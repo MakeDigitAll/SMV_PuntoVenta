@@ -4,6 +4,9 @@ import ProtectedRoute from "./components/routes/ProtectedRoute";
 import Home from "./views/home/Home.jsx";
 import User from "./views/user/User.jsx";
 import ProductList from "./views/products/ProductList.jsx";
+import VerAlmacen from "./views/warehouses/Viewwarehouse.jsx"
+
+
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -25,7 +28,17 @@ const App = () => {
         {
           path: "/Products/ProductList",
           element: <ProductList/>
+        },
+        {
+          path:"/home/VerAlmacen",
+          element: <VerAlmacen />
+        },
+        {
+          path:"/home/:id/VerAlmacen",
+          element: <VerAlmacen />
         }
+
+        
 
       ],
     },

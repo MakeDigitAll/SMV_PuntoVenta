@@ -96,7 +96,7 @@ const Login = () => {
                   {imgLogo ? (
                     <Image
                       isZoomed
-                      src="../../../public/make-light.png"
+                      src="../../../public/make-dark.png"
                       alt=""
                       width={100}
                       height={100}
@@ -104,7 +104,7 @@ const Login = () => {
                   ) : (
                     <Image
                       isZoomed
-                      src="../../../public/make-dark.png"
+                      src="../../../public/make-light.png"
                       alt=""
                       width={100}
                       height={100}
