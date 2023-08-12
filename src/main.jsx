@@ -10,7 +10,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <NextUIProvider>
-        <NextThemesProvider attribute="class" defaultTheme="dark">
+        <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem={true}>
           <App />
         </NextThemesProvider>
       </NextUIProvider>

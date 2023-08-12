@@ -4,10 +4,14 @@ import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org
 import { Button } from "@nextui-org/react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import Header from "../../components/header/headerC/Header";
+
 import { useNavigate } from 'react-router-dom';
 import { useEffect,useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 
 
 const Home = () => {
@@ -48,7 +52,8 @@ const Home = () => {
 
   return (
     <>
-    <Header/>
+      <Header />
+      <ItemsHeader />
       <div>
         Dashboard de{" "}
         {auth.getUser()?.nombre +
