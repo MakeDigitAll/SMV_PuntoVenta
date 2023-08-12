@@ -1,12 +1,14 @@
 import { Button } from "@nextui-org/react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import Header from "../../components/header/headerC/Header";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 
 const Home = () => {
   const auth = useAuth();
   return (
     <>
-    <Header/>
+      <Header />
+      <ItemsHeader />
       <div>
         Dashboard de{" "}
         {auth.getUser()?.nombre +

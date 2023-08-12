@@ -63,18 +63,18 @@ const Header = () => {
           </DropdownMenu>
         </Dropdown>
         <Switch
-              onChange={handleChange}
-              defaultSelected
-              size="sm"
-              color="default"
-              thumbIcon={({ isSelected, className }) =>
-                isSelected ? (
-                  <RiMoonLine className={className} />
-                ) : (
-                  <RiSunLine className={className} />
-                )
-              }
-            ></Switch>
+          onChange={handleChange}
+          defaultSelected
+          size="sm"
+          color="default"
+          thumbIcon={({ isSelected, className }) =>
+            isSelected ? (
+              <RiMoonLine className={className} />
+            ) : (
+              <RiSunLine className={className} />
+            )
+          }
+        ></Switch>
       </Navbar>
     </header>
   );

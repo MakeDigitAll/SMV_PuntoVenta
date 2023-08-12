@@ -75,7 +75,7 @@ const Login = () => {
             <Card
               style={{
                 display: "flex",
-                height: "500px",
+                height: "600px",
                 width: "400px",
                 marginTop: "100px",
               }}
@@ -86,7 +86,7 @@ const Login = () => {
                   marginRight: "20px",
                 }}
               >
-                <div className="flex justify-center">
+                <div className="flex justify-center" style={{marginTop:'20px'}}>
                   <h4>{t("login.Welcome")}</h4>
                 </div>
                 <div
@@ -96,7 +96,7 @@ const Login = () => {
                   {imgLogo ? (
                     <Image
                       isZoomed
-                      src="../../../public/make-light.png"
+                      src="../../../public/make-dark.png"
                       alt=""
                       width={100}
                       height={100}
@@ -104,15 +104,15 @@ const Login = () => {
                   ) : (
                     <Image
                       isZoomed
-                      src="../../../public/make-dark.png"
+                      src="../../../public/make-light.png"
                       alt=""
                       width={100}
                       height={100}
                     />
                   )}
                 </div>
-                <Spacer y={2} />
-                <div className="flex flex-col gap-2">
+                <Spacer y={10} />
+                <div className="flex flex-col gap-2" style={{marginTop:'20px'}}>
                   <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
                     <Input
                       id="email"
@@ -125,8 +125,8 @@ const Login = () => {
                     />
                   </div>
                 </div>
-                <Spacer y={2} />
-                <div className="flex flex-col gap-2">
+                <Spacer y={6} />
+                <div className="flex flex-col gap-2" style={{marginTop:'20px'}}>
                   <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
                     <Input
                       id="password"
