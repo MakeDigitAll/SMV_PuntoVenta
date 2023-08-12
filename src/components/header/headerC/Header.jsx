@@ -153,7 +153,7 @@ const Header = () => {
               </DropdownMenu>
             </Dropdown>
           </Badge>
-          <Dropdown style={{ marginLeft: "200px" }}>
+          <Dropdown>
             <DropdownTrigger style={{ marginLeft: "20px" }}>
               <Avatar
                 isBordered
