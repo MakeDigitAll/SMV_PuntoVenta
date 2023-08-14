@@ -21,6 +21,12 @@ i18n
             Login: 'Login',
             StayLogged: 'Remember me',
             AllRights: 'All rights reserved'
+          },
+          header:{
+            Profile: 'Profile',
+            Logout: 'Logout',
+            Language: 'Language',
+            Theme: 'Theme',
           }
         }
       },
@@ -33,6 +39,12 @@ i18n
             Login: 'Iniciar sesión',
             StayLogged: 'Recuerdame',
             AllRights: 'Todos los derechos reservados'
+          },
+          header:{
+            Profile: 'Perfil',
+            Logout: 'Cerrar sesión',
+            Language: 'Idioma',
+            Theme: 'Tema',
           }
         }
       }
