@@ -71,67 +71,24 @@ const Home = () => {
                 <ModalBody>
                   <Dropdown backdrop="blur">
                     <DropdownTrigger>
-                      <Button variant="bordered">Almacén</Button>
+                    <DropdownMenu name="almacenes" variant="faded" aria-label="Static Actions"> 
+                  {tasks.map((warehouse) => (
+                    <DropdownItem onClick={() => navigate(`/home/${warehouse.id}/VerAlmacen`)}  >{warehouse.nombre}</DropdownItem>
+                  ))}                 
+                </DropdownMenu>
                     </DropdownTrigger>
-                    <DropdownMenu
-                      name="almacenes"
-                      variant="faded"
-                      aria-label="Static Actions"
-                    >
-                      <DropdownItem
-                        onClick={() =>
-                          navigate(`/home/${tasks[0].id}/VerAlmacen`)
-                        }
-                      >
-                        Almacén de Transferencia
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() =>
-                          navigate(`/home/${tasks[1].id}/VerAlmacen`)
-                        }
-                      >
-                        Tarjeta de Almacén
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() =>
-                          navigate(`/home/${tasks[2].id}/VerAlmacen`)
-                        }
-                      >
-                        Inventario por Almacén{" "}
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() =>
-                          navigate(`/home/${tasks[3].id}/VerAlmacen`)
-                        }
-                      >
-                        Listado de Productos
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() =>
-                          navigate(`/home/${tasks[4].id}/VerAlmacen`)
-                        }
-                      >
-                        Datos de La Sucursal
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() =>
-                          navigate(`/home/${tasks[5].id}/VerAlmacen`)
-                        }
-                      >
-                        Almacén de la Sucursal
-                      </DropdownItem>
-                    </DropdownMenu>
+                   
                   </Dropdown>
-                </ModalBody>
-                <ModalFooter>
+              </ModalBody>
+              <ModalFooter>
                   <Button color="danger" variant="light" onClick={onClose}>
                     Cerrar
                   </Button>
                 </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       </div>
     </>
   );

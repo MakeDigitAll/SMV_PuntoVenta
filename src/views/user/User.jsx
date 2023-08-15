@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../../components/header/headerC/Header.jsx";
+import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx"
 
 const User = () => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -77,7 +78,7 @@ const User = () => {
               theme="light"
             />
             <div className="md:grid-nowrap mb-6 md:mb-0 gap-4">
-              <form onChange={handleChange} onSubmit={handleSubmit}>
+              {/* <form onChange={handleChange} onSubmit={handleSubmit}>
                 <Input
                   id="email"
                   value={user.email}
@@ -144,7 +145,8 @@ const User = () => {
                   />
                 )}
                 <Button type="submit">Guardar</Button>
-              </form>
+              </form> */}
+              <ProfileImageUpload />
             </div>
           </div>
         </div>
