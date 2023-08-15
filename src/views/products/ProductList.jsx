@@ -32,16 +32,16 @@ const columns = [
   { name: "ID", uid: "ID", sortable: true },
   { name: "Cod.Fab.", uid: "CodFab", sortable: true },
   { name: "Cod.Emp.", uid: "CodEmp", sortable: true },
-  { name: "Nombre/Descripción", uid: "Nombre" },
-  { name: "Marca", uid: "Marca" },
+  { name: "Nombre/Descripción", uid: "Nombre", sortable: true },
+  { name: "Marca", uid: "Marca", sortable: true },
   { name: "Categoría", uid: "Categoria", sortable: true },
-  { name: "Cod.SAT", uid: "CodSAT" },
+  { name: "Cod.SAT", uid: "CodSAT", sortable: true },
   { name: "Actualizado", uid: "Actualizado", sortable: true },
   { name: "Activo", uid: "Activo", sortable: true },
   { name: "Web", uid: "Web", sortable: true },
   { name: "POS", uid: "POS", sortable: true },
-  { name: "Venta", uid: "Venta" },
-  { name: "Precio", uid: "Precio" },
+  { name: "Venta", uid: "Venta", sortable: true },
+  { name: "Precio", uid: "Precio", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 
@@ -64,13 +64,14 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const ProductList = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const marcaOptions = [];
-  function contarmarca(){
+  function contarmarca() {
     for (let i = 0; i < data.length; i++) {
       marcaOptions.push({ name: data[i].marca, uid: data[i].idproducto });
     }
   }
-  
+
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -79,7 +80,6 @@ const ProductList = () => {
       if (response.ok) {
         setData(data);
         contarmarca();
-        console.log(marcaOptions);
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -90,7 +90,7 @@ const ProductList = () => {
   }
   useEffect(() => {
     loadTask();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
@@ -102,7 +102,7 @@ const ProductList = () => {
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
@@ -516,12 +516,12 @@ const ProductList = () => {
     filterValue,
     onSearchChange,
     statusFilter,
+    marcaOptions,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
     onClear,
   ]);
-
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
@@ -564,14 +564,7 @@ const ProductList = () => {
         </div>
       </div>
     );
-  }, [
-    selectedKeys,
-    filteredItems.length,
-    page,
-    pages,
-    onPreviousPage,
-    onNextPage,
-  ]);
+  }, [data.length, selectedKeys, page, pages, onPreviousPage, onNextPage]);
 
   return (
     <div style={{ marginLeft: "40px", marginRight: "40px" }}>

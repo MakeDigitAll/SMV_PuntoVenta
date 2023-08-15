@@ -8,6 +8,8 @@ import {
   Badge,
   Switch,
   Image,
+  DropdownSection,
+  User,
 } from "@nextui-org/react";
 import { useAuth } from "../../../components/auth/AuthProvider";
 import { RiMoonLine, RiNotification4Fill, RiSunLine } from "react-icons/ri";
@@ -21,12 +23,12 @@ const lngs = {
   Es: { nativeName: "Español" },
 };
 const Header = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [selectedKeys, setSelectedKeys] = React.useState(i18n.language);
   const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+  const islight = theme === "light";
   const handleChange = () => {
-    const nextTheme = isDark ? "light" : "dark";
+    const nextTheme = islight ? "dark" : "light";
     window.localStorage.setItem("data-theme", nextTheme); // you can use any storage
     setTheme(nextTheme);
   };
@@ -68,10 +70,9 @@ const Header = () => {
   }
   return (
     <header>
-      <br />
       <div
         className="flex flex-row items-center justify-between"
-        style={{ marginLeft: "10px", marginRight: "20px" }}
+        style={{ marginLeft: "80px", marginRight: "80px", marginTop:'15px' }}
       >
         <div className="items-start">
           {imgLogo ? (
@@ -79,57 +80,20 @@ const Header = () => {
               isZoomed
               src="../../../public/make-logo-light.png"
               alt=""
-              width={180}
-              height={180}
+              width={150}
+              height={100}
             />
           ) : (
             <Image
               isZoomed
               src="../../../public/make-logo-dark.png"
               alt=""
-              width={180}
-              height={180}
+              width={150}
+              height={100}
             />
           )}
         </div>
         <div className="flex flex-wrap place-content-end space-1">
-          <Switch
-            onChange={handleChange}
-            defaultSelected
-            size="sm"
-            color="default"
-            thumbIcon={({ isSelected, className }) =>
-              isSelected ? (
-                <RiMoonLine className={className} />
-              ) : (
-                <RiSunLine className={className} />
-              )
-            }
-          ></Switch>
-          <Dropdown>
-            <DropdownTrigger variant="light">
-              <Button className="capitalize" size="sm" endContent={<TbWorld />}>
-                {selectedValue}
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              aria-label="Single selection actions"
-              variant="light"
-              selectionMode="single"
-              selectedKeys={selectedKeys}
-              onSelectionChange={setSelectedKeys}
-            >
-              {Object.keys(lngs).map((lng) => (
-                <DropdownItem
-                  key={lng}
-                  value={lng}
-                  onPress={() => i18n.changeLanguage(lng)}
-                >
-                  {lngs[lng].nativeName}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
           <Badge
             content="10"
             shape="circle"
@@ -139,6 +103,7 @@ const Header = () => {
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Button
+                  size="sm"
                   radius="full"
                   isIconOnly
                   aria-label="more than 99 notifications"
@@ -168,7 +133,14 @@ const Header = () => {
               </DropdownMenu>
             </Dropdown>
           </Badge>
-          <Dropdown>
+          <Dropdown
+            showArrow
+            radius="sm"
+            classNames={{
+              base: "p-0 border-small border-divider bg-background",
+              arrow: "bg-default-200",
+            }}
+          >
             <DropdownTrigger style={{ marginLeft: "20px" }}>
               <Avatar
                 isBordered
@@ -180,19 +152,104 @@ const Header = () => {
               />
             </DropdownTrigger>
             <DropdownMenu
-              aria-label="Profile Actions"
-              variant="flat"
-              textValue=""
+              aria-label="Custom item styles"
+              disabledKeys={["profile"]}
+              className="p-3"
+              itemClasses={{}}
             >
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">
-                  {auth.getUser()?.nombre + " " + auth.getUser()?.apellido ||
-                    ""}
-                </p>
-              </DropdownItem>
-              <DropdownItem key="logout" color="danger" onPress={handleLogout}>
-                Cerrar sesión
-              </DropdownItem>
+              <DropdownSection aria-label="Profile & Actions" showDivider>
+                <DropdownItem isReadOnly className="h-14 gap-2">
+                  <User
+                    name={
+                      auth.getUser()?.nombre + " " + auth.getUser()?.apellido ||
+                      ""
+                    }
+                    description={auth.getUser()?.email || ""}
+                    classNames={{
+                      name: "text-default-600",
+                      description: "text-default-500",
+                    }}
+                    avatarProps={{
+                      size: "sm",
+                      src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+                    }}
+                  />
+                </DropdownItem>
+                <DropdownItem key="settings">
+                  {t("header.Profile")}
+                </DropdownItem>
+              </DropdownSection>
+
+              <DropdownSection aria-label="Preferences" showDivider>
+                <DropdownItem
+                  isReadOnly
+                  key="language"
+                  className="cursor-default"
+                  endContent={
+                    <Dropdown>
+                      <DropdownTrigger variant="light">
+                        <Button
+                          className="capitalize"
+                          size="sm"
+                          endContent={<TbWorld />}
+                        >
+                          {selectedValue}
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu
+                        aria-label="Single selection actions"
+                        variant="light"
+                        selectionMode="single"
+                        selectedKeys={selectedKeys}
+                        onSelectionChange={setSelectedKeys}
+                      >
+                        {Object.keys(lngs).map((lng) => (
+                          <DropdownItem
+                            key={lng}
+                            value={lng}
+                            onPress={() => i18n.changeLanguage(lng)}
+                          >
+                            {lngs[lng].nativeName}
+                          </DropdownItem>
+                        ))}
+                      </DropdownMenu>
+                    </Dropdown>
+                  }
+                >
+                  {t("header.Language")}
+                </DropdownItem>
+                <DropdownItem
+                  isReadOnly
+                  key="theme"
+                  className="cursor-default"
+                  endContent={
+                    <Switch
+                      onChange={handleChange}
+                      defaultSelected
+                      size="sm"
+                      color="secondary"
+                      thumbIcon={({ isSelected, className }) =>
+                        isSelected ? (
+                          <RiMoonLine className={className} />
+                        ) : (
+                          <RiSunLine className={className} />
+                        )
+                      }
+                    ></Switch>
+                  }
+                >
+                  {t("header.Theme")}
+                </DropdownItem>
+              </DropdownSection>
+              <DropdownSection aria-label="Logout">
+                <DropdownItem
+                  key="logout"
+                  color="danger"
+                  onPress={handleLogout}
+                >
+                  {t("header.Logout")}
+                </DropdownItem>
+              </DropdownSection>
             </DropdownMenu>
           </Dropdown>
         </div>
