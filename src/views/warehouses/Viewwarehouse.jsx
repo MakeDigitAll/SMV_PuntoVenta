@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from "@nextui-org/react";
 import {useParams, useNavigate} from 'react-router-dom';
+import Header from "../../components/header/headerC/Header";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 
 const VerAlmacen = () => {
 
@@ -52,7 +54,8 @@ const VerAlmacen = () => {
 
     return(
         <>
-        <h1>esto es una prueba de texto</h1>
+        <Header />
+        <ItemsHeader />
         <form onChange={handleChange}>
         <div>
             <Input  width="100px"

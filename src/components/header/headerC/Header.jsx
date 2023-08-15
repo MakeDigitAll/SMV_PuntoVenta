@@ -14,7 +14,8 @@ import { RiMoonLine, RiNotification4Fill, RiSunLine } from "react-icons/ri";
 import { TbWorld } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import db from "../../../views/user/Database.tsx"
 const lngs = {
   En: { nativeName: "English" },
   Es: { nativeName: "Español" },
@@ -35,6 +36,20 @@ const Header = () => {
     [selectedKeys]
   );
   const auth = useAuth();
+
+  async function getImage (){
+    const response = await db.getProfileImage('3')
+    console.log(response.data)
+    const urlImagen = URL.createObjectURL(response.data);
+    setuseUrlImagen(urlImagen);
+  }
+  const [useUrlImagen, setuseUrlImagen] = useState('')
+  useEffect(() => {
+    getImage();
+  }, []);
+  
+  
+
   async function handleLogout() {
     try {
       const response = await fetch(`http://localhost:4000/api/auth/logout`, {
@@ -161,7 +176,7 @@ const Header = () => {
                 className="transition-transform"
                 name={auth.getUser()?.nombre + " " + auth.getUser()?.apellido}
                 size="sm"
-                src="../../../public/Blank-Avatar.png"
+                src={useUrlImagen}
               />
             </DropdownTrigger>
             <DropdownMenu
