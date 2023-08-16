@@ -89,7 +89,7 @@ const ItemsSWeb = () => {
                     <div className="gap-2 sm:grid-cols-13 flex flex-wrap justify-center">
                         {itemsWeb.map((item, index) => (
                             <Card
-                            className="w-[130px] h-[70px] col-span-15 sm:col-span-7"
+                            className="w-[115px] h-[65px] col-span-15 sm:col-span-7"
                             shadow="md"
                             key={index}
                             isPressable
@@ -97,7 +97,7 @@ const ItemsSWeb = () => {
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">
-                                        <item.icon className="h-7 w-7"/>
+                                        <item.icon className="h-5 w-5"/>
                                     </div>
                                     <div className="text-center" style={{ marginTop: "3px" }}>
                                         <h6 style={{fontSize:'11px'}}>{item.name}</h6>
