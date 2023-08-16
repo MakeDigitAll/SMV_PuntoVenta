@@ -23,13 +23,13 @@ const items = [
     id: 2,
     name: "Ventas",
     icon: TbReport,
-    address: "Sells",
+    address: "Sales",
   },
   {
     id: 3,
     name: "Facturación",
     icon: TbReportAnalytics,
-    address: "Facturation",
+    address: "Billing",
     roleId: "0",
   },
   {
@@ -88,7 +88,7 @@ const items = [
     address: "POS",
     roleId: "0",
   },
-  { id: 12, name: "Web", icon: TbWorld, address: "WEB", roleId: "0" },
+  { id: 12, name: "Web", icon: TbWorld, address: "Web", roleId: "0" },
   {
     id: 13,
     name: "Ajustes",

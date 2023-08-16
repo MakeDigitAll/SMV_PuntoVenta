@@ -4,7 +4,16 @@ import ProtectedRoute from "./components/routes/ProtectedRoute";
 import Home from "./views/home/Home.jsx";
 import User from "./views/user/User.jsx";
 import ProductList from "./views/products/ProductList.jsx";
-import VerAlmacen from "./views/warehouses/Viewwarehouse.jsx"
+import VerAlmacen from "./views/warehouses/Viewwarehouse.jsx";
+import ItemsSales from "./views/sales/ItemsSales.jsx";
+import ItemsBilling from "./views/billing/ItemsBlling.jsx";
+import ItemsAdministration from "./views/administration/ItemsAdministration.jsx";
+import ClientList from "./views/client/ClientList.jsx";
+import SellersList from "./views/sellers/SellersList.jsx";
+import ItemsStore from "./views/store/ItemsStore.jsx";
+import ItemsSMarketing from "./views/marketing/ItemsMarketig.jsx";
+import ItemsSWeb from "./views/web/ItemsWeb.jsx";
+import ItemsSettings from "./views/settings/ItemsSettings.jsx";
 
 
 const App = () => {
@@ -36,8 +45,43 @@ const App = () => {
         {
           path:"/home/:id/VerAlmacen",
           element: <VerAlmacen />
+        },
+        {
+          path:"/Sales",
+          element: <ItemsSales />
+        },
+        {
+          path:"/Billing",
+          element: <ItemsBilling />
+        },
+        {
+          path:"/Administration",
+          element: <ItemsAdministration />
+        },
+        {
+          path:"/Store",
+          element: <ItemsStore />
+        },
+        {
+          path:"/Marketing",
+          element: <ItemsSMarketing />
+        },
+        {
+          path:"/Web",
+          element: <ItemsSWeb />
+        },
+        {
+          path: "/Settings",
+          element: <ItemsSettings />
+        },
+        {
+          path: "/Customers",
+          element: <ClientList />
+        },
+        {
+          path: "/Sellers",
+          element: <SellersList />
         }
-
         
 
       ],
