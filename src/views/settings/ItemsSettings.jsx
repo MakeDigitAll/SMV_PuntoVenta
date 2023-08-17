@@ -4,7 +4,6 @@ import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCog, BiMoneyWithdraw } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
@@ -16,7 +15,7 @@ const itemsSettings = [
         id: 1,
         name: "usuarios",
         icon: BiBarChartSquare,
-        address: "Usuarios",
+        address: "Users",
     },
     {
         id: 2,
@@ -85,7 +84,7 @@ const ItemsSettings = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            onPress={() => navigate(`/Settings/${item.address}`)}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">

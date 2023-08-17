@@ -17,7 +17,7 @@ import { TbWorld } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
-import db from "../../../views/user/Database.tsx"
+import db from "../../../views/user/Database.tsx";
 const lngs = {
   En: { nativeName: "English" },
   Es: { nativeName: "Español" },
@@ -39,18 +39,16 @@ const Header = () => {
   );
   const auth = useAuth();
 
-  async function getImage (){
-    const response = await db.getProfileImage('3')
-    console.log(response.data)
+  async function getImage() {
+    const response = await db.getProfileImage(auth.getUser().id);
     const urlImagen = URL.createObjectURL(response.data);
     setuseUrlImagen(urlImagen);
   }
-  const [useUrlImagen, setuseUrlImagen] = useState('')
+  const [useUrlImagen, setuseUrlImagen] = useState("");
   useEffect(() => {
     getImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  
 
   async function handleLogout() {
     try {
@@ -72,7 +70,7 @@ const Header = () => {
     <header>
       <div
         className="flex flex-row items-center justify-between"
-        style={{ marginLeft: "80px", marginRight: "80px", marginTop:'15px' }}
+        style={{ marginLeft: "80px", marginRight: "80px", marginTop: "15px" }}
       >
         <div className="items-start">
           {imgLogo ? (
@@ -147,7 +145,7 @@ const Header = () => {
                 as="button"
                 className="transition-transform"
                 name={auth.getUser()?.nombre + " " + auth.getUser()?.apellido}
-                size="sm"
+                size="md"
                 src={useUrlImagen}
               />
             </DropdownTrigger>
@@ -170,8 +168,8 @@ const Header = () => {
                       description: "text-default-500",
                     }}
                     avatarProps={{
-                      size: "sm",
-                      src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+                      size: "md",
+                      src: useUrlImagen,
                     }}
                   />
                 </DropdownItem>

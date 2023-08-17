@@ -16,6 +16,7 @@ export interface AuthResponse {
       nombre:string;
       apellido:string;
       email:string;
+      
   }
   export interface AccessTokenResponse{
     statusCode: number;

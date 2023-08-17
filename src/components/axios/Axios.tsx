@@ -13,7 +13,6 @@ function getBaseUrl() {
     return "http://192.168.100.9:8080/";
   }
 }
-
 // Crea la instancia de Axios
 const instance: AxiosInstance = axios.create({
   baseURL: getBaseUrl(), // Usa la función getBaseUrl para obtener la URL
