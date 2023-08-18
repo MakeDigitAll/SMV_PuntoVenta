@@ -1,4 +1,20 @@
-import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
+import {
+  Accordion,
+  AccordionItem,
+  Button,
+  Card,
+  CardBody,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
 import {
   RiAdminFill,
   RiDashboard2Fill,
@@ -108,9 +124,52 @@ const ItemsHeader = () => {
       roleId: "0",
     },
   ];
-
   return (
     <div className="place-content-center">
+      <div>
+        <Modal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          isDismissable={false}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1 text-center">
+                  Punto de Venta
+                </ModalHeader>
+                <ModalBody>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <DropdownMenu
+                        name="almacenes"
+                        variant="faded"
+                        aria-label="Static Actions"
+                      >
+                        {tasks.map((warehouse) => (
+                          <DropdownItem
+                            key={warehouse.id}
+                            onClick={() =>
+                              navigate(`/home/${warehouse.id}/VerAlmacen`)
+                            }
+                          >
+                            {warehouse.nombre}
+                          </DropdownItem>
+                        ))}
+                      </DropdownMenu>
+                    </DropdownTrigger>
+                  </Dropdown>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onClick={onClose}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      </div>
       <Accordion
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}

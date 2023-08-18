@@ -14,11 +14,10 @@ import {
   DropdownItem,
   Pagination,
   User,
-  Checkbox,
 } from "@nextui-org/react";
-import { statusOptions } from "./data";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
+import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -26,60 +25,34 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import db from "../../views/user/Database";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
 const columns = [
   { name: "Imagen", uid: "Imagen", sortable: true },
   { name: "ID", uid: "ID", sortable: true },
-  { name: "Cod.Fab.", uid: "CodFab", sortable: true },
-  { name: "Cod.Emp.", uid: "CodEmp", sortable: true },
-  { name: "Nombre/Descripción", uid: "Nombre", sortable: true },
-  { name: "Marca", uid: "Marca", sortable: true },
-  { name: "Categoría", uid: "Categoria", sortable: true },
-  { name: "Cod.SAT", uid: "CodSAT", sortable: true },
-  { name: "Actualizado", uid: "Actualizado", sortable: true },
-  { name: "Activo", uid: "Activo", sortable: true },
-  { name: "Web", uid: "Web", sortable: true },
-  { name: "POS", uid: "POS", sortable: true },
-  { name: "Venta", uid: "Venta", sortable: true },
-  { name: "Precio", uid: "Precio", sortable: true },
-  { name: "Acciones", uid: "Actions" },
+  { name: "Nombre", uid: "Nombre", sortable: true },
+  { name: "Apellido", uid: "Apellido", sortable: true },
+  { name: "Email", uid: "Email", sortable: true },
+  { name: "Acciones", uid: "Actions", sortable: true },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "Imagen",
   "ID",
-  "CodFab",
-  "CodEmp",
   "Nombre",
-  "Marca",
-  "Categoria",
-  "CodSAT",
-  "Actualizado",
-  "Activo",
-  "Web",
-  "POS",
-  "Venta",
-  "Precio",
+  "Apellido",
+  "Email",
   "Actions",
 ];
 
-const ProductList = () => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const marcaOptions = [];
-  function contarmarca() {
-    for (let i = 0; i < data.length; i++) {
-      marcaOptions.push({ name: data[i].marca, uid: data[i].idproducto });
-    }
-  }
-
+const Users = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch("http://localhost:4000/api/allusers");
       const data = await response.json();
       if (response.ok) {
         setData(data);
-        contarmarca();
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -127,10 +100,7 @@ const ProductList = () => {
         data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
+    {
       filteredUsers = filteredUsers.filter((data) =>
         Array.from(statusFilter).includes(data.nombre)
       );
@@ -157,93 +127,44 @@ const ProductList = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-
   const renderCell = React.useCallback((data, columnKey) => {
-    const cellValue = data[columnKey];
+    const response = db.getProfileImage(data.id);
 
     switch (columnKey) {
-      case "name":
-        return <User avatarProps={{ radius: "lg", src: data.avatar }} />;
+      case "Imagen":
+        return (
+          <User
+            avatarProps={{
+              radius: "lg",
+              src: URL.createObjectURL(
+                new Blob([response.data], { type: "image" })
+              ),
+            }}
+          />
+        );
+      case "ID":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.id}</p>
+          </div>
+        );
       case "Nombre":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
-      case "ID":
+
+      case "Apellido":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.idproducto}</p>
+            <p className="text-bold text-small capitalize">{data.apellido}</p>
           </div>
         );
-      case "CodFab":
+      case "Email":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.codigoFabricante}
-            </p>
-          </div>
-        );
-      case "CodEmp":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.codigoEmpresa}
-            </p>
-          </div>
-        );
-      case "Marca":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.marca}</p>
-          </div>
-        );
-      case "Categoria":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.categoria}</p>
-          </div>
-        );
-      case "CodSAT":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">Aun no se define</p>
-          </div>
-        );
-      case "Actualizado":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">Generico</p>
-          </div>
-        );
-      case "Activo":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "Web":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "POS":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "Venta":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "Precio":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.precio}</p>
+            <p className="text-bold text-small capitalize">{data.email}</p>
           </div>
         );
       case "Actions":
@@ -374,13 +295,7 @@ const ProductList = () => {
                   selectedKeys={statusFilter}
                   selectionMode="multiple"
                   onSelectionChange={setStatusFilter}
-                >
-                  {marcaOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
+                ></DropdownMenu>
               </Dropdown>
               <Dropdown>
                 <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
@@ -399,13 +314,7 @@ const ProductList = () => {
                   selectedKeys={statusFilter}
                   selectionMode="multiple"
                   onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
+                ></DropdownMenu>
               </Dropdown>
               <Dropdown>
                 <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
@@ -424,13 +333,7 @@ const ProductList = () => {
                   selectedKeys={statusFilter}
                   selectionMode="multiple"
                   onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
+                ></DropdownMenu>
               </Dropdown>
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
@@ -440,8 +343,13 @@ const ProductList = () => {
               <Button size="sm" color="warning" endContent={<TbReload />}>
                 Actualizar costos
               </Button>
-              <Button size="sm" color="primary" endContent={<TbPlus />}>
-                Nuevo Producto
+              <Button
+                onPress={() => navigate(`/Settings/User`)}
+                size="sm"
+                color="primary"
+                endContent={<TbPlus />}
+              >
+                Nuevo usuario
               </Button>
             </div>
           </div>
@@ -517,7 +425,6 @@ const ProductList = () => {
     filterValue,
     onSearchChange,
     statusFilter,
-    marcaOptions,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
@@ -574,8 +481,10 @@ const ProductList = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
         selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -593,12 +502,9 @@ const ProductList = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          emptyContent={"No se encuentran productos"}
-          items={sortedItems}
-        >
+        <TableBody emptyContent={"No users found"} items={data}>
           {(item) => (
-            <TableRow key={item.idproducto}>
+            <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
@@ -610,4 +516,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default Users;

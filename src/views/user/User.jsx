@@ -20,9 +20,15 @@ import { MdCheck, MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 
+import { Breadcrumbs, Typography } from "@mui/material";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import http from "../../components/axios/Axios";
 const User = () => {
   const [selectedImage, setSelectedImage] = useState("");
-  const imageDefault = selectedImage === null;
+  const imageDefault = selectedImage === "";
   const [user, setUser] = useState({
     nombre: "",
     apellido: "",
@@ -32,6 +38,7 @@ const User = () => {
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
+
   async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData();

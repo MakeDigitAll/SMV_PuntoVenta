@@ -14,6 +14,7 @@ import ItemsStore from "./views/store/ItemsStore.jsx";
 import ItemsSMarketing from "./views/marketing/ItemsMarketig.jsx";
 import ItemsSWeb from "./views/web/ItemsWeb.jsx";
 import ItemsSettings from "./views/settings/ItemsSettings.jsx";
+import Users from "./views/user/Users.jsx";
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
     {
       path: "/",
       element: <Login />,
+      onError: <div>Error</div>,
     },
     {
       path: "/",
@@ -81,6 +83,10 @@ const App = () => {
         {
           path: "/Sellers",
           element: <SellersList />
+        },
+        {
+          path: "/Settings/Users",
+          element: <Users />
         }
         
 
