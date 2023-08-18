@@ -27,35 +27,12 @@ import {
 import { TbReport, TbReportAnalytics, TbWorld } from "react-icons/tb";
 import { MdSettings, MdShoppingCart, MdStorefront } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
+import POS_Modal from "../../../views/home/POS_Modal";
 
 const ItemsHeader = () => {
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [tasks, setTask] = useState([]);
-  const loadTask = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/Almacenes`);
-      const data = await response.json();
-      setTask(data);
-    } catch (error) {
-      toast.error("¡Error al Cargar lo Datos!", {
-        position: "bottom-right",
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        autoClose: 5000,
-        theme: "colored",
-      });
-    }
-  };
-  useEffect(() => {
-    loadTask();
-  }, []);
   const items = [
     {
       id: 1,
@@ -67,13 +44,13 @@ const ItemsHeader = () => {
       id: 2,
       name: "Ventas",
       icon: TbReport,
-      address: () => navigate(`/${"Sales"}`),
+      address: () => navigate(`/${"Sells"}`),
     },
     {
       id: 3,
       name: "Facturación",
       icon: TbReportAnalytics,
-      address: () => navigate(`/${"Billing"}`),
+      address: () => navigate(`/${"Facturation"}`),
       roleId: "0",
     },
     {
@@ -129,7 +106,7 @@ const ItemsHeader = () => {
       id: 11,
       name: "Punto de venta",
       icon: RiStore3Line,
-      address: onOpen,
+      address: <POS_Modal/>,
       roleId: "0",
     },
     {
@@ -202,17 +179,18 @@ const ItemsHeader = () => {
           <div className="gap-2 sm:grid-cols-13 flex flex-wrap justify-center">
             {items.map((item, index) => (
               <Card
-                className="w-[100px] h-[60px] col-span-15 sm:col-span-7"
+                className="w-[90px] h-[55px]"
                 shadow="sm"
                 key={index}
                 isPressable
                 onPress={item.address}
+                radius="sm"
               >
-                <CardBody className="overflow-visible py-2">
-                  <div className="flex justify-center items-center">
-                    <item.icon className="h-5 w-5" />
+                <CardBody className="overflow-visible flex py-4">
+                  <div className="flex justify-center">
+                    <item.icon className="h-4 w-5" />
                   </div>
-                  <div className="text-center" style={{ marginTop: "3px" }}>
+                  <div className="text-center" style={{ marginTop: "2px" }}>
                     <h6 style={{ fontSize: "9px" }}>{item.name}</h6>
                   </div>
                 </CardBody>

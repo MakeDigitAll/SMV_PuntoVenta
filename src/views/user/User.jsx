@@ -1,8 +1,24 @@
-import { Button, Image, Input, Link } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Image,
+  Input,
+  Link,
+} from "@nextui-org/react";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../../components/header/headerC/Header.jsx";
+import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
+import { Breadcrumbs, Typography } from "@mui/material";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { MdCheck, MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 
 import { Breadcrumbs, Typography } from "@mui/material";
 import { RiDashboard2Fill } from "react-icons/ri";
@@ -27,34 +43,35 @@ const User = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("image", selectedImage);
-    formData.append(
-      "document",
-      JSON.stringify({
-        nombre: user.nombre,
-        apellido: user.apellido,
-        email: user.email,
-        password: user.password,
-      })
-    );
     try {
-      await http
-        .post(`/api/createuser`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          toast.success(response.data.body.message, { theme: "colored" });
-        })
-        .catch((error) => {
-          toast.error(error.response.data.body.error, { theme: "colored" });
-        });
+      const response = await fetch(`http://localhost:4000/api/createuser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        formData,
+        body: JSON.stringify({
+          nombre: user.nombre,
+          apellido: user.apellido,
+          email: user.email,
+          password: user.password,
+        }),
+      });
+      if (response.ok) {
+        const json = await response.json();
+        toast.success(json.body.message, { theme: "colored" });
+      } else {
+        const json = await response.json();
+        toast.error(json.body.error);
+      }
     } catch (error) {
       toast.warning(error.message);
     }
   }
+  function handleClickBreadCrumbs(event) {
+    event.preventDefault();
+  }
   const navigate = useNavigate();
-
   return (
     <>
       <Header />
@@ -109,17 +126,17 @@ const User = () => {
         className="flex flex-col items-center w-full h-screen"
         style={{ marginTop: "50px" }}
       >
-        <div className="mx-auto mt-16 max-w-2xl rounded-3xl sm:mt-20 lg:mx-0 lg:flex lg:max-w-none min-w-full">
+        <div className="mx-auto mt-16 max-w-2xl rounded-3xl ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex lg:max-w-none bg-gray-800 min-w-full">
           <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
-            <div className="rounded-2xl py-10 text-center lg:flex lg:flex-col lg:justify-center lg:py-16">
+            <div className="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
               <div className="mx-auto max-w-xs px-8">
                 {imageDefault ? (
                   <Image
                     isZoomed
                     src="../../../public/Blank-Avatar.png"
                     alt=""
-                    width={700}
-                    height={700}
+                    width={100}
+                    height={100}
                   />
                 ) : (
                   <Image
@@ -128,71 +145,79 @@ const User = () => {
                       new Blob([selectedImage], { type: "image" })
                     )}
                     alt=""
-                    width={700}
-                    height={700}
+                    width={100}
+                    height={100}
                   />
                 )}
               </div>
             </div>
           </div>
-          <div className="p-12 sm:p-10 lg:flex-auto space space-y-4">
-            <form onChange={handleChange} onSubmit={handleSubmit}>
-              <div className=" w-96">
-                <Input
-                  id="email"
-                  value={user.email}
-                  onChange={handleChange}
-                  size={"sm"}
-                  type="email"
-                  label="Email"
-                  name="email"
-                />
-              </div>
-              <div>
-                <Input
-                  id="password"
-                  value={user.password}
-                  onChange={handleChange}
-                  size={"sm"}
-                  type="password"
-                  label="password"
-                  name="password"
-                />
-              </div>
+          <div className="p-12 sm:p-10 lg:flex-auto space space-y-4">            
+            <div className=" w-96">
               <Input
-                id="nombre"
-                value={user.nombre}
+                id="email"
+                value={user.email}
                 onChange={handleChange}
                 size={"sm"}
-                type="text"
-                label="Nombre"
-                name="nombre"
+                type="email"
+                label="Email"
+                name="email"
               />
+            </div>
+            <div>
               <Input
-                size={"sm"}
-                type="text"
-                label="Apellido"
-                id="apellido"
-                name="apellido"
-                value={user.apellido}
+                id="password"
+                value={user.password}
                 onChange={handleChange}
-              />
-              <Input
                 size={"sm"}
-                type="file"
-                id="imagen"
-                value={user.imagen}
-                onChange={(event) => {
-                  setSelectedImage(event.target.files[0]);
-                }}
-                name="imagen"
+                type="password"
+                label="password"
+                name="password"
               />
-              <Button type="submit" size={"sm"}>
-                Guardar
-              </Button>
-            </form>
+            </div>
+            <Input
+              id="nombre"
+              value={user.nombre}
+              onChange={handleChange}
+              size={"sm"}
+              type="text"
+              label="Nombre"
+              name="nombre"
+            />
+            <Input
+              size={"sm"}
+              type="text"
+              label="Apellido"
+              id="apellido"
+              name="apellido"
+              value={user.apellido}
+              onChange={handleChange}
+            />
+            <Input
+              size={"sm"}
+              type="file"
+              id="imagen"
+              value={user.imagen}
+              onChange={(event) => {
+                setSelectedImage(event.target.files[0]);
+              }}
+              name="imagen"
+            />
+            <a
+              href="#"
+              className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Guardar
+            </a>
           </div>
         </div>
+
+        <div
+          role="presentation"
+          onClick={handleClickBreadCrumbs}
+          className="text-foreground"
+        ></div>
+        <div style={{ marginBottom: "50px" }}></div>
         <div
           style={{
             display: "flex",
@@ -216,7 +241,10 @@ const User = () => {
               pauseOnHover
               theme="light"
             />
-            <div className="md:grid-nowrap mb-6 md:mb-0 gap-4"></div>
+            <div className="md:grid-nowrap mb-6 md:mb-0 gap-4">
+              <form onChange={handleChange} onSubmit={handleSubmit}></form>
+              <ProfileImageUpload />
+            </div>
           </div>
         </div>
       </main>
