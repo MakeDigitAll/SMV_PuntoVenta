@@ -27,11 +27,34 @@ import {
 import { TbReport, TbReportAnalytics, TbWorld } from "react-icons/tb";
 import { MdSettings, MdShoppingCart, MdStorefront } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import POS_Modal from "../../../views/home/POS_Modal";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const ItemsHeader = () => {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [tasks, setTask] = useState([]);
+    const loadTask = async () => {
+        try {
+          const response = await fetch(`http://localhost:4000/Almacenes`);
+          const data = await response.json();
+          setTask(data);
+        } catch (error) {
+          toast.error("¡Error al Cargar lo Datos!", {
+            position: "bottom-right",
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            autoClose: 5000,
+            theme: "colored",
+          });
+        }
+      };
+      useEffect(() => {
+        loadTask();
+      }, []);
   const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
   const items = [
     {
@@ -106,7 +129,7 @@ const ItemsHeader = () => {
       id: 11,
       name: "Punto de venta",
       icon: RiStore3Line,
-      address: <POS_Modal/>,
+      address: {onOpen},
       roleId: "0",
     },
     {
