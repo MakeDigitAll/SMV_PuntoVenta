@@ -14,6 +14,7 @@ import {
   DropdownItem,
   Pagination,
   User,
+  Image,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
@@ -47,12 +48,14 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const Users = () => {
   const [data, setData] = useState([]);
+  const [filteredImagen, setFilteredImagen] = useState([]);
   async function loadTask() {
     try {
       const response = await fetch("http://localhost:4000/api/allusers");
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        const filteredImagen = data.map(data => data.imagen);
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -127,20 +130,26 @@ const Users = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-  const renderCell = React.useCallback((data, columnKey) => {
-    const response = db.getProfileImage(data.id);
 
+  const [useUrlImagen, setuseUrlImagen] = useState("");
+  async function getImage(idImagen) {
+    const response = await db.getProfileImage(36);
+    const urlImagen = URL.createObjectURL(response.data);
+    setuseUrlImagen(urlImagen);
+  }
+  const renderCell = React.useCallback((data, columnKey) => {    
+    getImage(data.id);
+    console.log(useUrlImagen);
     switch (columnKey) {
       case "Imagen":
         return (
-          <User
-            avatarProps={{
-              radius: "lg",
-              src: URL.createObjectURL(
-                new Blob([response.data], { type: "image" })
-              ),
-            }}
-          />
+          <Image
+            isZoomed
+            src={useUrlImagen}
+            alt=""
+            width={60}
+            height={50}
+          />             
         );
       case "ID":
         return (
