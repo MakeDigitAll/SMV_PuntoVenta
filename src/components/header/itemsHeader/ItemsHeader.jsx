@@ -128,8 +128,8 @@ const ItemsHeader = () => {
     <div className="place-content-center">
       <div>
         <Modal
-          //isOpen={isOpen}
-          //onOpenChange={onOpenChange}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
           isDismissable={false}
         >
           <ModalContent>
