@@ -284,7 +284,12 @@ const Users = () => {
               />
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              <Button size="sm" color="warning" endContent={<TbReload />} className="text-color-foreground">
+              <Button
+                size="sm"
+                color="warning"
+                endContent={<TbReload />}
+                className="text-color-foreground"
+              >
                 Actualizar precios
               </Button>
               <Button size="sm" color="warning" endContent={<TbReload />}>
@@ -368,15 +373,7 @@ const Users = () => {
         </DefaultLayout>
       </>
     );
-  }, [
-    filterValue,
-    onSearchChange,
-    statusFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    navigate,
-    onClear,
-  ]);
+  }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
