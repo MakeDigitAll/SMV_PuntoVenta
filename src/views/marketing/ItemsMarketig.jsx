@@ -1,36 +1,37 @@
 import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
-import { TbRoad } from "react-icons/tb";
-import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCheckShield, BiMoneyWithdraw, BiStar, BiColumns } from "react-icons/bi";
+import { TbMailDollar, TbMoodDollar, TbRoad } from "react-icons/tb";
+import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCheckShield, BiMoneyWithdraw, BiStar, BiColumns, BiSolidChevronUp, BiArchive, BiDollar } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiUser2Line, RiUser3Fill } from "react-icons/ri";
+import { RiDashboard2Fill, RiFileUserFill, RiRecordCircleFill, RiRecordCircleLine, RiUser2Line, RiUser3Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
 import { BiIdCard, BiSolidBarChartSquare } from "react-icons/bi";
+import { MdFastForward, MdFastRewind, MdMicExternalOn, MdMoney, MdMoneyOff, MdPadding, MdPeople, MdProductionQuantityLimits, MdRecordVoiceOver, MdStackedBarChart } from "react-icons/md";
 
 
 const itemsMarketing = [
     {
         id: 1,
         name: "Rpt. Clientes",
-        icon: BiBarChartSquare,
+        icon: RiFileUserFill,
         address: "RptCientes",
     },
     {
         id: 2,
         name: "Rpt. Clientes por Fecha",
-        icon: BiBookmarkPlus,
+        icon: MdPeople,
         address: "RptClientesFecha",
         roleId: "0",
     },
     {
         id: 3,
         name: "Cat. Giros",
-        icon: BiArchiveOut,
+        icon: BiArchive,
         address: "CatGiros",
         roleId: "0",
     },
@@ -44,28 +45,28 @@ const itemsMarketing = [
     {
         id: 5,
         name: "Margen Productos",
-        icon: BiStar,
+        icon: MdProductionQuantityLimits,
         address: "MargenProductos",
         roleId: "0",
     },
     {
         id: 6,
         name: "Costo Productos",
-        icon: BiCheckShield,
+        icon: MdStackedBarChart,
         address: "CostoProductos",
         roleId: "0",
     },
     {
         id: 7,
         name: "Record Productos",
-        icon: TbRoad,
+        icon: RiRecordCircleLine,
         address: "RecordProductos",
         roleId: "0",
     },
     {
         id: 8,
         name: "Record Compras",
-        icon: TbRoad,
+        icon: BiDollar,
         address: "RercorCompras",
         roleId: "0",
     },

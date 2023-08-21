@@ -2,13 +2,13 @@ import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import { TbRoad } from "react-icons/tb";
-import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCheckShield, BiMoneyWithdraw, BiStar } from "react-icons/bi";
+import { BiArchiveIn, BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCalendarAlt, BiCheckCircle, BiCheckDouble, BiCheckShield, BiClipboard, BiEnvelopeOpen, BiGitBranch, BiGroup, BiListUl, BiMoneyWithdraw, BiSolidTruck, BiStar, BiTag, BiTransfer, BiTransferAlt, BiVerticalBottom } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiListCheck, RiStockFill, RiUser2Line, RiUser3Fill } from "react-icons/ri";
+import { RiDashboard2Fill, RiListCheck,  } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
 
 
@@ -16,20 +16,20 @@ const itemsStoreAlmacen = [
     {
         id: 1,
         name: "Surtir Pedidos",
-        icon: BiBarChartSquare,
+        icon: BiCalendarAlt,
         address: "Cotizaciones",
     },
     {
         id: 2,
         name: "Logistica",
-        icon: BiBookmarkPlus,
+        icon: BiSolidTruck,
         address: "Pedidos",
         roleId: "0",
     },
     {
         id: 3,
         name: "Entradas de Almacén",
-        icon: BiArchiveOut,
+        icon: BiArchiveIn,
         address: "SurtirPedidos",
         roleId: "0",
     },
@@ -43,28 +43,28 @@ const itemsStoreAlmacen = [
     {
         id: 5,
         name: "Inventario",
-        icon: BiArchiveOut,
+        icon: BiCheckCircle,
         address: "SurtirPedidos",
         roleId: "0",
     },
     {
         id: 6,
         name: "Inv. X Almacén",
-        icon: BiArchiveOut,
+        icon: BiCheckDouble,
         address: "SurtirPedidos",
         roleId: "0",
     },
     {
         id: 7,
         name: "Transferencias",
-        icon: BiArchiveOut,
+        icon: BiTransfer,
         address: "SurtirPedidos",
         roleId: "0",
     },
     {
         id: 8,
         name: "Transferencias Masivas",
-        icon: BiArchiveOut,
+        icon: BiTransferAlt,
         address: "SurtirPedidos",
         roleId: "0",
     },
@@ -74,13 +74,13 @@ const itemsStoreCompras = [
     {
         id: 1,
         name: "Ordenes de Compra",
-        icon: BiBarChartSquare,
+        icon: BiClipboard,
         address: "Cotizaciones",
     },
     {
         id: 2,
         name: "Proveedores",
-        icon: BiBookmarkPlus,
+        icon: BiGroup,
         address: "Pedidos",
         roleId: "0",
     },
@@ -91,20 +91,20 @@ const itemsStorecaptura = [
     {
         id: 1,
         name: "Marcas",
-        icon: BiBarChartSquare,
+        icon: BiTag,
         address: "Cotizaciones",
     },
     {
         id: 2,
         name: "Categorías",
-        icon: BiBookmarkPlus,
+        icon: BiListUl,
         address: "Pedidos",
         roleId: "0",
     },
     {
         id: 3,
         name: "Importar Datos",
-        icon: BiArchiveOut,
+        icon: BiVerticalBottom,
         address: "SurtirPedidos",
         roleId: "0",
     },

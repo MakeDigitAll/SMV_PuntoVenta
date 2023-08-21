@@ -1,40 +1,41 @@
 import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
-import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCog, BiMoneyWithdraw } from "react-icons/bi";
+import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCog, BiDollar, BiMoneyWithdraw, BiStoreAlt } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
+import { MdPeople, MdSecurity, MdSecurityUpdate } from "react-icons/md";
 
 
 const itemsSettings = [
     {
         id: 1,
         name: "usuarios",
-        icon: BiBarChartSquare,
+        icon: MdPeople,
         address: "Users",
     },
     {
         id: 2,
         name: "Perfiles de Seguridad",
-        icon: BiBookmarkPlus,
+        icon: MdSecurity,
         address: "PerfilesSeguridad",
         roleId: "0",
     },
     {
         id: 3,
         name: "Sucursales",
-        icon: BiArchiveOut,
+        icon: BiStoreAlt,
         address: "Sucursales",
         roleId: "0",
     },
     {
         id: 4,
         name: "Formas de Pago",
-        icon: BiMoneyWithdraw,
+        icon: BiDollar,
         address: "FormasPagos",
         roleId: "0",
     },

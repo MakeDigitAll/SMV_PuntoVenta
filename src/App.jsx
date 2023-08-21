@@ -49,7 +49,7 @@ const App = () => {
           element: <VerAlmacen />,
         },
         {
-          path: "/Sales",
+          path: "/Sells",
           element: <ItemsSales />,
         },
         {

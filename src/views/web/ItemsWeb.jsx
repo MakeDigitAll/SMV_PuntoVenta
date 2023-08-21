@@ -1,8 +1,7 @@
 import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
-import { TbRoad } from "react-icons/tb";
-import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCast, BiMoneyWithdraw, BiStar } from "react-icons/bi";
+import {  BiCast, BiImage, BiImageAdd, BiMoneyWithdraw, BiSolidStar, BiStar } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,40 +9,41 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
+import { MdDocumentScanner, MdOutlineMail, MdPeople } from "react-icons/md";
 
 
 const itemsWeb = [
     {
         id: 1,
         name: "Prods. Especiales",
-        icon: BiBarChartSquare,
+        icon: BiSolidStar,
         address: "Cotizaciones",
     },
     {
         id: 2,
         name: "Banners",
-        icon: BiBookmarkPlus,
+        icon: BiImage,
         address: "Pedidos",
         roleId: "0",
     },
     {
         id: 3,
         name: "CMS",
-        icon: BiArchiveOut,
+        icon: MdDocumentScanner,
         address: "SurtirPedidos",
         roleId: "0",
     },
     {
         id: 4,
         name: "Notificaciones Web",
-        icon: BiMoneyWithdraw,
+        icon: MdOutlineMail,
         address: "Pagos",
         roleId: "0",
     },
     {
         id: 5,
         name: "Usuarios",
-        icon: BiStar,
+        icon: MdPeople,
         address: "Promociones",
         roleId: "0",
     },

@@ -1,7 +1,7 @@
 import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
-import { BiAlarm, BiArchiveOut, BiBarChartSquare, BiBookOpen, BiBookmarkPlus, BiCheckShield, BiClipboard, BiCreditCardFront, BiMoneyWithdraw, BiSolidBarChartSquare, BiStar } from "react-icons/bi";
+import { BiAlarm, BiArchiveOut, BiBarChartAlt, BiBarChartSquare, BiBookOpen, BiBookmarkPlus, BiBox, BiBullseye, BiCalendarAlt, BiCheckShield, BiClipboard, BiCreditCardFront, BiDollar, BiKey, BiMoneyWithdraw, BiSolidBarChartSquare, BiStar, BiTransfer } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -43,35 +43,35 @@ const itemsAdimOperaciones = [
     {
         id: 2,
         name: "Reporte Ventas",
-        icon: BiBookmarkPlus,
+        icon:  BiBarChartAlt,
         address: "Pedidos",
         roleId: "0",
     },
     {
         id: 3,
         name: "Listado de Precios",
-        icon: BiArchiveOut,
+        icon: BiDollar,
         address: "ListadoPrecios",
         roleId: "0",
     },
     {
         id: 4,
         name: "Descuentos",
-        icon: BiArchiveOut,
+        icon: BiMoneyWithdraw,
         address: "Descuentos",
         roleId: "0",
     },
     {
         id: 5,
         name: "Token de Descuentos",
-        icon: BiArchiveOut,
+        icon: BiKey,
         address: "TokenDescuentos",
         roleId: "0",
     },
     {
         id: 6,
         name: "Tipo de Cambio",
-        icon: BiArchiveOut,
+        icon: BiTransfer,
         address: "TipoCambio",
         roleId: "0",
     },
@@ -81,20 +81,20 @@ const itemsAdimVendedores = [
     {
         id: 1,
         name: "Comisiones",
-        icon: BiBarChartSquare,
+        icon: BiBullseye,
         address: "Comisiones",
     },
     {
         id: 2,
         name: "Rpt. Comisiones",
-        icon: BiBookmarkPlus,
+        icon: BiBox,
         address: "RepComisiones",
         roleId: "0",
     },
     {
         id: 3,
-        name: "Rpt. Comisiones Agrupado",
-        icon: BiArchiveOut,
+        name: "Comisiones Agrupado",
+        icon: BiCalendarAlt,
         address: "RepComisionesAgrup",
         roleId: "0",
     },

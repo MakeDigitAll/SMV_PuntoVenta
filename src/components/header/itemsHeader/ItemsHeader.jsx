@@ -73,7 +73,7 @@ const ItemsHeader = () => {
       id: 3,
       name: "Facturación",
       icon: TbReportAnalytics,
-      address: () => navigate(`/${"Facturation"}`),
+      address: () => navigate(`/${"Billing"}`),
       roleId: "0",
     },
     {
