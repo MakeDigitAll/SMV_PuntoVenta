@@ -1,4 +1,4 @@
-import http from "../../components/axios/Axios";
+import http from "./Axios";
 
 class UserService {
   //obtener la imagen de perfil

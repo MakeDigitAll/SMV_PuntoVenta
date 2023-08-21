@@ -10,10 +10,10 @@ import {
   Spacer,
   Button,
   CardBody,
-  Image,
 } from "@nextui-org/react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
+import { MdLock, MdMail } from "react-icons/md";
 
 const Login = () => {
   const goTo = useNavigate();
@@ -75,7 +75,7 @@ const Login = () => {
             <Card
               style={{
                 display: "flex",
-                height: "600px",
+                height: "500px",
                 width: "400px",
                 marginTop: "100px",
               }}
@@ -86,10 +86,11 @@ const Login = () => {
                   marginRight: "20px",
                 }}
               >
-                <div className="flex justify-center" style={{marginTop:'20px'}}>
-                  <h4>{t("login.Welcome")}</h4>
+                <br />
+                <div className="flex justify-center">
+                  <h4>{t("login.Login")}</h4>
                 </div>
-                <div
+                {/* <div
                   className="flex justify-center"
                   style={{ marginTop: "20px" }}
                 >
@@ -110,32 +111,52 @@ const Login = () => {
                       height={100}
                     />
                   )}
-                </div>
+                </div> */}
+
                 <Spacer y={10} />
-                <div className="flex flex-col gap-2" style={{marginTop:'20px'}}>
+                <div
+                  className="flex flex-col gap-2"
+                  style={{ marginTop: "20px" }}
+                >
                   <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
                     <Input
-                      id="email"
+                      autoFocus
+                      endContent={
+                        <MdMail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                      }
+                      label="Email"
+                      variant="bordered"
                       value={user.email}
                       onChange={handleChange}
-                      size={"sm"}
+                      id="email"
+                      size={"md"}
                       type="email"
-                      label="Email"
                       name="email"
+                      placeholder=" "
+                      labelPlacement={"outside"}
                     />
                   </div>
                 </div>
                 <Spacer y={6} />
-                <div className="flex flex-col gap-2" style={{marginTop:'20px'}}>
+                <div
+                  className="flex flex-col gap-2"
+                  style={{ marginTop: "20px" }}
+                >
                   <div className="flex w-full flex-wrap items-end md:flex-nowrap mb-6 md:mb-0 gap-4">
                     <Input
+                      endContent={
+                        <MdLock className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                      }
                       id="password"
                       value={user.password}
                       onChange={handleChange}
-                      size={"sm"}
+                      size={"md"}
                       type="password"
                       label="password"
                       name="password"
+                      variant="bordered"
+                      labelPlacement={"outside"}
+                      placeholder=" "
                     />
                   </div>
                 </div>
@@ -148,7 +169,7 @@ const Login = () => {
                   className="flex justify-center"
                   style={{ marginTop: "20px" }}
                 >
-                  <Button size={"md"} color="primary" type="submit">
+                  <Button size={"md"} color="primary" type="submit" className="w-[200px]">
                     {t("login.Login")}
                   </Button>
                 </div>

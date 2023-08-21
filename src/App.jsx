@@ -15,7 +15,7 @@ import ItemsSMarketing from "./views/marketing/ItemsMarketig.jsx";
 import ItemsSWeb from "./views/web/ItemsWeb.jsx";
 import ItemsSettings from "./views/settings/ItemsSettings.jsx";
 import Users from "./views/user/Users.jsx";
-
+import PosHome from "./views/pos/PosHome.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -38,58 +38,60 @@ const App = () => {
         },
         {
           path: "/Products/ProductList",
-          element: <ProductList/>
+          element: <ProductList />,
         },
         {
-          path:"/home/VerAlmacen",
-          element: <VerAlmacen />
+          path: "/home/VerAlmacen",
+          element: <VerAlmacen />,
         },
         {
-          path:"/home/:id/VerAlmacen",
-          element: <VerAlmacen />
+          path: "/home/:id/VerAlmacen",
+          element: <VerAlmacen />,
         },
         {
-          path:"/Sales",
-          element: <ItemsSales />
+          path: "/Sales",
+          element: <ItemsSales />,
         },
         {
-          path:"/Billing",
-          element: <ItemsBilling />
+          path: "/Billing",
+          element: <ItemsBilling />,
         },
         {
-          path:"/Administration",
-          element: <ItemsAdministration />
+          path: "/Administration",
+          element: <ItemsAdministration />,
         },
         {
-          path:"/Store",
-          element: <ItemsStore />
+          path: "/Store",
+          element: <ItemsStore />,
         },
         {
-          path:"/Marketing",
-          element: <ItemsSMarketing />
+          path: "/Marketing",
+          element: <ItemsSMarketing />,
         },
         {
-          path:"/Web",
-          element: <ItemsSWeb />
+          path: "/Web",
+          element: <ItemsSWeb />,
         },
         {
           path: "/Settings",
-          element: <ItemsSettings />
+          element: <ItemsSettings />,
         },
         {
           path: "/Customers",
-          element: <ClientList />
+          element: <ClientList />,
         },
         {
           path: "/Sellers",
-          element: <SellersList />
+          element: <SellersList />,
         },
         {
           path: "/Settings/Users",
-          element: <Users />
-        }
-        
-
+          element: <Users />,
+        },
+        {
+          path: "/POS/Home",
+          element: <PosHome />,
+        },
       ],
     },
   ]);

@@ -13,26 +13,25 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
+  Spacer,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+import { MdArrowDropDown, MdSearch } from "react-icons/md";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill } from "react-icons/ri";
+import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import db from "../../views/user/Database";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+import UserImage from "./UserImage";
 const columns = [
-  { name: "Imagen", uid: "Imagen", sortable: true },
-  { name: "ID", uid: "ID", sortable: true },
-  { name: "Nombre", uid: "Nombre", sortable: true },
-  { name: "Apellido", uid: "Apellido", sortable: true },
-  { name: "Email", uid: "Email", sortable: true },
+  { name: "Imagen", uid: "Imagen" },
+  { name: "Nombre(s)", uid: "Nombre", sortable: true },
+  { name: "Correo electronico", uid: "Email", sortable: true },
+  { name: "Grupo", uid: "Grupo", sortable: true },
+  { name: "Sucursales", uid: "Sucursales", sortable: true },
   { name: "Acciones", uid: "Actions", sortable: true },
 ];
 
@@ -40,9 +39,10 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Imagen",
   "ID",
   "Nombre",
-  "Apellido",
   "Email",
   "Actions",
+  "Sucursales",
+  "Grupo",
 ];
 
 const Users = () => {
@@ -74,13 +74,15 @@ const Users = () => {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
+
+  const pages = Math.ceil(data.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -96,20 +98,26 @@ const Users = () => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+      filteredUsers = filteredUsers.filter(
+        (user) =>
+          user.nombre.toLowerCase().includes(filterValue.toLowerCase()) +
+          user.apellido
+            .toLowerCase()
+            .includes(filterValue.toLocaleLowerCase()) +
+          user.email.toLowerCase().includes(filterValue.toLocaleLowerCase())
       );
     }
-    {
-      filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+    if (
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== data.length
+    ) {
+      filteredUsers = filteredUsers.filter((user) =>
+        Array.from(statusFilter).includes(user.email)
       );
     }
 
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -128,20 +136,10 @@ const Users = () => {
     });
   }, [sortDescriptor, items]);
   const renderCell = React.useCallback((data, columnKey) => {
-    const response = db.getProfileImage(data.id);
-
+    const cellValue = data[columnKey];
     switch (columnKey) {
       case "Imagen":
-        return (
-          <User
-            avatarProps={{
-              radius: "lg",
-              src: URL.createObjectURL(
-                new Blob([response.data], { type: "image" })
-              ),
-            }}
-          />
-        );
+        return <UserImage idUsuario={data.id} designType="tabla" />;
       case "ID":
         return (
           <div className="flex flex-col">
@@ -151,14 +149,9 @@ const Users = () => {
       case "Nombre":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.nombre}</p>
-          </div>
-        );
-
-      case "Apellido":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.apellido}</p>
+            <p className="text-bold text-small capitalize">
+              {data.nombre} {data.apellido}
+            </p>
           </div>
         );
       case "Email":
@@ -258,8 +251,8 @@ const Users = () => {
                 sx={{ display: "flex", alignItems: "center" }}
                 className="text-foreground"
               >
-                <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Listado de Productos
+                <RiUser2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+                Usuarios
               </Typography>
             </Breadcrumbs>
           </div>
@@ -267,77 +260,31 @@ const Users = () => {
             className="flex flex-col gap-4"
             style={{ marginLeft: "10px", marginRight: "10px" }}
           >
-            <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
+            <Spacer y={8} />
+            <div className="flex flex-wrap space space-x-4 ">
               <Input
                 isClearable
-                size="sm"
+                size="md"
                 className="w-[450px] sm:max-w-[44%]"
-                placeholder="Productos"
+                placeholder="Nombre/ Apellido"
                 startContent={<MdSearch />}
                 value={filterValue}
                 onClear={() => onClear()}
                 onValueChange={onSearchChange}
               />
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Marca
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                ></DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Categoría
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                ></DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Proveedor
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                ></DropdownMenu>
-              </Dropdown>
+              <Input
+                isClearable
+                size="md"
+                className="w-[450px] sm:max-w-[44%]"
+                placeholder="Correo electronico"
+                startContent={<MdSearch />}
+                value={filterValue}
+                onClear={() => onClear()}
+                onValueChange={onSearchChange}
+              />
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              <Button size="sm" color="warning" endContent={<TbReload />}>
+              <Button size="sm" color="warning" endContent={<TbReload />} className="text-color-foreground">
                 Actualizar precios
               </Button>
               <Button size="sm" color="warning" endContent={<TbReload />}>
@@ -406,10 +353,10 @@ const Users = () => {
                 </DropdownMenu>
               </Dropdown>
             </div>
-            <label className="flex items-center text-default-400 text-small">
+            <label className="flex items-center text-small">
               Productos por página:
               <select
-                className="bg-transparent outline-none text-default-400 text-small"
+                className="bg-transparent outline-none text-small"
                 onChange={onRowsPerPageChange}
               >
                 <option value="5">5</option>
@@ -433,7 +380,7 @@ const Users = () => {
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <span className="w-[30%] text-small">
           <span style={{ marginRight: "30px" }}>
             {data.length} productos en total
           </span>
@@ -495,14 +442,14 @@ const Users = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              align={"center"}
               allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={data}>
+        <TableBody emptyContent={"No users found"} items={sortedItems}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

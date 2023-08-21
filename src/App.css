@@ -1,8 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html,
+body {
+  color: #000;
+  background: #fff;
+}
 
-[data-theme='dark'] {
-    --background: rgb(196, 54, 54);
-    --foreground: white;
-  }
+[data-theme='dark'],
+[data-theme='dark'] body {
+  color: #fff;
+  background: #000;
+}

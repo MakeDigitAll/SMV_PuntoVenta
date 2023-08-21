@@ -202,7 +202,7 @@ const ItemsHeader = () => {
           <div className="gap-2 sm:grid-cols-13 flex flex-wrap justify-center">
             {items.map((item, index) => (
               <Card
-                className="w-[90px] h-[55px]"
+                className="w-[110px] h-[70px]"
                 shadow="sm"
                 key={index}
                 isPressable
@@ -211,10 +211,10 @@ const ItemsHeader = () => {
               >
                 <CardBody className="overflow-visible flex py-4">
                   <div className="flex justify-center">
-                    <item.icon className="h-4 w-5" />
+                    <item.icon className="h-4 w-4" />
                   </div>
                   <div className="text-center" style={{ marginTop: "2px" }}>
-                    <h6 style={{ fontSize: "9px" }}>{item.name}</h6>
+                    <h6 style={{ fontSize: "10px" }}>{item.name}</h6>
                   </div>
                 </CardBody>
               </Card>

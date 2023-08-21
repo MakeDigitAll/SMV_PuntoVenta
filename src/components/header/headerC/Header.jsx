@@ -17,7 +17,7 @@ import { TbWorld } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
-import db from "../../../views/user/Database.tsx";
+import db from "../../axios/Database";
 const lngs = {
   En: { nativeName: "English" },
   Es: { nativeName: "Español" },
@@ -145,7 +145,7 @@ const Header = () => {
                 as="button"
                 className="transition-transform"
                 name={auth.getUser()?.nombre + " " + auth.getUser()?.apellido}
-                size="md"
+                size="sm"
                 src={useUrlImagen}
               />
             </DropdownTrigger>
