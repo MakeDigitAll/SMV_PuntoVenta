@@ -10,101 +10,105 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
 
-const itemsAdimFinanciero = [
-    {
-        id: 1,
-        name: "Cobranza del Día",
-        icon: BiAlarm,
-        address: "Cobranza",
-    },
-    {
-        id: 2,
-        name: "Créditos",
-        icon: BiCreditCardFront,
-        address: "creditos",
-        roleId: "0",
-    },
-    {
-        id: 3,
-        name: "Estados de Cuenta",
-        icon: BiBookOpen,
-        address: "estasdosCuenta",
-        roleId: "0",
-    },
-];
 
-const itemsAdimOperaciones = [
-    {
-        id: 1,
-        name: "Margen Ventas",
-        icon: BiBarChartSquare,
-        address: "MargenVentas",
-    },
-    {
-        id: 2,
-        name: "Reporte Ventas",
-        icon:  BiBarChartAlt,
-        address: "Pedidos",
-        roleId: "0",
-    },
-    {
-        id: 3,
-        name: "Listado de Precios",
-        icon: BiDollar,
-        address: "ListadoPrecios",
-        roleId: "0",
-    },
-    {
-        id: 4,
-        name: "Descuentos",
-        icon: BiMoneyWithdraw,
-        address: "Descuentos",
-        roleId: "0",
-    },
-    {
-        id: 5,
-        name: "Token de Descuentos",
-        icon: BiKey,
-        address: "TokenDescuentos",
-        roleId: "0",
-    },
-    {
-        id: 6,
-        name: "Tipo de Cambio",
-        icon: BiTransfer,
-        address: "TipoCambio",
-        roleId: "0",
-    },
-];
 
-const itemsAdimVendedores = [
-    {
-        id: 1,
-        name: "Comisiones",
-        icon: BiBullseye,
-        address: "Comisiones",
-    },
-    {
-        id: 2,
-        name: "Rpt. Comisiones",
-        icon: BiBox,
-        address: "RepComisiones",
-        roleId: "0",
-    },
-    {
-        id: 3,
-        name: "Comisiones Agrupado",
-        icon: BiCalendarAlt,
-        address: "RepComisionesAgrup",
-        roleId: "0",
-    },
-
-];
 
 const ItemsAdministration = () => {
     
     const navigate = useNavigate();
     const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
+
+
+    const itemsAdimFinanciero = [
+        {
+            id: 1,
+            name: "Cobranza del Día",
+            icon: BiAlarm,
+            address: () => navigate(`/${"Administration/CollectionDay"}`),
+        },
+        {
+            id: 2,
+            name: "Créditos",
+            icon: BiCreditCardFront,
+            address: () => navigate(`/${"Administration/CreditNotes"}`),
+            roleId: "0",
+        },
+        {
+            id: 3,
+            name: "Estados de Cuenta",
+            icon: BiBookOpen,
+            address: () => navigate(`/${"Administration/AccountStates"}`),
+            roleId: "0",
+        },
+    ];
+    
+    const itemsAdimOperaciones = [
+        {
+            id: 1,
+            name: "Margen Ventas",
+            icon: BiBarChartSquare,
+            address: () => navigate(`/${"Administration/MarginSales"}`),
+        },
+        {
+            id: 2,
+            name: "Reporte Ventas",
+            icon:  BiBarChartAlt,
+            address: () => navigate(`/${"Administration/SalesReport"}`),
+            roleId: "0",
+        },
+        {
+            id: 3,
+            name: "Listado de Precios",
+            icon: BiDollar,
+            address:  () => navigate(`/${"Administration/PriceList"}`),
+            roleId: "0",
+        },
+        {
+            id: 4,
+            name: "Descuentos",
+            icon: BiMoneyWithdraw,
+            address: () => navigate(`/${"Administration/Discounts"}`),
+            roleId: "0",
+        },
+        {
+            id: 5,
+            name: "Token de Descuentos",
+            icon: BiKey,
+            address: () => navigate(`/${"Administration/DiscountToken"}`),
+            roleId: "0",
+        },
+        {
+            id: 6,
+            name: "Tipo de Cambio",
+            icon: BiTransfer,
+            address: () => navigate(`/${"Administration/ExchangeRate"}`),
+            roleId: "0",
+        },
+    ];
+    
+    const itemsAdimVendedores = [
+        {
+            id: 1,
+            name: "Comisiones",
+            icon: BiBullseye,
+            address: () => navigate(`/${"Administration/Commissions"}`),
+        },
+        {
+            id: 2,
+            name: "Rpt. Comisiones",
+            icon: BiBox,
+            address:  () => navigate(`/${"Administration/ReportCommissions"}`),
+            roleId: "0",
+        },
+        {
+            id: 3,
+            name: "Comisiones Agrupado",
+            icon: BiCalendarAlt,
+            address: () => navigate(`/${"Administration/GroupedCommissions"}`),
+            roleId: "0",
+        },
+    
+    ];
 
 
     return(
@@ -147,7 +151,7 @@ const ItemsAdministration = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            onPress={item.address}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">
@@ -169,7 +173,7 @@ const ItemsAdministration = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            onPress={item.address}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">
@@ -191,7 +195,7 @@ const ItemsAdministration = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            onPress={item.address}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">

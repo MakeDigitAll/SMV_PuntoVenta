@@ -13,73 +13,54 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
+  Spacer,
 } from "@nextui-org/react";
-import { statusOptions } from "./data";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
+import { MdArrowDropDown, MdSearch } from "react-icons/md";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill } from "react-icons/ri";
+import { RiDashboard2Fill, RiSortDesc, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+import ProductImage from "./ProductImage";
 const columns = [
-  { name: "Imagen", uid: "Imagen", sortable: true },
-  { name: "ID", uid: "ID", sortable: true },
-  { name: "Cod.Fab.", uid: "CodFab", sortable: true },
-  { name: "Cod.Emp.", uid: "CodEmp", sortable: true },
-  { name: "Nombre/Descripción", uid: "Nombre", sortable: true },
-  { name: "Marca", uid: "Marca", sortable: true },
-  { name: "Categoría", uid: "Categoria", sortable: true },
-  { name: "Cod.SAT", uid: "CodSAT", sortable: true },
-  { name: "Actualizado", uid: "Actualizado", sortable: true },
-  { name: "Activo", uid: "Activo", sortable: true },
-  { name: "Web", uid: "Web", sortable: true },
-  { name: "POS", uid: "POS", sortable: true },
-  { name: "Venta", uid: "Venta", sortable: true },
-  { name: "Precio", uid: "Precio", sortable: true },
-  { name: "Acciones", uid: "Actions" },
+  { name: "Imagen", uid: "Imagen" },
+  { name: "ID", uid: "id", sortable: true },
+  { name: "Codigo Empresa", uid: "codigoEmpresa", sortable: true },
+  { name: "Nombre", uid: "nombre", sortable: true },
+  { name: "Desde", uid: "desde", sortable: true },
+  { name: "Hasta", uid: "hasta", sortable: true },
+  { name: "Precio Base", uid: "precioBase", sortable: true },
+  { name: "Descuento", uid: "descuento", sortable: true },
+  { name: "Precio Oferta Neto", uid: "precioOfertaNeto", sortable: true },
+  { name: "Activo", uid: "activo", sortable: true },
+  { name: "Acciones", uid: "Actions", sortable: true },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "Imagen",
   "ID",
-  "CodFab",
-  "CodEmp",
   "Nombre",
-  "Marca",
-  "Categoria",
-  "CodSAT",
-  "Actualizado",
+  "Codigo Empresa",
+  "Desde",
+  "Hasta",
+  "Precio Base",
+  "Precio Oferta Neto",
   "Activo",
-  "Web",
-  "POS",
-  "Venta",
-  "Precio",
-  "Actions",
+  "Acciones",
 ];
 
-const ProductList = () => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const marcaOptions = [];
-  function contarmarca() {
-    for (let i = 0; i < data.length; i++) {
-      marcaOptions.push({ name: data[i].marca, uid: data[i].idproducto });
-    }
-  }
-
+const Users = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000");
+      const response = await fetch("http://localhost:4000/Comisiones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
-        contarmarca();
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -101,13 +82,15 @@ const ProductList = () => {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
+
+  const pages = Math.ceil(data.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -123,23 +106,26 @@ const ProductList = () => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+      filteredUsers = filteredUsers.filter(
+        (user) =>
+          user.nombre.toLowerCase().includes(filterValue.toLowerCase()) +
+          user.apellido
+            .toLowerCase()
+            .includes(filterValue.toLocaleLowerCase()) +
+          user.email.toLowerCase().includes(filterValue.toLocaleLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
+      Array.from(statusFilter).length !== data.length
     ) {
-      filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+      filteredUsers = filteredUsers.filter((user) =>
+        Array.from(statusFilter).includes(user.email)
       );
     }
 
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -157,93 +143,29 @@ const ProductList = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
-
     switch (columnKey) {
-      case "name":
-        return <User avatarProps={{ radius: "lg", src: data.avatar }} />;
-      case "Nombre":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.nombre}</p>
-          </div>
-        );
+      case "Imagen":
+        return <ProductImage idUsuario={data.id} designType="tabla" />;
       case "ID":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.idproducto}</p>
+            <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "CodFab":
+      case "Nombre":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.codigoFabricante}
+              {data.nombre} {data.apellido}
             </p>
           </div>
         );
-      case "CodEmp":
+      case "Email":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.codigoEmpresa}
-            </p>
-          </div>
-        );
-      case "Marca":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.marca}</p>
-          </div>
-        );
-      case "Categoria":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.categoria}</p>
-          </div>
-        );
-      case "CodSAT":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">Aun no se define</p>
-          </div>
-        );
-      case "Actualizado":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">Generico</p>
-          </div>
-        );
-      case "Activo":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "Web":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "POS":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "Venta":
-        return (
-          <div className="flex flex-col">
-            <Checkbox defaultSelected radius="sm"></Checkbox>
-          </div>
-        );
-      case "Precio":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.precio}</p>
+            <p className="text-bold text-small capitalize">{data.email}</p>
           </div>
         );
       case "Actions":
@@ -337,8 +259,8 @@ const ProductList = () => {
                 sx={{ display: "flex", alignItems: "center" }}
                 className="text-foreground"
               >
-                <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Listado de Productos
+                <RiSortDesc sx={{ mr: 0.5 }} fontSize="inherit" />
+                Listado de Productos con Descuentos
               </Typography>
             </Breadcrumbs>
           </div>
@@ -346,102 +268,18 @@ const ProductList = () => {
             className="flex flex-col gap-4"
             style={{ marginLeft: "10px", marginRight: "10px" }}
           >
-            <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-              <Input
-                isClearable
-                size="sm"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Productos"
-                startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
-              />
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Marca
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {marcaOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Categoría
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Proveedor
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
+            <Spacer y={8} />
+            <div className="flex flex-wrap space space-x-4 ">
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar precios
-              </Button>
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar costos
-              </Button>
-              <Button size="sm" color="primary" endContent={<TbPlus />}>
-                Nuevo Producto
+             
+              <Button
+                //onPress={() => navigate(`/Settings/User`)}
+                size="sm"
+                color="primary"
+                endContent={<TbPlus />}
+              >
+                Nuevo Descuento
               </Button>
             </div>
           </div>
@@ -498,10 +336,10 @@ const ProductList = () => {
                 </DropdownMenu>
               </Dropdown>
             </div>
-            <label className="flex items-center text-default-400 text-small">
-              Productos por página:
+            <label className="flex items-center text-small">
+              Descuentos por página:
               <select
-                className="bg-transparent outline-none text-default-400 text-small"
+                className="bg-transparent outline-none text-small"
                 onChange={onRowsPerPageChange}
               >
                 <option value="5">5</option>
@@ -513,22 +351,13 @@ const ProductList = () => {
         </DefaultLayout>
       </>
     );
-  }, [
-    filterValue,
-    onSearchChange,
-    statusFilter,
-    marcaOptions,
-    visibleColumns,
-    onRowsPerPageChange,
-    navigate,
-    onClear,
-  ]);
+  }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <span className="w-[30%] text-small">
           <span style={{ marginRight: "30px" }}>
-            {data.length} productos en total
+            {data.length} Descuentos en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -574,8 +403,10 @@ const ProductList = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
         selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -586,19 +417,16 @@ const ProductList = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              align={"center"}
               allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          emptyContent={"No se encuentran productos"}
-          items={sortedItems}
-        >
+        <TableBody emptyContent={"no discounts found"} items={sortedItems}>
           {(item) => (
-            <TableRow key={item.idproducto}>
+            <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
@@ -610,4 +438,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default Users;

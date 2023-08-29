@@ -16,6 +16,19 @@ import ItemsSWeb from "./views/web/ItemsWeb.jsx";
 import ItemsSettings from "./views/settings/ItemsSettings.jsx";
 import Users from "./views/user/Users.jsx";
 import PosHome from "./views/pos/PosHome.jsx";
+import CreditNotes from "./views/administration/CreditNotes.jsx";
+import AccountStates from "./views/administration/AccountStates.jsx";
+import CollectionDay from "./views/administration/CollectionDay.jsx";
+import MarginSales from "./views/administration/MarginSales.jsx";
+import SalesReport from "./views/administration/SalesReport.jsx";
+import PriceList from "./views/administration/PriceList.jsx";
+import Discounts from "./views/administration/Discounts.jsx";
+import DiscountToken from "./views/administration/discountToken.jsx";
+import ExchangeRate from "./views/administration/ExchangeRate.jsx";
+import Commissions from "./views/administration/Commissions.jsx";
+import ReportCommissions from "./views/administration/ReportCommissions.jsx";
+import GroupedCommissions from "./views/administration/GroupedCommissions.jsx";
+
 
 const App = () => {
   const router = createBrowserRouter([
@@ -59,6 +72,54 @@ const App = () => {
         {
           path: "/Administration",
           element: <ItemsAdministration />,
+        },
+        {
+          path: "/Administration/CreditNotes",
+          element: <CreditNotes />,
+        },
+        {
+          path: "/Administration/AccountStates",
+          element: <AccountStates />
+        },
+        {
+          path: "/Administration/CollectionDay",
+          element: <CollectionDay />
+        },
+        {
+          path: "/Administration/MarginSales",
+          element: <MarginSales />
+        },
+        {
+          path: "/Administration/SalesReport",
+          element: <SalesReport />
+        },
+        {
+          path: "/Administration/PriceList",
+          element: <PriceList />
+        },
+        {
+          path: "/Administration/Discounts",
+          element: <Discounts />
+        },
+        {
+          path: "/Administration/DiscountToken",
+          element: <DiscountToken />
+        },
+        {
+          path: "/Administration/ExchangeRate",
+          element: <ExchangeRate />
+        },
+        {
+          path: "/Administration/Commissions",
+          element: <Commissions />
+        },
+        {
+          path: "/Administration/ReportCommissions",
+          element: <ReportCommissions />
+        },
+        {
+          path: "/Administration/GroupedCommissions",
+          element: <GroupedCommissions />
         },
         {
           path: "/Store",
