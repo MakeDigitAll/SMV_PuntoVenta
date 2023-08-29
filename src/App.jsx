@@ -28,6 +28,11 @@ import ExchangeRate from "./views/administration/ExchangeRate.jsx";
 import Commissions from "./views/administration/Commissions.jsx";
 import ReportCommissions from "./views/administration/ReportCommissions.jsx";
 import GroupedCommissions from "./views/administration/GroupedCommissions.jsx";
+import Quotes from "./views/sales/quotes.jsx";
+import Orders from "./views/sales/Orders.jsx";
+import AddExcelBrands from "./views/Excel/addExcel/addExcelBrands.jsx";
+import Payment from "./views/sales/Payment.jsx";
+import PurchaseOrders from "./views/store/PurchaseOrders.jsx";
 
 
 const App = () => {
@@ -62,7 +67,7 @@ const App = () => {
           element: <VerAlmacen />,
         },
         {
-          path: "/Sells",
+          path: "/Sales",
           element: <ItemsSales />,
         },
         {
@@ -152,6 +157,26 @@ const App = () => {
         {
           path: "/POS/Home",
           element: <PosHome />,
+        },
+        {
+          path: "/Sales/Quotes",
+          element: <Quotes />,
+        },
+        {
+          path: "/Sales/Orders",
+          element: <Orders />,
+        },
+        {
+          path: "/test/añadir",
+          element: <AddExcelBrands />,
+        },
+        {
+          path: "/Sales/Payment",
+          element: <Payment />,
+        },
+        {
+          path: "/Store/PurchaseOrdes",
+          element: <PurchaseOrders />,
         },
       ],
     },
