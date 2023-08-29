@@ -27,7 +27,7 @@ import { ToastContainer, toast } from "react-toastify";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
 const columns = [
   { name: "ID", uid: "id" },
-  { name: "#", uid: "numero", sortable: true },
+  { name: "Numero", uid: "numero", sortable: true },
   { name: "Cliente", uid: "cliente", sortable: true },
   { name: "Razón Social", uid: "razonSocial", sortable: true },
   { name: "R.F.C.", uid: "rfc", sortable: true },
@@ -54,7 +54,7 @@ const AccountStates = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/EstadosCuenta");
+      const response = await fetch("http://localhost:4000/Comisiones");
       const data = await response.json();
       if (response.ok) {
         setData(data);

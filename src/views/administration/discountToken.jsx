@@ -15,7 +15,7 @@ import {
   Pagination,
   Spacer,
 } from "@nextui-org/react";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox} from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdCreditCard, MdPriceChange, MdPriceCheck, MdSearch } from "react-icons/md";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
@@ -39,11 +39,11 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const DiscountToken = () => {
   const [data, setData] = useState([]);
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Creditos");
+      const response = await fetch("http://localhost:4000/Comisiones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -95,7 +95,7 @@ const DiscountToken = () => {
       filteredUsers = filteredUsers.filter(
         (user) =>
           user.folio.toLowerCase().includes(filterValue.toLowerCase()) +
-          user.fecha.toLowerCase().includes(filterValue.toLocaleLowerCase())+
+          user.fecha.toLowerCase().includes(filterValue.toLocaleLowerCase()) +
           user.clientes.toLowerCase().includes(filterValue.toLocaleLowerCase())
       );
     }
@@ -130,7 +130,7 @@ const DiscountToken = () => {
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
     switch (columnKey) {
-      
+
       case "id":
         return (
           <div className="flex flex-col">
@@ -253,10 +253,10 @@ const DiscountToken = () => {
           >
             <Spacer y={8} />
             <div className="flex flex-wrap space space-x-4 ">
-              
+
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              
+
               <Button
                 onPress={onOpen}
                 size="sm"
@@ -266,42 +266,6 @@ const DiscountToken = () => {
                 Generar Token de Descuento
               </Button>
 
-              <Modal 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange}
-        placement="top-center"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Nueva Lista de Precios</ModalHeader>
-              <ModalBody>
-                <Input
-                  autoFocus
-                  label="Nombre de Lista de Precios"
-                  placeholder="Lista de Precios"
-                  variant="bordered"
-                />
-                <Input
-                  label="Variación Sobre el Precio Base"
-                  placeholder="0.00%"
-                  variant="bordered"
-                />
-                <div className="flex py-2 px-1 justify-between">
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
-                  Cerrar
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Guardar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
             </div>
           </div>
           <div className="flex justify-between items-center">
@@ -455,6 +419,42 @@ const DiscountToken = () => {
           )}
         </TableBody>
       </Table>
+      <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                placement="top-center"
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-1">Nueva Lista de Precios</ModalHeader>
+                      <ModalBody>
+                        <Input
+                          autoFocus
+                          label="Nombre de Lista de Precios"
+                          placeholder="Lista de Precios"
+                          variant="bordered"
+                        />
+                        <Input
+                          label="Variación Sobre el Precio Base"
+                          placeholder="0.00%"
+                          variant="bordered"
+                        />
+                        <div className="flex py-2 px-1 justify-between">
+                        </div>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color="danger" variant="flat" onPress={onClose}>
+                          Cerrar
+                        </Button>
+                        <Button color="primary" onPress={onClose}>
+                          Guardar
+                        </Button>
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
     </div>
   );
 };

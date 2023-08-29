@@ -15,6 +15,7 @@ import {
   Pagination,
   Spacer,
 } from "@nextui-org/react";
+import { format } from 'timeago.js';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdAlignHorizontalCenter, MdArrowDropDown, MdCreditCard, MdImportContacts, MdPriceChange, MdPriceCheck, MdSearch } from "react-icons/md";
@@ -23,7 +24,7 @@ import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill, RiSdCardFill, RiUser2Fill } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
 const columns = [
@@ -37,20 +38,66 @@ const columns = [
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
-  "Fecha",
-  "Nombre",
-  "Variacion",
-  "Clientes",
+  "fecha",
+  "nombre",
+  "variacion",
+  "clientes",
+  "Actions",
 ];
 
+
 const PriceList = () => {
+
+  const [task, setTask] = useState({
+    nombre: '',
+    variacion: '',
+    clientes: '',
+  });
+
+  const [editing, setEditing] = useState(false);
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
+  const params = useParams();
+
+
+  async function handleSubmit(e)  {
+    e.preventDefault();
+
+    const datosListado = {
+      nombre: task.nombre,
+      variacion: task.variacion,
+      clientes: task.clientes,
+    };
+
+    console.log(datosListado);
+      try {
+        await fetch(`http://localhost:4000/ListadoPrecios`, {
+          method: "POST",
+          body: JSON.stringify(datosListado),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+       
+      } catch (error) {
+        console.log("todo fallo")
+        toast.warning(error.message);
+      }
+  }
+
+  const handleChange = e => {
+    setTask({ ...task, [e.target.name]: e.target.value })
+  }
+
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Creditos");
+      const response = await fetch(`http://localhost:4000/ListadoPrecios`);
       const data = await response.json();
+      setTask({nombre: data.nombre, variacion: data.variacion, clientes: data.clientes})
+      //setEditing(true);
       if (response.ok) {
         setData(data);
       }
@@ -62,8 +109,9 @@ const PriceList = () => {
     }
   }
   useEffect(() => {
-    loadTask();
+    loadTask(params.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
@@ -143,11 +191,11 @@ const PriceList = () => {
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "serie":
+      case "fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.serie}
+              {format(data.fecha)} 
             </p>
           </div>
         );
@@ -167,9 +215,9 @@ const PriceList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem>Ver Listado</DropdownItem>
+                <DropdownItem>Editar Listado</DropdownItem>
+                <DropdownItem>Deshabilitar</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -425,40 +473,67 @@ const PriceList = () => {
           )}
         </TableBody>
       </Table>
+
+
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="top-center"
+        isDismissable={false}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Log in</ModalHeader>
-              <ModalBody>
-                <Input
-                autoFocus
-                label="Nombre de Lista de Precios"
-                placeholder="Lista de Precios"
-                variant="bordered"
-              />
-              <Input
-                label="Variación Sobre el Precio Base"
-                placeholder="0.00%"
-                variant="bordered"
-              />
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Sign in
-                </Button>
-              </ModalFooter>
+              <form onChange={handleChange} onSubmit={handleSubmit} >
+                <ModalHeader className="flex flex-col gap-1">Nueva Lista de Precios</ModalHeader>
+                <ModalBody>
+                  <Input
+                    id='nombre'
+                    name='nombre'
+                    value={task.nombre}
+                    label='Nombre de Lista de precios'
+                    placeholder="Nombre de lista"
+                    variant="bordered"
+                    onChange={handleChange}
+                    
+                  />
+                  <Input
+                    id='variacion'
+                    name='variacion'
+                    value={task.variacion}
+                    label='Variacion Sobre el Precio Base'
+                    placeholder="0.00%"
+                    variant="bordered"
+                    onChange={handleChange}
+                    
+                  />
+                  <Input
+                    id='clientes'
+                    name="clientes"
+                    value={task.clientes}
+                    label='Numero de Clientes'
+                    placeholder="0"
+                    variant="bordered"
+                    onChange={handleChange}
+                    
+                  />
+
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="flat" onPress={onClose}>
+                    Cerrar
+                  </Button>
+                  <Button color="primary" type="submit" onClick={handleSubmit}>
+                    Guardar
+                  </Button>
+                </ModalFooter>
+              </form>
             </>
           )}
         </ModalContent>
       </Modal>
+
+
 
     </div>
   );

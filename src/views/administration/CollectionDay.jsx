@@ -56,7 +56,7 @@ const CollectionDay = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Creditos");
+      const response = await fetch("http://localhost:4000/Comisiones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -298,13 +298,11 @@ const CollectionDay = () => {
                 onValueChange={onSearchChange}
               />
               <Input
-                isClearable
                 size="md"
                 className="w-[450px] sm:max-w-[16%]"
                 placeholder="No. Pedido"
                 startContent={<MdSearch />}
                 value={filterValue}
-                onClear={() => onClear()}
                 onValueChange={onSearchChange}
               />
             </div>

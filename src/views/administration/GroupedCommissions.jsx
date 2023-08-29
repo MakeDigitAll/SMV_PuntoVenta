@@ -66,7 +66,7 @@ const GroupedCommissions = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Creditos");
+      const response = await fetch("http://localhost:4000/Comisiones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -329,14 +329,7 @@ const GroupedCommissions = () => {
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
               
-              <Button
-                //onPress={() => navigate(`/Settings/User`)}
-                size="sm"
-                color="primary"
-                endContent={<TbPlus />}
-              >
-                Nuevo Credito
-              </Button>
+      
             </div>
           </div>
           <div className="flex justify-between items-center">

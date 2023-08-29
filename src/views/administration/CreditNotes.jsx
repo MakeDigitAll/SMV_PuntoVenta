@@ -84,8 +84,6 @@ const CreditNotes = () => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadTask()]);
-
-  console.log(data);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }

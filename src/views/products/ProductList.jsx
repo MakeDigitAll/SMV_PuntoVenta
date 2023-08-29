@@ -75,7 +75,7 @@ const ProductList = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000");
       const data = await response.json();
       if (response.ok) {
         setData(data);
