@@ -52,7 +52,7 @@ const Header = () => {
 
   async function handleLogout() {
     try {
-      const response = await fetch(`http://localhost:4000/api/auth/logout`, {
+      const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/auth/logout`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

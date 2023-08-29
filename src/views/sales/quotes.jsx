@@ -13,46 +13,71 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  Spacer,
+  User,
+  Checkbox,
+  Chip,
 } from "@nextui-org/react";
+
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch } from "react-icons/md";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
+import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
-import UserImage from "./UserImage";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
+
+const statusOptions = [
+  {name: "Active", uid: "active"},
+  {name: "Paused", uid: "paused"},
+  {name: "Vacation", uid: "vacation"},
+];
 const columns = [
-  { name: "Imagen", uid: "Imagen" },
-  { name: "Nombre(s)", uid: "Nombre", sortable: true },
-  { name: "Correo electronico", uid: "Email", sortable: true },
-  { name: "Grupo", uid: "Grupo", sortable: true },
-  { name: "Sucursales", uid: "Sucursales", sortable: true },
-  { name: "Acciones", uid: "Actions", sortable: true },
-];
-
+    { name: "ID", uid: "id", sortable: true },
+    { name: "Folio", uid: "folio", sortable: true  },
+    { name: "Fecha", uid: "fecha" , sortable: true },
+    { name: "Pedido", uid: "pedido", sortable: true  },
+    { name: "Cliente", uid: "cliente", sortable: true  },
+    { name: "Vendedor", uid: "vendedor", sortable: true  },
+    { name: "Recurrencia", uid: "recurrenciaa", sortable: true  },
+    { name: "Origen", uid: "origen", sortable: true  },
+    { name: "Monto", uid: "monto", sortable: true  },
+    { name: "Status", uid: "status", sortable: true  },
+    { name: "Acciones", uid: "Actions" },
+  ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "Imagen",
   "ID",
-  "Nombre",
-  "Email",
+  "Folio",
+  "Fecha",
+  "Pedido",
+  "Cliente",
+  "Vendedor",
+  "Recurrencia",
+  "Origen",
+  "Monto",
+  "status",
   "Actions",
-  "Sucursales",
-  "Grupo",
 ];
+const Quotes = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const marcaOptions = [];
+  function contarmarca() {
+    for (let i = 0; i < data.length; i++) {
+      marcaOptions.push({ name: data[i].folio, uid: data[i].id });
+    }
+  }
 
-const Users = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/allusers");
+      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Cotizaciones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        contarmarca();
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -74,15 +99,13 @@ const Users = () => {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter] = React.useState("all");
+  const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
-
-  const pages = Math.ceil(data.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -98,26 +121,23 @@ const Users = () => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.nombre.toLowerCase().includes(filterValue.toLowerCase()) +
-          user.apellido
-            .toLowerCase()
-            .includes(filterValue.toLocaleLowerCase()) +
-          user.email.toLowerCase().includes(filterValue.toLocaleLowerCase())
+      filteredUsers = filteredUsers.filter((data) =>
+        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
-      Array.from(statusFilter).length !== data.length
+      Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.email)
+      filteredUsers = filteredUsers.filter((data) =>
+        Array.from(statusFilter).includes(data.nombre)
       );
     }
 
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
+
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -135,31 +155,123 @@ const Users = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
+    const statusColorMap = {
+        Nueva: "primary",
+        Ganada: "success", 
+        Perdida: "warning", 
+        Cancelada: "error", 
+        Vencida: "danger", 
+      };
+      
+  
     switch (columnKey) {
-      case "Imagen":
-        return <UserImage idUsuario={data.id} designType="tabla" />;
       case "ID":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "Nombre":
+      case "Folio":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.nombre} {data.apellido}
+              {data.folio}
             </p>
           </div>
         );
-      case "Email":
+      case "Fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.email}</p>
+            <p className="text-bold text-small capitalize">
+              {data.fecha}
+            </p>
           </div>
         );
+      case "Pedido":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.pedido}</p>
+          </div>
+        );
+      case "Cliente":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.cliente}</p>
+          </div>
+        );
+      case "Vendedor":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+          </div>
+        );
+      case "Origen":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.origen}</p>
+          </div>
+        );
+      case "Monto":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">$ {data.monto}</p>
+          </div>
+        );
+        case "status":
+          
+            if (data.status === 0) {
+              return (
+         
+                  <Chip  variant="flat" className="capitalize" color={statusColorMap["Nueva"]} size="sm">
+                    <span >Nueva</span>
+                  </Chip >
+         
+              );
+              } else if (data.status === 1) {
+            
+              return (
+                
+                  <Chip className="capitalize" color={statusColorMap["Ganada"]} size="sm">
+                    <span>Ganada</span>
+                  </Chip>
+                
+                
+              );
+              
+            } else if (data.status === 2) {
+              return (
+                
+                  <Chip  className="capitalize" color={statusColorMap["Perdida"]} size="sm" >
+                    <span >Perdida</span>
+                  </Chip>
+                
+              );
+            } else if (data.status === 3) {
+              return (
+                
+                  <Chip  className="capitalize" color={statusColorMap["Cancelada"]} size="sm">
+                    <span >Cancelada</span>
+                  </Chip >
+                
+              );
+            } else if (data.status === 4) {
+              return (
+              
+                  <Chip  className="capitalize" color={statusColorMap["Vencida"]} size="sm" >
+                    <span>Vencida</span>
+                  </Chip >
+                
+              );
+          
+            }else {
+              return (
+                <span>{user.estado}</span>
+              );
+            }
+
       case "Actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -235,6 +347,7 @@ const Users = () => {
             onClick={handleClickBreadCrumbs}
             className="text-foreground"
           >
+            
             <Breadcrumbs aria-label="breadcrumb" color="foreground">
               <Link
                 className="text-foreground"
@@ -251,8 +364,8 @@ const Users = () => {
                 sx={{ display: "flex", alignItems: "center" }}
                 className="text-foreground"
               >
-                <RiUser2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Usuarios
+                <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
+                Cotizaciones
               </Typography>
             </Breadcrumbs>
           </div>
@@ -260,13 +373,12 @@ const Users = () => {
             className="flex flex-col gap-4"
             style={{ marginLeft: "10px", marginRight: "10px" }}
           >
-            <Spacer y={8} />
-            <div className="flex flex-wrap space space-x-4 ">
+            <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
               <Input
                 isClearable
-                size="md"
+                size="sm"
                 className="w-[450px] sm:max-w-[44%]"
-                placeholder="Nombre/ Apellido"
+                placeholder="Modalidad"
                 startContent={<MdSearch />}
                 value={filterValue}
                 onClear={() => onClear()}
@@ -274,34 +386,101 @@ const Users = () => {
               />
               <Input
                 isClearable
-                size="md"
+                size="sm"
                 className="w-[450px] sm:max-w-[44%]"
-                placeholder="Correo electronico"
+                placeholder="Folio"
                 startContent={<MdSearch />}
                 value={filterValue}
                 onClear={() => onClear()}
                 onValueChange={onSearchChange}
               />
+              <Dropdown>
+                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                  <Button
+                    size="sm"
+                    endContent={<MdArrowDropDown className="text-small" />}
+                    variant="flat"
+                  >
+                    Cliente
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Table Columns"
+                  closeOnSelect={false}
+                  selectedKeys={statusFilter}
+                  selectionMode="multiple"
+                  onSelectionChange={setStatusFilter}
+                >
+                  {marcaOptions.map((status) => (
+                    <DropdownItem key={status.uid} className="capitalize">
+                      {status.name}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+              <Dropdown>
+                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                  <Button
+                    size="sm"
+                    endContent={<MdArrowDropDown className="text-small" />}
+                    variant="flat"
+                  >
+                    Vendedor
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Table Columns"
+                  closeOnSelect={false}
+                  selectedKeys={statusFilter}
+                  selectionMode="multiple"
+                  onSelectionChange={setStatusFilter}
+                >
+                  {statusOptions.map((status) => (
+                    <DropdownItem key={status.uid} className="capitalize">
+                      {status.name}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+              <Dropdown>
+                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                  <Button
+                    size="sm"
+                    endContent={<MdArrowDropDown className="text-small" />}
+                    variant="flat"
+                  >
+                    Origen
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Table Columns"
+                  closeOnSelect={false}
+                  selectedKeys={statusFilter}
+                  selectionMode="multiple"
+                  onSelectionChange={setStatusFilter}
+                >
+                  {statusOptions.map((status) => (
+                    <DropdownItem key={status.uid} className="capitalize">
+                      {status.name}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
             </div>
+          
             <div className="flex flex-wrap place-content-end space-x-2">
-              <Button
-                size="sm"
-                color="warning"
-                endContent={<TbReload />}
-                className="text-color-foreground"
-              >
-                Actualizar precios
-              </Button>
+            <div>
+              <AddExcelQuotes/>
+            </div>
               <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar costos
+                Actualizar Cotizaciones
               </Button>
-              <Button
-                onPress={() => navigate(`/Settings/User`)}
-                size="sm"
-                color="primary"
-                endContent={<TbPlus />}
-              >
-                Nuevo usuario
+            
+              <Button size="sm" color="primary" endContent={<TbPlus />}>
+                Nueva cotizacion
               </Button>
             </div>
           </div>
@@ -358,10 +537,10 @@ const Users = () => {
                 </DropdownMenu>
               </Dropdown>
             </div>
-            <label className="flex items-center text-small">
+            <label className="flex items-center text-default-400 text-small">
               Productos por página:
               <select
-                className="bg-transparent outline-none text-small"
+                className="bg-transparent outline-none text-default-400 text-small"
                 onChange={onRowsPerPageChange}
               >
                 <option value="5">5</option>
@@ -373,13 +552,22 @@ const Users = () => {
         </DefaultLayout>
       </>
     );
-  }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);
+  }, [
+    filterValue,
+    onSearchChange,
+    statusFilter,
+    marcaOptions,
+    visibleColumns,
+    onRowsPerPageChange,
+    navigate,
+    onClear,
+  ]);
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small">
+        <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} productos en total
+            {data.length} Cotizaciones en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -425,10 +613,8 @@ const Users = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        classNames={{
-          wrapper: "max-h-[382px]",
-        }}
         selectedKeys={selectedKeys}
+        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -439,14 +625,17 @@ const Users = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={"center"}
+              align={column.uid === "Actions" ? "center" : "start"}
               allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={sortedItems}>
+        <TableBody
+          emptyContent={"No se encuentran productos"}
+          items={sortedItems}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
@@ -460,4 +649,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Quotes;

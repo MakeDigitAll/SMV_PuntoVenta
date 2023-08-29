@@ -1,5 +1,4 @@
 import Header from "../../components/header/headerC/Header";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody, Spacer } from "@nextui-org/react";
 import { TbRoad } from "react-icons/tb";
 import {
@@ -17,13 +16,15 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiCoinFill, RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const itemsSales = [
   {
     id: 1,
     name: "Cotizaciones",
     icon: BiBarChartSquare,
-    address: "Cotizaciones",
+    address: () => navigate(`/${"Sales/Quotes"}`),
+    roleId: "0",
   },
   {
     id: 2,

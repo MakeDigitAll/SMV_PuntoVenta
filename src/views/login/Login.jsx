@@ -26,7 +26,7 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:4000/api/login", {
+      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

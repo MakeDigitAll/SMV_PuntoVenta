@@ -25,7 +25,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
   async function requestNewAccessToken(refreshToken: string) {
     try {
-      const response = await fetch("http://localhost:4000/api/auth/refreshToken", {
+      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/auth/refreshToken", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
   async function getUserInfo(accessToken:string) {
     try {
-      const response = await fetch(`http://localhost:4000/api/auth/user`, {
+      const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/auth/user`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
