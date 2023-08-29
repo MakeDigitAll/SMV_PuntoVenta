@@ -157,7 +157,25 @@ const ItemsStore = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            onPress={() => {
+                                if (item.name === "Inv. X Almacén") {
+                                    navigate("/Store/InventoryXWarehouse"); 
+                             } else if(item.name=="Transferencias"){
+                                     navigate(`/Store/Transfers`);
+                                 }else if(item.name=="Transferencias Masivas"){
+                                       navigate(`/Store/BulkTransfers`);
+                                   }else if(item.name=="Inventario"){
+                                        navigate("/Store/Inventory")
+                                     }else if(item.name=="Surtir Pedidos"){
+                                          navigate("/Store/FillOrders")
+                                        }else if(item.name=="Logistica"){
+                                            navigate("/Store/Logistics")
+                                          }else if(item.name=="Entradas de Almacén"){
+                                              navigate("/Store/WarehouseEntries")
+                                            }else if(item.name=="Salidas de Almacén"){
+                                                navigate("/Store/WarehouseOutputs")
+                                            }
+                            }}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">
@@ -201,7 +219,14 @@ const ItemsStore = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            
+                            onPress={() => {
+                                if (item.name === "Marcas") {
+                                         navigate("/Store/Capture/Brands"); 
+                                                } else if(item.name === "Categorías"){
+                                                    navigate(`/Store/Categories`);
+                                            }
+                            }}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">

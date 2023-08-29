@@ -34,6 +34,20 @@ import AddExcelBrands from "./views/Excel/addExcel/addExcelBrands.jsx";
 import Payment from "./views/sales/Payment.jsx";
 import PurchaseOrders from "./views/store/PurchaseOrders.jsx";
 
+import PosHome from "./views/pos/PosHome.jsx";
+import Inventory from "./views/store/Inventory.jsx";
+import BulkTransfers from "./views/store/BulkTransfers.jsx";
+import Transfers from "./views/store/Transfers.jsx";
+import InventoryWarehouse from "./views/store/InventoryXWarehouse.jsx";
+import Brands from "./views/store/Brands.jsx";
+import FillOrders from "./views/store/FillOrders.jsx";
+import Logistics from "./views/store/Logistics.jsx";
+import WarehouseEntries from "./views/store/warehouseEntries.jsx";
+import Categories from "./views/store/Categories.jsx";
+import NewTransfer from "./views/store/NewTransfer.jsx";
+import WarehouseOutputs from "./views/store/WarehouseOutputs.jsx";
+import CatalogueofMotifs from "./views/store/CatalogueofMotifs.jsx";
+import NewEntry from "./views/store/NewEntry.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -177,6 +191,56 @@ const App = () => {
         {
           path: "/Store/PurchaseOrdes",
           element: <PurchaseOrders />,
+          path:"/Store/Transfers",
+          element: <Transfers />
+        },
+        {
+          path:"/Store/Transfers/NewTransfer",
+          element: <NewTransfer />
+        },
+        {
+          path:"/Store/BulkTransfers",
+          element: <BulkTransfers />
+        },
+        {
+          path:"/Store/Inventory",
+          element: <Inventory />
+        },
+        {
+          path:"/Store/InventoryXWarehouse",
+          element: <InventoryWarehouse />
+        },
+        {
+          path:"/Store/Capture/Brands",
+          element: <Brands />
+        },
+        {
+          path:"/Store/FillOrders",
+          element: <FillOrders />
+        },
+        {
+          path:"/Store/Logistics",
+          element: <Logistics />
+        },
+        {
+          path:"/Store/WarehouseEntries",
+          element: <WarehouseEntries />
+        },
+        {
+          path:"/Store/WarehouseEntries/CatalogueofMotifs",
+          element: <CatalogueofMotifs />
+        },
+        {
+          path:"/Store/WarehouseOutputs",
+          element: <WarehouseOutputs />
+        },
+        {
+          path:"/Store/WarehouseOutputs/NewEntry",
+          element: <NewEntry />
+        },
+        {
+          path:"/Store/Categories",
+          element: <Categories />
         },
       ],
     },
