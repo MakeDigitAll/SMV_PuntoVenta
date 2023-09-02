@@ -161,7 +161,6 @@ const CatalogueofMotifs = () => {
 
   //  Modal Funciones
   const [selectedData, setSelectedData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [datosEdit, setDatosEdit] = useState({
     id: "",
     motivo: "",

@@ -49,6 +49,8 @@ import WarehouseOutputs from "./views/store/WarehouseOutputs.jsx";
 import CatalogueofMotifs from "./views/store/CatalogueofMotifs.jsx";
 import NewEntry from "./views/store/NewEntry.jsx";
 import PaymentMethodList from "./views/settings/PaymentMethods.jsx";
+import BranchOffices from "./views/settings/BranchOffices.jsx";
+import NewBranch from "./views/settings/NewBranch.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -158,6 +160,14 @@ const App = () => {
           element: <ItemsSettings />,
         },
         {
+          path: "/Settings/BranchOffices",
+          element: <BranchOffices />,
+        },
+        {
+          path: "/Settings/BranchOffices/NewBranch",
+          element: <NewBranch />,
+        },
+        {
           path: "/Customers",
           element: <ClientList />,
         },
@@ -192,8 +202,10 @@ const App = () => {
         {
           path: "/Store/PurchaseOrdes",
           element: <PurchaseOrders />,
+        },
+        {
           path:"/Store/Transfers",
-          element: <Transfers />
+          element: <Transfers />,
         },
         {
           path:"/Store/Transfers/NewTransfer",

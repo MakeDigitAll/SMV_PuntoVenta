@@ -10,9 +10,6 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
 import { MdPeople, MdSecurity, MdSecurityUpdate } from "react-icons/md";
 
-
-
-
 const ItemsSettings = () => {
     
     const navigate = useNavigate();
@@ -36,7 +33,7 @@ const ItemsSettings = () => {
             id: 3,
             name: "Sucursales",
             icon: BiStoreAlt,
-            address: "Sucursales",
+            address: "BranchOffices",
             roleId: "0",
         },
         {

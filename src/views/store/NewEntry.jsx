@@ -1,13 +1,11 @@
 import {
     Button,
-    CheckboxGroup,
     Image,
     Input,
     Link,
     Spacer,
     Tab,
     Tabs,
-    Checkbox,
   } from "@nextui-org/react";
   import { useMemo, useRef, useState } from "react";
   import { ToastContainer, toast } from "react-toastify";
@@ -15,23 +13,40 @@ import {
   import Header from "../../components/header/headerC/Header.jsx";
   //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
   import { Breadcrumbs, Typography } from "@mui/material";
-  import {
-    RiArrowLeftLine,
-    RiArrowRightLine,
-    RiDashboard2Fill,
-  } from "react-icons/ri";
-  import { MdCamera, MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
+  import { RiDashboard2Fill} from "react-icons/ri";
+  import { MdAllInbox, MdCamera, MdInbox, MdWarehouse } from "react-icons/md";
   import { useNavigate } from "react-router-dom";
   import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
-  
   import { MdSave } from "react-icons/md";
   import http from "../../components/axios/Axios";
+  import { useParams } from "react-router-dom";
   const NewEntry = () => {
     const [selectedImage, setSelectedImage] = useState("");
     const imageDefault = selectedImage === "";
     const [user, setUser] = useState({
       
     });
+
+    const { id } = useParams();
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [entryData, setEntryData] = useState({}); // Carga tus datos desde la base de datos aquí
+  
+    const handleEditClick = () => {
+      setIsEditMode(true);
+    };
+  
+    const handleSaveClick = () => {
+      // Lógica para guardar los datos editados en la base de datos
+      setIsEditMode(false);
+    };
+  
+    const handleChange2 = (e) => {
+      const { name, value } = e.target;
+      setEntryData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+
     const handleChange = (e) => {
       setUser({ ...user, [e.target.name]: e.target.value });
     };
@@ -39,42 +54,7 @@ import {
     const handleFileButtonClick = () => {
       fileInputRef.current.click();
     };
-    async function handleSubmit(e) {
-      e.preventDefault();
-      const formData = new FormData();
-      const document = JSON.stringify({
-        nombre: user.nombre,
-        apellido: user.apellido,
-        email: user.email,
-        password: user.password,
-      });
-      formData.append("document", document);
-      formData.append("image", selectedImage);
-      try {
-        await http
-          .post(`/api/createuser`, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((response) => {
-            navigate("/Settings/Users");
-            toast.success(response.data.body.message, { theme: "colored" });
-          })
-          .catch((error) => {
-            toast.error(error.response.data.body.error, { theme: "colored" });
-          });
-      } catch (error) {
-        toast.warning(error.message);
-      }
-    }
-    const validateEmail = (value) =>
-      value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-    const validationState = useMemo(() => {
-      if (user.email === "") return undefined;
-  
-      return validateEmail(user.email) ? "valid" : "invalid";
-    }, [user.email]);
+    
     const navigate = useNavigate();
     const [selected, setSelected] = useState("photos");
     return (
@@ -108,7 +88,7 @@ import {
                       href="#"
                       onClick={() => navigate(`/Store`)}
                     >
-                      <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
+                      <MdWarehouse sx={{ mr: 0.5 }} fontSize="inherit" />
                     Almacén
                     </Link>
                     <Link
@@ -119,19 +99,19 @@ import {
                       href="#"
                       onClick={() => navigate(`/Store/WarehouseEntries`)}
                     >
-                      <MdPeopleAlt sx={{ mr: 0.5 }} fontSize="inherit" />
+                      <MdInbox sx={{ mr: 0.5 }} fontSize="inherit" />
                       Entradas de Almacén
                     </Link>
                     <Typography
                       sx={{ display: "flex", alignItems: "center" }}
                       className="text-foreground"
                     >
-                      <MdPerson sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Nuevo Usuario
+                      <MdAllInbox sx={{ mr: 0.5 }} fontSize="inherit" />
+                      Entrada de Almacén
                     </Typography>
                   </Breadcrumbs>
                 </div>
-                <form onChange={handleChange} onSubmit={handleSubmit}>
+                 <form > 
                   <Spacer y={6} />
                   {/* <div className="bg-white rounded shadow-2xl px-4 md:p-8 mb-6"></div> */}
                   <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
@@ -139,7 +119,7 @@ import {
                       <div>
                         <div className="text-gray-600 place-items-center grid lg:grid-cols-1">
                           <h2 className="font-large text-lg text-foreground">
-                            Imagen
+                            Imagen del Producto
                           </h2>
                           {imageDefault ? (
                             <Image
@@ -193,130 +173,75 @@ import {
                               variant="underlined"
                               aria-label="Tabs variants"
                             >
-                              <Tab key="photos" title="Entrada de Alnacén">
+                              <Tab key="photos" title="Entrada de Almacén">
                                 <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                   <Spacer y={6} />
                                   <div className="md:col-span-6"></div>
                                   <div className="md:col-span-6">
                                     <Input
-                                    //   id="nombre"
-                                    //   value={user.nombre}
-                                    //   onValueChange={handleChange}
                                       size={"sm"}
-                                      type="text"
-                                      label="Fecha de Entrada"
-                                      name="fechaEntrada"
+                                      type="number"
+                                      label="Folio"
+                                      id="folio"
+                                      name="folio"
+                                      value={entryData.folio || ''}
+                                      onChange={handleChange2}
                                       labelPlacement="outside"
                                       placeholder=" "
                                       variant="faded"
+                                      disabled={!isEditMode}
                                     />
                                   </div>
                                   <div className="md:col-span-6">
                                     <Input
+                                      id="fecha"
+                                      value={entryData.fecha || ''}
+                                      onChange={handleChange2}
                                       size={"sm"}
-                                      type="text"
-                                      label="Proveedor"
-                                      id="proveedor"
-                                      name="proveedor"
-                                    //   value={user.apellido}
-                                    //   onChange={handleChange}
+                                      type="date"
+                                      label="Fecha"
+                                      name="fecha"
                                       labelPlacement="outside"
                                       placeholder=" "
                                       variant="faded"
+                                      disabled={!isEditMode}
                                     />
-                                  </div>
-  
-                                  <div className="md:col-span-6">
-                                    <Input
-                                      id="referencia"
-                                    //   value={user.email}
-                                    //   onChange={handleChange}
-                                      size={"sm"}
-                                      type="text"
-                                      label="Referencia"
-                                      name="referncia"
-                                      labelPlacement="outside"
-                                      placeholder=" "
-                                      variant="faded"
-                                    />
-                                  </div>
-                                  <div className="md:col-span-6">
-                                    <Input
-                                      id="sucursal"
-                                    //   value={user.emailConfirm}
-                                    //   onChange={handleChange}
-                                      size={"sm"}
-                                      type="email"
-                                      label="Sucursal"
-                                      name="sucursal"
-                                      labelPlacement="outside"
-                                      placeholder=" "
-                                      variant="faded"
-                                    />
-                                  </div>
-  
-                                  <div className="md:col-span-6">
-                                    <Input
-                                      id="almacen"
-                                    //   value={user.password}
-                                    //   onChange={handleChange}
-                                      size={"sm"}
-                                      type="text"
-                                      label="Almacén"
-                                      name="almacen"
-                                      labelPlacement="outside"
-                                      placeholder=" "
-                                      variant="faded"
-                                    />
-                                  </div>
-  
-                                  <div className="md:col-span-6">
-                                    <Input
-                                      id="codigoFabrica"
-                                    //   value={user.password}
-                                    //   onChange={handleChange}
-                                      size={"sm"}
-                                      type="codigoFabrica"
-                                      label="Codigo Fabrica"
-                                    //   name="password"
-                                      labelPlacement="outside"
-                                      placeholder=" "
-                                      variant="faded"
-                                    />
-                                  </div>
+                                  </div>  
                                   <div className="md:col-span-6">
                                     <Input
                                       id="codigoEmpresa"
-                                    //   value={user.password}
-                                    //   onChange={handleChange}
+                                      value={entryData.codigoEmpres || ''}
+                                      onChange={handleChange2}
                                       size={"sm"}
-                                      type="text"
-                                      label="Codigo Empresa"
+                                      type="number"
+                                      label="Código Empresa"
                                       name="codigoEmpresa"
                                       labelPlacement="outside"
                                       placeholder=" "
                                       variant="faded"
+                                      disabled={!isEditMode}
                                     />
                                   </div>
                                   <div className="md:col-span-6">
                                     <Input
-                                      id="nombre"
-                                    //   value={user.password}
-                                    //   onChange={handleChange}
+                                      id="producto"
+                                      value={entryData.producto || ''}
+                                      onChange={handleChange2}
                                       size={"sm"}
                                       type="text"
-                                      label="Nombre del Producto"
-                                      name="nombre"
+                                      label="Producto"
+                                      name="producto"
                                       labelPlacement="outside"
                                       placeholder=" "
                                       variant="faded"
+                                      disabled={!isEditMode}
                                     />
                                   </div>
                                   <div className="md:col-span-6">
                                     <Input
                                       id="cantidad"
-                                    //   value={user.password}
-                                    //   onChange={handleChange}
+                                      value={entryData.cantidad || ''}
+                                      onChange={handleChange2}
                                       size={"sm"}
                                       type="number"
                                       label="Cantidad"
@@ -324,27 +249,56 @@ import {
                                       labelPlacement="outside"
                                       placeholder=" "
                                       variant="faded"
+                                      disabled={!isEditMode}
                                     />
                                   </div>
                                   <div className="md:col-span-6">
                                     <Input
-                                      id="costoProducto"
-                                    //   value={user.password}
-                                    //   onChange={handleChange}
+                                      id="sucursalAlmacen"
+                                      value={entryData.sucursalAlmacen || ''}
+                                      onChange={handleChange2}
                                       size={"sm"}
-                                      type="number"
-                                      label="Costo del Producto"
-                                      name="costoProducto"
+                                      type="text"
+                                      label="Sucursal/Almacén"
+                                      name="sucursalAlmacen"
                                       labelPlacement="outside"
                                       placeholder=" "
                                       variant="faded"
+                                      disabled={!isEditMode}
+                                    />
+                                  </div>  
+                                  <div className="md:col-span-6">
+                                    <Input
+                                      id="tipo"
+                                      value={entryData.tipo || ''}
+                                      onChange={handleChange2}
+                                      size={"sm"}
+                                      type="text"
+                                      label="Tipo"
+                                      name="tipo"
+                                      labelPlacement="outside"
+                                      placeholder=" "
+                                      variant="faded"
+                                      disabled={!isEditMode}
                                     />
                                   </div>
-                                  
-                                  
+                                  <div className="md:col-span-6">
+                                    <Input
+                                      id="motivo"
+                                      value={entryData.motivo || ''}
+                                      onChange={handleChange2}
+                                      size={"sm"}
+                                      type="text"
+                                      label="Motivo"
+                                      name="motivo"
+                                      labelPlacement="outside"
+                                      placeholder=" "
+                                      variant="faded"
+                                      disabled={!isEditMode}
+                                    />
+                                  </div>
                                 </div>
-                              </Tab>
-                              
+                              </Tab>                          
                             </Tabs>
                           </div>
                           <Spacer y={10} />
@@ -352,30 +306,24 @@ import {
                       </div>
                       <div className="md:col-span-12 text-right content-end">
                         <div className="space-x-5 space-y-5">
-                          <Button
-                            className="min-w-[200px]"
-                            color="primary"
-                            type="submit"
-                            startContent={<RiArrowLeftLine />}
-                          >
-                            Anterior
-                          </Button>
-                          <Button
-                            className="min-w-[200px]"
-                            color="primary"
-                            type="submit"
-                            endContent={<RiArrowRightLine />}
-                          >
-                            Siguiente
-                          </Button>
+                            {isEditMode ?(
+                                <>
                           <Button
                             className="min-w-[200px]"
                             color="success"
                             type="submit"
                             endContent={<MdSave />}
+                            onClick={handleSaveClick}
                           >
                             Guardar
                           </Button>
+                          <Button 
+                          className="min-w-[200px]"
+                          color="success"
+                          type="submit"
+                          onClick={() => setIsEditMode(false)}>Cancelar</Button>
+                          </>
+                          ):(<Button></Button>)}
                         </div>
                         <Spacer y={3} />
                       </div>
@@ -389,6 +337,6 @@ import {
       </>
     );
   };
-  
+}
   export default NewEntry;
   
