@@ -27,7 +27,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+//import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const statusOptions = [
   { name: "Active", uid: "active" },

@@ -11,40 +11,42 @@ import Typography from "@mui/material/Typography";
 import { MdPeople, MdSecurity, MdSecurityUpdate } from "react-icons/md";
 
 
-const itemsSettings = [
-    {
-        id: 1,
-        name: "usuarios",
-        icon: MdPeople,
-        address: "Users",
-    },
-    {
-        id: 2,
-        name: "Perfiles de Seguridad",
-        icon: MdSecurity,
-        address: "PerfilesSeguridad",
-        roleId: "0",
-    },
-    {
-        id: 3,
-        name: "Sucursales",
-        icon: BiStoreAlt,
-        address: "Sucursales",
-        roleId: "0",
-    },
-    {
-        id: 4,
-        name: "Formas de Pago",
-        icon: BiDollar,
-        address: "FormasPagos",
-        roleId: "0",
-    },
-];
+
 
 const ItemsSettings = () => {
     
     const navigate = useNavigate();
     const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
+
+    const itemsSettings = [
+        {
+            id: 1,
+            name: "usuarios",
+            icon: MdPeople,
+            address: "Users",
+        },
+        {
+            id: 2,
+            name: "Perfiles de Seguridad",
+            icon: MdSecurity,
+            address: "PerfilesSeguridad",
+            roleId: "0",
+        },
+        {
+            id: 3,
+            name: "Sucursales",
+            icon: BiStoreAlt,
+            address: "Sucursales",
+            roleId: "0",
+        },
+        {
+            id: 4,
+            name: "Formas de Pago",
+            icon: BiDollar,
+            address: () => navigate(`/${"Settings/PaymentMethod"}`),
+            roleId: "0",
+        },
+    ];
 
     return(
         <div className="place-content-center">
@@ -85,7 +87,7 @@ const ItemsSettings = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            onPress={() => navigate(`/Settings/${item.address}`)}
+                            onPress={item.address}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">
