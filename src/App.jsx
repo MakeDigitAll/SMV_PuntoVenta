@@ -34,7 +34,6 @@ import AddExcelBrands from "./views/Excel/addExcel/addExcelBrands.jsx";
 import Payment from "./views/sales/Payment.jsx";
 import PurchaseOrders from "./views/store/PurchaseOrders.jsx";
 
-import PosHome from "./views/pos/PosHome.jsx";
 import Inventory from "./views/store/Inventory.jsx";
 import BulkTransfers from "./views/store/BulkTransfers.jsx";
 import Transfers from "./views/store/Transfers.jsx";
@@ -48,6 +47,8 @@ import NewTransfer from "./views/store/NewTransfer.jsx";
 import WarehouseOutputs from "./views/store/WarehouseOutputs.jsx";
 import CatalogueofMotifs from "./views/store/CatalogueofMotifs.jsx";
 import NewEntry from "./views/store/NewEntry.jsx";
+import BranchOffices from "./views/settings/BranchOffices.jsx";
+import NewBranch from "./views/settings/NewBranch.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -157,6 +158,14 @@ const App = () => {
           element: <ItemsSettings />,
         },
         {
+          path: "/Settings/BranchOffices",
+          element: <BranchOffices />,
+        },
+        {
+          path: "/Settings/BranchOffices/NewBranch",
+          element: <NewBranch />,
+        },
+        {
           path: "/Customers",
           element: <ClientList />,
         },
@@ -191,8 +200,10 @@ const App = () => {
         {
           path: "/Store/PurchaseOrdes",
           element: <PurchaseOrders />,
+        },
+        {
           path:"/Store/Transfers",
-          element: <Transfers />
+          element: <Transfers />,
         },
         {
           path:"/Store/Transfers/NewTransfer",

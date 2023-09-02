@@ -14,12 +14,11 @@ import {
   DropdownItem,
   Pagination,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import {
+    MdAddHome,
   MdArrowDropDown,
   MdSearch,
-  MdStore,
-  MdWarehouse,
 } from "react-icons/md";
 import Header from "../../components/header/headerC/Header";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
@@ -29,41 +28,31 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-} from "@nextui-org/react";
-import NewEntry from "./NewEntry";
+
 
 const columns = [
-  { name: "Folio", uid: "Folio", sortable: true },
-  { name: "Fecha", uid: "Fecha", sortable: true },
-  { name: "CodEmp.", uid: "CodEmp", sortable: true },
-  { name: "Producto", uid: "Producto", sortable: true },
-  { name: "Cantidad", uid: "Cantidad", sortable: true },
-  { name: "Sucursal/Almacén", uid: "SucursalAlmacen", sortable: true },
-  { name: "Tipo", uid: "Tipo", sortable: true },
-  { name: "Motivo", uid: "Motivo", sortable: true },
+  { name: "Nombre", uid: "Nombre", sortable: true },
+  { name: "Ciudad", uid: "Ciudad", sortable: true },
+  { name: "Estado", uid: "Estado", sortable: true },
+  { name: "Telefono", uid: "Telefono", sortable: true },
+  { name: "Gerente", uid: "Gerente", sortable: true },
+  { name: "Almacenes", uid: "Almacenes", sortable: true },
+  { name: "Web", uid: "Web", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "Folio",
-  "Fecha",
-  "CodEmp",
-  "Producto",
-  "Cantidad",
-  "SucursalAlmacen",
-  "Tipo",
-  "Motivo",
+  "Nombre",
+  "Ciudad",
+  "Estado",
+  "Telefono",
+  "Gerente",
+  "Almacenes",
+  "Web",
   "Actions",
 ];
 
-const WarehouseEntries = () => {
+const BranchOffices = () => {
   const marcaOptions = [];
   function contarmarca() {
     for (let i = 0; i < data.length; i++) {
@@ -73,7 +62,7 @@ const WarehouseEntries = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoEntradas");
+      const response = await fetch("http://localhost:4000/SucursalesAlmacen");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -121,7 +110,7 @@ const WarehouseEntries = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.producto.toLowerCase().includes(filterValue.toLowerCase())
+        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -129,7 +118,7 @@ const WarehouseEntries = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.producto)
+        Array.from(statusFilter).includes(data.nombre)
       );
     }
 
@@ -154,144 +143,56 @@ const WarehouseEntries = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-  ///Modal Constantes y Funciones
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [size, setSize] = React.useState("lg");
-  const sizes = ["md", "lg", "xl", "2xl", "3xl"];
-  const [modalMode, setModalMode] = useState("create"); //
-  const handleOpen = (size) => {
-    setSize(size);
-    onOpen();
-  };
-  const [datosEdit, setDatosEdit] = useState({
-    folio: "",
-    fecha: "",
-    codigoEmpresa: "",
-    producto: "",
-    cantidad: "",
-    sucursalAlmacen: "",
-    tipo: "",
-    motivo: "",
-  });
-  const handleCreateClick = () => {
-    setModalMode("create");
-    onOpen();
-    setDatosEdit({
-      folio: "",
-      fecha: "",
-      codigoEmpresa: "",
-      producto: "",
-      cantidad: "",
-      sucursalAlmacen: "",
-      tipo: "",
-      motivo: "",
-    });
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDatosEdit((prevDatosEdit) => ({
-      ...prevDatosEdit,
-      [name]: value,
-    }));
-  };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const updatedData = {
-      //Crear
-      folio: datosEdit.folio,
-      fecha: datosEdit.fecha,
-      codigoEmpresa: datosEdit.codigoEmpresa,
-      producto: datosEdit.producto,
-      cantidad: datosEdit.cantidad,
-      sucursalAlmacen: datosEdit.sucursalAlmacen,
-      tipo: datosEdit.tipo,
-      motivo: datosEdit.motivo,
-    };
-
-    try {
-      if (modalMode === "create") {
-        // Crear nuevo elemento
-        const response = await fetch("http://localhost:4000/ListadoEntradas", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        });
-
-        if (response.ok) {
-          // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
-          console.log("Elemento creado exitosamente");
-          onClose(true);
-          window.location.reload();
-        } else {
-          // Si la solicitud no es exitosa, maneja el error
-          console.error("Error al crear el elemento:", response.statusText);
-          // Puedes mostrar un mensaje de error al usuario si es necesario
-        }
-      }
-    } catch (error) {
-      console.error("Error en la solicitud POST:", error);
-      // Manejar el error, mostrar un mensaje al usuario, etc.
-    }
-  };
-
+  
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "Folio":
+      case "Nombre":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.folio}</p>
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
-      case "Fecha":
+      case "Ciudad":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fecha}</p>
+            <p className="text-bold text-small capitalize">{data.ciudad}</p>
           </div>
         );
-      case "CodEmp":
+      case "Estado":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.codigoEmpresa}
+              {data.estado}
             </p>
           </div>
         );
-
-      case "Producto":
+      case "Telefono":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.producto}</p>
+            <p className="text-bold text-small capitalize">{data.telefono}</p>
           </div>
         );
-      case "Cantidad":
+      case "Gerente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.cantidad}</p>
+            <p className="text-bold text-small capitalize">{data.gerente}</p>
           </div>
         );
-      case "SucursalAlmacen":
+      case "Almacenes":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.sucursalAlmacen}
+              {data.almacenes}
             </p>
           </div>
         );
-      case "Tipo":
+      case "Web":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.tipo}</p>
-          </div>
-        );
-      case "Motivo":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.motivo}</p>
+            <p className="text-bold text-small capitalize">{data.web}</p>
           </div>
         );
       case "Actions":
@@ -304,9 +205,8 @@ const WarehouseEntries = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={()=>navigate('/Store/WarehouseOutputs/NewEntry')}>View</DropdownItem>
-                <DropdownItem >Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem >Editar Sucursal</DropdownItem>
+                <DropdownItem>Deshabilitar Sucursal</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -385,8 +285,8 @@ const WarehouseEntries = () => {
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <MdWarehouse sx={{ mr: 0.5 }} fontSize="inherit" />
-              Entradas de Almacén
+              <MdAddHome sx={{ mr: 0.5 }} fontSize="inherit" />
+              Sucursales
             </Typography>
           </Breadcrumbs>
         </div>
@@ -399,7 +299,7 @@ const WarehouseEntries = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Producto"
+              placeholder="Nombre"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
@@ -412,7 +312,7 @@ const WarehouseEntries = () => {
                   endContent={<MdArrowDropDown className="text-small" />}
                   variant="flat"
                 >
-                  Tipo
+                  Estado
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -432,23 +332,14 @@ const WarehouseEntries = () => {
             </Dropdown>
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            <Button
-              size="sm"
-              color="warning"
-              endContent={<TbReload />}
-              onClick={() =>
-                navigate("/Store/WarehouseEntries/CatalogueofMotifs")
-              }
-            >
-              Catálogo de Motivos
-            </Button>
+            
             <Button
               size="sm"
               color="primary"
               endContent={<TbPlus />}
-              onClick={handleCreateClick}
+              onClick={()=>navigate("/Settings/BranchOffices/NewBranch")}
             >
-              Nueva Entrada Manual
+              Nueva Sucursal
             </Button>
           </div>
         </div>
@@ -506,7 +397,7 @@ const WarehouseEntries = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Entradas Almacén por página:
+            Sucursales por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -533,7 +424,7 @@ const WarehouseEntries = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} Entradas de Almacén en total
+            {data.length} Sucursales en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -599,7 +490,7 @@ const WarehouseEntries = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran Entradas de Almacén"}
+          emptyContent={"No se encuentran Sucursales"}
           items={sortedItems}
         >
           {(item) => (
@@ -611,150 +502,8 @@ const WarehouseEntries = () => {
           )}
         </TableBody>
       </Table>
-      <Modal size={size} isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {modalMode === "create" && "Nuevo Motivo"}
-              </ModalHeader>
-              <ModalBody>
-                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
-                  <div className="md:col-span-12"></div>
-                  <div className="md:col-span-6">
-                    <Input
-                      id="folio"
-                      value={modalMode === "create" ? datosEdit.folio : ""}
-                      onChange={handleChange}
-                      size={"sm"}
-                      type="number"
-                      label="Folio*"
-                      name="folio"
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="date"
-                      label="Fecha*"
-                      id="fecha"
-                      name="fecha"
-                      value={modalMode === "create" ? datosEdit.fecha : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="number"
-                      label="Código Empresa*"
-                      id="codigoEmpresa"
-                      name="codigoEmpresa"
-                      value={
-                        modalMode === "create" ? datosEdit.codigoEmpresa : ""
-                      }
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="text"
-                      label="Producto*"
-                      id="producto"
-                      name="producto"
-                      value={modalMode === "create" ? datosEdit.producto : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="number"
-                      label="Cantidad*"
-                      id="cantidad"
-                      name="cantidad"
-                      value={modalMode === "create" ? datosEdit.cantidad : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="text"
-                      label="Sucursal/Almacén*"
-                      id="sucursalAlmacen"
-                      name="sucursalAlmacen"
-                      value={
-                        modalMode === "create" ? datosEdit.sucursalAlmacen : ""
-                      }
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="text"
-                      label="Tipo*"
-                      id="tipo"
-                      name="tipo"
-                      value={modalMode === "create" ? datosEdit.tipo : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="text"
-                      label="Motivo*"
-                      id="motivo"
-                      name="motivo"
-                      value={modalMode === "create" ? datosEdit.motivo : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                    />
-                  </div>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                {
-                  <Button color="primary" onClick={handleSubmit}>
-                    {modalMode === "create" ? "Crear" : "Guardar Cambios"}
-                  </Button>
-                }
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cerrar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   );
 };
 
-export default WarehouseEntries;
+export default BranchOffices;

@@ -29,7 +29,7 @@ const itemsSettings = [
         id: 3,
         name: "Sucursales",
         icon: BiStoreAlt,
-        address: "Sucursales",
+        address: "BranchOffices",
         roleId: "0",
     },
     {
