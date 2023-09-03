@@ -51,6 +51,7 @@ import NewEntry from "./views/store/NewEntry.jsx";
 import PaymentMethodList from "./views/settings/PaymentMethods.jsx";
 import BranchOffices from "./views/settings/BranchOffices.jsx";
 import NewBranch from "./views/settings/NewBranch.jsx";
+import Chat from "./views/chat/chat.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -259,6 +260,10 @@ const App = () => {
           path: "/Settings/PaymentMethod",
           element: <PaymentMethodList />
         },
+        {
+          path: "/Chat",
+          element: <Chat />,
+        }
       ],
     },
   ]);

@@ -14,6 +14,7 @@ import {
   DropdownItem,
   Pagination,
   Spacer,
+  Spinner,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch } from "react-icons/md";
@@ -47,23 +48,25 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const Users = () => {
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   async function loadTask() {
     try {
       const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/allusers");
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        setIsLoading(false);
       }
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
         theme: "colored",
       });
+      setIsLoading(false);
     }
   }
   useEffect(() => {
     loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
@@ -77,7 +80,7 @@ const Users = () => {
   const [statusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
+    column: "Email",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
@@ -284,12 +287,7 @@ const Users = () => {
               />
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              <Button
-                size="sm"
-                color="warning"
-                endContent={<TbReload />}
-                className="text-color-foreground"
-              >
+              <Button size="sm" color="warning" endContent={<TbReload />}>
                 Actualizar precios
               </Button>
               <Button size="sm" color="warning" endContent={<TbReload />}>
@@ -373,7 +371,14 @@ const Users = () => {
         </DefaultLayout>
       </>
     );
-  }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);
+  }, [
+    filterValue,
+    onSearchChange,
+    visibleColumns,
+    onRowsPerPageChange,
+    navigate,
+    onClear,
+  ]);
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
@@ -446,7 +451,18 @@ const Users = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={sortedItems}>
+        <TableBody
+          emptyContent={
+            sortedItems.length === 0 && isLoading === false ? (
+              "No users found"
+            ) : isLoading === true ? (
+              <Spinner label="Cargando" />
+            ) : (
+              "No users found"
+            )
+          }
+          items={sortedItems}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

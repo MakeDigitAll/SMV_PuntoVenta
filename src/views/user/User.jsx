@@ -45,6 +45,7 @@ const User = () => {
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
+  console.log(selectedImage);
   async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData();
