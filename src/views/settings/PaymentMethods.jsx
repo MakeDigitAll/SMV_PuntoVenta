@@ -27,7 +27,6 @@ import { RiDashboard2Fill, RiListOrdered, RiSdCardFill, RiUser2Fill } from "reac
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import DefaultLayout from "../../components/header/headerC/DefaultLayout";
-import axios from "axios";
 const columns = [
   { name: "ID", uid: "id" },
   { name: "Nombre Forma", uid: "nombreForma", sortable: true },
@@ -50,7 +49,6 @@ const PaymentMethodList = () => {
   let [dataDisable, setDataDisable] = useState([]);
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const [updatedData, setUpdatedData] = useState([]);
   const { isOpen: isOpenSecondModal, onOpen: onOpenSecondModal, onClose: onCloseSecondModal, onOpenChange: onOpenChangeSecondModal } = useDisclosure();
 
 
@@ -126,13 +124,6 @@ const PaymentMethodList = () => {
 
 
   const [task, setTask] = useState({
-    id: '',
-    nombreForma: '',
-    comision: '',
-    claveSAT: '',
-  });
-
-  const [errors, setErrors] = useState({
     nombreForma: '',
     comision: '',
     claveSAT: '',
@@ -142,11 +133,10 @@ const PaymentMethodList = () => {
   const [validationComision, setValidationComision] = useState('valid')
   const [validationClave, setValidationClave] = useState('valid')
 
+
+
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [modeModal, setModeModal] = useState("create", "edit", "view");
-  const [updateCounter, setUpdateCounter] = useState(0);
-  const [editCounter, setEditCounter] = useState(0); // Paso 1
-  const [disableCounter, setDisableCounter] = useState(0); // Paso 1
 
   async function loadTask() {
     try {
@@ -165,75 +155,56 @@ const PaymentMethodList = () => {
   useEffect(() => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateCounter, editCounter, disableCounter])
-
-
-
-  const [showButton, setShowButton] = useState(false);
+  }, [])
 
   const handleCreate = () => {
     setModeModal("create");
-    setShowButton(true);
     onOpen();
+    setTask({
+      nombreForma: '',
+      comision: '',
+      claveSAT: '',
+    });
   };
 
   const handleView = (id) => {
-    console.log(id);
     setModeModal("view");
-    setIsInputDisabled(true);
-    async function viewModal() {
-      try {
-        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
-        const data = await response.json();
-        if (response.ok) {
-          setTask({
-            id: data.id,
-            nombreForma: data.nombreForma,
-            comision: data.comision,
-            claveSAT: data.claveSAT,
-          })
-          setShowButton(false);
-          onOpen();
-        }
-      } catch (err) {
-        console.log(err);
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
+    try {
+      const response = fetch(`http://localhost:4000/FormasPago/${id}`);
+      const data = response.json();
+    } catch (error) {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
     }
-    viewModal();
+    console.log(id);
+    onOpen();
+    setTask({
+      nombreForma: data.nombreForma,
+      comision: data.comision,
+      claveSAT: data.comision,
+    })
   }
 
-
   const handleEdit = (id) => {
-    console.log(id);
     setModeModal("edit");
-    setIsInputDisabled(false);
-    async function editModal() {
-      try {
-        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
-        const data = await response.json();
-        if (response.ok) {
-          setTask({
-            id: data.id,
-            nombreForma: data.nombreForma,
-            comision: data.comision,
-            claveSAT: data.claveSAT,
-          })
-          setShowButton(true);
-          onOpen();
-        }
-      } catch (err) {
-        console.log(err);
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
+    try {
+      const response = fetch(`http://localhost:4000/FormasPago/${id}`);
+      const data = response.json();
+    } catch (error) {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
     }
-    editModal();
+    console.log(id);
+    onOpen();
+    setTask({
+      nombreForma: data.nombreForma,
+      comision: data.comision,
+      claveSAT: data.comision,
+    })
   }
 
 
@@ -241,13 +212,14 @@ const PaymentMethodList = () => {
     e.preventDefault();
     const newErrors = {};
 
+    
     !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
     !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
     !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
     if (!task.claveSAT || !task.comision || !task.nombreForma) {
       toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
     }
-
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -297,22 +269,38 @@ const PaymentMethodList = () => {
     if (!task.claveSAT || !task.comision || !task.nombreForma) {
       toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
     }
-
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
     const datosListado = {
-      id: task.id,
       nombre: task.nombreForma,
       comision: task.comision,
       claveSAT: task.claveSAT,
     };
-    async function edit() {
-      try {
+
+    try {
+      if (modeModal === "create") {
+        const res = await fetch(`http://localhost:4000/FormasPago`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datosListado),
+        });
         console.log(datosListado);
-        const res = await fetch(`http://localhost:4000/FormasPagoEdit/${datosListado.id}`, {
+        if (res.ok) {
+          console.log("Se guardo correctamente");
+          onClose(true);
+          window.location.reload();
+        } else {
+          console.error("Error al crear el elemento", res.statusText);
+        }
+      }
+      if (modeModal === "edit") {
+        const response = await fetch(`http://localhost:4000/FormasPago/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -326,32 +314,17 @@ const PaymentMethodList = () => {
           });
           onClose(true);
           setEditCounter((prevCounter) => prevCounter + 1);
-          // const editedData = updatedData.map((item) => {
-          //   if (item.id === datosListado.id) {
-          //     return datosListado;
-          //   }
-          //   return item;
-          // });
+
         } else {
-          toast.error("Error al actualizar la forma de pago", {
-            position: "bottom-right",
-            theme: "colored",
-          });
+          console.error("Error al editar el elemento", response.statusText);
         }
-      } catch (err) {
-        console.log(err);
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
       }
+    } catch (error) {
+      toast.warning(error.message);
     }
-    edit();
+
   }
 
-  // const handleChange = e => {
-  //   setTask({ ...task, [e.target.name]: e.target.value })
-  // }
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTask({
@@ -365,7 +338,6 @@ const PaymentMethodList = () => {
     });
   };
 
-
   const handleDisable = (id) => {
     console.log("Este es el id a deshabilitar: ", id);
     onOpenSecondModal();
@@ -374,16 +346,19 @@ const PaymentMethodList = () => {
   };
 
   async function handleDisableTrue(id) {
+    setDataDisable(id)
+    console.log(dataDisable);
     try {
       const res = await fetch(`http://localhost:4000/FormasPagoDisable/${dataDisable}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(),
+        body: JSON.stringify(datosListado),
       });
+      console.log(dataDisable);
       if (res.ok) {
-        toast.warning("Deshabilitando Forma de Pago", {
+        toast.success("Deshabilitando Forma de Pago", {
           position: "bottom-right",
           theme: "colored",
         });
@@ -398,8 +373,9 @@ const PaymentMethodList = () => {
     }
   }
 
-
   const [value, setValue] = React.useState("junior2nextui.org");
+
+  
 
 
   const renderCell = React.useCallback((data, columnKey) => {
@@ -436,9 +412,9 @@ const PaymentMethodList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={() => handleView(data.id)}>Ver Forma de Pago</DropdownItem>
-                <DropdownItem onPress={() => handleEdit(data.id)}>Editar Forma de Pago</DropdownItem>
-                <DropdownItem className="text-danger" onPress={() => handleDisable(data.id)}>Deshabilitar Forma de Pago</DropdownItem>
+                <DropdownItem onPress={handleView}>Ver Forma de Pago</DropdownItem>
+                <DropdownItem onPress={handleEdit}>Editar Forma de Pago</DropdownItem>
+                <DropdownItem className="text-danger">Deshabilitar Forma de Pago</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -704,7 +680,7 @@ const PaymentMethodList = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              <form onChange={handleChange} onSubmit={modeModal == "create" ? handleSubmit : handleEditing} >
+              <form onChange={handleChange} onSubmit={handleSubmit} >
                 <ModalHeader className="flex flex-col gap-1">
                   {modeModal === "create" && "Nueva Forma de Pago"}
                   {modeModal === "edit" && "Editar Forma de Pago"}
@@ -714,7 +690,7 @@ const PaymentMethodList = () => {
                   <Input
                     id='nombre'
                     name='nombreForma'
-                    value={modeModal !== "create" ? task.nombreForma : undefined}
+                    value={modeModal === "create" ? task.nombreForma : ""}
                     onChange={handleChange}
                     label='Nombre de la Forma de Pago'
                     placeholder="Efectivo"
@@ -727,7 +703,7 @@ const PaymentMethodList = () => {
                   <Input
                     id='comision'
                     name='comision'
-                    value={modeModal !== "create" ? task.comision : undefined}
+                    value={modeModal === "create" ? task.comision : ""}
                     onChange={handleChange}
                     label='Porcentaje de Comisión'
                     placeholder="0%"
@@ -740,7 +716,7 @@ const PaymentMethodList = () => {
                   <Input
                     id='claveSAT'
                     name="claveSAT"
-                    value={modeModal !== "create" ? task.claveSAT : undefined}
+                    value={modeModal === "create" ? task.claveSAT : ""}
                     onChange={handleChange}
                     label='Clave SAT'
                     placeholder="01"
@@ -750,16 +726,15 @@ const PaymentMethodList = () => {
                     errorMessage="Por favor escriba una clave de SAT"
                     required
                   />
+
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" variant="flat" onPress={onClose}>
                     Cerrar
                   </Button>
-                  {showButton && (
-                    <Button id="BtnGuardar" color="primary" type="submit">
-                      Guardar
-                    </Button>
-                  )}
+                  <Button color="primary" onPress={handleSubmit} type="submit">
+                    Guardar
+                  </Button>
                 </ModalFooter>
               </form>
             </>
@@ -776,7 +751,6 @@ const PaymentMethodList = () => {
             <>
               <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTA ORDEN DE PAGO? </ModalHeader>
               <ModalBody>
-                
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>

@@ -145,7 +145,7 @@ const ConfigureAccess = () => {
                                     <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                                         <Accordion>
                                             <AccordionItem key="1" aria-label="Accordion 1" title="Dashboard">
-
+                                            
                                                 <CheckboxGroup
                                                     label="Consultas"
                                                     defaultValue={["tareas-agendadas", "ventas-mes"]}
@@ -177,41 +177,41 @@ const ConfigureAccess = () => {
                                                 </CheckboxGroup>
                                             </AccordionItem>
                                             <AccordionItem key="2" aria-label="Accordion 2" title="Ventas">
-                                                <CheckboxGroup
-                                                    label="Cotizaciones"
-                                                    defaultValue={["tareas-agendadas", "ventas-mes"]}
-                                                >
-                                                    <Checkbox value="ventas-mes">
-                                                        Ventas del Mes
-                                                    </Checkbox>
-                                                    <Checkbox value="ventas-año">
-                                                        Ventas del Año
-                                                    </Checkbox>
-                                                    <Checkbox value="ventas-dia-agente">
-                                                        Ventas del Día por Agente
-                                                    </Checkbox>
-                                                    <Checkbox value="ventas-mes-agente">
-                                                        Ventas del Mes por Agente
-                                                    </Checkbox>
-                                                    <Checkbox value="top-desplacamientos">
-                                                        Top 5 Desplazamientos
-                                                    </Checkbox>
-                                                    <Checkbox value="inventario">
-                                                        Inventario
-                                                    </Checkbox>
-                                                    <Checkbox value="mensajes-pagina">
-                                                        Mensajes desde la Página
-                                                    </Checkbox>
-                                                    <Checkbox value="tareas-agendadas">
-                                                        Tareas Agendadas
-                                                    </Checkbox>
-                                                </CheckboxGroup>
+                                            <CheckboxGroup
+                                                        label="Cotizaciones"
+                                                        defaultValue={["tareas-agendadas", "ventas-mes"]}
+                                                    >
+                                                        <Checkbox value="ventas-mes">
+                                                            Ventas del Mes
+                                                        </Checkbox>
+                                                        <Checkbox value="ventas-año">
+                                                            Ventas del Año
+                                                        </Checkbox>
+                                                        <Checkbox value="ventas-dia-agente">
+                                                            Ventas del Día por Agente
+                                                        </Checkbox>
+                                                        <Checkbox value="ventas-mes-agente">
+                                                            Ventas del Mes por Agente
+                                                        </Checkbox>
+                                                        <Checkbox value="top-desplacamientos">
+                                                            Top 5 Desplazamientos
+                                                        </Checkbox>
+                                                        <Checkbox value="inventario">
+                                                            Inventario
+                                                        </Checkbox>
+                                                        <Checkbox value="mensajes-pagina">
+                                                            Mensajes desde la Página
+                                                        </Checkbox>
+                                                        <Checkbox value="tareas-agendadas">
+                                                            Tareas Agendadas
+                                                        </Checkbox>
+                                                    </CheckboxGroup>
                                             </AccordionItem>
                                             <AccordionItem key="3" aria-label="Accordion 3" title="Accordion 3">
                                                 <p>Prueba 3</p>
                                             </AccordionItem>
                                         </Accordion>
-
+                                        
                                         <div className="lg:col-span-2">
                                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                                 <div className="md:col-span-12">
