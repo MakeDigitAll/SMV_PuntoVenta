@@ -26,7 +26,7 @@ const ItemsSettings = () => {
             id: 2,
             name: "Perfiles de Seguridad",
             icon: MdSecurity,
-            address: "PerfilesSeguridad",
+            address: () => navigate(`/${"Settings/SecuritProfiles"}`),
             roleId: "0",
         },
         {
