@@ -47,9 +47,11 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const PaymentMethodList = () => {
 
+  let [dataDisable, setDataDisable] = useState([]);
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const [updatedData, setUpdatedData] = useState([]);
+  const { isOpen: isOpenSecondModal, onOpen: onOpenSecondModal, onClose: onCloseSecondModal, onOpenChange: onOpenChangeSecondModal } = useDisclosure();
 
 
   function handleClickBreadCrumbs(event) {
@@ -135,6 +137,10 @@ const PaymentMethodList = () => {
     comision: '',
     claveSAT: '',
   });
+
+  const [validationForma, setValidationForma] = useState('valid')
+  const [validationComision, setValidationComision] = useState('valid')
+  const [validationClave, setValidationClave] = useState('valid')
 
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [modeModal, setModeModal] = useState("create", "edit", "view");
@@ -235,30 +241,13 @@ const PaymentMethodList = () => {
     e.preventDefault();
     const newErrors = {};
 
-    if (!task.nombreForma) {
-      newErrors.nombreForma = "El campo Nombre de la Forma de Pago es obligatorio";
-      toast.error("El campo Nombre de la Forma de Pago es obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
+    !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
+    !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
+    !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
+    if (!task.claveSAT || !task.comision || !task.nombreForma) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
     }
-    if (!task.comision) {
-      newErrors.comision = "El campo Comisión es obligatorio";
-      toast.error("El campo Porcentaje de Comision es obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
-    }
-    if (!task.claveSAT) {
-      newErrors.claveSAT = "El campo Clave SAT es obligatorio";
-      toast.error("El campo Clave SAT es obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
-    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -302,35 +291,18 @@ const PaymentMethodList = () => {
 
     const newErrors = {};
 
-    if (!task.nombreForma) {
-      newErrors.nombreForma = "El campo Nombre de la Forma de Pago es obligatorio";
-      toast.error("El campo Nombre de la Forma de Pago es obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
+    !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
+    !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
+    !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
+    if (!task.claveSAT || !task.comision || !task.nombreForma) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
     }
-    if (!task.comision) {
-      newErrors.comision = "El campo Comisión es obligatorio";
-      toast.error("El campo Porcentaje de Comision es obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
-    }
-    if (!task.claveSAT) {
-      newErrors.claveSAT = "El campo Clave SAT es obligatorio";
-      toast.error("El campo Clave SAT es obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
-    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     const datosListado = {
       id: task.id,
       nombre: task.nombreForma,
@@ -393,9 +365,17 @@ const PaymentMethodList = () => {
     });
   };
 
-  async function handleDisable(id) {
+
+  const handleDisable = (id) => {
+    console.log("Este es el id a deshabilitar: ", id);
+    onOpenSecondModal();
+    setDataDisable(id);
+    console.log("esto tiene setDataDisable:", dataDisable)
+  };
+
+  async function handleDisableTrue(id) {
     try {
-      const res = await fetch(`http://localhost:4000/FormasPagoDisable/${id}`, {
+      const res = await fetch(`http://localhost:4000/FormasPagoDisable/${dataDisable}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -408,6 +388,7 @@ const PaymentMethodList = () => {
           theme: "colored",
         });
         setDisableCounter((prevCounter) => prevCounter + 1);
+        onCloseSecondModal(true);
       }
     } catch (error) {
       toast.error("Error al deshabilitar la forma de pago", {
@@ -416,6 +397,9 @@ const PaymentMethodList = () => {
       });
     }
   }
+
+
+  const [value, setValue] = React.useState("junior2nextui.org");
 
 
   const renderCell = React.useCallback((data, columnKey) => {
@@ -700,15 +684,15 @@ const PaymentMethodList = () => {
             </TableColumn>
           )}
         </TableHeader>
-          <TableBody emptyContent={"No payment methods found"} items={sortedItems}>
-            {(item) => (
-              <TableRow key={item.id}>
-                {(columnKey) => (
-                  <TableCell>{renderCell(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
+        <TableBody emptyContent={"No payment methods found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
       </Table>
 
 
@@ -736,6 +720,8 @@ const PaymentMethodList = () => {
                     placeholder="Efectivo"
                     variant="bordered"
                     isDisabled={isInputDisabled}
+                    validationState={validationForma}
+                    errorMessage="Por favor escriba una forma de pago"
                     required
                   />
                   <Input
@@ -747,6 +733,8 @@ const PaymentMethodList = () => {
                     placeholder="0%"
                     variant="bordered"
                     isDisabled={isInputDisabled}
+                    validationState={validationComision}
+                    errorMessage="Por favor escriba una comision"
                     required
                   />
                   <Input
@@ -758,6 +746,8 @@ const PaymentMethodList = () => {
                     placeholder="01"
                     variant="bordered"
                     isDisabled={isInputDisabled}
+                    validationState={validationClave}
+                    errorMessage="Por favor escriba una clave de SAT"
                     required
                   />
                 </ModalBody>
@@ -772,6 +762,30 @@ const PaymentMethodList = () => {
                   )}
                 </ModalFooter>
               </form>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isOpenSecondModal}
+        onOpenChange={onOpenChangeSecondModal}
+        placement="top-center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTA ORDEN DE PAGO? </ModalHeader>
+              <ModalBody>
+                
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={handleDisableTrue}>
+                  Aceptar
+                </Button>
+              </ModalFooter>
             </>
           )}
         </ModalContent>

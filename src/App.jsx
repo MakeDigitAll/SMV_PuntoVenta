@@ -52,6 +52,8 @@ import PaymentMethodList from "./views/settings/PaymentMethods.jsx";
 import BranchOffices from "./views/settings/BranchOffices.jsx";
 import NewBranch from "./views/settings/NewBranch.jsx";
 import Chat from "./views/chat/chat.jsx";
+import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
+import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -263,6 +265,14 @@ const App = () => {
         {
           path: "/Chat",
           element: <Chat />,
+        },
+        {
+          path: "/Settings/SecuritProfiles",
+          element: <SecuritProfiles />
+        },
+        {
+          path: "/Settings/SecuritProfiles/ConfigureAccess",
+          element: <ConfigureAccess />
         }
       ],
     },
