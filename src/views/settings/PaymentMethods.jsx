@@ -134,6 +134,7 @@ const PaymentMethodList = () => {
   const [validationClave, setValidationClave] = useState('valid')
 
 
+
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [modeModal, setModeModal] = useState("create", "edit", "view");
 
@@ -375,7 +376,6 @@ const PaymentMethodList = () => {
   const [value, setValue] = React.useState("junior2nextui.org");
 
   
-
 
 
   const renderCell = React.useCallback((data, columnKey) => {
@@ -751,7 +751,6 @@ const PaymentMethodList = () => {
             <>
               <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTA ORDEN DE PAGO? </ModalHeader>
               <ModalBody>
-
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
