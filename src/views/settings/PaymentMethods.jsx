@@ -49,6 +49,7 @@ const PaymentMethodList = () => {
   let [dataDisable, setDataDisable] = useState([]);
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const [updatedData, setUpdatedData] = useState([]);
   const { isOpen: isOpenSecondModal, onOpen: onOpenSecondModal, onClose: onCloseSecondModal, onOpenChange: onOpenChangeSecondModal } = useDisclosure();
 
 
@@ -298,21 +299,21 @@ const PaymentMethodList = () => {
     }
 
     const datosListado = {
+      id: task.id,
       nombre: task.nombreForma,
       comision: task.comision,
       claveSAT: task.claveSAT,
     };
 
-    try {
-      if (modeModal === "edit") {
-        const response = await fetch(`http://localhost:4000/FormasPagoEdit/${data.id}`, {
+    async function edit() {
+      try {
+        const res = await fetch(`http://localhost:4000/FormasPagoEdit/${datosListado.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(datosListado),
         });
-        console.log(data.id);
         if (res.ok) {
           toast.success("Forma de Pago Editada Correctamente", {
             position: "bottom-right",
@@ -322,13 +323,19 @@ const PaymentMethodList = () => {
           setEditCounter((prevCounter) => prevCounter + 1);
 
         } else {
-          console.error("Error al editar el elemento");
+          toast.error("Error al actualizar forma de pago", {
+            position: "bottom-right",
+            theme: "colored",
+          });
         }
+      } catch (error) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
       }
-    } catch (error) {
-      toast.warning(error.message);
     }
-
+    edit();
   }
 
   const handleChange = (e) => {
@@ -348,12 +355,11 @@ const PaymentMethodList = () => {
     console.log("Este es el id a deshabilitar: ", id);
     onOpenSecondModal();
     setDataDisable(id);
-    console.log("esto tiene setDataDisable:", dataDisable)
   };
 
   async function handleDisableTrue(id) {
     setDataDisable(id)
-    console.log(dataDisable);
+    console.log("Primer consulta id",dataDisable);
     try {
       const res = await fetch(`http://localhost:4000/FormasPagoDisable/${dataDisable}`, {
         method: "POST",
@@ -362,13 +368,12 @@ const PaymentMethodList = () => {
         },
         body: JSON.stringify(datosListado),
       });
-      console.log(dataDisable);
+      console.log("segunda consulta ID", dataDisable)
       if (res.ok) {
         toast.success("Deshabilitando Forma de Pago", {
           position: "bottom-right",
           theme: "colored",
-        });
-        setDisableCounter((prevCounter) => prevCounter + 1);
+        });setDisableCounter((prevCounter) => prevCounter + 1);
         onCloseSecondModal(true);
       }
     } catch (error) {
@@ -376,8 +381,8 @@ const PaymentMethodList = () => {
         position: "bottom-right",
         theme: "colored",
       });
-    }
   }
+}
 
   const [value, setValue] = React.useState("junior2nextui.org");
 
