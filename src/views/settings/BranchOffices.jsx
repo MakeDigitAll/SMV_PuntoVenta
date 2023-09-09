@@ -59,6 +59,8 @@ const BranchOffices = () => {
       marcaOptions.push({ name: data[i].sucursalAlmacen, uid: data[i].id });
     }
   }
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isAddingAlmacenes, setIsAddingAlmacenes] = useState(false);
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -144,6 +146,12 @@ const BranchOffices = () => {
     });
   }, [sortDescriptor, items]);
   
+  const handleCreateBranch = () => {
+    // Lógica para agregar almacenes
+    navigate("/Settings/BranchOffices/NewBranch");
+    // Cambiar a la vista de agregar almacenes
+    setShowConfirmationModal(true);
+  };
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
@@ -337,7 +345,8 @@ const BranchOffices = () => {
               size="sm"
               color="primary"
               endContent={<TbPlus />}
-              onClick={()=>navigate("/Settings/BranchOffices/NewBranch")}
+              onClick={handleCreateBranch}
+              
             >
               Nueva Sucursal
             </Button>
