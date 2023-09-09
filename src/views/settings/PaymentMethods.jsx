@@ -46,9 +46,10 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const PaymentMethodList = () => {
 
+  let [dataDisable, setDataDisable] = useState([]);
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const params = useParams();
+  const { isOpen: isOpenSecondModal, onOpen: onOpenSecondModal, onClose: onCloseSecondModal, onOpenChange: onOpenChangeSecondModal } = useDisclosure();
 
 
   function handleClickBreadCrumbs(event) {
@@ -128,7 +129,11 @@ const PaymentMethodList = () => {
     claveSAT: '',
   });
 
-  const [editing, setEditing] = useState(false);
+  const [validationForma, setValidationForma] = useState('valid')
+  const [validationComision, setValidationComision] = useState('valid')
+  const [validationClave, setValidationClave] = useState('valid')
+
+
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [modeModal, setModeModal] = useState("create", "edit", "view");
 
@@ -204,6 +209,71 @@ const PaymentMethodList = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const newErrors = {};
+
+    
+    !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
+    !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
+    !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
+    if (!task.claveSAT || !task.comision || !task.nombreForma) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const datosListado = {
+        nombre: task.nombreForma,
+        comision: task.comision,
+        claveSAT: task.claveSAT,
+      };
+      const res = await fetch(`http://localhost:4000/FormasPago`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datosListado),
+      });
+      if (res.ok) {
+        toast.success("Metodo de Pago guardado", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        onClose(true);
+        setUpdateCounter((prevCounter) => prevCounter + 1);
+      } else {
+        console.error("Error al crear el elemento", res.statusText);
+      }
+    } catch (error) {
+      toast.error("Error al guardar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+
+
+  async function handleEditing(e) {
+    e.preventDefault();
+
+    const newErrors = {};
+
+    !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
+    !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
+    !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
+    if (!task.claveSAT || !task.comision || !task.nombreForma) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const datosListado = {
       nombre: task.nombreForma,
       comision: task.comision,
@@ -236,10 +306,14 @@ const PaymentMethodList = () => {
           },
           body: JSON.stringify(datosListado),
         });
-        if (response.ok) {
-          console.log("Se edito Correctamente");
-          onclose(true);
-          window.location.reload();
+        if (res.ok) {
+          toast.success("Forma de Pago Editada Correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          onClose(true);
+          setEditCounter((prevCounter) => prevCounter + 1);
+
         } else {
           console.error("Error al editar el elemento", response.statusText);
         }
@@ -250,29 +324,45 @@ const PaymentMethodList = () => {
 
   }
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTask({
+      ...task,
+      [name]: value,
+    });
+    // Limpia el mensaje de error cuando el usuario comienza a escribir en el campo
+    setErrors({
+      ...errors,
+      [name]: "", // Esto eliminará el mensaje de error correspondiente
+    });
+  };
 
-  const handleChange = e => {
-    setTask({ ...task, [e.target.name]: e.target.value })
-  }
+  const handleDisable = (id) => {
+    console.log("Este es el id a deshabilitar: ", id);
+    onOpenSecondModal();
+    setDataDisable(id);
+    console.log("esto tiene setDataDisable:", dataDisable)
+  };
 
-  async function handleDisable(id) {
+  async function handleDisableTrue(id) {
+    setDataDisable(id)
+    console.log(dataDisable);
     try {
-      const res = await fetch(`http://localhost:4000/FormasPagoDisable/${id}`, {
-        method: "PUT",
+      const res = await fetch(`http://localhost:4000/FormasPagoDisable/${dataDisable}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(datosListado),
       });
-      console.log(datosListado);
+      console.log(dataDisable);
       if (res.ok) {
         toast.success("Deshabilitando Forma de Pago", {
           position: "bottom-right",
           theme: "colored",
         });
-        window.location.reload();
-      } else {
-        console.error("Error al crear el elemento", res.statusText);
+        setDisableCounter((prevCounter) => prevCounter + 1);
+        onCloseSecondModal(true);
       }
     } catch (error) {
       toast.error("Error al deshabilitar la forma de pago", {
@@ -281,6 +371,11 @@ const PaymentMethodList = () => {
       });
     }
   }
+
+  const [value, setValue] = React.useState("junior2nextui.org");
+
+  
+
 
 
   const renderCell = React.useCallback((data, columnKey) => {
@@ -600,6 +695,10 @@ const PaymentMethodList = () => {
                     label='Nombre de la Forma de Pago'
                     placeholder="Efectivo"
                     variant="bordered"
+                    isDisabled={isInputDisabled}
+                    validationState={validationForma}
+                    errorMessage="Por favor escriba una forma de pago"
+                    required
                   />
                   <Input
                     id='comision'
@@ -609,6 +708,10 @@ const PaymentMethodList = () => {
                     label='Porcentaje de Comisión'
                     placeholder="0%"
                     variant="bordered"
+                    isDisabled={isInputDisabled}
+                    validationState={validationComision}
+                    errorMessage="Por favor escriba una comision"
+                    required
                   />
                   <Input
                     id='claveSAT'
@@ -618,7 +721,10 @@ const PaymentMethodList = () => {
                     label='Clave SAT'
                     placeholder="01"
                     variant="bordered"
-
+                    isDisabled={isInputDisabled}
+                    validationState={validationClave}
+                    errorMessage="Por favor escriba una clave de SAT"
+                    required
                   />
 
                 </ModalBody>
@@ -635,9 +741,30 @@ const PaymentMethodList = () => {
           )}
         </ModalContent>
       </Modal>
+      <Modal
+        isOpen={isOpenSecondModal}
+        onOpenChange={onOpenChangeSecondModal}
+        placement="top-center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTA ORDEN DE PAGO? </ModalHeader>
+              <ModalBody>
 
-
-
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={handleDisableTrue}>
+                  Aceptar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
