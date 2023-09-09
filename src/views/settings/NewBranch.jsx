@@ -23,52 +23,46 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { TbDotsVertical } from "react-icons/tb";
-  import { useRef, useState } from "react";
-  import { ToastContainer, toast } from "react-toastify";
-  import "react-toastify/dist/ReactToastify.css";
-  import Header from "../../components/header/headerC/Header.jsx";
-  //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
-  import { Breadcrumbs, Typography } from "@mui/material";
-  import { RiDashboard2Fill} from "react-icons/ri";
-  import { MdAddHome, MdAllInbox,MdSettings} from "react-icons/md";
-  import { useNavigate } from "react-router-dom";
-  import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
-  import { MdSave } from "react-icons/md";
-  import http from "../../components/axios/Axios";
-  import React, { useCallback, useEffect } from "react";
+import { useRef, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Header from "../../components/header/headerC/Header.jsx";
+//import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
+import { Breadcrumbs, Typography } from "@mui/material";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { MdAddHome, MdAllInbox, MdSettings } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import { MdSave } from "react-icons/md";
+import http from "../../components/axios/Axios";
+import React, { useCallback, useEffect } from "react";
 import { TbPlus } from "react-icons/tb";
 
-  const columns = [
-    { name: "Nombre", uid: "Nombre", sortable: true },
-    { name: "Tipo", uid: "Tipo", sortable: true },
-    { name: "Acciones", uid: "Actions" },
-  ];
-  
-  const INITIAL_VISIBLE_COLUMNS = [
-    "Nombre",
-    "Tipo",
-    "Actions",
-  ];
+const columns = [
+  { name: "Nombre", uid: "Nombre", sortable: true },
+  { name: "Tipo", uid: "Tipo", sortable: true },
+  { name: "Acciones", uid: "Actions" },
+];
 
-  const NewBranch = () => {
-    const [user, setUser] = useState({
-      
-    });
+const INITIAL_VISIBLE_COLUMNS = ["Nombre", "Tipo", "Actions"];
 
-    const [visibleColumns, setVisibleColumns] = React.useState(
-        new Set(INITIAL_VISIBLE_COLUMNS)
-      );
-    const fileInputRef = useRef(null);
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-    const [sortDescriptor, setSortDescriptor] = React.useState({
-      column: "age",
-      direction: "ascending",
-    });
-    const handleFileButtonClick = () => {
-      fileInputRef.current.click();
-    };
+const NewBranch = () => {
+  const [user, setUser] = useState({});
 
-    const [data, setData] = useState([]);
+  const [visibleColumns, setVisibleColumns] = React.useState(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
+  const fileInputRef = useRef(null);
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+  const [sortDescriptor, setSortDescriptor] = React.useState({
+    column: "age",
+    direction: "ascending",
+  });
+  const handleFileButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const [data, setData] = useState([]);
   async function loadTask() {
     try {
       const response = await fetch("http://localhost:4000/Almacenes");
@@ -136,11 +130,132 @@ import { TbPlus } from "react-icons/tb";
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+  //Formulario
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isAddingAlmacenes, setIsAddingAlmacenes] = useState(false);
+  const [web, setWeb] = useState(false);
+
+const [formulario, setFormulario] = useState({
+  nombre: "",
+  ciudad: "",
+  estado: "",
+  telefono: "",
+  gerente: "",
+  almacenes:"",
+  web:""
+});
+
+
+const [sucursalDatos,setSucursalDatos]=useState({
+  nombreCorto:"",
+  direccion:"",
+  colonia:"",
+  codigoPostal:"",
+  emailSucursal:"",
+  rfc:"",
+  geoUrlMaps:"",
+  limiteCredito:"",
+  encabezadoPos:"",
+  notaEnviosPos:"",
+  notaTicketPos:"",
+})
+
+const handleAddAlmacenes = () => {
+  // Lógica para agregar almacenes
+  // Cambiar a la vista de agregar almacenes
+  setIsAddingAlmacenes(true);
+  // Cerrar el modal de confirmación
+  setShowConfirmationModal(false);
+};
+
+const handleReturnToMainPage = () => {
+  // Manejar el caso en el que el usuario no quiera agregar almacenes
+  // Cerrar el modal de confirmación
+  setShowConfirmationModal(false);
+  navigate("/Settings/BranchOffices");
+};
+
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
+    setFormulario((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+    setSucursalDatos((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleGuardar = async (e) => {
+    e.preventDefault();
     
+    const valorCheckbox = web ? 1 : 0;
+    try {
+      const response = await fetch("http://localhost:4000/SucursalesAlmacen", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: formulario.nombre,
+          ciudad: formulario.ciudad,
+          estado: formulario.estado,
+          telefono: formulario.telefono,
+          gerente: formulario.gerente,
+          almacenes: formulario.almacenes,
+          web: valorCheckbox, // Aquí guardamos el valor del checkbox
+        }),
+      });
+      console.log(response);
+  
+      if (!response.ok) {
+        toast.warning("Error al almacenar Sucursales");
+        return;
+      }
+
+      // Segunda solicitud POST a la segunda tabla
+      const response2 = await fetch("http://localhost:4000/SucursalesDatos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombreCorto: sucursalDatos.nombreCorto,
+          direccion: sucursalDatos.direccion,
+          colonia: sucursalDatos.colonia,
+          codigoPostal: sucursalDatos.codigoPostal,
+          emailSucursal: sucursalDatos.emailSucursal,
+          rfc: sucursalDatos.rfc,
+          geoUrlMaps: sucursalDatos.geoUrlMaps,
+          limiteCredito: sucursalDatos.limiteCredito,
+          encabezadoPos: sucursalDatos.encabezadoPos,
+          notaEnviosPos: sucursalDatos.notaEnviosPos,
+          notaTicketPos: sucursalDatos.notaTicketPos,
+        }),
+      });
+      console.log(response2);
+      if (!response2.ok) {
+        toast.warning("Error al almacenar Sucursales Datos");
+        return;
+      }
+      toast.success("Almacenado Correctamente")
+      setShowConfirmationModal(true);
+      // Ambas solicitudes POST se completaron con éxito
+    } catch (error) {
+      toast.warning("Error al guardar:");
+      console.error("Error en la segunda solicitud POST:", error);
+    }
+  };
+  
+  //Modal
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [size, setSize] = React.useState("md");
   const sizes = ["md", "lg", "xl", "2xl", "3xl"];
-  const [editingItem, setEditingItem] = useState({ id: "", nombre: "", tipo: "" });
+  const [editingItem, setEditingItem] = useState({
+    nombre: "",
+    tipo: "",
+  });
   const [modalMode, setModalMode] = useState("create");
   const [formData, setFormData] = useState({
     nombre: "",
@@ -151,56 +266,50 @@ import { TbPlus } from "react-icons/tb";
     setModalMode("create");
     onOpen();
     const newData = {
-        nombre: formData.nombre,
-        tipo: formData.tipo,
-      };
-    setData([...data, newData]);
+      nombre: formData.nombre,
+      tipo: formData.tipo,
+    };
+
     setFormData({
       nombre: "",
       tipo: "",
     });
-    
-}
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
   };
 
   const handleEdit = (itemId) => {
     const selectedItem = data.find((item) => item.id === itemId);
     console.log(selectedItem);
-  if (selectedItem) {
-    // Configura el estado del formulario modal con los datos del elemento seleccionado
-    setFormData({
-      nombre: selectedItem.nombre,
-      tipo: selectedItem.tipo,
-    });
-
-    // Abre el modal
-    setModalMode("edit");
-    onOpen();
-  } else {
-    console.error("Elemento no encontrado");
-  }
-};
-  
+    if (selectedItem) {
+      // Configura el estado del formulario modal con los datos del elemento seleccionado
+      setFormData({
+        nombre:selectedItem.nombre,
+        tipo:selectedItem.tipo,
+      })
+      setEditingItem({
+       ...selectedItem});
+      // Abre el modal
+      setModalMode("edit");
+      onOpen();
+    } else {
+      console.error("Elemento no encontrado");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!editingItem.id) {
+      // Manejar el caso en el que editingItem.id no tenga un valor válido
+      console.error("ID de almacén no válido");
+      return;
+    }
 
     const updatedData2 = {
-      //Editar y crear
       nombre: formData.nombre,
       tipo: formData.tipo,
     };
-    console.log(updatedData2);
+
     try {
       if (modalMode === "create") {
-        // Crear nuevo elemento
         const response = await fetch("http://localhost:4000/Almacenes", {
           method: "POST",
           headers: {
@@ -208,9 +317,20 @@ import { TbPlus } from "react-icons/tb";
           },
           body: JSON.stringify(updatedData2),
         });
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result);
+          setData([...data, result]);
+          console.log(data);
+          toast.success("Almacén Creado");
+          onClose(true);
+        } else {
+          const json = await response.json();
+          toast.error(json.body.error, { theme: "colored" });
+        }
       } else if (modalMode === "edit") {
         // Editar elemento existente
-        const response = await fetch(
+        const res = await fetch(
           `http://localhost:4000/Almacenes/${editingItem.id}`,
           {
             method: "PUT",
@@ -220,344 +340,475 @@ import { TbPlus } from "react-icons/tb";
             body: JSON.stringify(updatedData2),
           }
         );
-      }
-      if (response.ok) {
-        // Si la operación de creación o edición fue exitosa, actualiza la tabla
-        await loadTask();
-        setFormData({
-          nombre: "",
-          tipo: "",
-        });
-        onClose(true); // Cierra el modal
-      } else {
-        console.error("Error en la solicitud HTTP.");
+  
+        if (res.ok) {
+          const result = await res.json();
+          // Actualizar el elemento existente en lugar de agregar uno nuevo
+          const updatedData = data.map((item) =>
+            item.id === result.id ? result : item
+          );
+          setData(updatedData);
+          toast.success("Almacén Editado");
+          onClose(true);
+        } else {
+          const json = await res.json();
+          toast.error(json.body.error, { theme: "colored" });
+        }
       }
     } catch (error) {
-      console.error("Error al realizar la operación:", error);
-      // Manejar el error
+      toast.warning(error.message);
     }
   };
 
-    const navigate = useNavigate();
-    
-    const renderCell = React.useCallback((data, columnKey) => {
-        const cellValue = data[columnKey];
-    
-        switch (columnKey) {
-          case "Nombre":
-            return (
-              <div className="flex flex-col">
-                <p className="text-bold text-small capitalize">{data.nombre}</p>
-              </div>
-            );
-          case "Tipo":
-            return (
-              <div className="flex flex-col">
-                <p className="text-bold text-small capitalize">{data.tipo}</p>
-              </div>
-            );
-          case "Actions":
-            return (
-              <div className="relative flex justify-center items-center gap-2">
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button isIconOnly size="sm" variant="light">
-                      <TbDotsVertical className="text-default-300" />
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu>
-                    <DropdownItem onClick={()=>handleEdit(data.id)}>Editar Almacén</DropdownItem>
-                    <DropdownItem>Deshabilitar Almacén</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
-            );
-          default:
-            return cellValue;
+  const handleDisableAlmacen = async (almacenId) => {
+    try {
+      // Hacer una solicitud a la API para deshabilitar el almacén
+      const response = await fetch(
+        `http://localhost:4000/AlmacenesDisable/${almacenId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      }, []);
+      );
 
-    return (
-      <>
-        <Header />
-        <ItemsHeader />
-        <ToastContainer />
-        <main>
-          <div className="p-12">
-            {/* <div className="p-12 bg-gray-100"> */}
-            <div className="">
+      if (response.ok) {
+        // Actualizar la tabla de almacenes después de deshabilitar
+        const updatedData = data.filter((almacen) => almacen.id !== almacenId);
+        setData(updatedData);
+        toast.success("Almacén deshabilitado");
+      } else {
+        // Manejar errores si la respuesta no es exitosa
+        console.error("Error al deshabilitar el almacén:", response.status);
+      }
+    } catch (error) {
+      toast.warning(error.message);
+      // Manejar el error
+    }
+  };
+  
+
+  const navigate = useNavigate();
+
+  const renderCell = React.useCallback((data, columnKey) => {
+    const cellValue = data[columnKey];
+
+    switch (columnKey) {
+      case "Nombre":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
+          </div>
+        );
+      case "Tipo":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.tipo}</p>
+          </div>
+        );
+      case "Actions":
+        return (
+          <div className="relative flex justify-center items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <TbDotsVertical className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem onClick={() => handleEdit(data.id)}>
+                  Editar Almacén
+                </DropdownItem>
+                <DropdownItem onClick={() => handleDisableAlmacen(data.id)}>
+                  Deshabilitar Almacén</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <ItemsHeader />
+      <ToastContainer />
+      <main>
+        <div className="p-12">
+          {/* <div className="p-12 bg-gray-100"> */}
+          <div className="">
+            <div>
               <div>
-                <div>
-                  <Breadcrumbs aria-label="breadcrumb" color="foreground">
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Home`)}
-                    >
-                      <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Inicio
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Settings`)}
-                    >
-                      <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Ajustes
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Settings/BranchOffices`)}
-                    >
-                      <MdAddHome sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Sucursales
-                    </Link>
-                    <Typography
-                      sx={{ display: "flex", alignItems: "center" }}
-                      className="text-foreground"
-                    >
-                      <MdAllInbox sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Sucursal
-                    </Typography>
-                  </Breadcrumbs>
-                </div>
-                <form>
-                  <Spacer y={6} />
-                  <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
-                    <div className="col-span-1">
-                      <div className="grid gap-5  md:grid-cols-5  justify-center">
-                        <Spacer y={6} />
-                        <div className="md:col-span-6"></div>
-                        <div className="md:col-span-6">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Nombre de la sucursal"
-                            name="nombre"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
+                <Breadcrumbs aria-label="breadcrumb" color="foreground">
+                  <Link
+                    className="text-foreground"
+                    underline="hover"
+                    sx={{ display: "flex", alignItems: "center" }}
+                    color="foreground"
+                    href="#"
+                    onClick={() => navigate(`/Home`)}
+                  >
+                    <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Inicio
+                  </Link>
+                  <Link
+                    className="text-foreground"
+                    underline="hover"
+                    sx={{ display: "flex", alignItems: "center" }}
+                    color="foreground"
+                    href="#"
+                    onClick={() => navigate(`/Settings`)}
+                  >
+                    <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Ajustes
+                  </Link>
+                  <Link
+                    className="text-foreground"
+                    underline="hover"
+                    sx={{ display: "flex", alignItems: "center" }}
+                    color="foreground"
+                    href="#"
+                    onClick={() => navigate(`/Settings/BranchOffices`)}
+                  >
+                    <MdAddHome sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Sucursales
+                  </Link>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center" }}
+                    className="text-foreground"
+                  >
+                    <MdAllInbox sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Sucursal
+                  </Typography>
+                </Breadcrumbs>
+              </div>
+              <form>
+                <Spacer y={6} />
+                <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
+                  <div className="col-span-1">
+                    <div className="grid gap-5  md:grid-cols-5  justify-center">
+                      <Spacer y={6} />
+                      <div className="md:col-span-6"></div>
+                      <div className="md:col-span-6">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Nombre de la sucursal"
+                          name="nombre"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={formulario.nombre}
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Nombre Corto"
+                          name="nombreCorto"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.nombreCorto}
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Gerente de la Sucursal"
+                          name="gerente"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={formulario.gerente}
+                        />
+                      </div>
+                      <div className="md:col-span-12">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Dirección"
+                          name="direccion"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.direccion}
+                        />
+                      </div>
+                      <div className="md:col-span-12">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Colonia"
+                          name="colonia"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.colonia}
+                        />
+                      </div>
+                      <div className="md:col-span-4">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Ciudad"
+                          name="ciudad"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={formulario.ciudad}
+                        />
+                      </div>
+                      <div className="md:col-span-4">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Estado"
+                          name="estado"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={formulario.estado}
+                        />
+                      </div>
+                      <div className="md:col-span-4">
+                        <Input
+                          size={"sm"}
+                          type="number"
+                          label="Código Postal"
+                          name="codigoPostal"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.codigoPostal}
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Input
+                          size={"sm"}
+                          type="number"
+                          label="Telefono"
+                          name="telefono"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={formulario.telefono}
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Input
+                          size={"sm"}
+                          type="email"
+                          label="Email Sucursal"
+                          name="emailSucursal"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.emailSucursal}
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Input
+                          size={"sm"}
+                          type="number"
+                          label="Almacenes"
+                          name="almacenes"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={formulario.almacenes}
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="R.F.C."
+                          name="rfc"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.rfc}
+                        />
+                      </div>
+                      <div className="md:col-span-12">
+                        <Input
+                          size={"sm"}
+                          type="text"
+                          label="Geo URL de Google Maps"
+                          name="geoUrlMaps"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.geoUrlMaps}
+                        />
+                        <label
+                          htmlFor="url"
+                          className="text-default-400 text-small"
+                        >
+                          Capturar en Formato iFrame:
+                          https://www.google.com/maps/xxxxxxxxxx
+                        </label>
+                      </div>
+                      <div className="md:col-span-12">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            defaultSelected
+                            size="sm"
+                            id="webPageCheckbox"
+                            checked={web}
+                            onChange={(e) => setWeb(e.target.checked)}
                           />
-                        </div>
-                        <div className="md:col-span-3">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Nombre Corto"
-                            name="nombreCorto"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-3">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Gerente de la Sucursal"
-                            name="gerenteSucursal"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-12">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Dirección"
-                            name="direccion"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-12">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Colonia"
-                            name="colonia"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Ciudad"
-                            name="ciudad"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Estado"
-                            name="estado"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="number"
-                            label="Código Postal"
-                            name="codigoPostal"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="number"
-                            label="Telefono"
-                            name="telefono"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="email"
-                            label="Email Sucursal"
-                            name="emailSucursal"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="R.F.C."
-                            name="rfc"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-12">
-                          <Input
-                            size={"sm"}
-                            type="text"
-                            label="Geo URL de Google Maps"
-                            name="url"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                          <label
-                            htmlFor="url"
-                            className="text-default-400 text-small"
-                          >
-                            Capturar en Formato iFrame:
-                            https://www.google.com/maps/embed?xxxxxxxxxx
+                          <label htmlFor="webPageCheckbox">
+                            Mostrar en página web
                           </label>
                         </div>
-                        <div className="md:col-span-12">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              defaultSelected
-                              size="sm"
-                              id="webPageCheckbox"
-                            />
-                            <label htmlFor="webPageCheckbox">
-                              Mostrar en página web
-                            </label>
-                          </div>
-                        </div>
-                        <div className="md:col-span-4">
-                          <Input
-                            size={"sm"}
-                            type="number"
-                            label="Límite de Credito M.N"
-                            name="limiteCreditoM.N"
-                            labelPlacement="outside"
-                            placeholder=" "
-                            variant="faded"
-                          />
-                        </div>
-                        <div className="md:col-span-12"></div>
-                        <div className="md:col-span-12 flex space-x-5">
-                          <Textarea
-                            label="Encabezado ticket POS(HTML)"
-                            labelPlacement="outside"
-                            placeholder=""
-                            className="max-w-xs"
-                          />
-                          <Textarea
-                            label="Nota para envíos ticket POS(HTML)"
-                            labelPlacement="outside"
-                            placeholder=""
-                            className="max-w-xs"
-                          />
-                          <Textarea
-                            label="Nota ticket POS(HTML)"
-                            labelPlacement="outside"
-                            placeholder=""
-                            className="max-w-xs"
-                          />
-                        </div>
-                        
+                      </div>
+                      <div className="md:col-span-4">
+                        <Input
+                          size={"sm"}
+                          type="number"
+                          label="Límite de Credito M.N"
+                          name="limiteCredito"
+                          labelPlacement="outside"
+                          placeholder=" "
+                          variant="faded"
+                          onChange={handleNameChange}
+                          value={sucursalDatos.limiteCredito}
+                        />
+                      </div>
+                      <div className="md:col-span-12"></div>
+                      <div className="md:col-span-12 flex space-x-5">
+                        <Textarea
+                          label="Encabezado ticket POS(HTML)"
+                          labelPlacement="outside"
+                          placeholder=""
+                          className="max-w-xs"
+                          value={sucursalDatos.encabezadoPos}
+                          onChange={(e) =>
+                            setSucursalDatos({
+                              ...sucursalDatos,
+                              encabezadoPos: e.target.value,
+                            })
+                          }
+                        />
+                        <Textarea
+                          label="Nota para envíos ticket POS(HTML)"
+                          labelPlacement="outside"
+                          placeholder=""
+                          className="max-w-xs"
+                          value={sucursalDatos.notaEnviosPos}
+                          onChange={(e) =>
+                            setSucursalDatos({
+                              ...sucursalDatos,
+                              notaEnviosPos: e.target.value,
+                            })
+                          }
+                        />
+                        <Textarea
+                          label="Nota ticket POS(HTML)"
+                          labelPlacement="outside"
+                          placeholder=""
+                          className="max-w-xs"
+                          value={sucursalDatos.notaTicketPos}
+                          onChange={(e) =>
+                            setSucursalDatos({
+                              ...sucursalDatos,
+                              notaTicketPos: e.target.value,
+                            })
+                          }
+                        />
                       </div>
                     </div>
-                    <Spacer y={10} />
                   </div>
-                  <div className="md:col-span-12 flex justify-end">
-                    <div className="flex justify-end space-x-5 mt-10">
-                      <Button
-                        className="min-w-[200px]"
-                        color="success"
-                        type="submit"
-                        endContent={<MdSave />}
-                      >
-                        Guardar
-                      </Button>
-                      <Button
-                        className="min-w-[200px]"
-                        color="danger"
-                        type="submit"
-                      >
-                        Cancelar
-                      </Button>
-                    </div>
-                    <Spacer y={3} />
-                  </div>
-                </form>
-                <Spacer y={25} />
-                <div>
+                  <Spacer y={10} />
+                </div>
+                <div className="md:col-span-12 flex justify-end">
                   <div className="flex justify-end space-x-5 mt-10">
-                    <Button size="sm" color="primary" endContent={<TbPlus />}
-                     onClick={handleCreate}>
-                      Crear Nuevo Almacén
+                    <Button
+                      className="min-w-[200px]"
+                      color="success"
+                      type="submit"
+                      endContent={<MdSave />}
+                      onClick={handleGuardar}
+                    >
+                      Guardar
+                    </Button>
+                    <Button
+                      className="min-w-[200px]"
+                      color="warning"
+                      type="submit"
+                      onClick={()=>navigate("/Settings/BranchOffices")}
+                    >
+                      Regresar
                     </Button>
                   </div>
+                  <Spacer y={3} />
                 </div>
-                <Spacer y={3} />
+              </form>
+              <Spacer y={25} />
+              {showConfirmationModal &&(
+              <Modal size={size} isOpen={showConfirmationModal} onClose={handleReturnToMainPage}>
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-1"></ModalHeader>
+                      <ModalBody>
+                        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
+                          <div className="md:col-span-12"></div>
+                          <div className="md:col-span-12">
+                          <h2>¿Desea agregar Almacenes?</h2>
+                          </div>
+                        </div>
+                      </ModalBody>
+                      <ModalFooter>
+                      <Button color="primary" onClick={()=>{
+                            setShowConfirmationModal(false);
+                            setIsAddingAlmacenes(true);
+                          }}>
+                            Si
+                          </Button>
+                      <Button color="danger" onClick={onClose}>
+                            No
+                          </Button>
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>)}
+              {isAddingAlmacenes && (
                 <div style={{ marginLeft: "20px", marginRight: "20px" }}>
+                  <div>
+                    <div className="flex justify-end space-x-5 mt-10">
+                      <Button
+                        size="sm"
+                        color="primary"
+                        endContent={<TbPlus />}
+                        onClick={handleCreate}
+                      >
+                        Crear Nuevo Almacén
+                      </Button>
+                    </div>
+                  </div>
+                  <Spacer y={3} />
                   <Table
                     aria-label="Example table with custom cells, pagination and sorting"
                     isHeaderSticky
@@ -584,8 +835,8 @@ import { TbPlus } from "react-icons/tb";
                       emptyContent={"No se encuentran Sucursales"}
                       items={sortedItems}
                     >
-                      {data.map((dato,index) => (
-                        <TableRow key={index.id}>
+                      {data.map((dato, index) => (
+                        <TableRow key={dato.id}>
                           {(columnKey) => (
                             <TableCell>{renderCell(dato, columnKey)}</TableCell>
                           )}
@@ -614,7 +865,12 @@ import { TbPlus } from "react-icons/tb";
                                       ? formData.nombre
                                       : ""
                                   }
-                                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                                  onChange={(e) =>
+                                    setFormData({
+                                      ...formData,
+                                      nombre: e.target.value,
+                                    })
+                                  }
                                   size={"sm"}
                                   type="text"
                                   label="Nombre"
@@ -634,7 +890,12 @@ import { TbPlus } from "react-icons/tb";
                                       ? formData.tipo
                                       : ""
                                   }
-                                  onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
+                                  onChange={(e) =>
+                                    setFormData({
+                                      ...formData,
+                                      tipo: e.target.value,
+                                    })
+                                  }
                                   size={"sm"}
                                   type="text"
                                   label="Tipo"
@@ -647,17 +908,14 @@ import { TbPlus } from "react-icons/tb";
                             </div>
                           </ModalBody>
                           <ModalFooter>
-                            { (
+                            {
                               <Button color="primary" onClick={handleSubmit}>
                                 {modalMode === "edit"
                                   ? "Guardar Cambios"
                                   : "Crear"}
                               </Button>
-                            )}
-                            <Button
-                              color="danger"
-                              onPress={onClose}
-                            >
+                            }
+                            <Button color="danger" onPress={onClose}>
                               Cerrar
                             </Button>
                           </ModalFooter>
@@ -666,12 +924,12 @@ import { TbPlus } from "react-icons/tb";
                     </ModalContent>
                   </Modal>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-        </main>
-      </>
-    );
-  };
-  export default NewBranch;
-  
+        </div>
+      </main>
+    </>
+  );
+};
+export default NewBranch;

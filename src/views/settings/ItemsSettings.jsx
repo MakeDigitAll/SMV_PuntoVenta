@@ -33,7 +33,7 @@ const ItemsSettings = () => {
             id: 3,
             name: "Sucursales",
             icon: BiStoreAlt,
-            address: "BranchOffices",
+            address: () => navigate(`/${"Settings/BranchOffices"}`),
             roleId: "0",
         },
         {
