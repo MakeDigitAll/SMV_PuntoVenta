@@ -354,35 +354,45 @@ const PaymentMethodList = () => {
   const handleDisable = (id) => {
     console.log("Este es el id a deshabilitar: ", id);
     onOpenSecondModal();
-    setDataDisable(id);
   };
 
   async function handleDisableTrue(id) {
-    setDataDisable(id)
-    console.log("Primer consulta id",dataDisable);
-    try {
-      const res = await fetch(`http://localhost:4000/FormasPagoDisable/${dataDisable}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datosListado),
-      });
-      console.log("segunda consulta ID", dataDisable)
-      if (res.ok) {
-        toast.success("Deshabilitando Forma de Pago", {
+    const datoDisable = {
+      id: task.id
+    };
+    console.log(datoDisable.id);
+
+    async function disable() {
+      try {
+        const res = await fetch(`http://localhost:4000/FormasPagoDisable/${datoDisable.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datoDisable),
+        });
+        if (res.ok) {
+          toast.warning("Dehabilitando Forma de Pago", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setDisableCounter((prevCounter) => prevCounter + 1);
+          onCloseSecondModal(true);
+        } else {
+          toast.error("Error al deshabilitar forma de pago", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      } catch (error) {
+        toast.error("Error al deshabilitar forma de pago", {
           position: "bottom-right",
           theme: "colored",
-        });setDisableCounter((prevCounter) => prevCounter + 1);
-        onCloseSecondModal(true);
+        });
       }
-    } catch (error) {
-      toast.error("Error al deshabilitar la forma de pago", {
-        position: "bottom-right",
-        theme: "colored",
-      });
+    }
+    disable();
   }
-}
 
   const [value, setValue] = React.useState("junior2nextui.org");
 
