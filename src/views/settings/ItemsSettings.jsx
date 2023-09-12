@@ -26,14 +26,14 @@ const ItemsSettings = () => {
             id: 2,
             name: "Perfiles de Seguridad",
             icon: MdSecurity,
-            address: "PerfilesSeguridad",
+            address: () => navigate(`/${"Settings/SecuritProfiles"}`),
             roleId: "0",
         },
         {
             id: 3,
             name: "Sucursales",
             icon: BiStoreAlt,
-            address: "BranchOffices",
+            address: () => navigate(`/${"Settings/BranchOffices"}`),
             roleId: "0",
         },
         {
