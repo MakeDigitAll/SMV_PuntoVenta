@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -8,11 +8,19 @@ import "./ChatBox.css";
 import InputEmoji from "react-input-emoji";
 import { Button, Spinner } from "@nextui-org/react";
 import { RiPlaneLine } from "react-icons/ri";
-const ChatBox = (chat, setSendMessage) => {
+const ChatBox = (chat, setSendMessage, receiveMessage) => {
   const [userData, setUserData] = useState([]);
   const [messages, setMessages] = useState([]);
   const [newMessages, setNewMessages] = useState("");
   const auth = useAuth();
+
+  useEffect(() => {
+    if (receiveMessage !== null && receiveMessage?.chatId == chat?.id) {
+      console.log(receiveMessage);
+      setMessages([...messages, receiveMessage]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [receiveMessage]);
   useEffect(() => {
     const getUser = async (userInfor) => {
       try {
@@ -83,12 +91,13 @@ const ChatBox = (chat, setSendMessage) => {
     } catch (error) {
       toast.warning(error.message);
     }
+    let receiverId = null;
+    console.log(chat.chat.receptor);
+    chat.chat.receptor !== auth.getUser()?.id
+      ? receiverId == chat.chat.receptor
+      : receiverId == chat.chat.emisor;
+    setSendMessage({ ...messages, receiverId });
   };
-  let receiverId = null;
-  chat.chat.receptor !== auth.getUser()?.id
-    ? receiverId == chat.chat.receptor
-    : receiverId == chat.chat.emisor;
-    setSendMessage(receiverId);
   return (
     <div className="ChatBox-container">
       <>
@@ -109,12 +118,12 @@ const ChatBox = (chat, setSendMessage) => {
             marginTop: "20px",
           }}
         />
-        {messages.length === 0 ? (
+        {messages == undefined ? (
           <Spinner />
         ) : (
           <div className="chat-body">
             {messages.map((message) => (
-              <>
+              <React.Fragment key={message.id}>
                 <div
                   className={
                     parseInt(message.remitenteId) === auth.getUser()?.id
@@ -122,12 +131,14 @@ const ChatBox = (chat, setSendMessage) => {
                       : "message your"
                   }
                 >
-                  <div className="message-text">{message.mensaje}</div>
+                  <div className="message-text" key={message.id}>
+                    {message.mensaje}
+                  </div>
                   <div className="message-time">
                     {format(message.createdAt)}
                   </div>
                 </div>
-              </>
+              </React.Fragment>
             ))}
           </div>
         )}

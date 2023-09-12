@@ -14,21 +14,29 @@ const Chat = () => {
   const [chats, setChats] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [sendMessage, setSendMessage] = useState(null);
-  // eslint-disable-next-line no-unsafe-optional-chaining
-  const { user } = auth.getUser()?.id;
+  const [receiveMessage, setReceiveMessage] = useState(null);
+  const { user } = auth.getUser().id;
   useEffect(() => {
+    console.log(sendMessage)
     if (sendMessage !== null) {
       socket.current.emit("send-message", sendMessage);
     }
-  });
+  }, [sendMessage]);
   useEffect(() => {
     socket.current = io("http://localhost:8800");
     socket.current.emit("new-user-add", auth.getUser()?.id);
     socket.current.on("get-user", (users) => {
       setOnlineUsers(users);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [auth, user]);
+  useEffect(() => {
+    console.log(sendMessage)
+    if (sendMessage !== null) {
+      socket.current.on("recieve-message", (data) => {
+        setReceiveMessage(data);
+      });
+    }
+  });
   useEffect(() => {
     const getChats = async () => {
       try {
@@ -41,6 +49,7 @@ const Chat = () => {
     };
     getChats();
   }, [auth]);
+  console.log(receiveMessage)
   return (
     <div>
       <Header />
@@ -56,13 +65,17 @@ const Chat = () => {
           </div>
         </div>
         <div className="Right-side-chat">
-          {currentChat === null ? ( // Si no hay ningun chat seleccionado
+          {currentChat === null ? ( 
             <div className="No-chat">
               <h1>Selecciona un chat para comenzar</h1>
             </div>
           ) : (
             <div className="No-chat">
-              <ChatBox chat={currentChat} setSendMessage={setSendMessage} />
+              <ChatBox
+                chat={currentChat}
+                setSendMessage={setSendMessage}
+                receiveMessage={receiveMessage}
+              />
             </div>
           )}
         </div>
