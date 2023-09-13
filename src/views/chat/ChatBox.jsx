@@ -16,8 +16,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
 
   useEffect(() => {
     if (receiveMessage !== null && receiveMessage?.chatId == chat?.id) {
-      console.log(receiveMessage);
-      setMessages([...messages, receiveMessage]);
+      //setMessages([...messages, receiveMessage]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receiveMessage]);
@@ -92,7 +91,6 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
       toast.warning(error.message);
     }
     let receiverId = null;
-    console.log(chat.chat.receptor);
     chat.chat.receptor !== auth.getUser()?.id
       ? receiverId == chat.chat.receptor
       : receiverId == chat.chat.emisor;
@@ -118,29 +116,32 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
             marginTop: "20px",
           }}
         />
-        {messages == undefined ? (
+        {messages.length < 0 ? (
           <Spinner />
         ) : (
-          <div className="chat-body">
-            {messages.map((message) => (
-              <React.Fragment key={message.id}>
-                <div
-                  className={
-                    parseInt(message.remitenteId) === auth.getUser()?.id
-                      ? "message own"
-                      : "message your"
-                  }
-                >
-                  <div className="message-text" key={message.id}>
-                    {message.mensaje}
+          <>
+            <div className="chat-body">
+              {messages.map((message) => (
+                <React.Fragment key={message.id}>
+                  <div
+                    className={
+                      parseInt(message.remitenteId) === auth.getUser()?.id
+                        ? "message own"
+                        : "message your"
+                    }
+                  >
+                    <div className="message-text" key={message.id}>
+                      {message.mensaje}
+                    </div>
+                    <div className="message-time">
+                      {format(message.createdAt)}
+                    </div>
                   </div>
-                  <div className="message-time">
-                    {format(message.createdAt)}
-                  </div>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
+                </React.Fragment>
+              ))}
+            </div>
+            <div></div>
+          </>
         )}
         <div className="chat-sender">
           <div>+</div>

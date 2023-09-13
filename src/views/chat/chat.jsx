@@ -17,7 +17,6 @@ const Chat = () => {
   const [receiveMessage, setReceiveMessage] = useState(null);
   const { user } = auth.getUser().id;
   useEffect(() => {
-    console.log(sendMessage)
     if (sendMessage !== null) {
       socket.current.emit("send-message", sendMessage);
     }
@@ -30,7 +29,6 @@ const Chat = () => {
     });
   }, [auth, user]);
   useEffect(() => {
-    console.log(sendMessage)
     if (sendMessage !== null) {
       socket.current.on("recieve-message", (data) => {
         setReceiveMessage(data);
@@ -49,10 +47,8 @@ const Chat = () => {
     };
     getChats();
   }, [auth]);
-  console.log(receiveMessage)
   return (
     <div>
-      
       <Spacer y={6} />
       <div className="Chat">
         <div className="Left-side-chat">
@@ -65,7 +61,7 @@ const Chat = () => {
           </div>
         </div>
         <div className="Right-side-chat">
-          {currentChat === null ? ( 
+          {currentChat === null ? (
             <div className="No-chat">
               <h1>Selecciona un chat para comenzar</h1>
             </div>
