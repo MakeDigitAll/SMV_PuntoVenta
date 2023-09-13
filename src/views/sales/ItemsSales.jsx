@@ -1,4 +1,4 @@
-import Header from "../../components/header/headerC/Header";
+
 import { Accordion, AccordionItem, Card, CardBody, Spacer } from "@nextui-org/react";
 import { TbRoad } from "react-icons/tb";
 import {
@@ -79,7 +79,7 @@ const ItemsSales = () => {
 
   return (
     <div className="place-content-center">
-      <Header />
+      
       <ItemsHeader />
       <ToastContainer
         position="top-right"

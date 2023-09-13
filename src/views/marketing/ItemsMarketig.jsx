@@ -1,4 +1,4 @@
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import { TbMailDollar, TbMoodDollar, TbRoad } from "react-icons/tb";
@@ -79,7 +79,7 @@ const ItemsSMarketing = () => {
 
     return(
         <div className="place-content-center">
-            <Header />
+            
             <ItemsHeader />
             <div>
         <Breadcrumbs aria-label="breadcrumb" color="foreground">

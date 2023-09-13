@@ -98,7 +98,7 @@ const AddExcelProducts = () => {
   
       // Realiza un mapeo individual para cada valor
       const responseArray = await Promise.all(datosAEnviar.map(async (valor, index) => {
-        const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Productos`, {
+        const response = await fetch(`http://localhost:4000/Productos`, {
           method: 'POST',
           body: JSON.stringify(valor),
           headers: {

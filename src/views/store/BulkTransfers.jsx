@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -261,7 +261,7 @@ const BulkTransfers = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"

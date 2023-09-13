@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from "@nextui-org/react";
 import {useParams, useNavigate} from 'react-router-dom';
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
@@ -33,7 +33,7 @@ const VerAlmacen = () => {
 
     const loadTask = async (id) => {
         try{
-        const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Almacenes/${id}`)
+        const response = await fetch(`http://localhost:4000/Almacenes/${id}`)
         const data = await  response.json()
         setTask({nombre: data.nombre, tipo: data.tipo})
        
@@ -63,7 +63,7 @@ const VerAlmacen = () => {
 
     return(
         <>
-        <Header />
+        
         <div style={{  width: "100%", height: "800px", overflow: "hidden", marginTop: "10px" }}>
           
           <div style={{  width: "280px", height: "600px", float: "right", marginTop: "20px", marginRight: "5px" }}>

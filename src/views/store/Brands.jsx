@@ -13,13 +13,10 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
+  User,  
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
-
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -225,7 +222,7 @@ const Brands = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"

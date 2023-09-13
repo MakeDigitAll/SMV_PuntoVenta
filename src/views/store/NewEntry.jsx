@@ -10,7 +10,7 @@ import {
   import { useMemo, useRef, useState } from "react";
   import { ToastContainer, toast } from "react-toastify";
   import "react-toastify/dist/ReactToastify.css";
-  import Header from "../../components/header/headerC/Header.jsx";
+  
   //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
   import { Breadcrumbs, Typography } from "@mui/material";
   import { RiDashboard2Fill} from "react-icons/ri";
@@ -59,7 +59,7 @@ import {
     const [selected, setSelected] = useState("photos");
     return (
       <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer />
         <main>

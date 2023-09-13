@@ -1,4 +1,4 @@
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import { BiAlarm, BiArchiveOut, BiBarChartAlt, BiBarChartSquare, BiBookOpen, BiBookmarkPlus, BiBox, BiBullseye, BiCalendarAlt, BiCheckShield, BiClipboard, BiCreditCardFront, BiDollar, BiKey, BiMoneyWithdraw, BiSolidBarChartSquare, BiStar, BiTransfer } from "react-icons/bi";
@@ -113,7 +113,7 @@ const ItemsAdministration = () => {
 
     return(
         <div className="place-content-center">
-            <Header />
+            
             <ItemsHeader />
             <div>
         <Breadcrumbs aria-label="breadcrumb" color="foreground">

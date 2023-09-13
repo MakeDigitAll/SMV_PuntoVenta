@@ -24,7 +24,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill, RiSdCardFill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+
 const columns = [
   { name: "ID", uid: "id" },
   { name: "Serie", uid: "serie", sortable: true },
@@ -232,7 +232,7 @@ const CreditNotes = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
+
           <ItemsHeader />
           <ToastContainer
             position="top-right"
@@ -399,7 +399,7 @@ const CreditNotes = () => {
               </select>
             </label>
           </div>
-        </DefaultLayout>
+
       </>
     );
   }, [ navigate]);

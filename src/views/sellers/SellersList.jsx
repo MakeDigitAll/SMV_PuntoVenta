@@ -1,7 +1,7 @@
 import React from "react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue} from "@nextui-org/react";
 import { MdDelete, MdEdit, MdRemoveRedEye } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 
@@ -135,7 +135,7 @@ const SellersList = () => {
 
     return (
         <>
-        <Header />
+        
         <ItemsHeader />
         <div>
         <Breadcrumbs aria-label="breadcrumb" color="foreground">

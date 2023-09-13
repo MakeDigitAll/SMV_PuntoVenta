@@ -1,5 +1,5 @@
 import "./Chat.css";
-import Header from "../../components/header/headerC/Header";
+
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import axios from "axios";
@@ -52,7 +52,7 @@ const Chat = () => {
   console.log(receiveMessage)
   return (
     <div>
-      <Header />
+      
       <Spacer y={6} />
       <div className="Chat">
         <div className="Left-side-chat">

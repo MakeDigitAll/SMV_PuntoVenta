@@ -25,7 +25,6 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
 import UserImage from "./UserImage";
 const columns = [
   { name: "Imagen", uid: "Imagen" },
@@ -262,126 +261,154 @@ const Users = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
-          <ItemsHeader />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-          <div
-            role="presentation"
-            onClick={handleClickBreadCrumbs}
-            className="text-foreground"
-          >
-            <Breadcrumbs aria-label="breadcrumb" color="foreground">
-              <Link
-                className="text-foreground"
-                underline="hover"
-                sx={{ display: "flex", alignItems: "center" }}
-                color="foreground"
-                href="#"
-                onClick={() => navigate(`/Home`)}
-              >
-                <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Inicio
-              </Link>
-              <Typography
-                sx={{ display: "flex", alignItems: "center" }}
-                className="text-foreground"
-              >
-                <RiUser2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Usuarios
-              </Typography>
-            </Breadcrumbs>
+        <ItemsHeader />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div
+          role="presentation"
+          onClick={handleClickBreadCrumbs}
+          className="text-foreground"
+        >
+          <Breadcrumbs aria-label="breadcrumb" color="foreground">
+            <Link
+              className="text-foreground"
+              underline="hover"
+              sx={{ display: "flex", alignItems: "center" }}
+              color="foreground"
+              href="#"
+              onClick={() => navigate(`/Home`)}
+            >
+              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+              Inicio
+            </Link>
+            <Typography
+              sx={{ display: "flex", alignItems: "center" }}
+              className="text-foreground"
+            >
+              <RiUser2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+              Usuarios
+            </Typography>
+          </Breadcrumbs>
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={{ marginLeft: "10px", marginRight: "10px" }}
+        >
+          <Spacer y={8} />
+          <div className="flex flex-wrap space space-x-4 ">
+            <Input
+              isClearable
+              size="md"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Nombre/ Apellido"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="md"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Correo electronico"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
           </div>
-          <div
-            className="flex flex-col gap-4"
-            style={{ marginLeft: "10px", marginRight: "10px" }}
-          >
-            <Spacer y={8} />
-            <div className="flex flex-wrap space space-x-4 ">
-              <Input
-                isClearable
-                size="md"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Nombre/ Apellido"
-                startContent={<MdSearch />}
-                value={filterValueName}
-                onClear={() => onClear("name")}
-                onValueChange={(newValue) => onSearchChange("name", newValue)}
-              />
-              <Input
-                isClearable
-                size="md"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Correo electronico"
-                startContent={<MdSearch />}
-                value={filterValueEmail}
-                onClear={() => onClear("email")}
-                onValueChange={(newValue) => onSearchChange("email", newValue)}
-              />
-            </div>
-            <div className="flex flex-wrap place-content-end space-x-2">
-              <Button
-                onPress={() => navigate(`/Settings/User`)}
-                size="sm"
-                color="primary"
-                endContent={<TbPlus />}
-              >
-                Nuevo usuario
-              </Button>
-            </div>
+          <div className="flex flex-wrap place-content-end space-x-2">
+            <Button size="sm" color="warning" endContent={<TbReload />}>
+              Actualizar precios
+            </Button>
+            <Button size="sm" color="warning" endContent={<TbReload />}>
+              Actualizar costos
+            </Button>
+            <Button
+              onPress={() => navigate(`/Settings/User`)}
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+            >
+              Nuevo usuario
+            </Button>
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-wrap text-small space-x-3">
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Columnas
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap text-small space-x-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
                 >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            
-            </div>
-            <label className="flex items-center text-small">
-              Productos por página:
-              <select
-                className="bg-transparent outline-none text-small"
-                onChange={onRowsPerPageChange}
+                  Columnas
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </label>
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                  size="sm"
+                >
+                  Acciones
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           </div>
-        </DefaultLayout>
+          <label className="flex items-center text-small">
+            Productos por página:
+            <select
+              className="bg-transparent outline-none text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
       </>
     );
   }, [
@@ -406,7 +433,6 @@ const Users = () => {
         <Pagination
           isCompact
           showControls
-          showShadow
           classNames={{
             cursor: "bg-foreground text-background",
           }}

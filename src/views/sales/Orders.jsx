@@ -13,8 +13,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
   Chip,
 } from "@nextui-org/react";
 
@@ -26,8 +24,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 const statusOptions = [
   { name: "Active", uid: "active" },
   { name: "Paused", uid: "paused" },
@@ -84,7 +81,7 @@ const Orders = () => {
   const [foliofiltrado, setFolio] = useState(" ");
   const [AlmacenData, setAlmacenData] = useState([]);
   const loadCotizaciones = async () => {
-    const response = await fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Cotizaciones');
+    const response = await fetch('http://localhost:4000/Cotizaciones');
     const data = await response.json();
     const cotizacionesConStatus1 = data.filter(cotizacion => cotizacion.status === 1);
     setCotizacionesData(cotizacionesConStatus1);
@@ -92,7 +89,7 @@ const Orders = () => {
     loadAlmacen();
   }
   const loadAlmacen = async () => {
-    const response = await fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/OrdenCompra/ListadoEntradas');
+    const response = await fetch('http://localhost:4000/OrdenCompra/ListadoEntradas');
     const data = await response.json();
     const AlmacenStatus1 = data.filter(Almacen => Almacen.status === 3 || Almacen.status === 4);
     setAlmacenData(AlmacenStatus1);
@@ -101,7 +98,7 @@ const Orders = () => {
       const pedidoRelacionado = pedidosData.find(pedido => pedido.folio === ordenCompra.folio);
     
       if (pedidoRelacionado) {
-        const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/PedidosPendientes/${pedidoRelacionado.id}`, {
+        const response = await fetch(`http://localhost:4000/PedidosPendientes/${pedidoRelacionado.id}`, {
           method: 'POST',
         });
         const result = await response.json();
@@ -112,7 +109,7 @@ const Orders = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Pedidos");
+      const response = await fetch("http://localhost:4000/Pedidos");
       const data = await response.json();
       if (response.ok) {
         setPedidosData(data);
@@ -451,7 +448,7 @@ const Orders = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
+
           <ItemsHeader />
           <ToastContainer
             position="top-right"
@@ -668,7 +665,7 @@ const Orders = () => {
               </select>
             </label>
           </div>
-        </DefaultLayout>
+
       </>
     );
   }, [

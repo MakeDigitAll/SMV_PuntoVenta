@@ -26,7 +26,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import ExcelProducts from "../Excel/exports/ExcelProducts";
 import AddExcelProducts from "../Excel/addExcel/addExcelProducts";
@@ -70,7 +70,7 @@ const Payment = () => {
   const [foliofiltrado, setFolio] = useState(" ");
   const [data, setData] = useState([]);
   const loadPedidos = async () => {
-    const response = await fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Pedidos');
+    const response = await fetch('http://localhost:4000/Pedidos');
     const data = await response.json();
 
     const PedidosConStatus1 = data.filter(Pedidos => Pedidos.status === 1);
@@ -80,7 +80,7 @@ const Payment = () => {
   }
 
   const loadTask = async () => {
-    const response = await fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Pagos');
+    const response = await fetch('http://localhost:4000/Pagos');
     const data = await response.json();
     setPagosData(data);
     console.log(data);
@@ -307,7 +307,7 @@ const Payment = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
+
           <ItemsHeader />
           <ToastContainer
             position="top-right"
@@ -444,7 +444,7 @@ const Payment = () => {
               </select>
             </label>
           </div>
-        </DefaultLayout>
+
       </>
     );
   }, [

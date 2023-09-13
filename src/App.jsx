@@ -104,47 +104,47 @@ const App = () => {
         },
         {
           path: "/Administration/AccountStates",
-          element: <AccountStates />
+          element: <AccountStates />,
         },
         {
           path: "/Administration/CollectionDay",
-          element: <CollectionDay />
+          element: <CollectionDay />,
         },
         {
           path: "/Administration/MarginSales",
-          element: <MarginSales />
+          element: <MarginSales />,
         },
         {
           path: "/Administration/SalesReport",
-          element: <SalesReport />
+          element: <SalesReport />,
         },
         {
           path: "/Administration/PriceList",
-          element: <PriceList />
+          element: <PriceList />,
         },
         {
           path: "/Administration/Discounts",
-          element: <Discounts />
+          element: <Discounts />,
         },
         {
           path: "/Administration/DiscountToken",
-          element: <DiscountToken />
+          element: <DiscountToken />,
         },
         {
           path: "/Administration/ExchangeRate",
-          element: <ExchangeRate />
+          element: <ExchangeRate />,
         },
         {
           path: "/Administration/Commissions",
-          element: <Commissions />
+          element: <Commissions />,
         },
         {
           path: "/Administration/ReportCommissions",
-          element: <ReportCommissions />
+          element: <ReportCommissions />,
         },
         {
           path: "/Administration/GroupedCommissions",
-          element: <GroupedCommissions />
+          element: <GroupedCommissions />,
         },
         {
           path: "/Store",
@@ -207,60 +207,60 @@ const App = () => {
           element: <PurchaseOrders />,
         },
         {
-          path:"/Store/Transfers",
+          path: "/Store/Transfers",
           element: <Transfers />,
         },
         {
-          path:"/Store/Transfers/NewTransfer",
-          element: <NewTransfer />
+          path: "/Store/Transfers/NewTransfer",
+          element: <NewTransfer />,
         },
         {
-          path:"/Store/BulkTransfers",
-          element: <BulkTransfers />
+          path: "/Store/BulkTransfers",
+          element: <BulkTransfers />,
         },
         {
-          path:"/Store/Inventory",
-          element: <Inventory />
+          path: "/Store/Inventory",
+          element: <Inventory />,
         },
         {
-          path:"/Store/InventoryXWarehouse",
-          element: <InventoryWarehouse />
+          path: "/Store/InventoryXWarehouse",
+          element: <InventoryWarehouse />,
         },
         {
-          path:"/Store/Capture/Brands",
-          element: <Brands />
+          path: "/Store/Capture/Brands",
+          element: <Brands />,
         },
         {
-          path:"/Store/FillOrders",
-          element: <FillOrders />
+          path: "/Store/FillOrders",
+          element: <FillOrders />,
         },
         {
-          path:"/Store/Logistics",
-          element: <Logistics />
+          path: "/Store/Logistics",
+          element: <Logistics />,
         },
         {
-          path:"/Store/WarehouseEntries",
-          element: <WarehouseEntries />
+          path: "/Store/WarehouseEntries",
+          element: <WarehouseEntries />,
         },
         {
-          path:"/Store/WarehouseEntries/CatalogueofMotifs",
-          element: <CatalogueofMotifs />
+          path: "/Store/WarehouseEntries/CatalogueofMotifs",
+          element: <CatalogueofMotifs />,
         },
         {
-          path:"/Store/WarehouseOutputs",
-          element: <WarehouseOutputs />
+          path: "/Store/WarehouseOutputs",
+          element: <WarehouseOutputs />,
         },
         {
-          path:"/Store/WarehouseOutputs/NewEntry",
-          element: <NewEntry />
+          path: "/Store/WarehouseOutputs/NewEntry",
+          element: <NewEntry />,
         },
         {
-          path:"/Store/Categories",
-          element: <Categories />
+          path: "/Store/Categories",
+          element: <Categories />,
         },
         {
           path: "/Settings/PaymentMethod",
-          element: <PaymentMethodList />
+          element: <PaymentMethodList />,
         },
         {
           path: "/Chat",
@@ -268,12 +268,12 @@ const App = () => {
         },
         {
           path: "/Settings/SecuritProfiles",
-          element: <SecuritProfiles />
+          element: <SecuritProfiles />,
         },
         {
           path: "/Settings/SecuritProfiles/ConfigureAccess",
-          element: <ConfigureAccess />
-        }
+          element: <ConfigureAccess />,
+        },
       ],
     },
   ]);

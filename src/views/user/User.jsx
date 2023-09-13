@@ -14,7 +14,7 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Header from "../../components/header/headerC/Header.jsx";
+
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
@@ -39,7 +39,6 @@ const User = () => {
     imagen: "",
     emailConfirm: "",
     passwordConfirm: "",
-
   });
   const [validationErrors, setValidationErrors] = useState({
     nombre: "",
@@ -70,40 +69,59 @@ const User = () => {
   };
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage ? toast.error("Por favor, selecciona una imagen", { theme: "colored" }) : "";
-    if (!user.imagen || !user.nombre || !user.apellido || !user.password || !user.direccion || !user.colonia
-      || !user.estado || !user.codigoPostal || !user.telefonoContacto || !user.telefonoCelular || !user.perfilSeguridad || passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" || emailConfirmValidationState !== "valid") {
+    !selectedImage
+      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
+      : "";
+    if (
+      !user.imagen ||
+      !user.nombre ||
+      !user.apellido ||
+      !user.password ||
+      !user.direccion ||
+      !user.colonia ||
+      !user.estado ||
+      !user.codigoPostal ||
+      !user.telefonoContacto ||
+      !user.telefonoCelular ||
+      !user.perfilSeguridad ||
+      passwordValidationState !== "valid" ||
+      confirmPasswordValidationState !== "valid" ||
+      emailConfirmValidationState !== "valid"
+    ) {
       toast.error("Llena todos los campos correctamente", {
         theme: "colored",
       });
     }
-    (user.password !== user.confirmPassword || user.email !== user.emailConfirm)
-      ? toast.error("Las contraseñas o correos no coinciden", { theme: "colored" })
+    user.password !== user.confirmPassword || user.email !== user.emailConfirm
+      ? toast.error("Las contraseñas o correos no coinciden", {
+          theme: "colored",
+        })
       : "";
     const errors = {};
-    !user.nombre ? errors.nombre = "Llena este campo" : ""
-    !user.apellido ? errors.apellido = "Llena este campo" : ""
-    !user.perfilSeguridad ? errors.perfilSeguridad = "Llena este campo" : ""
-    !user.vendedor ? errors.vendedor = "Llena este campo" : ""
-    !user.direccion ? errors.direccion = "Llena este campo" : ""
-    !user.colonia ? errors.colonia = "Llena este campo" : ""
-    !user.status ? errors.status = "Llena este campo" : ""
-    !user.ciudad ? errors.ciudad = "Llena este campo" : ""
-    !user.estado ? errors.estado = "Llena este campo" : ""
-    !user.codigoPostal ? errors.codigoPostal = "Llena este campo" : ""
-    !user.telefonoCelular ? errors.telefonoCelular = "Llena este campo" : ""
-    !user.telefonoContacto ? errors.telefonoContacto = "Llena este campo" : ""
-    !user.email ? errors.email = "Llena este campo" : ""
-    !user.password ? errors.password = "Llena este campo" : ""
-    !user.imagen ? errors.imagen = "Llena este campo" : ""
+    !user.nombre ? (errors.nombre = "Llena este campo") : "";
+    !user.apellido ? (errors.apellido = "Llena este campo") : "";
+    !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
+    !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
+    !user.direccion ? (errors.direccion = "Llena este campo") : "";
+    !user.colonia ? (errors.colonia = "Llena este campo") : "";
+    !user.status ? (errors.status = "Llena este campo") : "";
+    !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
+    !user.estado ? (errors.estado = "Llena este campo") : "";
+    !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
+    !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
+    !user.telefonoContacto
+      ? (errors.telefonoContacto = "Llena este campo")
+      : "";
+    !user.email ? (errors.email = "Llena este campo") : "";
+    !user.password ? (errors.password = "Llena este campo") : "";
+    !user.imagen ? (errors.imagen = "Llena este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
     }
     setValidationErrors({});
 
-    const formData = new FormData()
+    const formData = new FormData();
     const document = JSON.stringify({
       nombre: user.nombre,
       apellido: user.apellido,
@@ -116,16 +134,18 @@ const User = () => {
     formData.append("document", document);
     formData.append("image", selectedImage);
     try {
-
-      const result = await http
-        .post(`http://localhost:4000/api/createuser`, formData, {
+      const result = await http.post(
+        `http://localhost:4000/api/createuser`,
+        formData,
+        {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        });
+        }
+      );
       console.log(result.data.id);
       if (result) {
-        const formData2 = new FormData()
+        const formData2 = new FormData();
         const document2 = JSON.stringify({
           idUsuario: result.data.id,
           direccion: user.direccion,
@@ -136,24 +156,24 @@ const User = () => {
           codigoPostal: user.codigoPostal,
           telefonoContacto: user.telefonoContacto,
           telefonoCelular: user.telefonoCelular,
-
         });
         formData2.append("document2", document2);
-        const response = await http.post(`http://localhost:4000/api/createUserData`, formData2, {
-          headers: {
-            "Content-Type": "multipart/form-data",
+        const response = await http.post(
+          `http://localhost:4000/api/createUserData`,
+          formData2,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-          },
-
-        });
-       
-        if (response.status==200 ? true : false) {
+        if (response.status == 200 ? true : false) {
           toast.success("Usuario creado correctamente", { theme: "colored" });
           navigate("/Settings/Users");
         }
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   }
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -165,11 +185,38 @@ const User = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
   const estadosDeMexico = [
-    "Aguascalientes", "Baja California", "Baja California Sur",
-    "Campeche", "Chiapas", "Chihuahua", "Coahuila", "Colima", "Ciudad de México",
-    "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "México", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca",
-    "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora",
-    "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas",
+    "Aguascalientes",
+    "Baja California",
+    "Baja California Sur",
+    "Campeche",
+    "Chiapas",
+    "Chihuahua",
+    "Coahuila",
+    "Colima",
+    "Ciudad de México",
+    "Durango",
+    "Guanajuato",
+    "Guerrero",
+    "Hidalgo",
+    "Jalisco",
+    "México",
+    "Michoacán",
+    "Morelos",
+    "Nayarit",
+    "Nuevo León",
+    "Oaxaca",
+    "Puebla",
+    "Querétaro",
+    "Quintana Roo",
+    "San Luis Potosí",
+    "Sinaloa",
+    "Sonora",
+    "Tabasco",
+    "Tamaulipas",
+    "Tlaxcala",
+    "Veracruz",
+    "Yucatán",
+    "Zacatecas",
   ];
 
   const passwordValidationState = useMemo(() => {
@@ -187,7 +234,6 @@ const User = () => {
 
   return (
     <>
-      <Header />
       <ItemsHeader />
       <ToastContainer />
       <main>
@@ -398,13 +444,15 @@ const User = () => {
                                         : "default"
                                     }
                                     errorMessage={
-                                      emailConfirmValidationState === "invalid" &&
+                                      emailConfirmValidationState ===
+                                        "invalid" &&
                                       "El correo de confirmación debe coincidir con el correo"
                                     }
-                                    validationState={emailConfirmValidationState}
+                                    validationState={
+                                      emailConfirmValidationState
+                                    }
                                   />
                                 </div>
-
 
                                 <div className="md:col-span-6">
                                   <Input
@@ -444,15 +492,19 @@ const User = () => {
                                     placeholder=" "
                                     variant="faded"
                                     color={
-                                      confirmPasswordValidationState === "invalid"
+                                      confirmPasswordValidationState ===
+                                      "invalid"
                                         ? "danger"
                                         : "default"
                                     }
                                     errorMessage={
-                                      confirmPasswordValidationState === "invalid" &&
+                                      confirmPasswordValidationState ===
+                                        "invalid" &&
                                       "La contraseña de confirmación debe coincidir con la contraseña"
                                     }
-                                    validationState={confirmPasswordValidationState}
+                                    validationState={
+                                      confirmPasswordValidationState
+                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -467,8 +519,12 @@ const User = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.perfilSeguridad !== ""}
-                                    errorMessage={validationErrors.perfilSeguridad}
+                                    error={
+                                      validationErrors.perfilSeguridad !== ""
+                                    }
+                                    errorMessage={
+                                      validationErrors.perfilSeguridad
+                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -541,10 +597,10 @@ const User = () => {
                                     errorMessage={validationErrors.status}
                                   >
                                     <MenuItem value="activo">Activo</MenuItem>
-                                    <MenuItem value="inactivo">Inactivo</MenuItem>
-
+                                    <MenuItem value="inactivo">
+                                      Inactivo
+                                    </MenuItem>
                                   </Select>
-
                                 </div>
 
                                 <div className="md:col-span-5">
@@ -574,7 +630,6 @@ const User = () => {
                                     label=" "
                                     name="estado"
                                     variant="outlined"
-
                                     error={validationErrors.estado !== ""}
                                     errorMessage={validationErrors.estado}
                                   >
@@ -613,8 +668,12 @@ const User = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.telefonoContacto !== ""}
-                                    errorMessage={validationErrors.telefonoContacto}
+                                    error={
+                                      validationErrors.telefonoContacto !== ""
+                                    }
+                                    errorMessage={
+                                      validationErrors.telefonoContacto
+                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -629,8 +688,12 @@ const User = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.telefonoCelular !== ""}
-                                    errorMessage={validationErrors.telefonoCelular}
+                                    error={
+                                      validationErrors.telefonoCelular !== ""
+                                    }
+                                    errorMessage={
+                                      validationErrors.telefonoCelular
+                                    }
                                   />
                                 </div>
                               </div>
@@ -675,7 +738,6 @@ const User = () => {
                       </div>
                       <Spacer y={3} />
                     </div>
-
                   </div>
                 </div>
               </form>

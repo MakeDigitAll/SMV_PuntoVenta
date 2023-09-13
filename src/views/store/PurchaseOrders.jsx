@@ -26,7 +26,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const statusOptions = [
@@ -388,7 +388,7 @@ const PurchaseOrders = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
+
           <ItemsHeader />
           <ToastContainer
             position="top-right"
@@ -605,7 +605,7 @@ const PurchaseOrders = () => {
               </select>
             </label>
           </div>
-        </DefaultLayout>
+
       </>
     );
   }, [

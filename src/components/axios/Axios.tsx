@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from "axios";
 function getBaseUrl() {
   // Verifica si la aplicación se está ejecutando en localhost
    const isLocalhost = window.location.hostname === "localhost";
-//  return "http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000"
+//  return "http://localhost:4000"
    if (isLocalhost) {
     // URL para desarrollo local
      return "http://localhost:4000/";

@@ -36,7 +36,7 @@ const ItemsHeader = () => {
     const [tasks, setTask] = useState([]);
     const loadTask = async () => {
         try {
-          const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Almacenes`);
+          const response = await fetch(`http://localhost:4000/Almacenes`);
           const data = await response.json();
           setTask(data);
         } catch (error) {

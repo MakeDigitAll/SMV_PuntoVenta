@@ -24,7 +24,7 @@ import Link from "@mui/material/Link";
 import { RiCodeSFill, RiCoinsLine, RiDashboard2Fill, RiSdCardFill, RiStockFill, RiSunFoggyFill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+
 const columns = [
   { name: "ID", uid: "id" },
   { name: "Nombre", uid: "nombre", sortable: true },
@@ -205,7 +205,7 @@ const Commissions = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
+
           <ItemsHeader />
           <ToastContainer
             position="top-right"
@@ -330,7 +330,7 @@ const Commissions = () => {
               </select>
             </label>
           </div>
-        </DefaultLayout>
+
       </>
     );
   }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);

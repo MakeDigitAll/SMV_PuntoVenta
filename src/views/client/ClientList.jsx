@@ -1,7 +1,7 @@
 import React from "react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue} from "@nextui-org/react";
 import { MdDelete, MdEdit, MdRemoveRedEye, MdSuperscript } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -121,7 +121,7 @@ const ClientList = () => {
 
     return (
         <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"

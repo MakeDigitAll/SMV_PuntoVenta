@@ -3,16 +3,8 @@ import { useAuth } from "../../components/auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Header from "../../components/header/Header";
-import {
-  Card,
-  Input,
-  Spacer,
-  Button,
-  CardBody,
-} from "@nextui-org/react";
+import { Card, Input, Spacer, Button, CardBody } from "@nextui-org/react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "next-themes";
 import { MdLock, MdMail } from "react-icons/md";
 
 const Login = () => {
@@ -26,7 +18,7 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/login", {
+      const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,8 +43,6 @@ const Login = () => {
       toast.warning(error.message);
     }
   }
-  const { theme } = useTheme();
-  const imgLogo = theme === "dark";
   if (auth.isAuthenticated) return <Navigate to="/home" />;
   return (
     <>
@@ -68,7 +58,7 @@ const Login = () => {
         pauseOnHover
         theme="light"
       />
-      <Header />
+
       <main>
         <form onChange={handleChange} onSubmit={handleSubmit}>
           <div className="flex justify-center">
@@ -90,29 +80,6 @@ const Login = () => {
                 <div className="flex justify-center">
                   <h4>{t("login.Login")}</h4>
                 </div>
-                {/* <div
-                  className="flex justify-center"
-                  style={{ marginTop: "20px" }}
-                >
-                  {imgLogo ? (
-                    <Image
-                      isZoomed
-                      src="../../../public/make-dark.png"
-                      alt=""
-                      width={100}
-                      height={100}
-                    />
-                  ) : (
-                    <Image
-                      isZoomed
-                      src="../../../public/make-light.png"
-                      alt=""
-                      width={100}
-                      height={100}
-                    />
-                  )}
-                </div> */}
-
                 <Spacer y={10} />
                 <div
                   className="flex flex-col gap-2"
@@ -169,7 +136,12 @@ const Login = () => {
                   className="flex justify-center"
                   style={{ marginTop: "20px" }}
                 >
-                  <Button size={"md"} color="primary" type="submit" className="w-[200px]">
+                  <Button
+                    size={"md"}
+                    color="primary"
+                    type="submit"
+                    className="w-[200px]"
+                  >
                     {t("login.Login")}
                   </Button>
                 </div>

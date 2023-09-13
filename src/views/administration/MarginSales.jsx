@@ -24,7 +24,7 @@ import Link from "@mui/material/Link";
 import { RiCoinFill, RiDashboard2Fill, RiMoneyCnyBoxFill, RiMoneyCnyBoxLine, RiMoneyDollarBoxLine, RiSdCardFill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import DefaultLayout from "../../components/header/headerC/DefaultLayout";
+
 const columns = [
   { name: "ID", uid: "id" },
   { name: "Folio", uid: "folio", sortable: true },
@@ -221,7 +221,7 @@ const MarginSales = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <DefaultLayout>
+
           <ItemsHeader />
           <ToastContainer
             position="top-right"
@@ -388,7 +388,7 @@ const MarginSales = () => {
               </select>
             </label>
           </div>
-        </DefaultLayout>
+
       </>
     );
   }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);

@@ -23,8 +23,8 @@ const UserImage = ({
         style={{ alignItems: "center" }}
       ></Image>
     );
-  } else if (designType === "lista") {
-    return (
+  } else if (designType === "lista") {    
+    return (      
       <Image
         src={imagenPerfil}
         width={50}

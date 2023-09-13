@@ -21,7 +21,7 @@ import {
   MdStore,
   MdWarehouse,
 } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -350,7 +350,7 @@ const WarehouseEntries = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"

@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdBookmarkAdded, MdCategory, MdList, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore, MdWarehouse } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -202,7 +202,7 @@ const Categories = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"

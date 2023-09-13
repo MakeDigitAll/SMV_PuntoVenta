@@ -1,4 +1,4 @@
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { Card, CardBody, Spacer } from "@nextui-org/react";
 import {
@@ -49,7 +49,7 @@ const ItemsBilling = () => {
   const navigate = useNavigate();
   return (
     <div className="place-content-center">
-      <Header />
+      
       <ItemsHeader />
       <ToastContainer
         position="top-right"

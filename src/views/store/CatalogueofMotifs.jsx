@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import { MdArrowDropDown, MdInbox, MdSearch } from "react-icons/md";
-import Header from "../../components/header/headerC/Header";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -353,7 +353,7 @@ const CatalogueofMotifs = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        <Header />
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"

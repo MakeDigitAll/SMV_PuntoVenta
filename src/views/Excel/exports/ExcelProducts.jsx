@@ -12,7 +12,7 @@ const ExcelProducts = () => {
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = React.createRef();
   useEffect(() => {
-    fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Productos')
+    fetch('http://localhost:4000/Productos')
       .then((response) => response.json())
       .then((data) => {
         if (Array.isArray(data)) {
