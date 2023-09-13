@@ -37,32 +37,28 @@ const statusOptions = [
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "Folio", uid: "folio", sortable: true },
-  { name: "Fecha", uid: "fecha", sortable: true },
-  { name: "Cotizacion", uid: "cotizacion", sortable: true },
-  { name: "Numero de cliente", uid: "numeroCliente", sortable: true },
-  { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Razon social", uid: "razonSocial", sortable: true },
-  { name: "RFC", uid: "rfc", sortable: true },
-  { name: "Monto", uid: "monto", sortable: true },
-  { name: "Saldo", uid: "saldo", sortable: true },
-  { name: "Facturacion", uid: "facturacion", sortable: true },
-  { name: "Surtido", uid: "surtido", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
+  { name: "Fecha Registrada", uid: "fechaRegistrada", sortable: true },
+  { name: "Fecha Compra", uid: "fechaCompra", sortable: true },
+  { name: "Fecha  Entrega", uid: "fechaEntrega", sortable: true },
+  { name: "Proveedor", uid: "provedor", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
+  { name: "Referencia", uid: "referencia", sortable: true },
+  { name: "Total", uid: "total", sortable: true },
+  { name: "Productos", uid: "productos", sortable: true },
+  { name: "Estatus", uid: "status", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "ID",
-  "Folio",
-  "Fecha",
-  "Cotizaciones",
-  "Numero de cliente",
-  "Clientes",
-  "Razon Social",
-  "RFC",
-  "Monto",
-  "Saldo",
-  "Facturacion",
-  "Surtido",
+  "id",
+  "folio",
+  "fechaRegistrada",
+  "fechaCompra",
+  "fechaEntrega",
+  "provedor",
+  "vendedor",
+  "referencias",
+  "total",
+  "productos",
   "status",
   "Actions",
 ];
@@ -78,72 +74,64 @@ const PurchaseOrders = () => {
     setFolio(e.target.value);
   }
   
-  const [pedidosData, setPedidosData] = useState([]);
-  const [cotizacionesData, setCotizacionesData] = useState([]);
-  const [cotizacionesFolioFiltrado, setCotizacionesFolioFiltrado] = useState(" ");
-  const [AlmacenFolioFiltrado, setAlmacenFolioFiltrado] = useState(" ");
-  const [foliofiltrado, setFolio] = useState(" ");
-  const [AlmacenData, setAlmacenData] = useState([]);
-  const loadCotizaciones = async () => {
-    const response = await fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Cotizaciones');
-    const data = await response.json();
-    const cotizacionesConStatus1 = data.filter(cotizacion => cotizacion.status === 1);
-    setCotizacionesData(cotizacionesConStatus1);
-    setCotizacionesFolioFiltrado(" ");
-    loadAlmacen();
-  }
-  const loadAlmacen = async () => {
-    const response = await fetch('http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/OrdenCompra/ListadoEntradas');
-    const data = await response.json();
-    const AlmacenStatus1 = data.filter(Almacen => Almacen.status === 3 || Almacen.status === 4);
-    setAlmacenData(AlmacenStatus1);
-    setAlmacenFolioFiltrado(" ");
-    AlmacenStatus1.forEach(async (ordenCompra) => {
-      const pedidoRelacionado = pedidosData.find(pedido => pedido.folio === ordenCompra.folio);
-    
-      if (pedidoRelacionado) {
-        const response = await fetch(`http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/PedidosPendientes/${pedidoRelacionado.id}`, {
-          method: 'POST',
-        });
-        const result = await response.json();
-      }
-    });
-  }
-
-  const [data, setData] = useState([]);
-  async function loadTask() {
+  const [ordenCompraData, setordenCompraData] = useState([]);
+  const [pagosData, setPagosData] = useState([]);
+  const [foliofiltrado, setfolio] = useState('');
+  const [PagosesData, setPagosesData] = useState([]);  
+  const [PagosesFolioFiltrado, setPagosesFolioFiltrado] = useState("");  
+ const [data, setdata] = useState([]);
+  
+  const loadTask = async () => {
     try {
-      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/Pedidos");
-      const data = await response.json();
-      if (response.ok) {
-        setPedidosData(data);
-        contarmarca();
+      const response = await fetch('http://localhost:4000/OrdenCompra/ListadoEntradas');
+      if (!response.ok) {
+        throw new Error('La respuesta de la red no fue satisfactoria');
       }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
+      const data = await response.json();
+      setordenCompraData(data);
+      console.log(data);
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
     }
-  }
+  };
+
+  const loadPagos = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/Pagos');
+      if (!response.ok) {
+        throw new Error('La respuesta de la red no fue satisfactoria');
+      }
+      const data = await response.json();
+      setPagosData(data);
+  
+      const pagosstatus = data.filter(pagos => pagos.status === 0);
+      setPagosesData(pagosstatus);
+      setPagosesFolioFiltrado(" ");
+  
+      console.log(data);
+    } catch (error) {
+      console.error('Error al obtener los datos de pagos:', error);
+    }
+  };
+
   useEffect(() => {
-    loadCotizaciones();
     loadTask();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadPagos();
   }, []);
-  const filteredListadoProd = pedidosData.filter((pedido) => {
-    const cotizacionRelacionada = cotizacionesData.find(cotizacion => cotizacion.folio === pedido.folio);
-    
-    if (cotizacionRelacionada && cotizacionRelacionada.status === 1) {
-      const folio = pedido.folio && typeof pedido.folio === 'string' ? pedido.folio : " ";
-
+  
+  const filteredListadoProd = ordenCompraData.filter((ordenCompra) => {
+    const PagosRelacionada = PagosesData.find(Pagos => Pagos.folio === ordenCompra.folio);
+  
+    if (PagosRelacionada && PagosRelacionada.status === 0) {
+      const folio = ordenCompra.folio && typeof ordenCompra.folio === 'string' ? ordenCompra.folio : " ";
       return folio.toLowerCase().includes(foliofiltrado.toLowerCase());
-    } else {
-      return false;
     }
+  else
+  {
+    return false;
+  }
   });
- console.log(pedidosData);
+   
 
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
@@ -215,19 +203,12 @@ const PurchaseOrders = () => {
     const cellValue = data[columnKey];
 
     const statusColorMap = {
-      //  Status
-      Nuevo: "primary",
-      Procesado: "success",
-      Facturado: "success",
-      surtido: "neutral",
-      Cancelada: "error",
-      Devuelto: "warning",
-      Cerrado: "neutral",
-      //Entrega
       Pendiente: "warning",
-      Entregado: "success",
-      Despachado: "success",
-      Regresado: "error",
+      Parcial: "warning",
+      Entrega: "success",
+      Ruta: "success",
+      Embarque: "success",
+      Surtido: "warning",
     };
 
 
@@ -246,154 +227,109 @@ const PurchaseOrders = () => {
             </p>
           </div>
         );
-      case "Fecha":
+      case "Fecha registro":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.fecha}
+              {data.fechaRegistro}
             </p>
           </div>
         );
-      case "Cotizacion":
+      case "Fecha compra":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.cotizacion}</p>
+            <p className="text-bold text-small capitalize">{data.fechaCompra}</p>
           </div>
         );
-      case "Numero de cliente":
+      case "Fecha entrega":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
+            <p className="text-bold text-small capitalize">{data.fechaEntrega}</p>
           </div>
         );
-      case "Cliente":
+      case "Proveedor":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.cliente}</p>
+            <p className="text-bold text-small capitalize">{data.provedor}</p>
           </div>
         );
-      case "Razon social":
+      case "Vendedor":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.razonSocial}</p>
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
-      case "Monto":
+      case "Referencia":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.monto}</p>
+            <p className="text-bold text-small capitalize">$ {data.referencia}</p>
           </div>
         );
-      case "Saldo":
+      case "Total":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.saldo}</p>
+            <p className="text-bold text-small capitalize">$ {data.total}</p>
           </div>
         );
-      case "Facturacion":
+      case "Productos":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.facturacion}</p>
-          </div>
-        );
-      case "Surtido":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.surtido}</p>
+            <p className="text-bold text-small capitalize">$ {data.productos}</p>
           </div>
         );
       case "status":
         if (data.status === 0) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Nuevo"]} size="sm">
-              <span>Nuevo</span>
-            </Chip>
-
+            
+              <Chip  className="capitalize" color={statusColorMap["Pendiente"]} size="sm">
+                <span>Pendiente</span>
+              </Chip>
+            
           );
-        } else if (data.status === 1) {
+        }else if (data.status === 1) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Procesado"]} size="sm">
-              <span>Procesado</span>
-            </Chip>
-
+            
+              <Chip className="capitalize" color={statusColorMap["Parcial"]} size="sm">
+                <span>Parcial</span>
+              </Chip>
+            
           );
         } else if (data.status === 2) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Facturado"]} size="sm" >
-              <span >Facturado</span>
-            </Chip>
-
+            
+              <Chip className="capitalize" color={statusColorMap["Entrega"]} size="sm" >
+                <span >Entrega</span>
+              </Chip>
+            
           );
         } else if (data.status === 3) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Surtido"]} size="sm" >
-              <span >surtido</span>
-            </Chip>
-
+            
+              <Chip className="capitalize" color={statusColorMap["Ruta"]} size="sm" >
+                <span >Ruta</span>
+              </Chip>
+            
           );
         } else if (data.status === 4) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Cancelada"]} size="sm" >
-              <span>Cancelado</span>
-            </Chip>
-
+            
+              <Chip className="capitalize" color={statusColorMap["Embarque"]} size="sm" >
+                <span>Embarque</span>
+              </Chip>
+            
           );
         } else if (data.status === 5) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Devuelto"]} size="sm" >
-              <span>Devuelto</span>
-            </Chip>
-
+            
+              <Chip className="capitalize" color={statusColorMap["Surtido"]} size="sm" >
+                <span>Surtido</span>
+              </Chip>
+            
           );
-        } else if (data.status === 6) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Cerrado"]} size="sm" >
-              <span>Cerrado</span>
-            </Chip>
-
-          );
-        } else if (data.status === 7) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Pendiente"]} size="sm" >
-              <span>Pendiente</span>
-            </Chip>
-
-          );
-        } else if (data.status === 8) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Entregado"]} size="sm" >
-              <span>Entregado</span>
-            </Chip>
-
-          );
-        } else if (data.status === 9) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Despachado"]} size="sm" >
-              <span>Despachado</span>
-            </Chip>
-
-          );
-        } else if (data.status === 10) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Regresado"]} size="sm" >
-              <span>Devuelto</span>
-            </Chip>
-
-          );
+     
         } else {
           return (
-            <span>{data.status}</span>
+            <span>{data.estado}</span>
           );
         }
       case "Actions":

@@ -118,7 +118,7 @@ const AddExcelBrands = () => {
 
   return (
     <div style={{ position: 'relative', zIndex: '0' }}>
-      <Button onClick={() => setModalIsOpen(true)}>Subir marcas</Button>
+      <Button size="sm" color="secondary" onClick={() => setModalIsOpen(true)}>Subir marcas</Button>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}

@@ -16,56 +16,59 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiCoinFill, RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+
+
+
 
 const itemsSales = [
   {
     id: 1,
     name: "Cotizaciones",
     icon: BiBarChartSquare,
-    address: () => navigate(`/${"Sales/Quotes"}`),
+    address: "Quotes",
     roleId: "0",
   },
   {
     id: 2,
     name: "Pedidos",
     icon: BiBookmarkPlus,
-    address: "Pedidos",
+    address: "Orders",
     roleId: "0",
   },
   {
     id: 3,
     name: "Surtir Pedidos",
     icon: BiArchiveOut,
-    address: "SurtirPedidos",
+    address: "FillOrders",
     roleId: "0",
   },
   {
     id: 4,
     name: "Pagos",
     icon: BiMoneyWithdraw,
-    address: "Pagos",
+    address: "Payment",
     roleId: "0",
   },
   {
     id: 5,
     name: "Promociones",
     icon: BiStar,
-    address: "Promociones",
+    address: "Promotions",
     roleId: "0",
   },
   {
     id: 6,
     name: "Inventario",
     icon: BiCheckShield,
-    address: "inventario",
+    address: "Inventory",
     roleId: "0",
   },
   {
     id: 7,
     name: "Visitas",
     icon: TbRoad,
-    address: "Visitas",
+    address: "Visits",
     roleId: "0",
   },
 ];
@@ -120,7 +123,7 @@ const ItemsSales = () => {
             shadow="md"
             key={index}
             isPressable
-            //onPress={() => navigate(`/${item.address}`)}
+            onPress={() => navigate(`/Sales/${item.address}`)}
           >
             <CardBody className="overflow-visible py-2">
               <div className="flex justify-center items-center">

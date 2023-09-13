@@ -33,6 +33,8 @@ const columns = [
   { name: "Correo electronico", uid: "Email", sortable: true },
   { name: "Grupo", uid: "Grupo", sortable: true },
   { name: "Sucursales", uid: "Sucursales", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
+  { name: "Perfil de seguridad", uid: "perfilSeguridad", sortable: true },
   { name: "Acciones", uid: "Actions", sortable: true },
 ];
 
@@ -44,6 +46,8 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
   "Sucursales",
   "Grupo",
+  "vendedor",
+  "perfilSeguridad"
 ];
 
 const Users = () => {
@@ -51,12 +55,13 @@ const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   async function loadTask() {
     try {
-      const response = await fetch("http://ec2-18-118-164-218.us-east-2.compute.amazonaws.com:4000/api/allusers");
+      const response = await fetch("http://localhost:4000/api/allusers");
       const data = await response.json();
       if (response.ok) {
         setData(data);
         setIsLoading(false);
       }
+
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -73,6 +78,8 @@ const Users = () => {
   }
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
+  const [filterValueName, setFilterValueName] = React.useState("");
+  const [filterValueEmail, setFilterValueEmail] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -163,6 +170,22 @@ const Users = () => {
             <p className="text-bold text-small capitalize">{data.email}</p>
           </div>
         );
+        case "Vendedor":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {data.vendedor}
+              </p>
+            </div>
+          );
+          case "Perfil de seguridad":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {data.perfilSeguridad}
+              </p>
+            </div>
+          );
       case "Actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -173,9 +196,9 @@ const Users = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/SeeUser`)}>View User</DropdownItem>
+                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/EditUser`)}>Edit User</DropdownItem>
+                <DropdownItem>Delete User</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -202,17 +225,37 @@ const Users = () => {
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value) => {
+  const onSearchChange = React.useCallback((field, value) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
     } else {
       setFilterValue("");
     }
+    if (value) {
+      if (field === "name") {
+        setFilterValueName(value);
+      } else if (field === "email") {
+        setFilterValueEmail(value);
+      }
+      setPage(1);
+    } else {
+      if (field === "name") {
+        setFilterValueName("");
+      } else if (field === "email") {
+        setFilterValueEmail("");
+      }
+    }
   }, []);
 
-  const onClear = useCallback(() => {
+  const onClear = useCallback((field) => {
     setFilterValue("");
+    setPage(1);
+    if (field === "name") {
+      setFilterValueName("");
+    } else if (field === "email") {
+      setFilterValueEmail("");
+    }
     setPage(1);
   }, []);
 
@@ -271,9 +314,9 @@ const Users = () => {
                 className="w-[450px] sm:max-w-[44%]"
                 placeholder="Nombre/ Apellido"
                 startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
+                value={filterValueName}
+                onClear={() => onClear("name")}
+                onValueChange={(newValue) => onSearchChange("name", newValue)}
               />
               <Input
                 isClearable
@@ -281,18 +324,12 @@ const Users = () => {
                 className="w-[450px] sm:max-w-[44%]"
                 placeholder="Correo electronico"
                 startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
+                value={filterValueEmail}
+                onClear={() => onClear("email")}
+                onValueChange={(newValue) => onSearchChange("email", newValue)}
               />
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar precios
-              </Button>
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar costos
-              </Button>
               <Button
                 onPress={() => navigate(`/Settings/User`)}
                 size="sm"
@@ -330,31 +367,7 @@ const Users = () => {
                   ))}
                 </DropdownMenu>
               </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                    size="sm"
-                  >
-                    Acciones
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
+            
             </div>
             <label className="flex items-center text-small">
               Productos por página:

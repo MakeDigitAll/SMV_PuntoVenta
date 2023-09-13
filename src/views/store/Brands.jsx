@@ -19,13 +19,15 @@ import {
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
 import Header from "../../components/header/headerC/Header";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import AddExcelBrands from "../Excel/addExcel/addExcelBrands";
 const columns = [
   { name: "ID", uid: "ID", sortable: true },
   { name: "Imagen", uid: "Imagen", sortable: true },
@@ -280,6 +282,8 @@ const Brands = () => {
             />
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
+            <div><AddExcelBrands/></div>
+          
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar marca
             </Button>
@@ -315,31 +319,7 @@ const Brands = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                  size="sm"
-                >
-                  Acciones
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+          
           </div>
           <label className="flex items-center text-default-400 text-small">
             Marcas por página:

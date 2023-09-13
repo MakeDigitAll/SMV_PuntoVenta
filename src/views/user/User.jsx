@@ -8,6 +8,8 @@ import {
   Tab,
   Tabs,
   Checkbox,
+  Select,
+  MenuItem,
 } from "@nextui-org/react";
 import { useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -37,42 +39,120 @@ const User = () => {
     imagen: "",
     emailConfirm: "",
     passwordConfirm: "",
+
   });
+  const [validationErrors, setValidationErrors] = useState({
+    nombre: "",
+    apellido: "",
+    email: "",
+    emailConfirm: "",
+    password: "",
+    confirmPassword: "",
+    direccion: "",
+    colonia: "",
+    ciudad: "",
+    estado: "",
+    codigoPostal: "",
+    telefonoContacto: "",
+    telefonoCelular: "",
+    perfilSeguridad: "",
+    vendedor: "",
+  });
+
   const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+    setValidationErrors({ ...validationErrors, [name]: "" });
   };
   const fileInputRef = useRef(null);
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
-  console.log(selectedImage);
   async function handleSubmit(e) {
     e.preventDefault();
-    const formData = new FormData();
+    !selectedImage ? toast.error("Por favor, selecciona una imagen", { theme: "colored" }) : "";
+    if (!user.imagen || !user.nombre || !user.apellido || !user.password || !user.direccion || !user.colonia
+      || !user.estado || !user.codigoPostal || !user.telefonoContacto || !user.telefonoCelular || !user.perfilSeguridad || passwordValidationState !== "valid" ||
+      confirmPasswordValidationState !== "valid" || emailConfirmValidationState !== "valid") {
+      toast.error("Llena todos los campos correctamente", {
+        theme: "colored",
+      });
+    }
+    (user.password !== user.confirmPassword || user.email !== user.emailConfirm)
+      ? toast.error("Las contraseñas o correos no coinciden", { theme: "colored" })
+      : "";
+    const errors = {};
+    !user.nombre ? errors.nombre = "Llena este campo" : ""
+    !user.apellido ? errors.apellido = "Llena este campo" : ""
+    !user.perfilSeguridad ? errors.perfilSeguridad = "Llena este campo" : ""
+    !user.vendedor ? errors.vendedor = "Llena este campo" : ""
+    !user.direccion ? errors.direccion = "Llena este campo" : ""
+    !user.colonia ? errors.colonia = "Llena este campo" : ""
+    !user.status ? errors.status = "Llena este campo" : ""
+    !user.ciudad ? errors.ciudad = "Llena este campo" : ""
+    !user.estado ? errors.estado = "Llena este campo" : ""
+    !user.codigoPostal ? errors.codigoPostal = "Llena este campo" : ""
+    !user.telefonoCelular ? errors.telefonoCelular = "Llena este campo" : ""
+    !user.telefonoContacto ? errors.telefonoContacto = "Llena este campo" : ""
+    !user.email ? errors.email = "Llena este campo" : ""
+    !user.password ? errors.password = "Llena este campo" : ""
+    !user.imagen ? errors.imagen = "Llena este campo" : ""
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    setValidationErrors({});
+
+    const formData = new FormData()
     const document = JSON.stringify({
       nombre: user.nombre,
       apellido: user.apellido,
       email: user.email,
       password: user.password,
+      perfilSeguridad: user.perfilSeguridad,
+      vendedor: user.vendedor,
     });
+
     formData.append("document", document);
     formData.append("image", selectedImage);
     try {
-      await http
-        .post(`/api/createuser`, formData, {
+
+      const result = await http
+        .post(`http://localhost:4000/api/createuser`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
-        .then((response) => {
-          navigate("/Settings/Users");
-          toast.success(response.data.body.message, { theme: "colored" });
-        })
-        .catch((error) => {
-          toast.error(error.response.data.body.error, { theme: "colored" });
         });
+      console.log(result.data.id);
+      if (result) {
+        const formData2 = new FormData()
+        const document2 = JSON.stringify({
+          idUsuario: result.data.id,
+          direccion: user.direccion,
+          colonia: user.colonia,
+          status: user.status,
+          ciudad: user.ciudad,
+          estado: user.estado,
+          codigoPostal: user.codigoPostal,
+          telefonoContacto: user.telefonoContacto,
+          telefonoCelular: user.telefonoCelular,
+
+        });
+        formData2.append("document2", document2);
+        const response = await http.post(`http://localhost:4000/api/createUserData`, formData2, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+
+          },
+
+        });
+       
+        if (response.status==200 ? true : false) {
+          toast.success("Usuario creado correctamente", { theme: "colored" });
+          navigate("/Settings/Users");
+        }
+      }
     } catch (error) {
-      toast.warning(error.message);
     }
   }
   const validateEmail = (value) =>
@@ -84,6 +164,27 @@ const User = () => {
   }, [user.email]);
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
+  const estadosDeMexico = [
+    "Aguascalientes", "Baja California", "Baja California Sur",
+    "Campeche", "Chiapas", "Chihuahua", "Coahuila", "Colima", "Ciudad de México",
+    "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "México", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca",
+    "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora",
+    "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas",
+  ];
+
+  const passwordValidationState = useMemo(() => {
+    if (user.password === "") return undefined;
+    return user.password.length >= 8 ? "valid" : "invalid";
+  }, [user.password]);
+  const confirmPasswordValidationState = useMemo(() => {
+    if (user.confirmPassword === "") return undefined;
+    return user.password === user.confirmPassword ? "valid" : "invalid";
+  }, [user.confirmPassword]);
+  const emailConfirmValidationState = useMemo(() => {
+    if (user.emailConfirm === "") return undefined;
+    return user.emailConfirm === user.email ? "valid" : "invalid";
+  }, [user.emailConfirm, user.email]);
+
   return (
     <>
       <Header />
@@ -171,7 +272,10 @@ const User = () => {
                           type="file"
                           id="imagen"
                           ref={fileInputRef}
-                          style={{ display: "none" }}
+                          style={{
+                            display: "none",
+                            borderColor: selectedImage ? "" : "red",
+                          }}
                           value={user.imagen}
                           onChange={(event) => {
                             setSelectedImage(event.target.files[0]);
@@ -231,6 +335,8 @@ const User = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.nombre !== ""}
+                                    errorMessage={validationErrors.nombre}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -245,6 +351,8 @@ const User = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.apellido !== ""}
+                                    errorMessage={validationErrors.apellido}
                                   />
                                 </div>
 
@@ -280,12 +388,23 @@ const User = () => {
                                     size={"sm"}
                                     type="email"
                                     label="Confirmar email"
-                                    name="emailConfirm"
+                                    name="emailConfirm" // Asegúrate de que el nombre coincida con el campo de Email
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    color={
+                                      emailConfirmValidationState === "invalid"
+                                        ? "danger"
+                                        : "default"
+                                    }
+                                    errorMessage={
+                                      emailConfirmValidationState === "invalid" &&
+                                      "El correo de confirmación debe coincidir con el correo"
+                                    }
+                                    validationState={emailConfirmValidationState}
                                   />
                                 </div>
+
 
                                 <div className="md:col-span-6">
                                   <Input
@@ -299,49 +418,73 @@ const User = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    color={
+                                      passwordValidationState === "invalid"
+                                        ? "danger"
+                                        : "default"
+                                    }
+                                    errorMessage={
+                                      passwordValidationState === "invalid" &&
+                                      "La contraseña debe tener al menos 8 caracteres"
+                                    }
+                                    validationState={passwordValidationState}
                                   />
                                 </div>
 
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="password"
-                                    value={user.password}
+                                    id="confirmPassword"
+                                    value={user.confirmPassword}
                                     onChange={handleChange}
                                     size={"sm"}
                                     type="password"
                                     label="Confirmar Password"
-                                    name="password"
+                                    name="confirmPassword" // Asegúrate de que el nombre coincida con el campo de Contraseña
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    color={
+                                      confirmPasswordValidationState === "invalid"
+                                        ? "danger"
+                                        : "default"
+                                    }
+                                    errorMessage={
+                                      confirmPasswordValidationState === "invalid" &&
+                                      "La contraseña de confirmación debe coincidir con la contraseña"
+                                    }
+                                    validationState={confirmPasswordValidationState}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="password"
-                                    value={user.password}
+                                    id="perfilSeguridad"
+                                    value={user.perfilSeguridad}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="password"
+                                    type="perfilSeguridad"
                                     label="Perfil de seguridad"
-                                    name="password"
+                                    name="perfilSeguridad"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.perfilSeguridad !== ""}
+                                    errorMessage={validationErrors.perfilSeguridad}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="password"
-                                    value={user.password}
+                                    id="vendedor"
+                                    value={user.vendedor}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="password"
+                                    type="vendedor"
                                     label="Vendedor"
-                                    name="password"
+                                    name="vendedor"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.vendedor !== ""}
+                                    errorMessage={validationErrors.vendedor}
                                   />
                                 </div>
                               </div>
@@ -353,115 +496,141 @@ const User = () => {
                                 <div className="md:col-span-12">
                                   <Input
                                     id="direccion"
-                                    value={user.nombre}
+                                    value={user.direccion}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="text"
+                                    type="direccion"
                                     label="Dirección"
                                     name="direccion"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.direccion !== ""}
+                                    errorMessage={validationErrors.direccion}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
                                     size={"sm"}
-                                    type="text"
+                                    type="colonia"
                                     label="Colonia"
-                                    id="apellido"
-                                    name="apellido"
-                                    value={user.apellido}
+                                    id="colonia"
+                                    name="colonia"
+                                    value={user.colonia}
                                     onChange={handleChange}
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.colonia !== ""}
+                                    errorMessage={validationErrors.colonia}
                                   />
                                 </div>
 
                                 <div className="md:col-span-6">
-                                  <Input
-                                    id="estado"
-                                    value={user.email}
+                                  <label htmlFor="status">Status</label>
+                                  <Select
+                                    id="status"
+                                    value={user.status}
                                     onChange={handleChange}
-                                    size={"sm"}
-                                    type="estado"
-                                    label="Estado"
-                                    name="estado"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                  />
+                                    size="small"
+                                    label=" "
+                                    name="status"
+                                    variant="outlined"
+                                    fullWidth
+                                    error={validationErrors.status !== ""}
+                                    errorMessage={validationErrors.status}
+                                  >
+                                    <MenuItem value="activo">Activo</MenuItem>
+                                    <MenuItem value="inactivo">Inactivo</MenuItem>
+
+                                  </Select>
+
                                 </div>
+
                                 <div className="md:col-span-5">
                                   <Input
                                     id="ciudad"
-                                    value={user.email}
+                                    value={user.ciudad}
                                     onChange={handleChange}
-                                    size={"sm"}
+                                    size="small"
                                     type="ciudad"
                                     label="Ciudad"
                                     name="ciudad"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.ciudad !== ""}
+                                    errorMessage={validationErrors.ciudad}
                                   />
                                 </div>
 
                                 <div className="md:col-span-4">
-                                  <Input
+                                  <label htmlFor="estado">Estado</label>
+                                  <Select
                                     id="estado"
-                                    value={user.password}
+                                    value={user.estado}
                                     onChange={handleChange}
-                                    size={"sm"}
-                                    type="estado"
-                                    label="Estado"
+                                    size="small"
+                                    label=" "
                                     name="estado"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                  />
+                                    variant="outlined"
+
+                                    error={validationErrors.estado !== ""}
+                                    errorMessage={validationErrors.estado}
+                                  >
+                                    {estadosDeMexico.map((estado) => (
+                                      <MenuItem key={estado} value={estado}>
+                                        {estado}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
                                 </div>
 
                                 <div className="md:col-span-3">
                                   <Input
-                                    id="cp"
-                                    value={user.password}
+                                    id="codigoPostal"
+                                    value={user.codigoPostal}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="cp"
+                                    type="codigoPostal"
                                     label="Código Postal"
-                                    name="cp"
+                                    name="codigoPostal"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.codigoPostal !== ""}
+                                    errorMessage={validationErrors.codigoPostal}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="telefonoContact"
-                                    value={user.password}
+                                    id="telefonoContacto"
+                                    value={user.telefonoContacto}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="Teléfono de contacto"
-                                    name="telefonoContact"
+                                    name="telefonoContacto"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.telefonoContacto !== ""}
+                                    errorMessage={validationErrors.telefonoContacto}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="celular"
-                                    value={user.password}
+                                    id="telefonoCelular"
+                                    value={user.telefonoCelular}
                                     onChange={handleChange}
                                     size={"sm"}
                                     type="text"
                                     label="Teléfono Celular"
-                                    name="celular"
+                                    name="telefonoCelular"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.telefonoCelular !== ""}
+                                    errorMessage={validationErrors.telefonoCelular}
                                   />
                                 </div>
                               </div>
@@ -473,22 +642,28 @@ const User = () => {
                     </div>
                     <div className="md:col-span-12 text-right content-end">
                       <div className="space-x-5 space-y-5">
-                        <Button
-                          className="min-w-[200px]"
-                          color="primary"
-                          type="submit"
-                          startContent={<RiArrowLeftLine />}
-                        >
-                          Anterior
-                        </Button>
-                        <Button
-                          className="min-w-[200px]"
-                          color="primary"
-                          type="submit"
-                          endContent={<RiArrowRightLine />}
-                        >
-                          Siguiente
-                        </Button>
+                        {selected === "music" && (
+                          <Button
+                            className="min-w-[200px]"
+                            color="primary"
+                            type="submit"
+                            startContent={<RiArrowLeftLine />}
+                            onClick={() => setSelected("photos")}
+                          >
+                            Anterior
+                          </Button>
+                        )}
+                        {selected === "photos" && (
+                          <Button
+                            className="min-w-[200px]"
+                            color="primary"
+                            type="button"
+                            endContent={<RiArrowRightLine />}
+                            onClick={() => setSelected("music")}
+                          >
+                            Siguiente
+                          </Button>
+                        )}
                         <Button
                           className="min-w-[200px]"
                           color="success"
@@ -500,6 +675,7 @@ const User = () => {
                       </div>
                       <Spacer y={3} />
                     </div>
+
                   </div>
                 </div>
               </form>
