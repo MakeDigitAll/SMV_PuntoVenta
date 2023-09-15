@@ -152,6 +152,34 @@ const BranchOffices = () => {
     // Cambiar a la vista de agregar almacenes
     setShowConfirmationModal(true);
   };
+  const handleDisableAlmacen = async (almacenId) => {
+    try {
+      // Hacer una solicitud a la API para deshabilitar el almacén
+      const response = await fetch(
+        `http://localhost:4000/SucursalesAlmacenDisable/${almacenId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        // Actualizar la tabla de almacenes después de deshabilitar
+        const updatedData = data.filter((almacen) => almacen.id !== almacenId);
+        setData(updatedData);
+        loadTask();
+        toast.success("Sucursal deshabilitada",{theme: "colored"});
+      } else {
+        // Manejar errores si la respuesta no es exitosa
+        console.error("Error al deshabilitar el almacén:", response.status);
+      }
+    } catch (error) {
+      toast.warning("Error al deshabilitar");
+      // Manejar el error
+    }
+  };
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
@@ -214,7 +242,8 @@ const BranchOffices = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem >Editar Sucursal</DropdownItem>
-                <DropdownItem>Deshabilitar Sucursal</DropdownItem>
+                <DropdownItem onClick={() => handleDisableAlmacen(data.id)}>
+                  Deshabilitar Sucursal</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -502,13 +531,13 @@ const BranchOffices = () => {
           emptyContent={"No se encuentran Sucursales"}
           items={sortedItems}
         >
-          {(item) => (
-            <TableRow key={item.id}>
+          {data.map((dato,index) => (
+            <TableRow key={dato.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell>{renderCell(dato, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

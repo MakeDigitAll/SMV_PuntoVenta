@@ -20,7 +20,8 @@ const ItemsSettings = () => {
             id: 1,
             name: "usuarios",
             icon: MdPeople,
-            address: "Users",
+            address: () => navigate(`/${"Settings/Users"}`),
+            roleId: "0",
         },
         {
             id: 2,
