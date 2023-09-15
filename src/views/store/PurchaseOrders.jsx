@@ -26,8 +26,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 
 const statusOptions = [
   { name: "Active", uid: "active" },
@@ -95,28 +94,28 @@ const PurchaseOrders = () => {
     }
   };
 
-  const loadPagos = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/Pagos');
-      if (!response.ok) {
-        throw new Error('La respuesta de la red no fue satisfactoria');
-      }
-      const data = await response.json();
-      setPagosData(data);
+  // const loadPagos = async () => {
+  //   try {
+  //     const response = await fetch('http://localhost:4000/Pagos');
+  //     if (!response.ok) {
+  //       throw new Error('La respuesta de la red no fue satisfactoria');
+  //     }
+  //     const data = await response.json();
+  //     setPagosData(data);
   
-      const pagosstatus = data.filter(pagos => pagos.status === 0);
-      setPagosesData(pagosstatus);
-      setPagosesFolioFiltrado(" ");
+  //     const pagosstatus = data.filter(pagos => pagos.status === 0);
+  //     setPagosesData(pagosstatus);
+  //     setPagosesFolioFiltrado(" ");
   
-      console.log(data);
-    } catch (error) {
-      console.error('Error al obtener los datos de pagos:', error);
-    }
-  };
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error('Error al obtener los datos de pagos:', error);
+  //   }
+  // };
 
   useEffect(() => {
     loadTask();
-    loadPagos();
+    // loadPagos();
   }, []);
   
   const filteredListadoProd = ordenCompraData.filter((ordenCompra) => {
@@ -454,81 +453,7 @@ const PurchaseOrders = () => {
                 onClear={() => onClear()}
                 onValueChange={onSearchChange}
               />
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Cliente
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {marcaOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Vendedor
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Origen
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
+              
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
               <Button size="sm" color="warning" endContent={<TbReload />}>
@@ -690,7 +615,7 @@ const PurchaseOrders = () => {
         </TableHeader>
         <TableBody
           emptyContent={"No se encuentran productos"}
-          items={filteredListadoProd}
+          items={ordenCompraData}
         >
           {(item) => (
             <TableRow key={item.id}>

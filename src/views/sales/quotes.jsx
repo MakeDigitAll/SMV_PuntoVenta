@@ -1,648 +1,743 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  Table,
+  Button,
+  Input,
+  Link,
+  Spacer,
+  Tab,
+  Tabs,
+  Checkbox,
+  Select,
+  Textarea,
   TableHeader,
   TableColumn,
-  TableBody,
   TableRow,
+  TableBody,
+  Table,
   TableCell,
-  Input,
-  Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Pagination,
-  Chip,
+  ModalContent,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  SelectItem,
 } from "@nextui-org/react";
-
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
-import Typography from "@mui/material/Typography";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
-import { RiDashboard2Fill } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
-import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Paused", uid: "paused" },
-  { name: "Vacation", uid: "vacation" },
-];
-const columns = [
-  { name: "ID", uid: "id", sortable: true },
-  { name: "Folio", uid: "folio", sortable: true },
-  { name: "Fecha", uid: "fecha", sortable: true },
-  { name: "Pedido", uid: "pedido", sortable: true },
-  { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Recurrencia", uid: "recurrenciaa", sortable: true },
-  { name: "Origen", uid: "origen", sortable: true },
-  { name: "Monto", uid: "monto", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
-  { name: "Acciones", uid: "Actions" },
-];
-const INITIAL_VISIBLE_COLUMNS = [
-  "ID",
-  "Folio",
-  "Fecha",
-  "Pedido",
-  "Cliente",
-  "Vendedor",
-  "Recurrencia",
-  "Origen",
-  "Monto",
-  "status",
-  "Actions",
-];
-const Quotes = () => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const marcaOptions = [];
-  function contarmarca() {
-    for (let i = 0; i < data.length; i++) {
-      marcaOptions.push({ name: data[i].folio, uid: data[i].id });
-    }
-  }
+import "react-toastify/dist/ReactToastify.css";
 
-  const [data, setData] = useState([]);
-  async function loadTask() {
-    try {
-      const response = await fetch("http://localhost:4000/Cotizaciones");
-      const data = await response.json();
-      if (response.ok) {
-        setData(data);
-        contarmarca();
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
+//import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
+import { Breadcrumbs, Typography } from "@mui/material";
+import {
+  RiArrowLeftLine,
+  RiArrowRightLine,
+  RiDashboard2Fill,
+} from "react-icons/ri";
+import {
+  MdDiscount,
+  MdPeopleAlt,
+  MdPercent,
+  MdPerson,
+  MdSearch,
+  MdSettings,
+  MdUpload,
+} from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+
+import { MdSave } from "react-icons/md";
+import http from "../../components/axios/Axios";
+const Quote = () => {
+  const [selectedImage, setSelectedImage] = useState("");
+  const imageDefault = selectedImage === "";
+  const [user, setUser] = useState({
+    nombre: "",
+    apellido: "",
+    email: "",
+    password: "",
+    imagen: "",
+    emailConfirm: "",
+    passwordConfirm: "",
+    dateQuote: Date().toString().split("T")[0],
+  });
+  const [validationErrors, setValidationErrors] = useState({
+    nombre: "",
+    apellido: "",
+    email: "",
+    emailConfirm: "",
+    password: "",
+    confirmPassword: "",
+    direccion: "",
+    colonia: "",
+    ciudad: "",
+    estado: "",
+    codigoPostal: "",
+    telefonoContacto: "",
+    telefonoCelular: "",
+    perfilSeguridad: "",
+    vendedor: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+    setValidationErrors({ ...validationErrors, [name]: "" });
+  };
+  const fileInputRef = useRef(null);
+  const handleFileButtonClick = () => {
+    fileInputRef.current.click();
+  };
+  async function handleSubmit(e) {
+    e.preventDefault();
+    !selectedImage
+      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
+      : "";
+    if (
+      !user.imagen ||
+      !user.nombre ||
+      !user.apellido ||
+      !user.password ||
+      !user.direccion ||
+      !user.colonia ||
+      !user.estado ||
+      !user.codigoPostal ||
+      !user.telefonoContacto ||
+      !user.telefonoCelular ||
+      !user.perfilSeguridad ||
+      passwordValidationState !== "valid" ||
+      confirmPasswordValidationState !== "valid" ||
+      emailConfirmValidationState !== "valid"
+    ) {
+      toast.error("Llena todos los campos correctamente", {
         theme: "colored",
       });
     }
-  }
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  function handleClickBreadCrumbs(event) {
-    event.preventDefault();
-  }
-  const navigate = useNavigate();
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
-    direction: "ascending",
-  });
-  const [page, setPage] = React.useState(1);
-
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...data];
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
-      );
+    user.password !== user.confirmPassword || user.email !== user.emailConfirm
+      ? toast.error("Las contraseñas o correos no coinciden", {
+          theme: "colored",
+        })
+      : "";
+    const errors = {};
+    !user.nombre ? (errors.nombre = "Llena este campo") : "";
+    !user.apellido ? (errors.apellido = "Llena este campo") : "";
+    !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
+    !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
+    !user.direccion ? (errors.direccion = "Llena este campo") : "";
+    !user.colonia ? (errors.colonia = "Llena este campo") : "";
+    !user.status ? (errors.status = "Llena este campo") : "";
+    !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
+    !user.estado ? (errors.estado = "Llena este campo") : "";
+    !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
+    !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
+    !user.telefonoContacto
+      ? (errors.telefonoContacto = "Llena este campo")
+      : "";
+    !user.email ? (errors.email = "Llena este campo") : "";
+    !user.password ? (errors.password = "Llena este campo") : "";
+    !user.imagen ? (errors.imagen = "Llena este campo") : "";
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
-      );
-    }
+    setValidationErrors({});
 
-    return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+    const formData = new FormData();
+    const document = JSON.stringify({
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      password: user.password,
+      perfilSeguridad: user.perfilSeguridad,
+      vendedor: user.vendedor,
     });
-  }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((data, columnKey) => {
-    const cellValue = data[columnKey];
-    const statusColorMap = {
-      Nueva: "primary",
-      Ganada: "success",
-      Perdida: "warning",
-      Cancelada: "error",
-      Vencida: "danger",
-    };
-
-    switch (columnKey) {
-      case "ID":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
-          </div>
-        );
-      case "Folio":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.folio}</p>
-          </div>
-        );
-      case "Fecha":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fecha}</p>
-          </div>
-        );
-      case "Pedido":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.pedido}</p>
-          </div>
-        );
-      case "Cliente":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.cliente}</p>
-          </div>
-        );
-      case "Vendedor":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.vendedor}</p>
-          </div>
-        );
-      case "Origen":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.origen}</p>
-          </div>
-        );
-      case "Monto":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.monto}</p>
-          </div>
-        );
-      case "status":
-        if (data.status === 0) {
-          return (
-            <Chip
-              variant="flat"
-              className="capitalize"
-              color={statusColorMap["Nueva"]}
-              size="sm"
-            >
-              <span>Nueva</span>
-            </Chip>
-          );
-        } else if (data.status === 1) {
-          return (
-            <Chip
-              className="capitalize"
-              color={statusColorMap["Ganada"]}
-              size="sm"
-            >
-              <span>Ganada</span>
-            </Chip>
-          );
-        } else if (data.status === 2) {
-          return (
-            <Chip
-              className="capitalize"
-              color={statusColorMap["Perdida"]}
-              size="sm"
-            >
-              <span>Perdida</span>
-            </Chip>
-          );
-        } else if (data.status === 3) {
-          return (
-            <Chip
-              className="capitalize"
-              color={statusColorMap["Cancelada"]}
-              size="sm"
-            >
-              <span>Cancelada</span>
-            </Chip>
-          );
-        } else if (data.status === 4) {
-          return (
-            <Chip
-              className="capitalize"
-              color={statusColorMap["Vencida"]}
-              size="sm"
-            >
-              <span>Vencida</span>
-            </Chip>
-          );
-        } else {
-          return <span>{user.estado}</span>;
+    formData.append("document", document);
+    formData.append("image", selectedImage);
+    try {
+      const result = await http.post(
+        `http://localhost:4000/api/createuser`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-
-      case "Actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <TbDotsVertical className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+      );
+      console.log(result.data.id);
+      if (result) {
+        const formData2 = new FormData();
+        const document2 = JSON.stringify({
+          idUsuario: result.data.id,
+          direccion: user.direccion,
+          colonia: user.colonia,
+          status: user.status,
+          ciudad: user.ciudad,
+          estado: user.estado,
+          codigoPostal: user.codigoPostal,
+          telefonoContacto: user.telefonoContacto,
+          telefonoCelular: user.telefonoCelular,
+        });
+        formData2.append("document2", document2);
+        const response = await http.post(
+          `http://localhost:4000/api/createUserData`,
+          formData2,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
-      default:
-        return cellValue;
-    }
-  }, []);
 
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
+        if (response.status == 200 ? true : false) {
+          toast.success("Usuario creado correctamente", { theme: "colored" });
+          navigate("/Settings/Users");
+        }
+      }
+    } catch (error) {}
+  }
+  const validateEmail = (value) =>
+    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+  const validationState = useMemo(() => {
+    if (user.email === "") return undefined;
 
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
+    return validateEmail(user.email) ? "valid" : "invalid";
+  }, [user.email]);
+  const navigate = useNavigate();
+  const [selected, setSelected] = useState("photos");
+  const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
 
-  const onRowsPerPageChange = React.useCallback((e) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, []);
+  const passwordValidationState = useMemo(() => {
+    if (user.password === "") return undefined;
+    return user.password.length >= 8 ? "valid" : "invalid";
+  }, [user.password]);
+  const confirmPasswordValidationState = useMemo(() => {
+    if (user.confirmPassword === "") return undefined;
+    return user.password === user.confirmPassword ? "valid" : "invalid";
+  }, [user.confirmPassword]);
+  const emailConfirmValidationState = useMemo(() => {
+    if (user.emailConfirm === "") return undefined;
+    return user.emailConfirm === user.email ? "valid" : "invalid";
+  }, [user.emailConfirm, user.email]);
 
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenDiscount,
+    onOpen: onOpenDiscount,
+    onClose: onCloseDiscount,
+  } = useDisclosure();
 
-  const onClear = useCallback(() => {
-    setFilterValue("");
-    setPage(1);
-  }, []);
-  const topContent = React.useMemo(() => {
-    return (
-      <>
-        <ItemsHeader />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        <div
-          role="presentation"
-          onClick={handleClickBreadCrumbs}
-          className="text-foreground"
-        >
-          <Breadcrumbs aria-label="breadcrumb" color="foreground">
-            <Link
-              className="text-foreground"
-              underline="hover"
-              sx={{ display: "flex", alignItems: "center" }}
-              color="foreground"
-              href="#"
-              onClick={() => navigate(`/Home`)}
-            >
-              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-              Inicio
-            </Link>
-            <Typography
-              sx={{ display: "flex", alignItems: "center" }}
-              className="text-foreground"
-            >
-              <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-              Cotizaciones
-            </Typography>
-          </Breadcrumbs>
-        </div>
-        <div
-          className="flex flex-col gap-4"
-          style={{ marginLeft: "10px", marginRight: "10px" }}
-        >
-          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Modalidad"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Folio"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Cliente
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Vendedor
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Origen
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+  const handleOpenAddProduct = () => {
+    onOpen();
+  };
 
-          <div className="flex flex-wrap place-content-end space-x-2">
-            <div>
-              <AddExcelQuotes />
-            </div>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Cotizaciones
-            </Button>
-
-            <Button
-              size="sm"
-              color="primary"
-              endContent={<TbPlus />}
-              onClick={() => navigate(`/Sales/Quotes/NewQuote`)}
-            >
-              Nueva cotizacion
-            </Button>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex flex-wrap text-small space-x-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Columnas
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                  size="sm"
-                >
-                  Acciones
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-          <label className="flex items-center text-default-400 text-small">
-            Productos por página:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
-      </>
-    );
-  }, [
-    filterValue,
-    onSearchChange,
-    statusFilter,
-    marcaOptions,
-    visibleColumns,
-    onRowsPerPageChange,
-    navigate,
-    onClear,
-  ]);
-  const bottomContent = React.useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
-          <span style={{ marginRight: "30px" }}>
-            {data.length} Cotizaciones en total
-          </span>
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${data.length} selected`}
-        </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          classNames={{
-            cursor: "bg-foreground text-background",
-          }}
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    );
-  }, [data.length, selectedKeys, page, pages, onPreviousPage, onNextPage]);
+  const handleOpenAddDiscount = () => {
+    onOpenDiscount();
+  };
 
   return (
-    <div style={{ marginLeft: "40px", marginRight: "40px" }}>
-      <Table
-        aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        onSortChange={setSortDescriptor}
+    <>
+      <ItemsHeader />
+      <ToastContainer />
+      <main>
+        <div className="p-12">
+          {/* <div className="p-12 bg-gray-100"> */}
+          <div className="">
+            <div>
+              <div>
+                <Breadcrumbs aria-label="breadcrumb" color="foreground">
+                  <Link
+                    className="text-foreground"
+                    underline="hover"
+                    sx={{ display: "flex", alignItems: "center" }}
+                    color="foreground"
+                    href="#"
+                    onClick={() => navigate(`/Home`)}
+                  >
+                    <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Inicio
+                  </Link>
+                  <Link
+                    className="text-foreground"
+                    underline="hover"
+                    sx={{ display: "flex", alignItems: "center" }}
+                    color="foreground"
+                    href="#"
+                    onClick={() => navigate(`/Home`)}
+                  >
+                    <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Ventas
+                  </Link>
+                  <Link
+                    className="text-foreground"
+                    underline="hover"
+                    sx={{ display: "flex", alignItems: "center" }}
+                    color="foreground"
+                    href="#"
+                    onClick={() => navigate(`/Home`)}
+                  >
+                    <MdPeopleAlt sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Cotizaciones
+                  </Link>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center" }}
+                    className="text-foreground"
+                  >
+                    <MdPerson sx={{ mr: 0.5 }} fontSize="inherit" />
+                    Nueva cotización
+                  </Typography>
+                </Breadcrumbs>
+              </div>
+              <form onChange={handleChange} onSubmit={handleSubmit}>
+                <Spacer y={6} />
+                <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
+                  <div className="grid gap-4 gap-y-2 text-xs grid-cols-1 lg:grid-cols-4">
+                    <div className="lg:col-span-2">
+                      <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                        <div className="md:col-span-12">
+                          <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <Spacer y={6} />
+                            <div className="md:col-span-6"></div>
+                            <div className="md:col-span-12">
+                              <Input
+                                id="nombre"
+                                value={user.nombre}
+                                onValueChange={handleChange}
+                                size="sm"
+                                isRequired
+                                type="text"
+                                label="Cliente"
+                                name="nombre"
+                                labelPlacement="outside"
+                                placeholder=" "
+                                variant="faded"
+                                error={validationErrors.nombre !== ""}
+                                errorMessage={validationErrors.nombre}
+                                endContent={
+                                  <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+                                }
+                              />
+                            </div>
+                            <div className="md:col-span-8">
+                              <Input
+                                size={"sm"}
+                                type="text"
+                                label="Vendedor"
+                                id="apellido"
+                                isRequired
+                                name="apellido"
+                                value={user.apellido}
+                                onChange={handleChange}
+                                labelPlacement="outside"
+                                placeholder=" "
+                                variant="faded"
+                                error={validationErrors.apellido !== ""}
+                                errorMessage={validationErrors.apellido}
+                                endContent={<MdSearch />}
+                              />
+                            </div>
+
+                            <div className="md:col-span-4">
+                              <Input
+                                id="dateQuote"
+                                isRequired
+                                value={user.dateQuote}
+                                onChange={handleChange}
+                                size={"sm"}
+                                isDisabled
+                                type="date"
+                                label="Fecha de la Cotización"
+                                name="dateQuote"
+                                labelPlacement="outside"
+                                placeholder=" "
+                                variant="faded"
+                                color={
+                                  validationState === "invalid"
+                                    ? "danger"
+                                    : "default"
+                                }
+                                errorMessage={
+                                  validationState === "invalid" &&
+                                  "Ingresa un correo valido"
+                                }
+                                validationState={validationState}
+                              />
+                            </div>
+                            <div className="md:col-span-6">
+                              <Checkbox isRequired>Es recurrente</Checkbox>
+                            </div>
+                          </div>
+                        </div>
+                        <Spacer y={10} />
+                      </div>
+                    </div>
+                    <div className="lg:col-span-2">
+                      <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                        <div className="md:col-span-12">
+                          <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <Spacer y={2} />
+                            <div className="md:col-span-6"></div>
+                            <div className="md:col-span-12">
+                              <Select
+                                isRequired
+                                labelPlacement={"outside"}
+                                label="Información del Cliente"
+                                placeholder="Seleccione"
+                                size="sm"
+                              >
+                                {/* {animals.map((animal) => (
+                                  <SelectItem
+                                    key={animal.value}
+                                    value={animal.value}
+                                  >
+                                    {animal.label}
+                                  </SelectItem>
+                                ))} */}
+                              </Select>
+                            </div>
+                            <div className="md:col-span-12">
+                              <Textarea
+                                isDisabled
+                                label=" "
+                                labelPlacement="inside"
+                                placeholder=" "
+                                defaultValue=" "
+                              />
+                            </div>
+                            <div className="md:col-span-6">
+                              <Select
+                                labelPlacement={"outside"}
+                                label="Envío"
+                                placeholder="Seleccione"
+                                size="sm"
+                                isRequired
+                              >
+                                {envios.map((envios) => (
+                                  <SelectItem key={envios} value={envios}>
+                                    {envios}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="lg:col-span-2">
+                      <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                        <div className="md:col-span-12">
+                          <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <Spacer y={2} />
+                            <div className="md:col-span-6"></div>
+                            <div className="md:col-span-12">
+                              <Tabs
+                                key={"key"}
+                                variant="underlined"
+                                aria-label="Tabs variants"
+                              >
+                                <Tab key="photos" title="Productos Cotizados">
+                                  <Table
+                                    removeWrapper
+                                    aria-label="Example static collection table"
+                                  >
+                                    <TableHeader>
+                                      <TableColumn>Imagen</TableColumn>
+                                      <TableColumn>Código</TableColumn>
+                                      <TableColumn>Nombre</TableColumn>
+                                      <TableColumn>Marca</TableColumn>
+                                      <TableColumn>Cantidad</TableColumn>
+                                      <TableColumn>Inv.</TableColumn>
+                                      <TableColumn>Precio Uni.</TableColumn>
+                                      <TableColumn>Descuento</TableColumn>
+                                      <TableColumn>Total</TableColumn>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {/* <TableRow key="1">
+                                        <TableCell>Tony Reichert</TableCell>
+                                        <TableCell>CEO</TableCell>
+                                        <TableCell>Active</TableCell>
+                                      </TableRow>                                       */}
+                                    </TableBody>
+                                  </Table>
+                                </Tab>
+                              </Tabs>
+                            </div>
+                            <div className="md:col-span-12 space-x-4">
+                              <Button
+                                startContent={<MdUpload />}
+                                variant="flat"
+                                color="primary"
+                                onPress={() => handleOpenAddProduct()}
+                                className="capitalize"
+                              >
+                                Agregar productos
+                              </Button>
+                              <Button
+                                variant="flat"
+                                color="success"
+                                onPress={() => handleOpenAddDiscount()}
+                                className="capitalize"
+                                startContent={<MdDiscount />}
+                              >
+                                Aplicar descuento
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid gap-4 gap-y-2 text-xs grid-cols-1 lg:grid-cols-3">
+                    <div className="lg:col-span-2">
+                      <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                        <div className="md:col-span-12">
+                          <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <Spacer y={6} />
+                            <div className="md:col-span-6"></div>
+                            <div className="md:col-span-12">
+                              <Textarea
+                                minRows={8}
+                                label="Comentarios de la Cotización"
+                                labelPlacement="outside"
+                                placeholder=" "
+                                defaultValue=" "
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <Spacer y={10} />
+                      </div>
+                    </div>
+                    <div className="lg:col-span-2">
+                      <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                        <div className="md:col-span-12">
+                          <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <Spacer y={2} />
+                            <div className="md:col-span-6"></div>
+                            <div className="md:col-span-12">
+                              <div style={{ marginLeft: "30px" }}>
+                                <Table
+                                  selectionMode="single"
+                                  hideHeader
+                                  aria-label="Example static collection table"
+                                >
+                                  <TableHeader>
+                                    <TableColumn>NAME</TableColumn>
+                                    <TableColumn>ROLE</TableColumn>
+                                  </TableHeader>
+                                  <TableBody>
+                                    <TableRow key="1">
+                                      <TableCell>Neto</TableCell>
+                                      <TableCell>$</TableCell>
+                                    </TableRow>
+                                    <TableRow key="2">
+                                      <TableCell>Descuento</TableCell>
+                                      <TableCell>$</TableCell>
+                                    </TableRow>
+                                    <TableRow key="3">
+                                      <TableCell>Sub Total</TableCell>
+                                      <TableCell>$</TableCell>
+                                    </TableRow>
+                                    <TableRow key="4">
+                                      <TableCell>Impuestos</TableCell>
+                                      <TableCell>$</TableCell>
+                                    </TableRow>
+                                    <TableRow key="4">
+                                      <TableCell>Total</TableCell>
+                                      <TableCell>$</TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="md:col-span-12 text-right">
+                      <div className="space-x-5 space-y-5">
+                        <Button
+                          className="min-w-[200px]"
+                          color="primary"
+                          type="submit"
+                          endContent={<MdSave />}
+                        >
+                          Guardar cotización
+                        </Button>
+                      </div>
+                      <Spacer y={3} />
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Modal
+        backdrop="blur"
+        isOpen={isOpen}
+        onClose={onClose}
+        size="5xl"
+        isDismissable={false}
       >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "Actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
-            >
-              {column.name}
-            </TableColumn>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Agregar producto a la cotización
+              </ModalHeader>
+              <ModalBody>
+                <div className="grid gap-4 gap-y-2 text-xs grid-cols-1 lg:grid-cols-3">
+                  <div className="lg:col-span-4">
+                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                      <div className="md:col-span-12">
+                        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                          <div className="md:col-span-12"></div>
+                          <div className="md:col-span-6">
+                            <Input
+                              id="nombre"
+                              value={user.nombre}
+                              onValueChange={handleChange}
+                              size="sm"
+                              type="text"
+                              label="Cliente"
+                              name="nombre"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              variant="faded"
+                              error={validationErrors.nombre !== ""}
+                              errorMessage={validationErrors.nombre}
+                              endContent={
+                                <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+                              }
+                            />
+                          </div>
+                          <div className="md:col-span-3">
+                            <Select
+                              labelPlacement={"outside"}
+                              label="Marca"
+                              placeholder="Seleccione"
+                              size="sm"
+                            >
+                              {/* {animals.map((animal) => (
+                                  <SelectItem
+                                    key={animal.value}
+                                    value={animal.value}
+                                  >
+                                    {animal.label}
+                                  </SelectItem>
+                                ))} */}
+                            </Select>
+                          </div>
+                          <div className="md:col-span-3">
+                            <Select
+                              labelPlacement={"outside"}
+                              label="Categoría"
+                              placeholder="Seleccione"
+                              size="sm"
+                            >
+                              {/* {animals.map((animal) => (
+                                  <SelectItem
+                                    key={animal.value}
+                                    value={animal.value}
+                                  >
+                                    {animal.label}
+                                  </SelectItem>
+                                ))} */}
+                            </Select>
+                          </div>
+                          <div className="md:col-span-12">
+                            <Table
+                              removeWrapper
+                              aria-label="Example static collection table"
+                            >
+                              <TableHeader>
+                                <TableColumn>Imagen</TableColumn>
+                                <TableColumn>Código</TableColumn>
+                                <TableColumn>Nombre</TableColumn>
+                                <TableColumn>Marca</TableColumn>
+                                <TableColumn>Cantidad</TableColumn>
+                                <TableColumn>Inv.</TableColumn>
+                                <TableColumn>Precio Uni.</TableColumn>
+                                <TableColumn>Descuento</TableColumn>
+                                <TableColumn>Total</TableColumn>
+                              </TableHeader>
+                              <TableBody>
+                                {/* <TableRow key="1">
+                                        <TableCell>Tony Reichert</TableCell>
+                                        <TableCell>CEO</TableCell>
+                                        <TableCell>Active</TableCell>
+                                      </TableRow>                                       */}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
           )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No se encuentran productos"}
-          items={sortedItems}
-        >
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
+        </ModalContent>
+      </Modal>
+      <Modal
+        backdrop="blur"
+        isOpen={isOpenDiscount}
+        onClose={onCloseDiscount}
+        isDismissable={false}
+      >
+        <ModalContent>
+          {(onCloseDiscount) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Aplicar descuento
+              </ModalHeader>
+              <ModalBody>
+                <div className="grid gap-4 gap-y-2 text-xs grid-cols-1 lg:grid-cols-3">
+                  <div className="lg:col-span-4">
+                    <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-center">
+                      <div className="md:col-span-12">
+                        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-center">
+                          <div className="md:col-span-6"></div>
+                          <div className="md:col-span-12">
+                            <h2>Descuento expresado en porcentaje</h2>
+                          </div>
+                          <div className="md:col-span-12">
+                            <Input
+                              type="number"
+                              placeholder="00.00"
+                              color="success"
+                              endContent={<MdPercent />}
+                              label="Porcentaje"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <Spacer y={10} />
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" onPress={onCloseDiscount}>
+                  Cerrar
+                </Button>
+                <Button color="success" onPress={onCloseDiscount}>
+                  Aplicar descuento
+                </Button>
+              </ModalFooter>
+            </>
           )}
-        </TableBody>
-      </Table>
-    </div>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
-export default Quotes;
+export default Quote;

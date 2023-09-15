@@ -36,7 +36,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
       }
     };
     let userInfor = null;
-    chat.chat.receptor !== auth.getUser()?.id
+    chat.chat.receptor === auth.getUser()?.id
       ? (userInfor = chat.chat.receptor)
       : (userInfor = chat.chat.emisor);
     if (chat !== null) getUser(userInfor);

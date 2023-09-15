@@ -25,7 +25,7 @@ const Conversation = (data) => {
       }
     };
     let userInfor = null;
-    data.data.receptor !== auth.getUser()?.id
+    data.data.receptor === auth.getUser()?.id
       ? (userInfor = data.data.receptor)
       : (userInfor = data.data.emisor);
     getUser(userInfor);

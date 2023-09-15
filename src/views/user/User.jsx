@@ -94,8 +94,8 @@ const User = () => {
     }
     user.password !== user.confirmPassword || user.email !== user.emailConfirm
       ? toast.error("Las contraseñas o correos no coinciden", {
-          theme: "colored",
-        })
+        theme: "colored",
+      })
       : "";
     const errors = {};
     !user.nombre ? (errors.nombre = "Llena este campo") : "";
@@ -173,7 +173,7 @@ const User = () => {
           navigate("/Settings/Users");
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   }
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -445,7 +445,7 @@ const User = () => {
                                     }
                                     errorMessage={
                                       emailConfirmValidationState ===
-                                        "invalid" &&
+                                      "invalid" &&
                                       "El correo de confirmación debe coincidir con el correo"
                                     }
                                     validationState={
@@ -493,13 +493,13 @@ const User = () => {
                                     variant="faded"
                                     color={
                                       confirmPasswordValidationState ===
-                                      "invalid"
+                                        "invalid"
                                         ? "danger"
                                         : "default"
                                     }
                                     errorMessage={
                                       confirmPasswordValidationState ===
-                                        "invalid" &&
+                                      "invalid" &&
                                       "La contraseña de confirmación debe coincidir con la contraseña"
                                     }
                                     validationState={

@@ -15,14 +15,16 @@ import {
   Pagination,
   Spacer,
 } from "@nextui-org/react";
+import { format } from 'timeago.js';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdCreditCard, MdSearch } from "react-icons/md";
+import { MdAlignHorizontalCenter, MdArrowDropDown, MdCreditCard, MdFilterList, MdImportContacts, MdMonetizationOn, MdPriceChange, MdPriceCheck, MdSearch } from "react-icons/md";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiCashLine, RiCoinLine, RiCoinsFill, RiDashboard2Fill, RiSdCardFill, RiUser2Fill } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import { RiDashboard2Fill, RiListOrdered, RiSdCardFill, RiUser2Fill } from "react-icons/ri";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 const columns = [
@@ -36,34 +38,25 @@ const columns = [
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "Id",
-  "Fecha",
-  "Hora",
-  "Abreviatura",
-  "Contra",
-  "Valor",
+  "id",
+  "fecha",
+  "hora",
+  "abreviatura",
+  "contra",
+  "valor",
+  "Actions",
 ];
 
+
 const ExchangeRate = () => {
+
+  let [dataDisable, setDataDisable] = useState([]);
   const [data, setData] = useState([]);
-  async function loadTask() {
-    try {
-      const response = await fetch("http://localhost:4000/Comisiones");
-      const data = await response.json();
-      if (response.ok) {
-        setData(data);
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  }
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const [updatedData, setUpdatedData] = useState([]);
+  const { isOpen: isOpenSecondModal, onOpen: onOpenSecondModal, onClose: onCloseSecondModal, onOpenChange: onOpenChangeSecondModal } = useDisclosure();
+
+
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -100,7 +93,7 @@ const ExchangeRate = () => {
       filteredUsers = filteredUsers.filter(
         (user) =>
           user.folio.toLowerCase().includes(filterValue.toLowerCase()) +
-          user.fecha.toLowerCase().includes(filterValue.toLocaleLowerCase())+
+          user.fecha.toLowerCase().includes(filterValue.toLocaleLowerCase()) +
           user.clientes.toLowerCase().includes(filterValue.toLocaleLowerCase())
       );
     }
@@ -132,21 +125,299 @@ const ExchangeRate = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+
+
+
+  const [task, setTask] = useState({
+    nombreForma: '',
+    comision: '',
+    claveSAT: '',
+  });
+
+  const [validationForma, setValidationForma] = useState('valid')
+  const [validationComision, setValidationComision] = useState('valid')
+  const [validationClave, setValidationClave] = useState('valid')
+
+
+
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
+  const [modeModal, setModeModal] = useState("create", "edit", "view");
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const [editCounter, setEditCounter] = useState(0); // Paso 1
+  const [disableCounter, setDisableCounter] = useState(0); // Paso 1
+
+  async function loadTask() {
+    try {
+      const response = await fetch(`http://localhost:4000/TipoCambio`);
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+  useEffect(() => {
+    loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateCounter, editCounter, disableCounter])
+
+  const [showButton, setShowButton] = useState(false);
+
+  const handleCreate = () => {
+    setModeModal("create");
+    setShowButton(true);
+    onOpen();
+    setTask({
+      nombreForma: '',
+      comision: '',
+      claveSAT: '',
+    });
+  };
+
+  const handleView = (id) => {
+    setModeModal("view");
+
+    setIsInputDisabled(true);
+    async function viewModal() {
+      try {
+        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
+        const data = await response.json();
+        console.log(data)
+        if (response.ok) {
+          setTask({
+            id: data.id,
+            nombreForma: data.nombreForma,
+            comision: data.comision,
+            claveSAT: data.claveSAT,
+          })
+          setShowButton(false);
+          onOpen();
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    viewModal();
+  }
+
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const newErrors = {};
+
+    !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
+    !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
+    !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
+    if (!task.claveSAT || !task.comision || !task.nombreForma) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    try {
+      const datosListado = {
+        nombre: task.nombreForma,
+        comision: task.comision,
+        claveSAT: task.claveSAT,
+      };
+      const res = await fetch(`http://localhost:4000/FormasPago`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datosListado),
+      });
+      if (res.ok) {
+        toast.success("Metodo de Pago guardado", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        onClose(true);
+        setUpdateCounter((prevCounter) => prevCounter + 1);
+      } else {
+        console.error("Error al crear el elemento", res.statusText);
+      }
+    } catch (error) {
+      toast.error("Error al guardar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+
+  const handleEdit = (id) => {
+    console.log(id)
+    setModeModal("edit");
+    setIsInputDisabled(false);
+    async function editModal() {
+      try {
+        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
+        const data = await response.json();
+        if (response.ok) {
+          setTask({
+            id: data.id,
+            nombreForma: data.nombreForma,
+            comision: data.comision,
+            claveSAT: data.claveSAT,
+          })
+          setShowButton(true);
+          onOpen();
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    editModal();
+  }
+
+
+  async function handleEditing(e) {
+    e.preventDefault();
+
+    const newErrors = {};
+
+    !task.nombreForma ? setValidationForma('invalid') : setValidationForma('valid');
+    !task.comision ? setValidationComision('invalid') : setValidationComision('valid');
+    !task.claveSAT ? setValidationClave('invalid') : setValidationClave('valid');
+    if (!task.claveSAT || !task.comision || !task.nombreForma) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const datosListado = {
+      id: task.id,
+      nombre: task.nombreForma,
+      comision: task.comision,
+      claveSAT: task.claveSAT,
+    };
+
+    async function edit() {
+      try {
+        const res = await fetch(`http://localhost:4000/FormasPagoEdit/${datosListado.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datosListado),
+        });
+        if (res.ok) {
+          toast.success("Forma de Pago Editada Correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          onClose(true);
+          setEditCounter((prevCounter) => prevCounter + 1);
+
+        } else {
+          toast.error("Error al actualizar forma de pago", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      } catch (error) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    edit();
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTask({
+      ...task,
+      [name]: value,
+    });
+    // Limpia el mensaje de error cuando el usuario comienza a escribir en el campo
+    setErrors({
+      ...errors,
+      [name]: "", // Esto eliminará el mensaje de error correspondiente
+    });
+  };
+
+  const handleDisable = (id) => {
+    console.log("Este es el id a deshabilitar: ", id);
+    onOpenSecondModal();
+  };
+
+  async function handleDisableTrue(id) {
+    const datoDisable = {
+      id: task.id
+    };
+    console.log(datoDisable.id);
+
+    async function disable() {
+      try {
+        const res = await fetch(`http://localhost:4000/FormasPagoDisable/${datoDisable.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datoDisable),
+        });
+        if (res.ok) {
+          toast.warning("Dehabilitando Forma de Pago", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setDisableCounter((prevCounter) => prevCounter + 1);
+          onCloseSecondModal(true);
+        } else {
+          toast.error("Error al deshabilitar forma de pago", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      } catch (error) {
+        toast.error("Error al deshabilitar forma de pago", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    disable();
+  }
+
+  const [value, setValue] = React.useState("junior2nextui.org");
+
+
+
+
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
     switch (columnKey) {
-      
+
       case "id":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "serie":
+      case "fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.serie}
+              {format(data.fecha)}
             </p>
           </div>
         );
@@ -166,9 +437,9 @@ const ExchangeRate = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem onPress={() => handleView(data.id)}>Ver Forma de Pago</DropdownItem>
+                <DropdownItem onPress={() => handleEdit(data.id)}>Editar Forma de Pago</DropdownItem>
+                <DropdownItem className="text-danger" onPress={() => handleDisable(data.id)}>Deshabilitar Forma de Pago</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -247,8 +518,8 @@ const ExchangeRate = () => {
                 sx={{ display: "flex", alignItems: "center" }}
                 className="text-foreground"
               >
-                <RiCoinsFill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Tipo de Cambio
+                <MdMonetizationOn sx={{ mr: 0.5 }} fontSize="inherit" />
+                Listado de Tipo de Cambio
               </Typography>
             </Breadcrumbs>
           </div>
@@ -257,19 +528,20 @@ const ExchangeRate = () => {
             style={{ marginLeft: "10px", marginRight: "10px" }}
           >
             <Spacer y={8} />
-            <div className="flex flex-wrap space space-x-4 ">
-              
-            </div>
             <div className="flex flex-wrap place-content-end space-x-2">
-              
+
               <Button
-                //onPress={() => navigate(`/Settings/User`)}
+                onPress={handleCreate}
                 size="sm"
                 color="primary"
                 endContent={<TbPlus />}
               >
-                Nuevo Tipo de Cambio
+                Nueva Forma de Pago
               </Button>
+
+
+
+
             </div>
           </div>
           <div className="flex justify-between items-center">
@@ -326,7 +598,7 @@ const ExchangeRate = () => {
               </Dropdown>
             </div>
             <label className="flex items-center text-small">
-              Tipos de cambio por página:
+              Formas de pago por página:
               <select
                 className="bg-transparent outline-none text-small"
                 onChange={onRowsPerPageChange}
@@ -346,7 +618,7 @@ const ExchangeRate = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small">
           <span style={{ marginRight: "30px" }}>
-            {data.length} Tipo de cambio en total
+            {data.length} Tipos de Cambio en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -413,7 +685,7 @@ const ExchangeRate = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"no exchange rates found"} items={sortedItems}>
+        <TableBody emptyContent={"No Exchange Rate Found"} items={sortedItems}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
@@ -423,9 +695,104 @@ const ExchangeRate = () => {
           )}
         </TableBody>
       </Table>
+
+
+      <Modal
+        isOpen={isOpen}
+        placement="top-center"
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <form onChange={handleChange} onSubmit={modeModal == "create" ? handleSubmit : handleEditing} >
+                <ModalHeader className="flex flex-col gap-1">
+                  {modeModal === "create" && "Nuevo Tipo de Cambio"}
+                  {modeModal === "edit" && "Editar Tipo de Cambio"}
+                  {modeModal === "view" && "Detalles de Tipo de Cambio"}
+                </ModalHeader>
+                <ModalBody>
+                  <Input
+                    id='nombre'
+                    name='nombreForma'
+                    value={modeModal !== "create" ? task.nombreForma : undefined}
+                    onChange={handleChange}
+                    label='Seleccione la Moneda'
+                    placeholder="Efectivo"
+                    variant="bordered"
+                    isDisabled={isInputDisabled}
+                    validationState={validationForma}
+                    required
+                  />
+                  <Input
+                    id='comision'
+                    name='comision'
+                    value={modeModal !== "create" ? task.comision : undefined}
+                    onChange={handleChange}
+                    label='Seleccione la Moneda'
+                    placeholder="0%"
+                    variant="bordered"
+                    isDisabled={isInputDisabled}
+                    validationState={validationComision}
+                    required
+                  />
+                  <Input
+                    id='claveSAT'
+                    name="claveSAT"
+                    value={modeModal !== "create" ? task.claveSAT : undefined}
+                    onChange={handleChange}
+                    label='Valor'
+                    placeholder="01"
+                    variant="bordered"
+                    isDisabled={isInputDisabled}
+                    validationState={validationClave}
+                    required
+                  />
+
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="flat" onPress={onClose}>
+                    Cerrar
+                  </Button>
+                  {showButton && (
+                    <Button id="BtnGuardar" color="primary" type="submit">
+                      Guardar
+                    </Button>
+                  )}
+                </ModalFooter>
+              </form>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isOpenSecondModal}
+        onOpenChange={onOpenChangeSecondModal}
+        placement="top-center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTA ORDEN DE PAGO? </ModalHeader>
+              <ModalBody>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={handleDisableTrue}>
+                  Aceptar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
+
+
 
 
 export default ExchangeRate;

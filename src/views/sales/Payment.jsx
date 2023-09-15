@@ -26,8 +26,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import ExcelProducts from "../Excel/exports/ExcelProducts";
 import AddExcelProducts from "../Excel/addExcel/addExcelProducts";
 
@@ -79,16 +78,16 @@ const Payment = () => {
    
   }
 
-  const loadTask = async () => {
-    const response = await fetch('http://localhost:4000/Pagos');
-    const data = await response.json();
-    setPagosData(data);
-    console.log(data);
-  }
+  // const loadTask = async () => {
+  //   const response = await fetch('http://localhost:4000/Pagos');
+  //   const data = await response.json();
+  //   setPagosData(data);
+  //   console.log(data);
+  // }
 
   useEffect(() => {
     loadPedidos();
-    loadTask();
+    // loadTask();
   }, []);
 
   const filteredListadoProd = PagosData.filter((pagos) => {
@@ -529,7 +528,7 @@ const Payment = () => {
         </TableHeader>
         <TableBody
           emptyContent={"No se encuentran productos"}
-          items={filteredListadoProd}
+          items={PedidosData}
         >
           {(item) => (
             <TableRow key={item.id}>

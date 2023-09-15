@@ -342,31 +342,7 @@ const BranchOffices = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Estado
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+            
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             

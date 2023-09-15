@@ -718,7 +718,6 @@ const PaymentMethodList = () => {
                     variant="bordered"
                     isDisabled={isInputDisabled}
                     validationState={validationForma}
-                    errorMessage="Por favor escriba una forma de pago"
                     required
                   />
                   <Input
@@ -731,7 +730,6 @@ const PaymentMethodList = () => {
                     variant="bordered"
                     isDisabled={isInputDisabled}
                     validationState={validationComision}
-                    errorMessage="Por favor escriba una comision"
                     required
                   />
                   <Input
@@ -744,7 +742,6 @@ const PaymentMethodList = () => {
                     variant="bordered"
                     isDisabled={isInputDisabled}
                     validationState={validationClave}
-                    errorMessage="Por favor escriba una clave de SAT"
                     required
                   />
 
