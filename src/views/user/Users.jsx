@@ -148,7 +148,7 @@ const Users = () => {
     const cellValue = data[columnKey];
     switch (columnKey) {
       case "Imagen":
-        return <UserImage idUsuario={data.id} designType="tabla" />;
+        return <UserImage idUsuario={data.id} designType="avatar" />;
       case "ID":
         return (
           <div className="flex flex-col">

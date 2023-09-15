@@ -73,7 +73,7 @@ const Header = () => {
       <header>
         <div
           className="flex flex-row items-center justify-between"
-          style={{ marginLeft: "80px", marginRight: "80px", marginTop: "15px" }}
+          style={{ marginLeft: "40px", marginRight: "40px", marginTop: "10px" }}
         >
           <div className="items-start">
             {imgLogo ? (
@@ -81,7 +81,7 @@ const Header = () => {
                 isZoomed
                 src="../../../public/make-logo-light.png"
                 alt=""
-                width={150}
+                width={100}
                 height={100}
               />
             ) : (
@@ -89,7 +89,7 @@ const Header = () => {
                 isZoomed
                 src="../../../public/make-logo-dark.png"
                 alt=""
-                width={150}
+                width={100}
                 height={100}
               />
             )}

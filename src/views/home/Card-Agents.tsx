@@ -18,7 +18,7 @@ export const CardAgents = ({ dataInf }: { dataInf: any[] }) => {
           <span className="text-xs">Conoce a nuestro equipo.</span>
           {/* {dataInf.map((item) => (
             <AvatarGroup isBordered>
-              <UserImage idUsuario={item.id} designType="lista" />
+              <UserImage idUsuario={item.id} designType="avatar" />
             </AvatarGroup>
           ))} */}
         </div>

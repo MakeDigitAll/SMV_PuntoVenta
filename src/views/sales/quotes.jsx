@@ -27,23 +27,23 @@ import { ToastContainer, toast } from "react-toastify";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
 const statusOptions = [
-  {name: "Active", uid: "active"},
-  {name: "Paused", uid: "paused"},
-  {name: "Vacation", uid: "vacation"},
+  { name: "Active", uid: "active" },
+  { name: "Paused", uid: "paused" },
+  { name: "Vacation", uid: "vacation" },
 ];
 const columns = [
-    { name: "ID", uid: "id", sortable: true },
-    { name: "Folio", uid: "folio", sortable: true  },
-    { name: "Fecha", uid: "fecha" , sortable: true },
-    { name: "Pedido", uid: "pedido", sortable: true  },
-    { name: "Cliente", uid: "cliente", sortable: true  },
-    { name: "Vendedor", uid: "vendedor", sortable: true  },
-    { name: "Recurrencia", uid: "recurrenciaa", sortable: true  },
-    { name: "Origen", uid: "origen", sortable: true  },
-    { name: "Monto", uid: "monto", sortable: true  },
-    { name: "Status", uid: "status", sortable: true  },
-    { name: "Acciones", uid: "Actions" },
-  ];
+  { name: "ID", uid: "id", sortable: true },
+  { name: "Folio", uid: "folio", sortable: true },
+  { name: "Fecha", uid: "fecha", sortable: true },
+  { name: "Pedido", uid: "pedido", sortable: true },
+  { name: "Cliente", uid: "cliente", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
+  { name: "Recurrencia", uid: "recurrenciaa", sortable: true },
+  { name: "Origen", uid: "origen", sortable: true },
+  { name: "Monto", uid: "monto", sortable: true },
+  { name: "Status", uid: "status", sortable: true },
+  { name: "Acciones", uid: "Actions" },
+];
 const INITIAL_VISIBLE_COLUMNS = [
   "ID",
   "Folio",
@@ -155,14 +155,13 @@ const Quotes = () => {
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
     const statusColorMap = {
-        Nueva: "primary",
-        Ganada: "success", 
-        Perdida: "warning", 
-        Cancelada: "error", 
-        Vencida: "danger", 
-      };
-      
-  
+      Nueva: "primary",
+      Ganada: "success",
+      Perdida: "warning",
+      Cancelada: "error",
+      Vencida: "danger",
+    };
+
     switch (columnKey) {
       case "ID":
         return (
@@ -173,17 +172,13 @@ const Quotes = () => {
       case "Folio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.folio}
-            </p>
+            <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
       case "Fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.fecha}
-            </p>
+            <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
       case "Pedido":
@@ -216,57 +211,61 @@ const Quotes = () => {
             <p className="text-bold text-small capitalize">$ {data.monto}</p>
           </div>
         );
-        case "status":
-          
-            if (data.status === 0) {
-              return (
-         
-                  <Chip  variant="flat" className="capitalize" color={statusColorMap["Nueva"]} size="sm">
-                    <span >Nueva</span>
-                  </Chip >
-         
-              );
-              } else if (data.status === 1) {
-            
-              return (
-                
-                  <Chip className="capitalize" color={statusColorMap["Ganada"]} size="sm">
-                    <span>Ganada</span>
-                  </Chip>
-                
-                
-              );
-              
-            } else if (data.status === 2) {
-              return (
-                
-                  <Chip  className="capitalize" color={statusColorMap["Perdida"]} size="sm" >
-                    <span >Perdida</span>
-                  </Chip>
-                
-              );
-            } else if (data.status === 3) {
-              return (
-                
-                  <Chip  className="capitalize" color={statusColorMap["Cancelada"]} size="sm">
-                    <span >Cancelada</span>
-                  </Chip >
-                
-              );
-            } else if (data.status === 4) {
-              return (
-              
-                  <Chip  className="capitalize" color={statusColorMap["Vencida"]} size="sm" >
-                    <span>Vencida</span>
-                  </Chip >
-                
-              );
-          
-            }else {
-              return (
-                <span>{user.estado}</span>
-              );
-            }
+      case "status":
+        if (data.status === 0) {
+          return (
+            <Chip
+              variant="flat"
+              className="capitalize"
+              color={statusColorMap["Nueva"]}
+              size="sm"
+            >
+              <span>Nueva</span>
+            </Chip>
+          );
+        } else if (data.status === 1) {
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Ganada"]}
+              size="sm"
+            >
+              <span>Ganada</span>
+            </Chip>
+          );
+        } else if (data.status === 2) {
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Perdida"]}
+              size="sm"
+            >
+              <span>Perdida</span>
+            </Chip>
+          );
+        } else if (data.status === 3) {
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Cancelada"]}
+              size="sm"
+            >
+              <span>Cancelada</span>
+            </Chip>
+          );
+        } else if (data.status === 4) {
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Vencida"]}
+              size="sm"
+            >
+              <span>Vencida</span>
+            </Chip>
+          );
+        } else {
+          return <span>{user.estado}</span>;
+        }
 
       case "Actions":
         return (
@@ -320,232 +319,233 @@ const Quotes = () => {
     setFilterValue("");
     setPage(1);
   }, []);
-
   const topContent = React.useMemo(() => {
     return (
       <>
-
-          <ItemsHeader />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-          <div
-            role="presentation"
-            onClick={handleClickBreadCrumbs}
-            className="text-foreground"
-          >
-            
-            <Breadcrumbs aria-label="breadcrumb" color="foreground">
-              <Link
-                className="text-foreground"
-                underline="hover"
-                sx={{ display: "flex", alignItems: "center" }}
-                color="foreground"
-                href="#"
-                onClick={() => navigate(`/Home`)}
+        <ItemsHeader />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div
+          role="presentation"
+          onClick={handleClickBreadCrumbs}
+          className="text-foreground"
+        >
+          <Breadcrumbs aria-label="breadcrumb" color="foreground">
+            <Link
+              className="text-foreground"
+              underline="hover"
+              sx={{ display: "flex", alignItems: "center" }}
+              color="foreground"
+              href="#"
+              onClick={() => navigate(`/Home`)}
+            >
+              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+              Inicio
+            </Link>
+            <Typography
+              sx={{ display: "flex", alignItems: "center" }}
+              className="text-foreground"
+            >
+              <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
+              Cotizaciones
+            </Typography>
+          </Breadcrumbs>
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={{ marginLeft: "10px", marginRight: "10px" }}
+        >
+          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Modalidad"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Folio"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Dropdown>
+              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Cliente
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
               >
-                <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Inicio
-              </Link>
-              <Typography
-                sx={{ display: "flex", alignItems: "center" }}
-                className="text-foreground"
+                {marcaOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Vendedor
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
               >
-                <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Cotizaciones
-              </Typography>
-            </Breadcrumbs>
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Origen
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           </div>
-          <div
-            className="flex flex-col gap-4"
-            style={{ marginLeft: "10px", marginRight: "10px" }}
-          >
-            <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-              <Input
-                isClearable
-                size="sm"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Modalidad"
-                startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
-              />
-              <Input
-                isClearable
-                size="sm"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Folio"
-                startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
-              />
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Cliente
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {marcaOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Vendedor
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Origen
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={statusFilter}
-                  selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
-                >
-                  {statusOptions.map((status) => (
-                    <DropdownItem key={status.uid} className="capitalize">
-                      {status.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          
-            <div className="flex flex-wrap place-content-end space-x-2">
+
+          <div className="flex flex-wrap place-content-end space-x-2">
             <div>
-              <AddExcelQuotes/>
+              <AddExcelQuotes />
             </div>
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar Cotizaciones
-              </Button>
-            
-              <Button size="sm" color="primary" endContent={<TbPlus />}>
-                Nueva cotizacion
-              </Button>
-            </div>
-          </div>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-wrap text-small space-x-3">
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Columnas
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                    size="sm"
-                  >
-                    Acciones
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-            <label className="flex items-center text-default-400 text-small">
-              Productos por página:
-              <select
-                className="bg-transparent outline-none text-default-400 text-small"
-                onChange={onRowsPerPageChange}
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </label>
-          </div>
+            <Button size="sm" color="warning" endContent={<TbReload />}>
+              Actualizar Cotizaciones
+            </Button>
 
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+              onClick={() => navigate(`/Sales/Quotes/NewQuote`)}
+            >
+              Nueva cotizacion
+            </Button>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap text-small space-x-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Columnas
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                  size="sm"
+                >
+                  Acciones
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+          <label className="flex items-center text-default-400 text-small">
+            Productos por página:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
       </>
     );
   }, [

@@ -54,6 +54,7 @@ import NewBranch from "./views/settings/NewBranch.jsx";
 import Chat from "./views/chat/chat.jsx";
 import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
+import Quote from "./views/sales/Quote.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -273,6 +274,10 @@ const App = () => {
         {
           path: "/Settings/SecuritProfiles/ConfigureAccess",
           element: <ConfigureAccess />,
+        },
+        {
+          path: "/Sales/Quotes/NewQuote",
+          element: <Quote />,
         },
       ],
     },

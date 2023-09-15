@@ -194,26 +194,27 @@ const ItemsHeader = () => {
         </Modal>
       </div>
       <Accordion
+        isCompact
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         variant="light"
       >
         <AccordionItem key="1" aria-label="Menu">
-          <div className="gap-2 sm:grid-cols-13 flex flex-wrap justify-center">
+          <div className="gap-1 sm:grid-cols-16 flex flex-wrap justify-center">
             {items.map((item, index) => (
               <Card
-                className="w-[110px] h-[70px]"
+                className="min-w-[90px]"
                 shadow="sm"
                 key={index}
                 isPressable
                 onPress={item.address}
                 radius="sm"
               >
-                <CardBody className="overflow-visible flex py-4">
+                <CardBody className="overflow-visible flex py-3">
                   <div className="flex justify-center">
                     <item.icon className="h-4 w-4" />
                   </div>
-                  <div className="text-center" style={{ marginTop: "2px" }}>
+                  <div className="text-center" style={{ marginTop: "3px" }}>
                     <h6 style={{ fontSize: "10px" }}>{item.name}</h6>
                   </div>
                 </CardBody>

@@ -16,17 +16,14 @@ export const CardTransactions = ({ dataInf }: { dataInf: any[] }) => {
         </div>
         <div className="flex flex-col gap-4 ">
           {dataInf.map((item) => (
-            <div key={item.id} className="grid grid-cols-3 w-full">
+            <div key={item.id} className="grid grid-cols-2 w-full">
               <div className="w-full">                
-                <UserImage idUsuario={item.id} designType="tabla" />
+                <UserImage idUsuario={item.id} designType="avatar" />                
               </div>
 
               <span className="text-default-800  font-semibold">
                 {item.nombre} {item.apellido}
               </span>
-              <div>
-                <span className="text-default-500 text-xs">{item.email}</span>
-              </div>
             </div>
           ))}
         </div>
