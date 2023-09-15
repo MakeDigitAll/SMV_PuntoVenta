@@ -23,7 +23,7 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { TbDotsVertical } from "react-icons/tb";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -46,6 +46,15 @@ const columns = [
 
 const INITIAL_VISIBLE_COLUMNS = ["Nombre", "Tipo", "Actions"];
 
+const validationRules = {
+  nombre: (value) => value.trim() !== "",
+  ciudad: (value) => value.trim() !== "",
+  estado: (value) => value.trim() !== "",
+  telefono: (value) => value.match(/^\d{10}$/),
+  gerente: (value) => value.trim() !== "",
+  almacenes: (value) => value.match(/^\d{10}$/),
+};
+
 const NewBranch = () => {
   const [user, setUser] = useState({});
 
@@ -63,6 +72,7 @@ const NewBranch = () => {
   };
 
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   async function loadTask() {
     try {
       const response = await fetch("http://localhost:4000/Almacenes");
@@ -132,63 +142,147 @@ const NewBranch = () => {
   }, [sortDescriptor, items]);
   //Formulario
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showFormulario, setShowFormulario] = useState(false);
   const [isAddingAlmacenes, setIsAddingAlmacenes] = useState(false);
   const [web, setWeb] = useState(false);
+  const [botonGuardarHabilitado, setBotonGuardarHabilitado] =
+    React.useState(true);
 
-const [formulario, setFormulario] = useState({
-  nombre: "",
-  ciudad: "",
-  estado: "",
-  telefono: "",
-  gerente: "",
-  almacenes:"",
-  web:""
-});
+  const [formulario, setFormulario] = useState({
+    nombre: "",
+    ciudad: "",
+    estado: "",
+    telefono: "",
+    gerente: "",
+    almacenes: "",
+    web: "",
+  });
 
+  const [sucursalDatos, setSucursalDatos] = useState({
+    nombreCorto: "",
+    direccion: "",
+    colonia: "",
+    codigoPostal: "",
+    emailSucursal: "",
+    rfc: "",
+    geoUrlMaps: "",
+    limiteCredito: "",
+    encabezadoPos: "",
+    notaEnviosPos: "",
+    notaTicketPos: "",
+  });
 
-const [sucursalDatos,setSucursalDatos]=useState({
-  nombreCorto:"",
-  direccion:"",
-  colonia:"",
-  codigoPostal:"",
-  emailSucursal:"",
-  rfc:"",
-  geoUrlMaps:"",
-  limiteCredito:"",
-  encabezadoPos:"",
-  notaEnviosPos:"",
-  notaTicketPos:"",
-})
+  const handleAddAlmacenes = () => {
+    // Lógica para agregar almacenes
+    // Cambiar a la vista de agregar almacenes
+    setIsAddingAlmacenes(true);
+    // Cerrar el modal de confirmación
+    setShowConfirmationModal(false);
+  };
 
-const handleAddAlmacenes = () => {
-  // Lógica para agregar almacenes
-  // Cambiar a la vista de agregar almacenes
-  setIsAddingAlmacenes(true);
-  // Cerrar el modal de confirmación
-  setShowConfirmationModal(false);
-};
-
-const handleReturnToMainPage = () => {
-  // Manejar el caso en el que el usuario no quiera agregar almacenes
-  // Cerrar el modal de confirmación
-  setShowConfirmationModal(false);
-  navigate("/Settings/BranchOffices");
-};
+  const handleReturnToMainPage = () => {
+    // Manejar el caso en el que el usuario no quiera agregar almacenes
+    // Cerrar el modal de confirmación
+    setShowConfirmationModal(false);
+    navigate("/Settings/BranchOffices");
+  };
 
   const handleNameChange = (e) => {
     const { name, value } = e.target;
-    setFormulario((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormulario({ ...formulario, [name]: value });
+    // Actualizar el estado de validación según si el campo está vacío o no
+    if (!value) {
+      switch (name) {
+        case "nombre":
+          setValidationNombre("invalid");
+          break;
+        case "ciudad":
+          setValidationCiud("invalid");
+          break;
+        case "estado":
+          setValidationEstado("invalid");
+          break;
+        case "telefono":
+          setValidationTel("invalid");
+          break;
+        case "gerente":
+          setValidationGeren("invalid");
+          break;
+        case "almacenes":
+          setValidationAlma("invalid");
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (name) {
+        case "nombre":
+          setValidationNombre("valid");
+          break;
+        case "ciudad":
+          setValidationCiud("valid");
+          break;
+        case "estado":
+          setValidationEstado("valid");
+          break;
+        case "telefono":
+          setValidationTel("valid");
+          break;
+        case "gerente":
+          setValidationGeren("valid");
+          break;
+        case "almacenes":
+          setValidationAlma("valid");
+          break;
+        default:
+          break;
+      }
+    }
     setSucursalDatos((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
   };
 
+  const validation = (value) => value.trim() !== "";
+  const validationStates = useMemo(() => {
+    if (formulario.nombre === "") return undefined;
+
+    return validation(formulario.nombre) ? "valid" : "invalid";
+  }, [formulario.nombre]);
+
+  const [nuevaSucursalId, setNuevaSucursalId] = useState(null);
+  const [validationNombre, setValidationNombre] = React.useState("");
+  const [validationCiud, setValidationCiud] = React.useState("");
+  const [validationEstado, setValidationEstado] = React.useState("");
+  const [validationTel, setValidationTel] = React.useState("");
+  const [validationGeren, setValidationGeren] = React.useState("");
+  const [validationAlma, setValidationAlma] = React.useState("");
+
   const handleGuardar = async (e) => {
     e.preventDefault();
+
+    // Verificar si alguno de los campos está vacío
+    if (
+      !formulario.nombre ||!formulario.ciudad || !formulario.estado || !formulario.telefono ||
+      !formulario.gerente || !formulario.almacenes ||!sucursalDatos.nombreCorto ||!sucursalDatos.direccion ||
+      !sucursalDatos.colonia ||!sucursalDatos.codigoPostal ||!sucursalDatos.emailSucursal ||
+      !sucursalDatos.rfc ||!sucursalDatos.geoUrlMaps ||!sucursalDatos.limiteCredito ||
+      !sucursalDatos.encabezadoPos ||!sucursalDatos.notaEnviosPos ||!sucursalDatos.notaTicketPos
+    ) {
+      // Mostrar un mensaje de error o realizar alguna acción
+      toast.warning("Por favor, complete todos los campos antes de guardar.",{theme: "colored"});
+      return; // No continuar con la solicitud POST
+    }
+
+    const camposFaltantes = [];
+    !formulario.nombre ? setValidationNombre("invalid") : setValidationNombre("valid");
+    !formulario.ciudad ? setValidationCiud("invalid") : setValidationCiud("valid");
+    !formulario.estado ? setValidationEstado("invalid") : setValidationEstado("valid");
+    !formulario.telefono ? setValidationTel("invalid") : setValidationTel("valid");
+    !formulario.gerente ? setValidationGeren("invalid") : setValidationGeren("valid");
+    !formulario.almacenes ? setValidationAlma("invalid") : setValidationAlma("valid");
+    
     
     const valorCheckbox = web ? 1 : 0;
     try {
@@ -207,10 +301,8 @@ const handleReturnToMainPage = () => {
           web: valorCheckbox, // Aquí guardamos el valor del checkbox
         }),
       });
-      console.log(response);
-  
       if (!response.ok) {
-        toast.warning("Error al almacenar Sucursales");
+        toast.warning("Error al almacenar Sucursales", { theme: "colored" });
         return;
       }
 
@@ -234,20 +326,25 @@ const handleReturnToMainPage = () => {
           notaTicketPos: sucursalDatos.notaTicketPos,
         }),
       });
-      console.log(response2);
+      // const nuevaSucursal = await response.json();
+      // const nuevaSucursalId = nuevaSucursal.id; // Obtén el ID de la sucursal
       if (!response2.ok) {
-        toast.warning("Error al almacenar Sucursales Datos");
+        // console.log("Error al almacenar Sucursales Datos");
         return;
       }
-      toast.success("Almacenado Correctamente")
+      toast.success("Sucursal Guardada Correctamente", { theme: "colored" });
+      // Almacena el ID de la sucursal en un estado o variable
+      //  setNuevaSucursalId(nuevaSucursalId);
+      //  console.log(nuevaSucursalId);
       setShowConfirmationModal(true);
+      //  setShowFormulario(true);
       // Ambas solicitudes POST se completaron con éxito
     } catch (error) {
-      toast.warning("Error al guardar:");
+      toast.warning("Error al guardar sucursal");
       console.error("Error en la segunda solicitud POST:", error);
     }
   };
-  
+
   //Modal
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [size, setSize] = React.useState("md");
@@ -265,43 +362,61 @@ const handleReturnToMainPage = () => {
   const handleCreate = () => {
     setModalMode("create");
     onOpen();
-    const newData = {
-      nombre: formData.nombre,
-      tipo: formData.tipo,
-    };
+    if (formData.nombre && formData.tipo) {
+      // Verifica si el registro ya existe en la tabla
+      const exists = data2.some(
+        (registro) =>
+          registro.nombre === formData.nombre && registro.tipo === formData.tipo
+      );
 
-    setFormData({
-      nombre: "",
-      tipo: "",
-    });
+      if (!exists) {
+        const nuevoRegistro = {
+          // sucursalId: nuevaSucursalId,
+          nombre: formData.nombre,
+          tipo: formData.tipo,
+        };
+
+        // Agrega el nuevo registro a data2
+        setData2([...data2, nuevoRegistro]);
+
+        setFormData({
+          nombre: "",
+          tipo: "",
+        });
+      } else {
+        // Muestra un mensaje de error o realiza alguna acción para indicar que el registro ya existe
+        // console.log("El registro ya existe en la tabla");
+      }
+    }
   };
 
   const handleEdit = (itemId) => {
     const selectedItem = data.find((item) => item.id === itemId);
-    console.log(selectedItem);
+    // console.log(selectedItem);
     if (selectedItem) {
       // Configura el estado del formulario modal con los datos del elemento seleccionado
       setFormData({
-        nombre:selectedItem.nombre,
-        tipo:selectedItem.tipo,
-      })
+        id: selectedItem.id,
+        nombre: selectedItem.nombre,
+        tipo: selectedItem.tipo,
+      });
       setEditingItem({
-       ...selectedItem});
+        ...selectedItem,
+      });
       // Abre el modal
       setModalMode("edit");
       onOpen();
     } else {
-      console.error("Elemento no encontrado");
+      toast.warning("Elemento no encontrado", { theme: "colored" });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!editingItem.id) {
-      // Manejar el caso en el que editingItem.id no tenga un valor válido
-      console.error("ID de almacén no válido");
-      return;
-    }
+    // if(!nuevaSucursalId){
+    //   console.log(nuevaSucursalId);
+    //   return;
+    // }
 
     const updatedData2 = {
       nombre: formData.nombre,
@@ -315,15 +430,20 @@ const handleReturnToMainPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedData2),
+          body: JSON.stringify({
+            // sucursalId: nuevaSucursalId,
+            nombre: formData.nombre,
+            tipo: formData.tipo,
+          }),
         });
         if (response.ok) {
           const result = await response.json();
           console.log(result);
-          setData([...data, result]);
-          console.log(data);
-          toast.success("Almacén Creado");
+          toast.success("Almacén Creado",{theme: "colored"});
           onClose(true);
+          setData2([...data2, result]);
+          console.log(data2);
+          loadTask();
         } else {
           const json = await response.json();
           toast.error(json.body.error, { theme: "colored" });
@@ -340,23 +460,24 @@ const handleReturnToMainPage = () => {
             body: JSON.stringify(updatedData2),
           }
         );
-  
+
         if (res.ok) {
           const result = await res.json();
           // Actualizar el elemento existente en lugar de agregar uno nuevo
-          const updatedData = data.map((item) =>
+          const updatedData = data2.map((item) =>
             item.id === result.id ? result : item
           );
-          setData(updatedData);
-          toast.success("Almacén Editado");
+          setData2(updatedData);
+          toast.success("Almacén Editado",{theme: "colored"});
           onClose(true);
+          loadTask();
         } else {
           const json = await res.json();
-          toast.error(json.body.error, { theme: "colored" });
+          toast.warning(json.body.error, { theme: "colored" });
         }
       }
     } catch (error) {
-      toast.warning(error.message);
+      toast.error("Error al Guardar", { theme: "colored" });
     }
   };
 
@@ -375,19 +496,18 @@ const handleReturnToMainPage = () => {
 
       if (response.ok) {
         // Actualizar la tabla de almacenes después de deshabilitar
-        const updatedData = data.filter((almacen) => almacen.id !== almacenId);
+        const updatedData = data2.filter((almacen) => almacen.id !== almacenId);
         setData(updatedData);
-        toast.success("Almacén deshabilitado");
+        toast.success("Almacén deshabilitado", { theme: "colored" });
       } else {
         // Manejar errores si la respuesta no es exitosa
-        console.error("Error al deshabilitar el almacén:", response.status);
+        toast.warning("Error al deshabilitar el almacén", { theme: "colored" });
       }
     } catch (error) {
-      toast.warning(error.message);
+      toast.error("Error al deshabilitar", { theme: "colored" });
       // Manejar el error
     }
   };
-  
 
   const navigate = useNavigate();
 
@@ -421,7 +541,8 @@ const handleReturnToMainPage = () => {
                   Editar Almacén
                 </DropdownItem>
                 <DropdownItem onClick={() => handleDisableAlmacen(data.id)}>
-                  Deshabilitar Almacén</DropdownItem>
+                  Deshabilitar Almacén
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -503,6 +624,8 @@ const handleReturnToMainPage = () => {
                           variant="faded"
                           onChange={handleNameChange}
                           value={formulario.nombre}
+                          validationState={validationNombre}
+                          required
                         />
                       </div>
                       <div className="md:col-span-3">
@@ -529,6 +652,8 @@ const handleReturnToMainPage = () => {
                           variant="faded"
                           onChange={handleNameChange}
                           value={formulario.gerente}
+                          validationState={validationGeren}
+                          required
                         />
                       </div>
                       <div className="md:col-span-12">
@@ -568,6 +693,8 @@ const handleReturnToMainPage = () => {
                           variant="faded"
                           onChange={handleNameChange}
                           value={formulario.ciudad}
+                          validationState={validationCiud}
+                          required
                         />
                       </div>
                       <div className="md:col-span-4">
@@ -581,6 +708,8 @@ const handleReturnToMainPage = () => {
                           variant="faded"
                           onChange={handleNameChange}
                           value={formulario.estado}
+                          validationState={validationEstado}
+                          required
                         />
                       </div>
                       <div className="md:col-span-4">
@@ -607,6 +736,8 @@ const handleReturnToMainPage = () => {
                           variant="faded"
                           onChange={handleNameChange}
                           value={formulario.telefono}
+                          validationState={validationTel}
+                          required
                         />
                       </div>
                       <div className="md:col-span-3">
@@ -633,6 +764,8 @@ const handleReturnToMainPage = () => {
                           variant="faded"
                           onChange={handleNameChange}
                           value={formulario.almacenes}
+                          validationState={validationAlma}
+                          required
                         />
                       </div>
                       <div className="md:col-span-3">
@@ -749,6 +882,7 @@ const handleReturnToMainPage = () => {
                       type="submit"
                       endContent={<MdSave />}
                       onClick={handleGuardar}
+                      // disabled={showFormulario}
                     >
                       Guardar
                     </Button>
@@ -756,7 +890,7 @@ const handleReturnToMainPage = () => {
                       className="min-w-[200px]"
                       color="warning"
                       type="submit"
-                      onClick={()=>navigate("/Settings/BranchOffices")}
+                      onClick={() => navigate("/Settings/BranchOffices")}
                     >
                       Regresar
                     </Button>
@@ -765,35 +899,43 @@ const handleReturnToMainPage = () => {
                 </div>
               </form>
               <Spacer y={25} />
-              {showConfirmationModal &&(
-              <Modal size={size} isOpen={showConfirmationModal} onClose={handleReturnToMainPage}>
-                <ModalContent>
-                  {(onClose) => (
-                    <>
-                      <ModalHeader className="flex flex-col gap-1"></ModalHeader>
-                      <ModalBody>
-                        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
-                          <div className="md:col-span-12"></div>
-                          <div className="md:col-span-12">
-                          <h2>¿Desea agregar Almacenes?</h2>
+              {showConfirmationModal && (
+                <Modal
+                  size={size}
+                  isOpen={showConfirmationModal}
+                  onClose={handleReturnToMainPage}
+                >
+                  <ModalContent>
+                    {(onClose) => (
+                      <>
+                        <ModalHeader className="flex flex-col gap-1"></ModalHeader>
+                        <ModalBody>
+                          <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
+                            <div className="md:col-span-12"></div>
+                            <div className="md:col-span-12">
+                              <h2>¿Desea agregar Almacenes?</h2>
+                            </div>
                           </div>
-                        </div>
-                      </ModalBody>
-                      <ModalFooter>
-                      <Button color="primary" onClick={()=>{
-                            setShowConfirmationModal(false);
-                            setIsAddingAlmacenes(true);
-                          }}>
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              setShowConfirmationModal(false);
+                              setIsAddingAlmacenes(true);
+                            }}
+                          >
                             Si
                           </Button>
-                      <Button color="danger" onClick={onClose}>
+                          <Button color="danger" onClick={onClose}>
                             No
                           </Button>
-                      </ModalFooter>
-                    </>
-                  )}
-                </ModalContent>
-              </Modal>)}
+                        </ModalFooter>
+                      </>
+                    )}
+                  </ModalContent>
+                </Modal>
+              )}
               {isAddingAlmacenes && (
                 <div style={{ marginLeft: "20px", marginRight: "20px" }}>
                   <div>
@@ -835,7 +977,7 @@ const handleReturnToMainPage = () => {
                       emptyContent={"No se encuentran Sucursales"}
                       items={sortedItems}
                     >
-                      {data.map((dato, index) => (
+                      {data2.map((dato, index) => (
                         <TableRow key={dato.id}>
                           {(columnKey) => (
                             <TableCell>{renderCell(dato, columnKey)}</TableCell>
