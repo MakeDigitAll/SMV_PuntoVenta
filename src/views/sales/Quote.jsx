@@ -25,14 +25,11 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { format } from "date-fns";
 
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
-import {
-  RiArrowLeftLine,
-  RiArrowRightLine,
-  RiDashboard2Fill,
-} from "react-icons/ri";
+import { RiDashboard2Fill } from "react-icons/ri";
 import {
   MdDiscount,
   MdPeopleAlt,
@@ -58,7 +55,7 @@ const Quote = () => {
     imagen: "",
     emailConfirm: "",
     passwordConfirm: "",
-    dateQuote: Date().toString().split("T")[0],
+    dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
     nombre: "",
@@ -163,7 +160,6 @@ const Quote = () => {
           },
         }
       );
-      console.log(result.data.id);
       if (result) {
         const formData2 = new FormData();
         const document2 = JSON.stringify({
@@ -233,7 +229,6 @@ const Quote = () => {
   const handleOpenAddDiscount = () => {
     onOpenDiscount();
   };
-
   return (
     <>
       <ItemsHeader />
@@ -324,6 +319,7 @@ const Quote = () => {
                                 label="Vendedor"
                                 id="apellido"
                                 isRequired
+                                isDisabled
                                 name="apellido"
                                 value={user.apellido}
                                 onChange={handleChange}
@@ -332,7 +328,7 @@ const Quote = () => {
                                 variant="faded"
                                 error={validationErrors.apellido !== ""}
                                 errorMessage={validationErrors.apellido}
-                                endContent={<MdSearch />}
+                                endContent={<MdPerson />}
                               />
                             </div>
 
@@ -541,7 +537,7 @@ const Quote = () => {
                                       <TableCell>Impuestos</TableCell>
                                       <TableCell>$</TableCell>
                                     </TableRow>
-                                    <TableRow key="4">
+                                    <TableRow key="5">
                                       <TableCell>Total</TableCell>
                                       <TableCell>$</TableCell>
                                     </TableRow>

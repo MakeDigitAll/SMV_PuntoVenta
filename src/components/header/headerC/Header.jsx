@@ -9,6 +9,8 @@ import {
   Switch,
   Image,
   DropdownSection,
+  Tabs,
+  Tab,
   User,
 } from "@nextui-org/react";
 import { useAuth } from "../../../components/auth/AuthProvider";
@@ -119,19 +121,61 @@ const Header = () => {
                     variant="flat"
                     textValue=""
                   >
-                    <DropdownItem key="profile" className="h-14 gap-2">
-                      <p className="font-semibold">
-                        {auth.getUser()?.nombre +
-                          " " +
-                          auth.getUser()?.apellido || ""}
-                      </p>
-                    </DropdownItem>
                     <DropdownItem
-                      key="logout"
-                      color="danger"
-                      onPress={handleLogout}
-                    >
-                      Log Out
+                      isReadOnly
+                      key="profile"
+                      className="h-14 gap-2"
+                      startContent={
+                        <Tabs
+                          key="underlined"
+                          variant="underlined"
+                          aria-label="Tabs variants"
+                        >
+                          <Tab key="Readed" title="Leídas" />
+                          <Tab key="No readed" title="No leídas" />
+                          <Tab key="All" title="Todas" />
+                        </Tabs>
+                      }
+                    ></DropdownItem>
+                    {/* Aqui va el map */}
+                    <DropdownItem key="profile" className="h-14 gap-2">
+                      <div className="text-right">
+                        <h6 className="text-default-500 text-xs">
+                          Ahora mismo
+                        </h6>
+                      </div>
+                      <User
+                        name="Christian"
+                        description="ha creado un nuevo producto en el listado de productos"
+                        classNames={{
+                          name: "text-default-600",
+                          description: "text-default-500",
+                        }}
+                        avatarProps={{
+                          size: "sm",
+                          src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+                        }}
+                      />
+                    </DropdownItem>
+                    <DropdownItem key="profile" className="h-14 gap-2">
+                      <div className="text-right">
+                        <h6 className="text-default-500 text-xs">
+                          Hace 5 minutos
+                        </h6>
+                      </div>
+                      <User
+                        name="David"
+                        description="ha borrado un álmacen en el listado de productos"
+                        avatarProps={{
+                          size: "sm",
+                          src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+                        }}
+                      />
+                    </DropdownItem>
+                    <DropdownItem className="text-center">
+                      <a href="/" onClick={handleLogout}>
+                        <span className="ml-2">Ver todas</span>
+                      </a>
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
@@ -163,23 +207,10 @@ const Header = () => {
                   itemClasses={{}}
                 >
                   <DropdownSection aria-label="Profile & Actions" showDivider>
-                    <DropdownItem isReadOnly className="h-14 gap-2">
-                      <User
-                        name={
-                          auth.getUser()?.nombre +
-                            " " +
-                            auth.getUser()?.apellido || ""
-                        }
-                        description={auth.getUser()?.email || ""}
-                        classNames={{
-                          name: "text-default-600",
-                          description: "text-default-500",
-                        }}
-                        avatarProps={{
-                          size: "md",
-                          src: useUrlImagen,
-                        }}
-                      />
+                    <DropdownItem key="menu">
+                      {auth.getUser()?.nombre +
+                        " " +
+                        auth.getUser()?.apellido || ""}
                     </DropdownItem>
                     <DropdownItem key="settings">
                       {t("header.Profile")}
