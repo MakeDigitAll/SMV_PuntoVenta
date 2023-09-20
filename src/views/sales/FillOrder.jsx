@@ -1,60 +1,64 @@
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Button, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Pagination } from "@nextui-org/react";
-import { MdArrowDropDown, MdCategory, MdDelete, MdEdit, MdRemoveRedEye, MdSearch } from "react-icons/md";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Input,
+  Button,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  User,
+  Checkbox,
+} from "@nextui-org/react";
+import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
-import Typography from "@mui/material/Typography";
-import AddExcelCategories from "../Excel/addExcel/addExcelCategories";
-import { TbPlus, TbReload } from "react-icons/tb";
-import React,{useState, useEffect, useCallback} from "react";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
-  { name: "# Cliente", uid: "numeroCliente", sortable: true },
-  { name: "# Comercial", uid: "numeroComercial", sortable: true },
-  { name: "Nombre Comercial", uid: "nombreComercial", sortable: true },
-  { name: "Razón Social", uid: "razonSocial", sortable: true },
-  { name: "Contacto", uid: "contacto", sortable: true },
-  { name: "RFC", uid: "rfc", sortable: true },
-  { name: "Teléfono", uid: "telefono", sortable: true },
-  { name: "eMail", uid: "email", sortable: true },
-  { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Giro", uid: "giro", sortable: true },
-  { name: "Activo", uid: "activo", sortable: true },
-  { name: "Registro", uid: "registro", sortable: true },
-  { name: "Actualizado", uid: "actualizado", sortable: true },
-  { name: "Actions", uid: "Actions", sortable: true },
+  { name: "Codigo", uid: "codigo", sortable: true },
+  { name: "Nombre", uid: "nombre", sortable: true },
+  { name: "Cantidad", uid: "cantidad", sortable: true },
+  { name: "Falta", uid: "falta", sortable: true },
+  { name: "Surtir", uid: "surtir", sortable: true },
+  { name: "Disponibles", uid: "disponibles", sortable: true },
+  { name: "Series", uid: "series", sortable: true },
+  { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "numeroCliente",
-  "numeroComercial",
-  "nombreComercial",
-  "razonSocial",
-  "contacto",
-  "rfc",
-  "telefono",
-  "email",
-  "vendedor",
-  "giro",
-  "activo",
-  "registro",
-  "actualizado",
+  "Folio",
+  "Fecha",
+  "Cliente",
+  "Monto",
+  "Estatus",
+  "Factura",
+  "Surtido",
+  "Parcial",
   "Actions",
 ];
-const ClientList = () => {
-  const clienteOptions = [];
-  function clientemarca() {
-    for (let i = 0; i < data.length; i++) {
-      clienteOptions.push({ name: data[i].nombre, uid: data[i].id });
+
+const FillOrder = () => {
+    const marcaOptions = [];
+    function contarmarca() {
+      for (let i = 0; i < data.length; i++) {
+        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
+      }
     }
-  }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoClientes");
+      const response = await fetch("http://localhost:4000/    ");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -70,7 +74,6 @@ const ClientList = () => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -103,7 +106,7 @@ const ClientList = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+        data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -111,9 +114,10 @@ const ClientList = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+        Array.from(statusFilter).includes(data.cliente)
       );
     }
+
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
 
@@ -140,108 +144,79 @@ const ClientList = () => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "id":
+      case "Folio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
-      case "numeroCliente":
+        case "Fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
+            <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-      case "numeroComercial":
+      case "Cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroComercial}</p>
+            <p className="text-bold text-small capitalize">
+              {data.cliente}
+            </p>
           </div>
         );
-      case "razonSocial":
+        
+      case "Monto":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.razonSocial}</p>
+            <p className="text-bold text-small capitalize">{data.monto}</p>
           </div>
         );
-      case "contacto":
+      case "Estatus":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.contacto}</p>
+            <p className="text-bold text-small capitalize">{data.estatus}</p>
           </div>
         );
-      case "rfc":
+      case "Factura":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.rfc}</p>
+            <p className="text-bold text-small capitalize">{data.factura}</p>
           </div>
         );
-      case "telefono":
+      case "Surtido":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.telefono}</p>
+            <p className="text-bold text-small capitalize">{data.surtido}</p>
           </div>
         );
-      case "email":
+        case "Parcial":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.email}</p>
-          </div>
-        );
-      case "vendedor":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.vendedor}</p>
-          </div>
-        );
-      case "giro":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.giro}</p>
-          </div>
-        );
-      case "activo":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.activo}</p>
-          </div>
-        );
-      case "registro":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.registro}</p>
-          </div>
-        );
-      case "actualizado":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.actualizado}</p>
+            <p className="text-bold text-small capitalize">{data.parcial}</p>
           </div>
         );
       case "Actions":
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdRemoveRedEye />
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdEdit />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <MdDelete />
-              </span>
-            </Tooltip>
+          <div className="relative flex justify-center items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <TbDotsVertical className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem>View</DropdownItem>
+                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
         );
       default:
         return cellValue;
     }
   }, []);
+
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
@@ -272,10 +247,11 @@ const ClientList = () => {
     setFilterValue("");
     setPage(1);
   }, []);
+
   const topContent = React.useMemo(() => {
     return (
       <>
-
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -310,8 +286,8 @@ const ClientList = () => {
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <MdCategory sx={{ mr: 0.5 }} fontSize="inherit" />
-              Categorías
+              <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
+              Surtir Pedidos
             </Typography>
           </Breadcrumbs>
         </div>
@@ -324,30 +300,42 @@ const ClientList = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Nombre"
+              placeholder="Cliente"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
+            <Dropdown>
+              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Modalidad
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {marcaOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            
           </div>
-          <Input
-            isClearable
-            size="sm"
-            className="w-[450px] sm:max-w-[44%]"
-            placeholder="SKU"
-            startContent={<MdSearch />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
           <div className="flex flex-wrap place-content-end space-x-2">
-            <AddExcelCategories />
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Categorías
-            </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Categoría
+              Actualizar Surtir Pedido
             </Button>
           </div>
         </div>
@@ -405,7 +393,7 @@ const ClientList = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Categorías por página:
+            Pedidos por Surtir por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -432,7 +420,7 @@ const ClientList = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} clientes en total
+            {data.length} Pedidos por surtir en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -498,7 +486,7 @@ const ClientList = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran clientes"}
+          emptyContent={"No se encuentran Pedidos por surtir"}
           items={sortedItems}
         >
           {(item) => (
@@ -513,4 +501,5 @@ const ClientList = () => {
     </div>
   );
 };
-export default ClientList;
+
+export default FillOrder;

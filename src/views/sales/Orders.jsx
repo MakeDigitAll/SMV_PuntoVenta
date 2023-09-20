@@ -25,6 +25,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import AddExcelOrders from "../Excel/addExcel/addExcelOrders";
 const statusOptions = [
   { name: "Active", uid: "active" },
   { name: "Paused", uid: "paused" },
@@ -518,6 +519,7 @@ const Orders = () => {
               
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
+            <AddExcelOrders/>
               <Button size="sm" color="warning" endContent={<TbReload />}>
                 Actualizar Cotizaciones
               </Button>
@@ -677,7 +679,7 @@ const Orders = () => {
         </TableHeader>
         <TableBody
           emptyContent={"No se encuentran productos"}
-          items={pedidosData}
+          items={filteredListadoProd}
         >
           {(item) => (
             <TableRow key={item.id}>

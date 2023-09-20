@@ -28,7 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import ExcelProducts from "../Excel/exports/ExcelProducts";
-import AddExcelProducts from "../Excel/addExcel/addExcelProducts";
+import AddExcelPays from "../Excel/addExcel/addExcelPays";
 
 const statusOptions = [
   { name: "Active", uid: "active" },
@@ -368,7 +368,7 @@ const Payment = () => {
             </div>
             <div className="flex flex-wrap place-content-end space-x-2">
               <ExcelProducts/>
-              <AddExcelProducts/>
+              <AddExcelPays/>
               <Button size="sm" color="warning" endContent={<TbReload />}>
                 Actualizar Pagos
               </Button>

@@ -26,15 +26,18 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import AddExcelCategories from "../Excel/addExcel/addExcelCategories";
 const columns = [
-  { name: "Nombre", uid: "Nombre", sortable: true },
-  { name: "Sku", uid: "Sku", sortable: true },
+  { name: "ID", uid: "id", sortable: true },
+  { name: "Nombre", uid: "nombre", sortable: true },
+  { name: "Sku", uid: "sku", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "Nombre",
-  "Sku",
+  "id",
+  "nombre",
+  "sku",
   "Actions",
 ];
 
@@ -251,15 +254,25 @@ const Categories = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Proveedor"
+              placeholder="Nombre"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            
           </div>
+          <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="SKU"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
           <div className="flex flex-wrap place-content-end space-x-2">
+            <AddExcelCategories/>
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Categorías
             </Button>

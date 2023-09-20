@@ -1,60 +1,68 @@
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Button, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Pagination } from "@nextui-org/react";
-import { MdArrowDropDown, MdCategory, MdDelete, MdEdit, MdRemoveRedEye, MdSearch } from "react-icons/md";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Input,
+  Button,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  User,
+  Checkbox,
+} from "@nextui-org/react";
+import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { MdArrowDropDown, MdBookOnline, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
-import Typography from "@mui/material/Typography";
-import AddExcelCategories from "../Excel/addExcel/addExcelCategories";
-import { TbPlus, TbReload } from "react-icons/tb";
-import React,{useState, useEffect, useCallback} from "react";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 const columns = [
-  { name: "ID", uid: "id", sortable: true },
-  { name: "# Cliente", uid: "numeroCliente", sortable: true },
-  { name: "# Comercial", uid: "numeroComercial", sortable: true },
-  { name: "Nombre Comercial", uid: "nombreComercial", sortable: true },
-  { name: "Razón Social", uid: "razonSocial", sortable: true },
-  { name: "Contacto", uid: "contacto", sortable: true },
-  { name: "RFC", uid: "rfc", sortable: true },
-  { name: "Teléfono", uid: "telefono", sortable: true },
-  { name: "eMail", uid: "email", sortable: true },
-  { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Giro", uid: "giro", sortable: true },
-  { name: "Activo", uid: "activo", sortable: true },
-  { name: "Registro", uid: "registro", sortable: true },
-  { name: "Actualizado", uid: "actualizado", sortable: true },
-  { name: "Actions", uid: "Actions", sortable: true },
+  { name: "Imagen", uid: "Imagen", sortable: true },
+  { name: "CodFab", uid: "CodFab", sortable: true },
+  { name: "CodEmp", uid: "CodEmp", sortable: true },
+  { name: "Nombre", uid: "Nombre", sortable: true },
+  { name: "Marca", uid: "Marca", sortable: true },
+  { name: "Minímo", uid: "Minimo", sortable: true },
+  { name: "Máximo", uid: "Maximo", sortable: true },
+  { name:"Total", uid: "Total",sortable:true},
+  { name:"Detalles", uid: "Detalles",sortable:true},
+  { name: "Acciones", uid: "Actions" },
 ];
+
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "numeroCliente",
-  "numeroComercial",
-  "nombreComercial",
-  "razonSocial",
-  "contacto",
-  "rfc",
-  "telefono",
-  "email",
-  "vendedor",
-  "giro",
-  "activo",
-  "registro",
-  "actualizado",
+  "Imagen",
+  "CodFab",
+  "CodEmp",
+  "Nombre",
+  "Marca",
+  "Minimo",
+  "Maximo",
+  "Total",
+  "Detalles",
   "Actions",
 ];
-const ClientList = () => {
-  const clienteOptions = [];
-  function clientemarca() {
-    for (let i = 0; i < data.length; i++) {
-      clienteOptions.push({ name: data[i].nombre, uid: data[i].id });
+
+const   Inventories = () => {
+    const marcaOptions = [];
+    function contarmarca() {
+      for (let i = 0; i < data.length; i++) {
+        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
+      }
     }
-  }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoClientes");
+      const response = await fetch("http://localhost:4000/  ");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -70,7 +78,6 @@ const ClientList = () => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -114,6 +121,7 @@ const ClientList = () => {
         Array.from(statusFilter).includes(data.nombre)
       );
     }
+
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
 
@@ -140,108 +148,81 @@ const ClientList = () => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "id":
+        case "Imagen":
+            return <User avatarProps={{ radius: "lg", src: data.imagen }} />;
+        case "CodFab":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{data.codigoFabricante}</p>
           </div>
         );
-      case "numeroCliente":
+      case "CodEmp":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
+            <p className="text-bold text-small capitalize">
+              {data.codigoEmpresa}
+            </p>
           </div>
         );
-      case "numeroComercial":
+        
+      case "Nombre":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroComercial}</p>
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
-      case "razonSocial":
+      case "Marca":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.razonSocial}</p>
+            <p className="text-bold text-small capitalize">{data.marca}</p>
           </div>
         );
-      case "contacto":
+      case "Minimo":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.contacto}</p>
+            <p className="text-bold text-small capitalize">{data.minimo}</p>
           </div>
         );
-      case "rfc":
+      case "Maximo":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.rfc}</p>
+            <p className="text-bold text-small capitalize">{data.maximo}</p>
           </div>
         );
-      case "telefono":
+        case "Total":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.telefono}</p>
+            <p className="text-bold text-small capitalize">{data.total}</p>
           </div>
         );
-      case "email":
+        case "Detalles":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.email}</p>
-          </div>
-        );
-      case "vendedor":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.vendedor}</p>
-          </div>
-        );
-      case "giro":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.giro}</p>
-          </div>
-        );
-      case "activo":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.activo}</p>
-          </div>
-        );
-      case "registro":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.registro}</p>
-          </div>
-        );
-      case "actualizado":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.actualizado}</p>
+            {/* <p className="text-bold text-small capitalize">{data.status}</p> */}
           </div>
         );
       case "Actions":
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdRemoveRedEye />
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdEdit />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <MdDelete />
-              </span>
-            </Tooltip>
+          <div className="relative flex justify-center items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <TbDotsVertical className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem>View</DropdownItem>
+                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
         );
       default:
         return cellValue;
     }
   }, []);
+
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
@@ -272,10 +253,11 @@ const ClientList = () => {
     setFilterValue("");
     setPage(1);
   }, []);
+
   const topContent = React.useMemo(() => {
     return (
       <>
-
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -310,8 +292,8 @@ const ClientList = () => {
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <MdCategory sx={{ mr: 0.5 }} fontSize="inherit" />
-              Categorías
+              <MdBookOnline sx={{ mr: 0.5 }} fontSize="inherit" />
+              Inventario
             </Typography>
           </Breadcrumbs>
         </div>
@@ -324,30 +306,45 @@ const ClientList = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Nombre"
+              placeholder="Nombre del Producto"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
+            <Dropdown>
+              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Marca
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {marcaOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            
           </div>
-          <Input
-            isClearable
-            size="sm"
-            className="w-[450px] sm:max-w-[44%]"
-            placeholder="SKU"
-            startContent={<MdSearch />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
           <div className="flex flex-wrap place-content-end space-x-2">
-            <AddExcelCategories />
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Categorías
+              Actualizar Inventario
             </Button>
             <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Categoría
+              Nueva Inventario
             </Button>
           </div>
         </div>
@@ -405,7 +402,7 @@ const ClientList = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Categorías por página:
+            Inventario por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -432,7 +429,7 @@ const ClientList = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} clientes en total
+            {data.length} Inventario en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -498,7 +495,7 @@ const ClientList = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran clientes"}
+          emptyContent={"No se encuentra Inventario"}
           items={sortedItems}
         >
           {(item) => (
@@ -513,4 +510,5 @@ const ClientList = () => {
     </div>
   );
 };
-export default ClientList;
+
+export default Inventories;

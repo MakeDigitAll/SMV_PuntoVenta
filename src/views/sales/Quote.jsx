@@ -22,7 +22,7 @@ import {
   useDisclosure,
   SelectItem,
 } from "@nextui-org/react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { format } from "date-fns";
@@ -229,6 +229,36 @@ const Quote = () => {
   const handleOpenAddDiscount = () => {
     onOpenDiscount();
   };
+  const [categorias, setCategorias] = useState([]);
+  const [marca, setmarca] = useState([]);
+  const loadCategorias = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/Categoria");
+      if (response.ok) {
+        const categoriasData = await response.json();
+        setCategorias(categoriasData);
+      }
+    } catch (error) {
+      console.error("Error al obtener las categorías:", error);
+    }
+  };
+  useEffect(() => {
+    loadCategorias();
+  }, []);
+  const loadCMarcas = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/MarcasProducto");
+      if (response.ok) {
+        const marcaData = await response.json();
+        setmarca(marcaData);
+      }
+    } catch (error) {
+      console.error("Error al obtener las categorías:", error);
+    }
+  };
+  useEffect(() => {
+    loadCMarcas();
+  }, []);
   return (
     <>
       <ItemsHeader />
@@ -615,14 +645,11 @@ const Quote = () => {
                               placeholder="Seleccione"
                               size="sm"
                             >
-                              {/* {animals.map((animal) => (
-                                  <SelectItem
-                                    key={animal.value}
-                                    value={animal.value}
-                                  >
-                                    {animal.label}
-                                  </SelectItem>
-                                ))} */}
+                              {marca.map((marca) => (
+                                <SelectItem key={marca.id} value={marca.id}>
+                                  {marca.marca}
+                                </SelectItem>
+                              ))}
                             </Select>
                           </div>
                           <div className="md:col-span-3">
@@ -632,14 +659,11 @@ const Quote = () => {
                               placeholder="Seleccione"
                               size="sm"
                             >
-                              {/* {animals.map((animal) => (
-                                  <SelectItem
-                                    key={animal.value}
-                                    value={animal.value}
-                                  >
-                                    {animal.label}
-                                  </SelectItem>
-                                ))} */}
+                              {categorias.map((categoria) => (
+                                <SelectItem key={categoria.id} value={categoria.id}>
+                                  {categoria.nombre}
+                                </SelectItem>
+                              ))}
                             </Select>
                           </div>
                           <div className="md:col-span-12">

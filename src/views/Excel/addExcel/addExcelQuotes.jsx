@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { HotTable } from "@handsontable/react";
-import Modal from "react-modal";
-import ExcelJS from "exceljs";
-import "handsontable/dist/handsontable.full.css";
-import { Button } from "@nextui-org/react";
+import React, { useState } from 'react';
+import Modal from 'react-modal';
+import ExcelJS from 'exceljs';
+import 'handsontable/dist/handsontable.full.css';
+import { Button } from '@nextui-org/react';
+import { HotTable } from '@handsontable/react';
 
 Modal.setAppElement("#root");
 
 const AddExcelQuotes = () => {
   const headers = [
-    " ",
-    "Fecha",
-    "Pedido",
-    "Cliente",
-    "Vendedor",
-    "Recurrencia",
-    "Origen",
-    "Monto",
+    ' ',
+    'Fecha',
+    'Pedido',
+    'Cliente',
+    'Vendedor',
+    'Recurrencia',
+    'Origen',
+    'Monto',
   ];
 
-  const [data, setData] = useState([[" ", " ", " ", " ", " ", " ", " ", " "]]);
+  const [data, setData] = useState([[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']]);
 
   const settings = {
     data: data,
@@ -125,7 +125,7 @@ const AddExcelQuotes = () => {
   return (
     <div style={{ position: "relative", zIndex: "0" }}>
       <Button size="sm" color="success" onClick={() => setModalIsOpen(true)}>
-        Subir marcas
+        Subir cotizaciones
       </Button>
       <Modal
         isOpen={modalIsOpen}

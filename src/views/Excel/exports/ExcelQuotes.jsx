@@ -4,19 +4,19 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Workbook } from 'exceljs';
 import CopyToClipboard from 'react-copy-to-clipboard';
-const ExcelProducts = () => {
+const ExcelQuotes = () => {
   const [loadingExcel, setLoadingExcel] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
-  const [ProductosExcel, setProductosExcel] = useState([]);
+  const [CotizacionesExcel, setCotizacionesExcel] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = React.createRef();
   useEffect(() => {
-    fetch('http://localhost:4000/Productos')
+    fetch('http://localhost:4000/Cotizaciones')
       .then((response) => response.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setProductosExcel(data);
+          setCotizacionesExcel(data);
         } else {
           console.error('Los datos recibidos no son válidos.');
         }
@@ -27,13 +27,13 @@ const ExcelProducts = () => {
   const handleDownloadExcel = () => {
     setLoadingExcel(true);
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('ProductosExcel');
+    const worksheet = workbook.addWorksheet('CotizacionesExcel');
     const headerStyle = {
       alignment: { horizontal: 'center', vertical: 'middle' },
     };
     const columns = [
-      { header: 'ID', key: 'idproducto', width: 10 },
-      { header: 'Código Empresa', key: 'codigoEmpresa', width: 20 },
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Folio', key: 'folio', width: 20 },
       { header: 'Código Fabricante', key: 'codigoFabricante', width: 20 },
       { header: 'Nombre', key: 'nombre', width: 15 },
       { header: 'Marca', key: 'marca', width: 15 },
@@ -55,7 +55,7 @@ const ExcelProducts = () => {
       cell.font = headerStyle.font;
       cell.alignment = headerStyle.alignment;
     });
-    ProductosExcel.forEach((item) => {
+    CotizacionesExcel.forEach((item) => {
       const row = worksheet.addRow(item);
       row.eachCell((cell) => {
         cell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -80,7 +80,7 @@ const ExcelProducts = () => {
     const columns = [
       'ID', 'Código Empresa', 'Código Fabricante', 'Nombre', 'Marca', 'Categoría', 'Existencia', 'BackOrder', 'Cantidad', 'Precio', 'Descuento', 'Total', 'isUpdated', 'isDeleted', 'Fecha de Creación', 'Fecha de Modificación',
     ];
-    const rows = ProductosExcel.map(item => [
+    const rows = CotizacionesExcel.map(item => [
       item.idproducto, item.codigoEmpresa, item.codigoFabricante, item.nombre, item.marca, item.categoria, item.existencia, item.backOrder, item.cantidad, item.precio, item.descuento, item.total, item.isUpdated, item.isDeleted, item.DateCreation, item.DateModification,
     ]);
     doc.autoTable({
@@ -155,7 +155,7 @@ const ExcelProducts = () => {
               )}
             </DropdownItem>
             <DropdownItem key="copy">
-              <CopyToClipboard text={JSON.stringify(ProductosExcel, null, 2)}>
+              <CopyToClipboard text={JSON.stringify(CotizacionesExcel, null, 2)}>
                 <div flat color="success">Copiar</div>
               </CopyToClipboard>
             </DropdownItem>
@@ -171,5 +171,5 @@ const ExcelProducts = () => {
     </div>
   );
 };
-export default ExcelProducts
+export default ExcelQuotes;
 

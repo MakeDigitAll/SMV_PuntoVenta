@@ -40,7 +40,7 @@ const itemsSales = [
     id: 3,
     name: "Surtir Pedidos",
     icon: BiArchiveOut,
-    address: "FillOrders",
+    address: "FillOrder",
     roleId: "0",
   },
   {
@@ -61,7 +61,7 @@ const itemsSales = [
     id: 6,
     name: "Inventario",
     icon: BiCheckShield,
-    address: "Inventory",
+    address: "Inventories",
     roleId: "0",
   },
   {
