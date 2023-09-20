@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   Table,
   TableHeader,
@@ -23,8 +23,17 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import AddExcelBrands from "../Excel/addExcel/addExcelBrands";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+import { display } from "@mui/system";
 const columns = [
   { name: "ID", uid: "ID", sortable: true },
   { name: "Imagen", uid: "Imagen", sortable: true },
@@ -130,6 +139,98 @@ const Brands = () => {
     });
   }, [sortDescriptor, items]);
 
+  //Modal
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState("2xl");
+  const sizes = ["md", "lg", "xl", "2xl", "3xl"];
+  const [modalMode, setModalMode] = useState("create"); 
+  const [datosCrear, setDatosCrear] = useState({
+    marca: "",
+    catalogo: "",
+    productos: "",
+  });
+  const [datosEditar, setDatosEditar] = useState({
+    marca: "",
+    catalogo: "",
+    productos: "",
+  });
+  const [imagenSeleccionada, setImagenSeleccionada] = useState(null);
+  const inputImagenRef = useRef(null);
+  const [selectedData, setSelectedData] = useState(null);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDatosCrear((prevDatosCrear) => ({
+      ...prevDatosCrear,
+      [name]: value,
+    }));
+  };
+  const handleImagenSeleccionada = (event) => {
+    const archivo = event.target.files[0];
+    if (archivo) {
+      // Puedes realizar validaciones adicionales aquí si es necesario
+      setImagenSeleccionada(archivo);
+    }
+  };
+  const handleCreateClick = () => {
+    setModalMode("create");
+    onOpen();
+    setDatosCrear({
+      marca: "",
+      catalogo: "",
+      productos: "",
+    });
+  };
+  const handleVer = (item) => {
+    setModalMode("view");
+    const selectedItem = data.find((entry) => entry.id === item);
+    setSelectedData(selectedItem);
+    onOpen(); // Abrir el modal
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!datosCrear.marca || !datosCrear.catalogo || !datosCrear.productos || !imagenSeleccionada) {
+      // Muestra un mensaje de error o realiza alguna acción para indicar que faltan campos
+      toast.warning("Por favor, completa todos los campos y selecciona una imagen.", {theme:"colored"});
+      return; // No continúes con la solicitud POST si faltan campos
+    }
+    const updatedData = {
+      //Crear
+      imagen: imagenSeleccionada,
+      marca: datosCrear.marca,
+      catalogo: datosCrear.catalogo,
+      productos: datosCrear.productos,
+    };
+
+    try {
+      if (modalMode === "create") {
+        // Crear nuevo elemento
+        const response = await fetch("http://localhost:4000/MarcasProducto", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        if (response.ok) {
+          // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
+          toast.success("Elemento creado exitosamente", {theme:"colored"});
+          onClose(true);
+          loadTask();
+        } else {
+          // Si la solicitud no es exitosa, maneja el error
+          console.error("Error al crear el elemento", response.statusText);
+          // Puedes mostrar un mensaje de error al usuario si es necesario
+        }
+      }
+    } catch (error) {
+      toast.error("Error al Guardar", {theme:"colored"});
+      // Manejar el error, mostrar un mensaje al usuario, etc.
+    }
+  };
+
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
@@ -176,8 +277,8 @@ const Brands = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem onPress={()=>handleVer(data.id)}>Ver</DropdownItem>
+                <DropdownItem>Editar</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -284,7 +385,8 @@ const Brands = () => {
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar marca
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
+            <Button size="sm" color="primary" endContent={<TbPlus />}
+            onClick={handleCreateClick}>
               Nueva Marca
             </Button>
           </div>
@@ -411,10 +513,7 @@ const Brands = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          emptyContent={"No se encuentran marcas"}
-          items={sortedItems}
-        >
+        <TableBody emptyContent={"No se encuentran marcas"} items={sortedItems}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
@@ -424,6 +523,104 @@ const Brands = () => {
           )}
         </TableBody>
       </Table>
+      <Modal size={size} isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {modalMode === "create" && "Nueva Marca"}
+                {modalMode === "edit" && "Editar Marca"}
+                {modalMode === "view" && "Marca"}
+              </ModalHeader>
+              <ModalBody>
+                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
+                  <div className="md:col-span-12"></div>
+                  <div className="md:col-span-6">
+                    <Input
+                      id="marca"
+                      value={modalMode === "create" ? datosCrear.marca
+                      :modalMode === "view" ? selectedData?.marca : ""}
+                      onChange={handleChange}
+                      size={"sm"}
+                      type="text"
+                      label="Marca*"
+                      name="marca"
+                      labelPlacement="outside"
+                      placeholder=" "
+                      variant="faded"
+                      readOnly={modalMode === "view"}
+                    />
+                  </div>
+                  <div className="md:col-span-6">
+                    <Input
+                      size={"sm"}
+                      type="text"
+                      label="Catálogo*"
+                      id="catalogo"
+                      name="catalogo"
+                      value={modalMode === "create" ? datosCrear.catalogo 
+                      :modalMode === "view" ? selectedData?.catalogo : ""}
+                      onChange={handleChange}
+                      labelPlacement="outside"
+                      placeholder=" "
+                      variant="faded"
+                      readOnly={modalMode === "view"}
+                    />
+                  </div>
+                  <div className="md:col-span-6">
+                    <Input
+                      size={"sm"}
+                      type="number"
+                      label="Número Productos*"
+                      id="productos"
+                      name="productos"
+                      value={modalMode === "create" ? datosCrear.productos
+                      :modalMode === "view" ? selectedData?.productos : ""}
+                      onChange={handleChange}
+                      labelPlacement="outside"
+                      placeholder=" "
+                      variant="faded"
+                      readOnly={modalMode === "view"}
+                    />
+                  </div>
+                  <div className="md:col-span-6">
+                    <input
+                      id="imagen"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImagenSeleccionada}
+                      // style={{display:'none'}}
+                      ref={inputImagenRef}
+                      value={modalMode === "view" ? selectedData?.imagen : ""}
+                    />
+                    
+                    {imagenSeleccionada && (
+                      <div>
+                        <img
+                          src={URL.createObjectURL(imagenSeleccionada)}
+                          alt="Imagen seleccionada"
+                          width={200}
+                        />
+                        
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                {
+                  <Button color="primary" onClick={handleSubmit}>
+                    {modalMode === "create" ? "Crear" : "Guardar Cambios"}
+                  </Button>
+                }
+                <Button color="danger" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
