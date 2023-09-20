@@ -273,7 +273,7 @@ const Quote = () => {
                     sx={{ display: "flex", alignItems: "center" }}
                     color="foreground"
                     href="#"
-                    onClick={() => navigate(`/Home`)}
+                    onClick={() => navigate(`/Sales/Quotes`)}
                   >
                     <MdPeopleAlt sx={{ mr: 0.5 }} fontSize="inherit" />
                     Cotizaciones
