@@ -55,6 +55,7 @@ import Chat from "./views/chat/chat.jsx";
 import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 import Quote from "./views/sales/Quote.jsx";
+import Seller from "./views/sellers/Seller.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -178,6 +179,10 @@ const App = () => {
         {
           path: "/Sellers",
           element: <SellersList />,
+        },
+        {
+          path: "/Sellers/Seller",
+          element: <Seller />,
         },
         {
           path: "/Settings/Users",
