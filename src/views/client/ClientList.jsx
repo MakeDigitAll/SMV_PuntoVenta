@@ -7,11 +7,13 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
-import AddExcelCategories from "../Excel/addExcel/addExcelCategories";
 import { TbPlus, TbReload } from "react-icons/tb";
-import React,{useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import AddExcelClients from "../Excel/addExcel/addExcelClients";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
+  { name: "Imagen", uid: "imagen", sortable: true },
+  { name: "Nombre del cliente", uid: "nombreCliente", sortable: true },
   { name: "# Cliente", uid: "numeroCliente", sortable: true },
   { name: "# Comercial", uid: "numeroComercial", sortable: true },
   { name: "Nombre Comercial", uid: "nombreComercial", sortable: true },
@@ -29,6 +31,8 @@ const columns = [
 ];
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
+  "imagen",
+  "nombreCliente",
   "numeroCliente",
   "numeroComercial",
   "nombreComercial",
@@ -144,6 +148,18 @@ const ClientList = () => {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.id}</p>
+          </div>
+        );
+      case "imagen":
+        return (
+          <div className="flex flex-col">
+            <img src={`aca va la API/${data.imagen}`}  />
+          </div>
+        );
+        case "nombreCliente":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.nombreCliente}</p>
           </div>
         );
       case "numeroCliente":
@@ -311,7 +327,7 @@ const ClientList = () => {
               className="text-foreground"
             >
               <MdCategory sx={{ mr: 0.5 }} fontSize="inherit" />
-              Categorías
+              Clientes
             </Typography>
           </Breadcrumbs>
         </div>
@@ -319,35 +335,37 @@ const ClientList = () => {
           className="flex flex-col gap-4"
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
-          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Nombre"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col w-[450px] sm:max-w-[44%]">
+              <Input
+                isClearable
+                size="sm"
+                placeholder="Numero del cliente"
+                startContent={<MdSearch />}
+                value={filterValue}
+                onClear={() => onClear()}
+                onValueChange={onSearchChange}
+              />
+            </div>
+            <div className="flex flex-col w-[450px] sm:max-w-[44%]">
+              <Input
+                isClearable
+                size="sm"
+                placeholder="Numero comercial"
+                startContent={<MdSearch />}
+                value={filterValue}
+                onClear={() => onClear()}
+                onValueChange={onSearchChange}
+              />
+            </div>
           </div>
-          <Input
-            isClearable
-            size="sm"
-            className="w-[450px] sm:max-w-[44%]"
-            placeholder="SKU"
-            startContent={<MdSearch />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
           <div className="flex flex-wrap place-content-end space-x-2">
-            <AddExcelCategories />
+            <AddExcelClients />
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Categorías
+              Actualizar Clientes
             </Button>
             <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Categoría
+              Nuevo Cliente
             </Button>
           </div>
         </div>
@@ -405,7 +423,7 @@ const ClientList = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Categorías por página:
+            Clientes por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
