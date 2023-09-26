@@ -11,11 +11,9 @@ import {
   Select,
   MenuItem,
 } from "@nextui-org/react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-//import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
   RiArrowLeftLine,
@@ -29,6 +27,7 @@ import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 const User = () => {
+  const [status, useStatus] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const imageDefault = selectedImage === "";
   const [user, setUser] = useState({
@@ -94,8 +93,8 @@ const User = () => {
     }
     user.password !== user.confirmPassword || user.email !== user.emailConfirm
       ? toast.error("Las contraseñas o correos no coinciden", {
-        theme: "colored",
-      })
+          theme: "colored",
+        })
       : "";
     const errors = {};
     !user.nombre ? (errors.nombre = "Llena este campo") : "";
@@ -173,7 +172,9 @@ const User = () => {
           navigate("/Settings/Users");
         }
       }
-    } catch (error) { }
+    } catch (error) {
+      null;
+    }
   }
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -225,13 +226,18 @@ const User = () => {
   }, [user.password]);
   const confirmPasswordValidationState = useMemo(() => {
     if (user.confirmPassword === "") return undefined;
-    return user.password === user.confirmPassword ? "valid" : "invalid";
-  }, [user.confirmPassword]);
+    if (user.confirmPassword != undefined)
+      return user.password === user.confirmPassword ? "valid" : "invalid";
+  }, [user.confirmPassword, user.password]);
   const emailConfirmValidationState = useMemo(() => {
     if (user.emailConfirm === "") return undefined;
     return user.emailConfirm === user.email ? "valid" : "invalid";
   }, [user.emailConfirm, user.email]);
-
+  useEffect(() => {
+    status != "View"
+      ? (document.getElementById("button-file").style.display = "flex")
+      : (document.getElementById("button-file").style.display = "none");
+  });
   return (
     <>
       <ItemsHeader />
@@ -334,6 +340,7 @@ const User = () => {
                           color="success"
                           endContent={<MdCamera />}
                           onClick={handleFileButtonClick}
+                          id="button-file"
                         >
                           Agregar foto de perfil
                         </Button>
@@ -372,6 +379,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="nombre"
+                                    isDisabled={status ? true : false}
                                     value={user.nombre}
                                     onValueChange={handleChange}
                                     size={"sm"}
@@ -391,6 +399,7 @@ const User = () => {
                                     type="text"
                                     label="Apellido (s)"
                                     id="apellido"
+                                    isDisabled={status ? true : false}
                                     name="apellido"
                                     value={user.apellido}
                                     onChange={handleChange}
@@ -406,6 +415,7 @@ const User = () => {
                                   <Input
                                     id="email"
                                     value={user.email}
+                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
                                     type="email"
@@ -423,12 +433,12 @@ const User = () => {
                                       validationState === "invalid" &&
                                       "Ingresa un correo valido"
                                     }
-                                    validationState={validationState}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
                                     id="emailConfirm"
+                                    isDisabled={status ? true : false}
                                     value={user.emailConfirm}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -445,7 +455,7 @@ const User = () => {
                                     }
                                     errorMessage={
                                       emailConfirmValidationState ===
-                                      "invalid" &&
+                                        "invalid" &&
                                       "El correo de confirmación debe coincidir con el correo"
                                     }
                                     validationState={
@@ -457,6 +467,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="password"
+                                    isDisabled={status ? true : false}
                                     value={user.password}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -482,6 +493,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="confirmPassword"
+                                    isDisabled={status ? true : false}
                                     value={user.confirmPassword}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -493,13 +505,13 @@ const User = () => {
                                     variant="faded"
                                     color={
                                       confirmPasswordValidationState ===
-                                        "invalid"
+                                      "invalid"
                                         ? "danger"
                                         : "default"
                                     }
                                     errorMessage={
                                       confirmPasswordValidationState ===
-                                      "invalid" &&
+                                        "invalid" &&
                                       "La contraseña de confirmación debe coincidir con la contraseña"
                                     }
                                     validationState={
@@ -510,6 +522,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="perfilSeguridad"
+                                    isDisabled={status ? true : false}
                                     value={user.perfilSeguridad}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -530,6 +543,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="vendedor"
+                                    isDisabled={status ? true : false}
                                     value={user.vendedor}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -552,6 +566,7 @@ const User = () => {
                                 <div className="md:col-span-12">
                                   <Input
                                     id="direccion"
+                                    isDisabled={status ? true : false}
                                     value={user.direccion}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -571,6 +586,7 @@ const User = () => {
                                     type="colonia"
                                     label="Colonia"
                                     id="colonia"
+                                    isDisabled={status ? true : false}
                                     name="colonia"
                                     value={user.colonia}
                                     onChange={handleChange}
@@ -586,6 +602,7 @@ const User = () => {
                                   <label htmlFor="status">Status</label>
                                   <Select
                                     id="status"
+                                    isDisabled={status ? true : false}
                                     value={user.status}
                                     onChange={handleChange}
                                     size="small"
@@ -606,6 +623,7 @@ const User = () => {
                                 <div className="md:col-span-5">
                                   <Input
                                     id="ciudad"
+                                    isDisabled={status ? true : false}
                                     value={user.ciudad}
                                     onChange={handleChange}
                                     size="small"
@@ -624,6 +642,7 @@ const User = () => {
                                   <label htmlFor="estado">Estado</label>
                                   <Select
                                     id="estado"
+                                    isDisabled={status ? true : false}
                                     value={user.estado}
                                     onChange={handleChange}
                                     size="small"
@@ -644,6 +663,7 @@ const User = () => {
                                 <div className="md:col-span-3">
                                   <Input
                                     id="codigoPostal"
+                                    isDisabled={status ? true : false}
                                     value={user.codigoPostal}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -660,6 +680,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="telefonoContacto"
+                                    isDisabled={status ? true : false}
                                     value={user.telefonoContacto}
                                     onChange={handleChange}
                                     size={"sm"}
@@ -679,6 +700,7 @@ const User = () => {
                                 <div className="md:col-span-6">
                                   <Input
                                     id="telefonoCelular"
+                                    isDisabled={status ? true : false}
                                     value={user.telefonoCelular}
                                     onChange={handleChange}
                                     size={"sm"}

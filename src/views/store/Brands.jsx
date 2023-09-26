@@ -13,10 +13,19 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,  
+  User,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
+import {
+  MdArrowDropDown,
+  MdBook,
+  MdFileUpload,
+  MdSave,
+  MdSearch,
+  MdShoppingCart,
+  MdTag,
+  MdUpload,
+} from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -33,7 +42,6 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import { display } from "@mui/system";
 const columns = [
   { name: "ID", uid: "ID", sortable: true },
   { name: "Imagen", uid: "Imagen", sortable: true },
@@ -53,7 +61,11 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const Brands = () => {
-
+  const [brand, setBrand] = useState({
+    Nombre: "",
+    Catalogo: "",
+    Logo: "",    
+  });
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -140,10 +152,8 @@ const Brands = () => {
   }, [sortDescriptor, items]);
 
   //Modal
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [size, setSize] = React.useState("2xl");
-  const sizes = ["md", "lg", "xl", "2xl", "3xl"];
-  const [modalMode, setModalMode] = useState("create"); 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [modalMode, setModalMode] = useState("create");
   const [datosCrear, setDatosCrear] = useState({
     marca: "",
     catalogo: "",
@@ -187,12 +197,19 @@ const Brands = () => {
     onOpen(); // Abrir el modal
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!datosCrear.marca || !datosCrear.catalogo || !datosCrear.productos || !imagenSeleccionada) {
+    if (
+      !datosCrear.marca ||
+      !datosCrear.catalogo ||
+      !datosCrear.productos ||
+      !imagenSeleccionada
+    ) {
       // Muestra un mensaje de error o realiza alguna acción para indicar que faltan campos
-      toast.warning("Por favor, completa todos los campos y selecciona una imagen.", {theme:"colored"});
+      toast.warning(
+        "Por favor, completa todos los campos y selecciona una imagen.",
+        { theme: "colored" }
+      );
       return; // No continúes con la solicitud POST si faltan campos
     }
     const updatedData = {
@@ -202,7 +219,6 @@ const Brands = () => {
       catalogo: datosCrear.catalogo,
       productos: datosCrear.productos,
     };
-
     try {
       if (modalMode === "create") {
         // Crear nuevo elemento
@@ -216,7 +232,7 @@ const Brands = () => {
 
         if (response.ok) {
           // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
-          toast.success("Elemento creado exitosamente", {theme:"colored"});
+          toast.success("Elemento creado exitosamente", { theme: "colored" });
           onClose(true);
           loadTask();
         } else {
@@ -226,11 +242,15 @@ const Brands = () => {
         }
       }
     } catch (error) {
-      toast.error("Error al Guardar", {theme:"colored"});
+      toast.error("Error al Guardar", { theme: "colored" });
       // Manejar el error, mostrar un mensaje al usuario, etc.
     }
   };
-
+  const fileInputRef = useRef(null);
+  const handleFileButtonClick = () => {
+    fileInputRef.current.click();
+  };
+  const [selectedImage, setSelectedImage] = useState("");
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
@@ -242,23 +262,17 @@ const Brands = () => {
           </div>
         );
       case "Imagen":
-        return (
-            <User avatarProps={{ radius: "lg", src: data.imagen }} />
-        );
+        return <User avatarProps={{ radius: "lg", src: data.imagen }} />;
       case "Marca":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.marca}
-            </p>
+            <p className="text-bold text-small capitalize">{data.marca}</p>
           </div>
         );
       case "Catalogo":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.catalogo}
-            </p>
+            <p className="text-bold text-small capitalize">{data.catalogo}</p>
           </div>
         );
       case "Productos":
@@ -277,7 +291,9 @@ const Brands = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={()=>handleVer(data.id)}>Ver</DropdownItem>
+                <DropdownItem onPress={() => handleVer(data.id)}>
+                  Ver
+                </DropdownItem>
                 <DropdownItem>Editar</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
@@ -323,7 +339,6 @@ const Brands = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -380,13 +395,19 @@ const Brands = () => {
             />
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            <div><AddExcelBrands/></div>
-          
+            <div>
+              <AddExcelBrands />
+            </div>
+
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar marca
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}
-            onClick={handleCreateClick}>
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+              onClick={handleCreateClick}
+            >
               Nueva Marca
             </Button>
           </div>
@@ -418,7 +439,6 @@ const Brands = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-          
           </div>
           <label className="flex items-center text-default-400 text-small">
             Marcas por página:
@@ -437,7 +457,7 @@ const Brands = () => {
   }, [
     filterValue,
     onSearchChange,
-    statusFilter,
+    handleCreateClick,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
@@ -523,98 +543,88 @@ const Brands = () => {
           )}
         </TableBody>
       </Table>
-      <Modal size={size} isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="top-center"
+        size="3xl"
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                {modalMode === "create" && "Nueva Marca"}
-                {modalMode === "edit" && "Editar Marca"}
-                {modalMode === "view" && "Marca"}
-              </ModalHeader>
+              <ModalHeader>Nueva marca</ModalHeader>
               <ModalBody>
-                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
-                  <div className="md:col-span-12"></div>
-                  <div className="md:col-span-6">
-                    <Input
-                      id="marca"
-                      value={modalMode === "create" ? datosCrear.marca
-                      :modalMode === "view" ? selectedData?.marca : ""}
-                      onChange={handleChange}
-                      size={"sm"}
-                      type="text"
-                      label="Marca*"
-                      name="marca"
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                      readOnly={modalMode === "view"}
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="text"
-                      label="Catálogo*"
-                      id="catalogo"
-                      name="catalogo"
-                      value={modalMode === "create" ? datosCrear.catalogo 
-                      :modalMode === "view" ? selectedData?.catalogo : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                      readOnly={modalMode === "view"}
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <Input
-                      size={"sm"}
-                      type="number"
-                      label="Número Productos*"
-                      id="productos"
-                      name="productos"
-                      value={modalMode === "create" ? datosCrear.productos
-                      :modalMode === "view" ? selectedData?.productos : ""}
-                      onChange={handleChange}
-                      labelPlacement="outside"
-                      placeholder=" "
-                      variant="faded"
-                      readOnly={modalMode === "view"}
-                    />
-                  </div>
-                  <div className="md:col-span-6">
-                    <input
-                      id="imagen"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImagenSeleccionada}
-                      // style={{display:'none'}}
-                      ref={inputImagenRef}
-                      value={modalMode === "view" ? selectedData?.imagen : ""}
-                    />
-                    
-                    {imagenSeleccionada && (
-                      <div>
-                        <img
-                          src={URL.createObjectURL(imagenSeleccionada)}
-                          alt="Imagen seleccionada"
-                          width={200}
+                <div className="rounded px-4 md:p-8 mb-6">
+                  <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                      <div className="md:col-span-6"></div>
+                      <div className="md:col-span-12">
+                        <Input
+                          autoFocus
+                          endContent={
+                            <MdTag className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                          }
+                          label="Nombre de la Marca (*)"
+                          isRequired
+                          placeholder=" "
+                          variant="bordered"
                         />
-                        
                       </div>
-                    )}
+                      <div className="md:col-span-12">
+                        <Input
+                          endContent={
+                            <MdBook className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                          }
+                          label="Catálogo"
+                          isRequired
+                          placeholder=" "
+                          type="text"
+                          variant="bordered"
+                        />
+                      </div>
+                      <div className="md:col-span-12">
+                          <input
+                            size={"sm"}
+                            type="file"
+                            id="imagen"
+                            ref={fileInputRef}
+                            style={{
+                              display: "none",
+                              borderColor: selectedImage ? "" : "red",
+                            }}
+                            value={brand.logo}
+                            onChange={(event) => {
+                              setSelectedImage(event.target.files[0]);
+                            }}
+                            name="imagen"
+                          />
+                          <Button
+                            autoFocus
+                            size="md"
+                            color="primary"
+                            variant="flat"
+                            endContent={<MdSearch />}
+                            onClick={handleFileButtonClick}
+                            id="button-file"
+                          >
+                            Agregar logotipo
+                          </Button>
+                        </div>
+                    </div>                    
                   </div>
                 </div>
+                <div className="lg:col-span-2"></div>
               </ModalBody>
               <ModalFooter>
-                {
-                  <Button color="primary" onClick={handleSubmit}>
-                    {modalMode === "create" ? "Crear" : "Guardar Cambios"}
-                  </Button>
-                }
-                <Button color="danger" onPress={onClose}>
+                <Button color="danger" variant="flat" onPress={onClose}>
                   Cerrar
+                </Button>
+                <Button
+                  endContent={<MdSave />}
+                  color="primary"
+                  onPress={onClose}
+                >
+                  Guardar
                 </Button>
               </ModalFooter>
             </>

@@ -74,7 +74,7 @@ const App = () => {
         },
         {
           path: "/settings/user",
-          element: <User />,
+          element: <User/>,
         },
         {
           path: "/Products/ProductList",

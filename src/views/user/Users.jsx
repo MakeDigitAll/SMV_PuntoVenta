@@ -26,6 +26,7 @@ import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import UserImage from "./UserImage";
+import Images from "../../components/images/Images";
 const columns = [
   { name: "Imagen", uid: "Imagen" },
   { name: "Nombre(s)", uid: "Nombre", sortable: true },
@@ -46,7 +47,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Sucursales",
   "Grupo",
   "vendedor",
-  "perfilSeguridad"
+  "perfilSeguridad",
 ];
 
 const Users = () => {
@@ -60,7 +61,6 @@ const Users = () => {
         setData(data);
         setIsLoading(false);
       }
-
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -151,8 +151,9 @@ const Users = () => {
         return <UserImage idUsuario={data.id} designType="avatar" />;
       case "ID":
         return (
-          <div className="flex flex-col">
+          <div className="flex flex-col">            
             <p className="text-bold text-small capitalize">{data.id}</p>
+            
           </div>
         );
       case "Nombre":
@@ -169,22 +170,20 @@ const Users = () => {
             <p className="text-bold text-small capitalize">{data.email}</p>
           </div>
         );
-        case "Vendedor":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {data.vendedor}
-              </p>
-            </div>
-          );
-          case "Perfil de seguridad":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {data.perfilSeguridad}
-              </p>
-            </div>
-          );
+      case "Vendedor":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+          </div>
+        );
+      case "Perfil de seguridad":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {data.perfilSeguridad}
+            </p>
+          </div>
+        );
       case "Actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -195,8 +194,16 @@ const Users = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/SeeUser`)}>View User</DropdownItem>
-                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/EditUser`)}>Edit User</DropdownItem>
+                <DropdownItem
+                  onClick={() => navigate(`/Settings/User/${user.id}/SeeUser`)}
+                >
+                  View User
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => navigate(`/Settings/User/${user.id}/EditUser`)}
+                >
+                  Edit User
+                </DropdownItem>
                 <DropdownItem>Delete User</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -205,7 +212,7 @@ const Users = () => {
       default:
         return cellValue;
     }
-  }, []);
+  }, [navigate]);
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
