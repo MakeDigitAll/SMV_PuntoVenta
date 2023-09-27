@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
 import db from "../../axios/Database";
+import { useNavigate } from "react-router-dom";
 const lngs = {
   En: { nativeName: "English" },
   Es: { nativeName: "Español" },
@@ -70,6 +71,12 @@ const Header = () => {
       console.log(e);
     }
   }
+
+  
+  async function openNotifications() {
+    console.log('quiero cambiar a las notificaciones')
+  }
+
   return (
     <>
       <header>
@@ -177,6 +184,10 @@ const Header = () => {
                         <span className="ml-2">Ver todas</span>
                       </a>
                     </DropdownItem>
+                    <DropdownItem
+                      onPress={openNotifications}>
+                      Notificaciones
+                    </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </Badge>
@@ -207,10 +218,23 @@ const Header = () => {
                   itemClasses={{}}
                 >
                   <DropdownSection aria-label="Profile & Actions" showDivider>
-                    <DropdownItem key="menu">
-                      {auth.getUser()?.nombre +
-                        " " +
-                        auth.getUser()?.apellido || ""}
+                    <DropdownItem isReadOnly className="h-14 gap-2">
+                      <User
+                        name={
+                          auth.getUser()?.nombre +
+                          " " +
+                          auth.getUser()?.apellido || ""
+                        }
+                        description={auth.getUser()?.email || ""}
+                        classNames={{
+                          name: "text-default-600",
+                          description: "text-default-500",
+                        }}
+                        avatarProps={{
+                          size: "md",
+                          src: useUrlImagen,
+                        }}
+                      />
                     </DropdownItem>
                     <DropdownItem key="settings">
                       {t("header.Profile")}

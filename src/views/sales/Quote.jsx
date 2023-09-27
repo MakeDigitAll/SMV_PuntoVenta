@@ -75,6 +75,27 @@ const Quote = () => {
     vendedor: "",
   });
 
+  const datosCliente = () => {
+    async function loadDatosCliente() {
+      try {
+        const response = await fetch(`http://localhost:4000/Clientes`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data)
+          console.log(data);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadDatosCliente();
+  };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
@@ -111,8 +132,8 @@ const Quote = () => {
     }
     user.password !== user.confirmPassword || user.email !== user.emailConfirm
       ? toast.error("Las contraseñas o correos no coinciden", {
-          theme: "colored",
-        })
+        theme: "colored",
+      })
       : "";
     const errors = {};
     !user.nombre ? (errors.nombre = "Llena este campo") : "";
@@ -189,7 +210,7 @@ const Quote = () => {
           navigate("/Settings/Users");
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   }
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -222,12 +243,33 @@ const Quote = () => {
     onClose: onCloseDiscount,
   } = useDisclosure();
 
+
+  const [productos, setProductos] = useState([]);
+
   const handleOpenAddProduct = () => {
     onOpen();
+    async function loadProducts() {
+      try {
+        const response = await fetch(`http://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data)
+          console.log(data);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
   };
 
   const handleOpenAddDiscount = () => {
     onOpenDiscount();
+
   };
   const [categorias, setCategorias] = useState([]);
   const [marca, setmarca] = useState([]);
@@ -683,11 +725,24 @@ const Quote = () => {
                                 <TableColumn>Total</TableColumn>
                               </TableHeader>
                               <TableBody>
+                                {/* {productos.map((producto, index) => (
+                                  <TableRow key={index}>
+                                    <TableCell>{producto.imagen}</TableCell>
+                                    <TableCell>{producto.codigoEmpresa}</TableCell>
+                                    <TableCell>{producto.nombre}</TableCell>
+                                    <TableCell>{producto.marca}</TableCell>
+                                    <TableCell>cantidad</TableCell>
+                                    <TableCell>inv.</TableCell>
+                                    <TableCell>{producto.precio}</TableCell>
+                                    <TableCell>descuento</TableCell>
+                                    <TableCell>precio</TableCell>
+                                  </TableRow>
+                                ))} */}
                                 {/* <TableRow key="1">
-                                        <TableCell>Tony Reichert</TableCell>
-                                        <TableCell>CEO</TableCell>
-                                        <TableCell>Active</TableCell>
-                                      </TableRow>                                       */}
+                                  <TableCell>Tony Reichert</TableCell>
+                                  <TableCell>CEO</TableCell>
+                                  <TableCell>Active</TableCell>
+                                </TableRow> */}
                               </TableBody>
                             </Table>
                           </div>

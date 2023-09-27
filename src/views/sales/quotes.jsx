@@ -44,7 +44,7 @@ const columns = [
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
+  "iD",
   "folio",
   "fecha",
   "pedido",
@@ -90,7 +90,6 @@ const Quotes = () => {
   }
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
-  const [filterValue2, setFilterValue2] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -104,7 +103,6 @@ const Quotes = () => {
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
-  const hasSearchFilter2= Boolean(filterValue2);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -118,41 +116,23 @@ const Quotes = () => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
-      console.log("Filtering by client:", filterValue2);
       filteredUsers = filteredUsers.filter((data) =>
-        data.folio.toString().includes(filterValue.toString())&&
-        data.cliente.toLowerCase().includes(filterValue2.toLowerCase())
+        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
-      console.log("Filtering by client:", filteredUsers);
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.folio)&&
-        Array.from(statusFilter).includes(data.cliente)
+        Array.from(statusFilter).includes(data.nombre)
       );
     }
-    
-    return filteredUsers;
-  }, [data, hasSearchFilter, hasSearchFilter2, statusFilter, filterValue, filterValue2]);
- 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-  const [filtro, setFiltro] = useState('');
-  const [clientesFiltrados, setClientesFiltrados] = useState([]);
-  const filtrarClientes = (valorFiltro) => {
-    const clientesFiltrados = data.filter((data) =>
-      data.cliente.toLowerCase().includes(valorFiltro.toLowerCase())
-    );
-    setClientesFiltrados(clientesFiltrados);
-  };
 
-  const handleChangeFiltro = (e) => {
-    const valorFiltro = e.target.value;
-    setFiltro(valorFiltro);
-    filtrarClientes(valorFiltro);
-  };
+    return filteredUsers;
+  }, [data, hasSearchFilter, statusFilter, filterValue]);
+
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -182,43 +162,43 @@ const Quotes = () => {
     };
 
     switch (columnKey) {
-      case "id":
+      case "ID":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "folio":
+      case "Folio":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
-      case "fecha":
+      case "Fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-      case "pedido":
+      case "Pedido":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.pedido}</p>
           </div>
         );
-      case "cliente":
+      case "Cliente":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.cliente}</p>
           </div>
         );
-      case "vendedor":
+      case "Vendedor":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
-      case "origen":
+      case "Origen":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.origen}</p>
@@ -333,21 +313,9 @@ const Quotes = () => {
       setFilterValue("");
     }
   }, []);
-  const onSearchChange2 = React.useCallback((value) => {
-    if (value) {
-      setFilterValue2(value);
-      setPage(1);
-    } else {
-      setFilterValue2("");
-    }
-  }, []);
 
   const onClear = useCallback(() => {
     setFilterValue("");
-    setPage(1);
-  }, []);
-  const onClear2 = useCallback(() => {
-    setFilterValue2("");
     setPage(1);
   }, []);
   const topContent = React.useMemo(() => {
@@ -403,9 +371,9 @@ const Quotes = () => {
               className="w-[450px] sm:max-w-[44%]"
               placeholder="Modalidad"
               startContent={<MdSearch />}
-              value={filterValue2}
-              onClear={() => onClear2()}
-              onValueChange={onSearchChange2}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
             />
             <Input
               isClearable

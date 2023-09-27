@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import {
-    MdAddHome,
+  MdAddHome,
   MdArrowDropDown,
   MdPeople,
   MdSearch,
@@ -51,8 +51,8 @@ const INITIAL_VISIBLE_COLUMNS = [
   "refWeb",
   "clientes",
   "actions",
-];  
-  
+];
+
 
 
 const SellersList = () => {
@@ -65,6 +65,9 @@ const SellersList = () => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [isAddingAlmacenes, setIsAddingAlmacenes] = useState(false);
   const [data, setData] = useState([]);
+  const [disableCounter, setDisableCounter] = useState(0);
+  const [isDataLoading, setIsDataLoading] = useState(false); 
+
   async function loadTask() {
     try {
       const response = await fetch("http://localhost:4000/ListadoVendedores");
@@ -83,9 +86,52 @@ const SellersList = () => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
+
+  const handleDisable = async (id) => {
+    const datoDisable = {
+      id: id
+    };
+    console.log(datoDisable.id);
+    try {
+      const res = await fetch(`http://localhost:4000/ListadoVendedoresDisable/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datoDisable),
+      });
+
+      if (res.ok) {
+        toast.warning("Deshabilitando Vendedor", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        setDisableCounter((prevCounter) => prevCounter + 1);
+      } else {
+        toast.error("Error al deshabilitar Vendedor", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    } catch (error) {
+      toast.error("Error al deshabilitar Vendedor", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    } finally {
+      // Después de deshabilitar, vuelva a cargar los datos para reflejar los cambios
+      setIsDataLoading(true);
+      await loadTask();
+      setIsDataLoading(false);
+    }
+  };
+
+
+
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -148,7 +194,7 @@ const SellersList = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-  
+
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
@@ -157,7 +203,7 @@ const SellersList = () => {
       case "imagen":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{}</p>
+            <p className="text-bold text-small capitalize">{ }</p>
           </div>
         );
       case "nombre":
@@ -210,9 +256,9 @@ const SellersList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem >Ver Vendedor</DropdownItem>
-                <DropdownItem >Editar Vendedor</DropdownItem>
-                <DropdownItem>
+                <DropdownItem onClick={() => navigate(`/Sellers/${data.id}/ViewSeller`)} >Ver Vendedor</DropdownItem>
+                <DropdownItem onClick={() => navigate(`/Sellers/${data.id}/EditSeller`)}>Editar Vendedor</DropdownItem>
+                <DropdownItem className="text-danger" color="danger" onClick={() => handleDisable(data.id)}>
                   Deshabilitar Vendedor</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -257,7 +303,7 @@ const SellersList = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        
+
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -312,15 +358,15 @@ const SellersList = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            
+
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            
+
             <Button
               size="sm"
               color="primary"
               endContent={<TbPlus />}
-              onClick={()=>navigate("/Sellers/Seller")} 
+              onClick={() => navigate("/Sellers/Seller")}
             >
               Nuevo Vendedor
             </Button>
