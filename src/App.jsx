@@ -56,6 +56,10 @@ import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 import Quote from "./views/sales/Quote.jsx";
 import Seller from "./views/sellers/Seller.jsx";
+import FillOrder from "./views/sales/FillOrder.jsx";
+import Promotions from "./views/sales/promotions.jsx";
+import Visits from "./views/sales/Views.jsx";
+
 
 const App = () => {
   const router = createBrowserRouter([
@@ -229,6 +233,10 @@ const App = () => {
           element: <Inventory />,
         },
         {
+          path: "/Sales/Inventory",
+          element: <Inventory />,
+        },
+        {
           path: "/Store/InventoryXWarehouse",
           element: <InventoryWarehouse />,
         },
@@ -283,6 +291,18 @@ const App = () => {
         {
           path: "/Sales/Quotes/NewQuote",
           element: <Quote />,
+        },
+        {
+          path: "/Sales/fillOrder",
+          element: <FillOrder />,
+        },
+        {
+          path: "/Sales/Promotions",
+          element: <Promotions />,
+        },
+        {
+          path: "/Sales/Visits",
+          element: <Visits />,
         },
       ],
     },

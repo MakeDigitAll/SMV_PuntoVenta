@@ -1,4 +1,4 @@
-//surtir pedidos
+//Promotions
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
@@ -29,33 +29,33 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
-  { name: "Folio", uid: "folio", sortable: true },
-  { name: "Fecha", uid: "fecha", sortable: true },
-  { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Monto", uid: "monto", sortable: true },
-  { name: "Estatus", uid: "estatus", sortable: true },
-  { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Factura", uid: "factura", sortable: true },
-  { name: "Surtido", uid: "surtido", sortable: true },
-  { name:"Parcial", uid: "parcial",sortable:true},
+  { name: "Imagen", uid: "imagen", sortable: true },
+  { name: "Codigo Empresa", uid: "codigoEmpresa", sortable: true },
+  { name: "Nombre", uid: "nombre", sortable: true },
+  { name: "Desde", uid: "desde", sortable: true },
+  { name: "Hasta", uid: "hasta", sortable: true },
+  { name: "Precio base", uid: "precioBase", sortable: true },
+  { name: "Descuento", uid: "descuento", sortable: true },
+  { name: "Precio", uid: "precio", sortable: true },
+  { name:"Activo", uid: "activo",sortable:true},
   { name: "Acciones", uid: "Actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
-  "folio",
-  "fecha",
-  "cliente",
-  "monto",
-  "estatus",
-  "vendedor",
-  "factura",
-  "surtido",
-  "parcial",
+  "imagen",
+  "codigoEmpresa",
+  "nombre",
+  "desde",
+  "hasta",
+  "precioBase",
+  "descuento",
+  "precio",
+  "activo",
   "Actions",
 ];
 
-const FillOrder = () => {
+const Promotions = () => {
     const marcaOptions = [];
     function contarmarca() {
       for (let i = 0; i < data.length; i++) {
@@ -65,7 +65,7 @@ const FillOrder = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/PedidosPendientesSurtir");
+      const response = await fetch("http://localhost:4000/ListadoProductosDescuento");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -157,61 +157,60 @@ const FillOrder = () => {
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "folio":
+        case "imagen":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.folio}</p>
+            <Images idImage={data.imagen} designType="tabla" ruta={"http://localhost:4000/ListadoProductosDescuento"}/> 
           </div>
         );
-        case "fecha":
+      case "codigoEmpresa":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fecha}</p>
+            <p className="text-bold text-small capitalize">{data.codigoEmpresa}</p>
           </div>
         );
-      case "cliente":
+        case "nombre":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
+          </div>
+        );
+      case "desde":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.cliente}
+              {data.desde}
             </p>
           </div>
-        );
-        
-      case "monto":
+        ); 
+      case "hasta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.monto}</p>
+            <p className="text-bold text-small capitalize">{data.hasta}</p>
           </div>
         );
-      case "estatus":
+      case "precioBase":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.estatus}</p>
+            <p className="text-bold text-small capitalize">{data.precioBase}</p>
           </div>
         );
-        case "vendedor":
+        case "descuento":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+            <p className="text-bold text-small capitalize">{data.descuento}</p>
           </div>
         );
-      case "factura":
+      case "precio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.factura}</p>
+            <p className="text-bold text-small capitalize">{data.precio}</p>
           </div>
         );
-      case "surtido":
+      case "activo":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.surtido}</p>
-          </div>
-        );
-        case "Parcial":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.parcial}</p>
+            <p className="text-bold text-small capitalize">{data.activo}</p>
           </div>
         );
       case "Actions":
@@ -306,7 +305,7 @@ const FillOrder = () => {
               className="text-foreground"
             >
               <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
-              Surtir Pedidos
+              Promotions
             </Typography>
           </Breadcrumbs>
         </div>
@@ -366,7 +365,7 @@ const FillOrder = () => {
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Surtir Pedido
+              Actualizar Promociones
             </Button>
           </div>
         </div>
@@ -533,4 +532,4 @@ const FillOrder = () => {
   );
 };
 
-export default FillOrder;
+export default Promotions;

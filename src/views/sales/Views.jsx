@@ -29,33 +29,27 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
-  { name: "Folio", uid: "folio", sortable: true },
   { name: "Fecha", uid: "fecha", sortable: true },
+  { name: "Hora", uid: "hora", sortable: true },
+  { name: "Numero de Cliente", uid: "numeroCliente", sortable: true },
   { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Monto", uid: "monto", sortable: true },
-  { name: "Estatus", uid: "estatus", sortable: true },
   { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Factura", uid: "factura", sortable: true },
-  { name: "Surtido", uid: "surtido", sortable: true },
-  { name:"Parcial", uid: "parcial",sortable:true},
+  { name: "Comentarios", uid: "comentarios", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
-  "folio",
   "fecha",
+  "hora",
+  "numeroCliente",
   "cliente",
-  "monto",
-  "estatus",
   "vendedor",
-  "factura",
-  "surtido",
-  "parcial",
+  "comentarios",
   "Actions",
 ];
 
-const FillOrder = () => {
+const Visits = () => {
     const marcaOptions = [];
     function contarmarca() {
       for (let i = 0; i < data.length; i++) {
@@ -65,7 +59,7 @@ const FillOrder = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/PedidosPendientesSurtir");
+      const response = await fetch("http://localhost:4000/ ");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -157,61 +151,42 @@ const FillOrder = () => {
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "folio":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.folio}</p>
-          </div>
-        );
-        case "fecha":
+      case "fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-      case "cliente":
+        case "hora":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.hora}</p>
+          </div>
+        );
+      case "numeroCliente":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.cliente}
+              {data.numeroCliente}
             </p>
           </div>
         );
-        
-      case "monto":
+      case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.monto}</p>
-          </div>
+            <p className="text-bold text-small capitalize">{data.cliente}</p>
+        </div>
         );
-      case "estatus":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.estatus}</p>
-          </div>
-        );
-        case "vendedor":
+      case "vendedor":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
-      case "factura":
+        case "comentarios":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.factura}</p>
-          </div>
-        );
-      case "surtido":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.surtido}</p>
-          </div>
-        );
-        case "Parcial":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.parcial}</p>
+            <p className="text-bold text-small capitalize">{data.comentarios}</p>
           </div>
         );
       case "Actions":
@@ -306,7 +281,7 @@ const FillOrder = () => {
               className="text-foreground"
             >
               <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
-              Surtir Pedidos
+              Visitas
             </Typography>
           </Breadcrumbs>
         </div>
@@ -366,7 +341,7 @@ const FillOrder = () => {
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Surtir Pedido
+              Actualizar Visitas
             </Button>
           </div>
         </div>
@@ -533,4 +508,4 @@ const FillOrder = () => {
   );
 };
 
-export default FillOrder;
+export default Visits;

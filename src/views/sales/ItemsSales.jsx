@@ -61,7 +61,7 @@ const itemsSales = [
     id: 6,
     name: "Inventario",
     icon: BiCheckShield,
-    address: "Inventories",
+    address: "Inventory",
     roleId: "0",
   },
   {

@@ -4,6 +4,7 @@ import ExcelJS from 'exceljs';
 import 'handsontable/dist/handsontable.full.css';
 import { Button } from '@nextui-org/react';
 import { HotTable } from '@handsontable/react';
+import { toast } from 'react-toastify';
 Modal.setAppElement("#root");
 const AddExcelClients = () => {
   const headers = [
@@ -123,13 +124,12 @@ const AddExcelClients = () => {
       const allResponsesOk = responseArray.every((response) => response.ok);
 
       if (allResponsesOk) {
-        alert("Los datos se han guardado en la base de datos.");
-        console.log(datosAEnviar);
+        toast.success("Usuario creado correctamente", { theme: "colored" });
       } else {
-        alert("Hubo un problema al guardar los datos en la base de datos.");
+        toast.error("Hubo un problema al guardar los datos en la base de datos.", { theme: "colored" });
       }
     } catch (error) {
-      console.error("Error al guardar los datos:", error);
+      toast.error("Error al guardar los datos:", error);
     }
   };
 

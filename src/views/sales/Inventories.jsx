@@ -18,7 +18,6 @@ import {
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdBookOnline, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
-
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -52,7 +51,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 
-const   Inventories = () => {
+const   Inventory = () => {
     const marcaOptions = [];
     function contarmarca() {
       for (let i = 0; i < data.length; i++) {
@@ -62,7 +61,7 @@ const   Inventories = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/  ");
+      const response = await fetch("http://localhost:4000/inventarioGeneralReporteInventario");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -511,4 +510,4 @@ const   Inventories = () => {
   );
 };
 
-export default Inventories;
+export default Inventory;
