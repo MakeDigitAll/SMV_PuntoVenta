@@ -120,8 +120,8 @@ const Quotes = () => {
     if (hasSearchFilter) {
       console.log("Filtering by client:", filterValue2);
       filteredUsers = filteredUsers.filter((data) =>
-        data.folio.toString().includes(filterValue.toString())&&
-        data.cliente.toLowerCase().includes(filterValue2.toLowerCase())
+      data.cliente.toLowerCase().includes(filterValue2.toLowerCase())&&
+        data.folio.toString().includes(filterValue.toString())
       );
       console.log("Filtering by client:", filteredUsers);
     }
@@ -130,8 +130,8 @@ const Quotes = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.folio)&&
-        Array.from(statusFilter).includes(data.cliente)
+        Array.from(statusFilter).includes(data.cliente)&&
+        Array.from(statusFilter).includes(data.folio)
       );
     }
     

@@ -72,6 +72,23 @@ const Users = () => {
   useEffect(() => {
     loadTask();
   }, []);
+
+  const [nombre, setNombre] = useState(""); // Estado para almacenar el valor del filtro
+  const [correo,setCorreo]= useState("");
+  // Función para filtrar los datos en función del valor del filtro
+  const filtrarDatos = data.filter((dato) =>
+      dato.nombre.toLowerCase().includes(nombre.toLowerCase()) &&
+      dato.email.toLowerCase().includes(correo.toLowerCase())
+  );
+
+  // Manejar el cambio en el campo de filtro
+  const handleChangeNombre = (event) => {
+    setNombre(event.target.value);
+  };
+  const handelChangeCorreo = (event) =>{
+    setCorreo(event.target.value);
+  }
+
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -265,6 +282,18 @@ const Users = () => {
     setPage(1);
   }, []);
 
+  const onClear2 = useCallback((field) => {
+    setNombre("");
+    setCorreo("")
+    setPage(1);
+    if (field === "nombre") {
+      setNombre("");
+    } else if (field === "email") {
+      setCorreo("");
+    }
+    setPage(1);
+  }, []);
+
   const topContent = React.useMemo(() => {
     return (
       <>
@@ -315,23 +344,23 @@ const Users = () => {
           <div className="flex flex-wrap space space-x-4 ">
             <Input
               isClearable
+              type="text"
               size="md"
               className="w-[450px] sm:max-w-[44%]"
               placeholder="Nombre/ Apellido"
               startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
+              onChange={handleChangeNombre}
+              // value={nombre}
             />
             <Input
               isClearable
+              type="text"
               size="md"
               className="w-[450px] sm:max-w-[44%]"
               placeholder="Correo electronico"
               startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
+              onChange={handelChangeCorreo}
+              // value={correo}
             />
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
@@ -509,13 +538,13 @@ const Users = () => {
           }
           items={sortedItems}
         >
-          {(item) => (
+          {filtrarDatos.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

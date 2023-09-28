@@ -13,13 +13,10 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
   Chip,
 } from "@nextui-org/react";
-
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
+import { MdArrowDropDown, MdPeopleOutline, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -27,41 +24,33 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
-import ExcelProducts from "../Excel/exports/ExcelProducts";
-import AddExcelPays from "../Excel/addExcel/addExcelPays";
-
+import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
 const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Paused", uid: "paused" },
-  { name: "Vacation", uid: "vacation" },
-];
+    { name: "Active", uid: "active" },
+    { name: "Paused", uid: "paused" },
+    { name: "Vacation", uid: "vacation" },
+  ];
 const columns = [
-  { name: "ID", uid: "id", sortable: true },
-  { name: "Folio", uid: "folio", sortable: true },
-  { name: "Fecha", uid: "fecha", sortable: true },
-  { name: "Tipo", uid: "tipo", sortable: true },
+  { name: "No.Cliente", uid: "noCliente", sortable: true },
   { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Detalle", uid: "detalle", sortable: true },
-  { name: "M.pago", uid: "maneraPago", sortable: true },
+  { name: "No.Venta", uid: "noVenta", sortable: true },
+  { name: "Fecha", uid: "fecha", sortable: true },
   { name: "Vendedor", uid: "vendedor", sortable: true },
   { name: "Monto", uid: "monto", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
+  { name: "Total", uid: "total", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "folio",
-  "fecha",
-  "tipo",
+  "noCliente",
   "cliente",
-  "detalle",
-  "maneraPago",
+  "noVenta",
+  "fecha",
   "vendedor",
   "monto",
-  "status",
+  "total",
   "Actions",
 ];
-const Payment = () => {
+const SalesCustomer = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const marcaOptions = [];
   function contarmarca() {
@@ -69,50 +58,27 @@ const Payment = () => {
       marcaOptions.push({ name: data[i].folio, uid: data[i].id });
     }
   }
-  const SearchFolio = (e) => {
-    setFolio(e.target.value);
-  }
 
-  const [PagosData, setPagosData] = useState([]);
-  const [PedidosData, setPedidosData] = useState([]);
-  const [PedidosFolioFiltrado, setPedidosFolioFiltrado] = useState(" ");
-  const [foliofiltrado, setFolio] = useState(" ");
   const [data, setData] = useState([]);
-  const loadPedidos = async () => {
-    const response = await fetch('http://localhost:4000/Pedidos');
-    const data = await response.json();
-
-    const PedidosConStatus1 = data.filter(Pedidos => Pedidos.status === 1);
-    setPedidosData(PedidosConStatus1);
-    setPedidosFolioFiltrado(" ");
-
+  async function loadTask() {
+    try {
+      const response = await fetch("http://localhost:4000/ReporteVentasCliente");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+        contarmarca();
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
   }
-
-  const loadTask = async () => {
-    const response = await fetch('http://localhost:4000/Pagos');
-    const data = await response.json();
-    setPagosData(data);
-    console.log(data);
-  }
-
   useEffect(() => {
-    // loadPedidos();
     loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const filteredListadoProd = PagosData.filter((pagos) => {
-    const PedidosRelacionada = PedidosData.find(Pedidos => Pedidos.folio === pagos.folio);
-
-    if (PedidosRelacionada && PedidosRelacionada.status === 1) {
-      const folio = pagos.folio && typeof pagos.folio === 'string' ? pagos.folio : " ";
-      return folio.toLowerCase().includes(foliofiltrado.toLowerCase());
-    }
-    else {
-      return false;
-    }
-  });
-
-
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -145,21 +111,22 @@ const Payment = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.folio.toString().includes(filterValue.toString())
+      data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
+      console.log("Filtering by client:", filteredUsers);
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.folio)
+        Array.from(statusFilter).includes(data.cliente)
       );
     }
-
+    
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
-
+ 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
@@ -181,139 +148,57 @@ const Payment = () => {
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
-
     const statusColorMap = {
-      Liquidado: "success",
-      Parcial: "danger",
-      //
-      Credito: "primary",
-      Facturado: "success",
-      Pendiente: "neutral",
-      // 
-      PagoRegistrado: "success",
-      CobrarEntregar: "warning",
-      PagadoEntregar: "warning",
+      Nueva: "primary",
+      Ganada: "success",
+      Perdida: "warning",
+      Cancelada: "error",
+      Vencida: "danger",
     };
 
-
     switch (columnKey) {
-      case "id":
+      case "noCliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{PagosData.id}</p>
-          </div>
-        );
-      case "folio":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {PagosData.folio}
-            </p>
-          </div>
-        );
-      case "fecha":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.fecha}
-            </p>
-          </div>
-        );
-      case "tipo":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.tipo}
-            </p>
+            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
           </div>
         );
       case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.cliente}
-            </p>
+            <p className="text-bold text-small capitalize">{data.cliente}</p>
           </div>
         );
-      case "detalle":
+      case "noVenta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.detalle}
-            </p>
+            <p className="text-bold text-small capitalize">{data.numeroVenta}</p>
           </div>
         );
-      case "maneraPago":
+      case "fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.maneraPago}
-            </p>
+            <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
       case "vendedor":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.vendedor}
-            </p>
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
       case "monto":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.monto}
-            </p>
+            <p className="text-bold text-small capitalize">{data.monto}</p>
           </div>
         );
-      case "status":
-        if (data.status === 0) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Liquidado"]} size="sm">
-              <span>Liquidado</span>
-            </Chip>
-
-          );
-        } else if (data.status === 1) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Parcial"]} size="sm">
-              <span>Parcial</span>
-            </Chip>
-
-          );
-        } else if (data.status === 2) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Credito"]} size="sm" >
-              <span >Credito</span>
-            </Chip>
-
-          );
-        } else if (data.status === 3) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Facturado"]} size="sm" >
-              <span >Facturado</span>
-            </Chip>
-
-          );
-        } else if (data.status2 === 1 || data.status2 === 2) {
-          return (
-
-            <Chip className="capitalize" color={statusColorMap["Pendiente"]} size="sm" >
-              <span>Pendiente</span>
-            </Chip>
-
-          );
-
-        } else {
-          return (
-            <span>{user.estado}</span>
-          );
-        }
+      case "total":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.total}</p>
+          </div>
+        );
       case "Actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -366,11 +251,9 @@ const Payment = () => {
     setFilterValue("");
     setPage(1);
   }, []);
-
   const topContent = React.useMemo(() => {
     return (
       <>
-
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -389,7 +272,6 @@ const Payment = () => {
           onClick={handleClickBreadCrumbs}
           className="text-foreground"
         >
-
           <Breadcrumbs aria-label="breadcrumb" color="foreground">
             <Link
               className="text-foreground"
@@ -400,14 +282,14 @@ const Payment = () => {
               onClick={() => navigate(`/Home`)}
             >
               <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-              Home
+              Inicio
             </Link>
             <Typography
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-              Payments
+              <MdPeopleOutline sx={{ mr: 0.5 }} fontSize="inherit" />
+              Ventas por Cliente
             </Typography>
           </Breadcrumbs>
         </div>
@@ -416,29 +298,30 @@ const Payment = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-
             <Input
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Folio"
+              placeholder="Cliente"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
-            />
-
-
+            />          
           </div>
+
           <div className="flex flex-wrap place-content-end space-x-2">
-            <ExcelProducts />
-            <AddExcelPays />
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Pagos
+              Actualizar Ventas
             </Button>
 
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Pago
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+              onClick={() => navigate(`/Sales/Quotes/NewQuote`)}
+            >
+              Nueva Venta por Cliente
             </Button>
           </div>
         </div>
@@ -496,7 +379,7 @@ const Payment = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Productos por página:
+            Ventas por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -507,7 +390,6 @@ const Payment = () => {
             </select>
           </label>
         </div>
-
       </>
     );
   }, [
@@ -525,7 +407,7 @@ const Payment = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} Cotizaciones en total
+            {data.length} Ventas en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -591,20 +473,20 @@ const Payment = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran pagos"}
-          items={PedidosData}
+          emptyContent={"No se encuentran ventas"}
+          items={sortedItems}
         >
-          {PagosData.map((item) => (
+          {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
   );
 };
 
-export default Payment;
+export default SalesCustomer;

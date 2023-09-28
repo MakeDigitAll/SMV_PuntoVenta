@@ -59,7 +59,8 @@ import Seller from "./views/sellers/Seller.jsx";
 import FillOrder from "./views/sales/FillOrder.jsx";
 import Promotions from "./views/sales/promotions.jsx";
 import Visits from "./views/sales/Views.jsx";
-
+import SalesCustomer from "./views/marketing/SalesperCustomer.jsx";
+import ClientReport from "./views/marketing/ClientReport.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -159,6 +160,14 @@ const App = () => {
         {
           path: "/Marketing",
           element: <ItemsSMarketing />,
+        },
+        {
+          path: "/Marketing/SalesCustomer",
+          element: <SalesCustomer />,
+        },
+        {
+          path: "/Marketing/ClientReport",
+          element: <ClientReport />,
         },
         {
           path: "/Web",
