@@ -14,101 +14,87 @@ import {
   DropdownItem,
   Pagination,
   Spacer,
-  Spinner,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdSearch } from "react-icons/md";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import { MdArrowDropDown, MdBookmarks, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
+import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import UserImage from "./UserImage";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
+const statusOptions = [
+    { name: "Active", uid: "active" },
+    { name: "Paused", uid: "paused" },
+    { name: "Vacation", uid: "vacation" },
+  ];
 const columns = [
-  { name: "Imagen", uid: "Imagen" },
-  { name: "Nombre(s)", uid: "Nombre", sortable: true },
-  { name: "Correo electronico", uid: "Email", sortable: true },
-  { name: "Grupo", uid: "Grupo", sortable: true },
-  { name: "Sucursales", uid: "Sucursales", sortable: true },
+  { name: "No.Cliente", uid: "noCliente", sortable: true },
+  { name: "Cliente", uid: "cliente", sortable: true },
+  { name: "No.Venta", uid: "noVenta", sortable: true },
+  { name: "Fecha", uid: "fecha", sortable: true },
   { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Perfil de seguridad", uid: "perfilSeguridad", sortable: true },
-  { name: "Acciones", uid: "Actions", sortable: true },
+  { name: "Monto", uid: "monto", sortable: true },
+  { name: "Total", uid: "total", sortable: true },
+  { name: "Acciones", uid: "Actions" },
 ];
-
 const INITIAL_VISIBLE_COLUMNS = [
-  "Imagen",
-  "ID",
-  "Nombre",
-  "Email",
-  "Actions",
-  "Sucursales",
-  "Grupo",
+  "noCliente",
+  "cliente",
+  "noVenta",
+  "fecha",
   "vendedor",
-  "perfilSeguridad"
+  "monto",
+  "total",
+  "Actions",
 ];
+const ClientReport = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const marcaOptions = [];
+  function contarmarca() {
+    for (let i = 0; i < data.length; i++) {
+      marcaOptions.push({ name: data[i].folio, uid: data[i].id });
+    }
+  }
 
-const Users = () => {
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/api/allusers");
+      const response = await fetch("http://localhost:4000/ReporteVentasCliente");
       const data = await response.json();
       if (response.ok) {
         setData(data);
-        setIsLoading(false);
+        contarmarca();
       }
-
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
         theme: "colored",
       });
-      setIsLoading(false);
     }
   }
   useEffect(() => {
     loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const [nombre, setNombre] = useState(""); // Estado para almacenar el valor del filtro
-  const [correo,setCorreo]= useState("");
-  // Función para filtrar los datos en función del valor del filtro
-  const filtrarDatos = data.filter((dato) =>
-      dato.nombre.toLowerCase().includes(nombre.toLowerCase()) &&
-      dato.email.toLowerCase().includes(correo.toLowerCase())
-  );
-
-  // Manejar el cambio en el campo de filtro
-  const handleChangeNombre = (event) => {
-    setNombre(event.target.value);
-  };
-  const handelChangeCorreo = (event) =>{
-    setCorreo(event.target.value);
-  }
-
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
-  const [filterValueName, setFilterValueName] = React.useState("");
-  const [filterValueEmail, setFilterValueEmail] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter] = React.useState("all");
+  const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "Email",
+    column: "age",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
-
-  const pages = Math.ceil(data.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -124,26 +110,24 @@ const Users = () => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.nombre.toLowerCase().includes(filterValue.toLowerCase()) +
-          user.apellido
-            .toLowerCase()
-            .includes(filterValue.toLocaleLowerCase()) +
-          user.email.toLowerCase().includes(filterValue.toLocaleLowerCase())
+      filteredUsers = filteredUsers.filter((data) =>
+      data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
+      console.log("Filtering by client:", filteredUsers);
     }
     if (
       statusFilter !== "all" &&
-      Array.from(statusFilter).length !== data.length
+      Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.email)
+      filteredUsers = filteredUsers.filter((data) =>
+        Array.from(statusFilter).includes(data.cliente)
       );
     }
-
+    
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
+ 
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -161,47 +145,60 @@ const Users = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
+    const statusColorMap = {
+      Nueva: "primary",
+      Ganada: "success",
+      Perdida: "warning",
+      Cancelada: "error",
+      Vencida: "danger",
+    };
+
     switch (columnKey) {
-      case "Imagen":
-        return <UserImage idUsuario={data.id} designType="avatar" />;
-      case "ID":
+      case "noCliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
           </div>
         );
-      case "Nombre":
+      case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.nombre} {data.apellido}
-            </p>
+            <p className="text-bold text-small capitalize">{data.cliente}</p>
           </div>
         );
-      case "Email":
+      case "noVenta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.email}</p>
+            <p className="text-bold text-small capitalize">{data.numeroVenta}</p>
           </div>
         );
-        case "Vendedor":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {data.vendedor}
-              </p>
-            </div>
-          );
-          case "Perfil de seguridad":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {data.perfilSeguridad}
-              </p>
-            </div>
-          );
+      case "fecha":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.fecha}</p>
+          </div>
+        );
+      case "vendedor":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+          </div>
+        );
+      case "monto":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.monto}</p>
+          </div>
+        );
+      case "total":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.total}</p>
+          </div>
+        );
       case "Actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -212,9 +209,9 @@ const Users = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/SeeUser`)}>View User</DropdownItem>
-                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/EditUser`)}>Edit User</DropdownItem>
-                <DropdownItem>Delete User</DropdownItem>
+                <DropdownItem>View</DropdownItem>
+                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -241,52 +238,19 @@ const Users = () => {
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((field, value) => {
+  const onSearchChange = React.useCallback((value) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
     } else {
       setFilterValue("");
     }
-    if (value) {
-      if (field === "name") {
-        setFilterValueName(value);
-      } else if (field === "email") {
-        setFilterValueEmail(value);
-      }
-      setPage(1);
-    } else {
-      if (field === "name") {
-        setFilterValueName("");
-      } else if (field === "email") {
-        setFilterValueEmail("");
-      }
-    }
   }, []);
 
-  const onClear = useCallback((field) => {
+  const onClear = useCallback(() => {
     setFilterValue("");
     setPage(1);
-    if (field === "name") {
-      setFilterValueName("");
-    } else if (field === "email") {
-      setFilterValueEmail("");
-    }
-    setPage(1);
   }, []);
-
-  const onClear2 = useCallback((field) => {
-    setNombre("");
-    setCorreo("")
-    setPage(1);
-    if (field === "nombre") {
-      setNombre("");
-    } else if (field === "email") {
-      setCorreo("");
-    }
-    setPage(1);
-  }, []);
-
   const topContent = React.useMemo(() => {
     return (
       <>
@@ -324,8 +288,8 @@ const Users = () => {
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <RiUser2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-              Usuarios
+              <MdBookmarks sx={{ mr: 0.5 }} fontSize="inherit" />
+              Reporte de Clientes
             </Typography>
           </Breadcrumbs>
         </div>
@@ -333,43 +297,31 @@ const Users = () => {
           className="flex flex-col gap-4"
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
-          <Spacer y={8} />
-          <div className="flex flex-wrap space space-x-4 ">
+          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
             <Input
               isClearable
-              type="text"
-              size="md"
+              size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Nombre/ Apellido"
+              placeholder="Cliente"
               startContent={<MdSearch />}
-              onChange={handleChangeNombre}
-              // value={nombre}
-            />
-            <Input
-              isClearable
-              type="text"
-              size="md"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Correo electronico"
-              startContent={<MdSearch />}
-              onChange={handelChangeCorreo}
-              // value={correo}
-            />
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />          
           </div>
+
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar precios
+              Actualizar Rpt. Clientes
             </Button>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar costos
-            </Button>
+
             <Button
-              onPress={() => navigate(`/Settings/User`)}
               size="sm"
               color="primary"
               endContent={<TbPlus />}
+              onClick={() => navigate(`/Sales/Quotes/NewQuote`)}
             >
-              Nuevo usuario
+              Nueva Rpt. Cliente
             </Button>
           </div>
         </div>
@@ -426,10 +378,10 @@ const Users = () => {
               </DropdownMenu>
             </Dropdown>
           </div>
-          <label className="flex items-center text-small">
-            Productos por página:
+          <label className="flex items-center text-default-400 text-small">
+            Ventas por página:
             <select
-              className="bg-transparent outline-none text-small"
+              className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
               <option value="5">5</option>
@@ -443,6 +395,8 @@ const Users = () => {
   }, [
     filterValue,
     onSearchChange,
+    statusFilter,
+    marcaOptions,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
@@ -451,9 +405,9 @@ const Users = () => {
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small">
+        <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} productos en total
+            {data.length} Ventas en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -462,6 +416,7 @@ const Users = () => {
         <Pagination
           isCompact
           showControls
+          showShadow
           classNames={{
             cursor: "bg-foreground text-background",
           }}
@@ -498,10 +453,8 @@ const Users = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        classNames={{
-          wrapper: "max-h-[382px]",
-        }}
         selectedKeys={selectedKeys}
+        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -512,36 +465,53 @@ const Users = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={"center"}
+              align={column.uid === "Actions" ? "center" : "start"}
               allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          emptyContent={
-            sortedItems.length === 0 && isLoading === false ? (
-              "No users found"
-            ) : isLoading === true ? (
-              <Spinner label="Cargando" />
-            ) : (
-              "No users found"
-            )
-          }
-          items={sortedItems}
-        >
-          {filtrarDatos.map((item) => (
+        <TableBody emptyContent={"No se encuentran ventas"} items={sortedItems}>
+          {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
+      <div className="lg:col-span-2">
+          <div className="md:col-span-12">
+            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4">
+              <Spacer y={2} />
+              <div className="md:col-span-12">
+                <div style={{ marginLeft: "400px" }}>
+                  <Table
+                    id="tablaCalculos"
+                    selectionMode="single"
+                    hideHeader
+                    aria-label="Example static collection table"
+                  >
+                    <TableHeader>
+                      <TableColumn>NAME</TableColumn>
+                      <TableColumn>ROLE</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow key="1">
+                        <TableCell>Total Ventas M.N</TableCell>
+                        <TableCell>$0.00</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   );
 };
 
-export default Users;
+export default ClientReport;

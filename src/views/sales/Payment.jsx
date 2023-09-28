@@ -59,10 +59,7 @@ const Payment = () => {
     setFolio(e.target.value);
   }
   
-  
-  
-  
- 
+
   const [PagosData, setPagosData] = useState([]);
   const [PedidosData, setPedidosData] = useState([]);
   const [PedidosFolioFiltrado, setPedidosFolioFiltrado] = useState(" ");
@@ -78,16 +75,16 @@ const Payment = () => {
    
   }
 
-  // const loadTask = async () => {
-  //   const response = await fetch('http://localhost:4000/Pagos');
-  //   const data = await response.json();
-  //   setPagosData(data);
-  //   console.log(data);
-  // }
+  const loadTask = async () => {
+    const response = await fetch('http://localhost:4000/Pagos');
+    const data = await response.json();
+    setPagosData(data);
+    console.log(data);
+  }
 
   useEffect(() => {
-    loadPedidos();
-    // loadTask();
+    // loadPedidos();
+    loadTask();
   }, []);
 
   const filteredListadoProd = PagosData.filter((pagos) => {
@@ -136,7 +133,7 @@ const Payment = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+        data.folio.toString().includes(filterValue.toString())
       );
     }
     if (
@@ -144,7 +141,7 @@ const Payment = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+        Array.from(statusFilter).includes(data.folio)
       );
     }
 
@@ -191,20 +188,20 @@ const Payment = () => {
       case "ID":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{PagosData.id}</p>
           </div>
         );
       case "Folio":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {data.folio}
+              {PagosData.folio}
             </p>
           </div>
         );
      
         case "status":
-          if (data.status === 0) {
+          if (PagosData.status === 0) {
             return (
               
                 <Chip  className="capitalize" color={statusColorMap["Liquidado"]} size="sm">
@@ -212,7 +209,7 @@ const Payment = () => {
                 </Chip>
               
             );
-          }else if (data.status === 1) {
+          }else if (PagosData.status === 1) {
             return (
               
                 <Chip className="capitalize" color={statusColorMap["Parcial"]} size="sm">
@@ -220,7 +217,7 @@ const Payment = () => {
                 </Chip>
               
             );
-          } else if (data.status === 2) {
+          } else if (PagosData.status === 2) {
             return (
               
                 <Chip className="capitalize" color={statusColorMap["Credito"]} size="sm" >
@@ -228,7 +225,7 @@ const Payment = () => {
                 </Chip>
               
             );
-          } else if (data.status === 3) {
+          } else if (PagosData.status === 3) {
             return (
               
                 <Chip className="capitalize" color={statusColorMap["Facturado"]} size="sm" >
@@ -236,7 +233,7 @@ const Payment = () => {
                 </Chip>
               
             );
-          } else if (data.status2 === 1 || data.status2 === 2) {
+          } else if (PagosData.status2 === 1 || PagosData.status2 === 2) {
             return (
               
                 <Chip className="capitalize" color={statusColorMap["Pendiente"]} size="sm" >
@@ -247,7 +244,7 @@ const Payment = () => {
         
           } else {
             return (
-              <span>{user.estado}</span>
+              <span>{PagosData.status}</span>
             );
           }      
       case "Actions":
@@ -527,16 +524,16 @@ const Payment = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran productos"}
+          emptyContent={"No se encuentran pagos"}
           items={PedidosData}
         >
-          {(item) => (
+          {PagosData.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

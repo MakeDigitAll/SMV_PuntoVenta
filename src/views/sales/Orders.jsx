@@ -487,7 +487,7 @@ const Orders = () => {
                 className="text-foreground"
               >
                 <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Orders
+                Pedidos
               </Typography>
             </Breadcrumbs>
           </div>
@@ -521,11 +521,11 @@ const Orders = () => {
             <div className="flex flex-wrap place-content-end space-x-2">
             <AddExcelOrders/>
               <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar Cotizaciones
+                Actualizar Pedidos
               </Button>
 
               <Button size="sm" color="primary" endContent={<TbPlus />}>
-                Nueva cotizacion
+                Nuevo Pedido
               </Button>
             </div>
           </div>

@@ -259,6 +259,150 @@ const Quote = () => {
   useEffect(() => {
     loadCMarcas();
   }, []);
+  
+  const [datos,setData]=useState([]);
+  const loadTask= async()=>{
+    try {
+      const response = await fetch("http://localhost:4000/Productos");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+  useEffect(() => {
+    loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [datos2,setData2]=useState([]);
+  const loadTask2= async()=>{
+    try {
+      const response = await fetch("http://localhost:4000/ProductosCotizados");
+      const data = await response.json();
+      if (response.ok) {
+        setData2(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+  useEffect(() => {
+    loadTask2();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [filasAgregadas, setFilasAgregadas] = useState([]);
+  const [cantidadesUsuario, setCantidadesUsuario] = useState([]);
+  function adaptarDatos(data,cantidad) {
+    return {
+      codigo: data.codigoEmpresa,
+      nombre: data.nombre,
+      marca: data.marca,
+      cantidad: cantidad,
+      inventario: data.existencia,
+      precioUnitario: data.precio,
+      descuento: data.descuento,
+      total: data.total,
+    };
+  }
+  const agregarFila = (data,index) => {
+    const cantidad = parseFloat(cantidadesUsuario[index]);
+
+    // Verifica si la cantidad es un número válido
+    if (!isNaN(cantidad)) {
+      const datosAdaptados = adaptarDatos(data, cantidad);
+
+      // Agrega la fila adaptada a la lista de filas agregadas en el estado
+      setFilasAgregadas([...filasAgregadas, datosAdaptados]);
+    } else {
+      toast.warning('Por favor, ingrese una cantidad válida.');
+    }
+  };
+
+  function calcularTotalesTablaResumen(filas) {
+    let netoTotal = 0;
+    let descuentoTotal = 0;
+    let subtotalTotal = 0;
+    let impuestosTotal = 0;
+    let total = 0;
+  
+    for (const fila of filas) {
+      const neto = fila.cantidad * fila.precioUnitario;
+      const descuentoValor = (neto * fila.descuento) / 100;
+      const subtotal = neto - descuentoValor;
+      const impuestos = subtotal * 0.10; // Cambia el valor del impuesto según tu necesidad
+  
+      netoTotal += neto;
+      descuentoTotal += descuentoValor;
+      subtotalTotal += subtotal;
+      impuestosTotal += impuestos;
+    }
+  
+    total = subtotalTotal + impuestosTotal;
+  
+    return {
+      netoTotal,
+      descuentoTotal,
+      subtotalTotal,
+      impuestosTotal,
+      total,
+    };
+  }
+  
+  const calcularTotales = () => {
+    const tablaResumen = document.getElementById('tablaCalculos');
+    const totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
+    // Actualiza los valores en la tabla de resumen
+    tablaResumen.querySelector(
+      "#netoTotal"
+    ).textContent = `$${totalesNuevaTabla.netoTotal.toFixed(2)}`;
+    tablaResumen.querySelector(
+      "#descuentoTotal"
+    ).textContent = `$${totalesNuevaTabla.descuentoTotal.toFixed(2)}`;
+    tablaResumen.querySelector(
+      "#subtotalTotal"
+    ).textContent = `$${totalesNuevaTabla.subtotalTotal.toFixed(2)}`;
+    tablaResumen.querySelector(
+      "#impuestosTotal"
+    ).textContent = `$${totalesNuevaTabla.impuestosTotal.toFixed(2)}`;
+    tablaResumen.querySelector(
+      "#total"
+    ).textContent = `$${totalesNuevaTabla.total.toFixed(2)}`;
+  };
+  useEffect(() => {
+    // Esta función se ejecutará cuando el componente esté montado
+    calcularTotales();
+  }, [filasAgregadas]);
+
+  const handleCantidadChange = (event, index) => {
+    const nuevasCantidades = [...cantidadesUsuario];
+    nuevasCantidades[index] = event.target.value;
+    setCantidadesUsuario(nuevasCantidades);
+  };
+
+  const [filtro, setFiltro] = useState(''); // Estado para almacenar el valor del filtro
+
+  // Función para filtrar los datos en función del valor del filtro
+  const filtrarDatos = () => {
+    return datos.filter((dato) =>
+      dato.nombre.toLowerCase().includes(filtro.toLowerCase())
+    );
+  };
+
+  // Manejar el cambio en el campo de filtro
+  const handleFiltroChange = (event) => {
+    setFiltro(event.target.value);
+  };
+
   return (
     <>
       <ItemsHeader />
@@ -327,10 +471,11 @@ const Quote = () => {
                                 id="nombre"
                                 value={user.nombre}
                                 onValueChange={handleChange}
+                                onChange={handleFiltroChange}
                                 size="sm"
                                 isRequired
                                 type="text"
-                                label="Cliente"
+                                label="Nombre"
                                 name="nombre"
                                 labelPlacement="outside"
                                 placeholder=" "
@@ -462,11 +607,11 @@ const Quote = () => {
                               >
                                 <Tab key="photos" title="Productos Cotizados">
                                   <Table
+                                    id="tablaEnPaginaPrincipal"
                                     removeWrapper
                                     aria-label="Example static collection table"
                                   >
                                     <TableHeader>
-                                      <TableColumn>Imagen</TableColumn>
                                       <TableColumn>Código</TableColumn>
                                       <TableColumn>Nombre</TableColumn>
                                       <TableColumn>Marca</TableColumn>
@@ -477,11 +622,24 @@ const Quote = () => {
                                       <TableColumn>Total</TableColumn>
                                     </TableHeader>
                                     <TableBody>
-                                      {/* <TableRow key="1">
-                                        <TableCell>Tony Reichert</TableCell>
-                                        <TableCell>CEO</TableCell>
-                                        <TableCell>Active</TableCell>
-                                      </TableRow>                                       */}
+                                      {filasAgregadas.map((fila, index) => (
+                                        <TableRow key={index}>
+                                          <TableCell>{fila.codigo}</TableCell>
+                                          <TableCell>{fila.nombre}</TableCell>
+                                          <TableCell>{fila.marca}</TableCell>
+                                          <TableCell>{fila.cantidad}</TableCell>
+                                          <TableCell>
+                                            {fila.inventario}
+                                          </TableCell>
+                                          <TableCell>
+                                            {fila.precioUnitario}
+                                          </TableCell>
+                                          <TableCell>
+                                            {fila.descuento}
+                                          </TableCell>
+                                          <TableCell>{fila.total}</TableCell>
+                                        </TableRow>
+                                      ))}
                                     </TableBody>
                                   </Table>
                                 </Tab>
@@ -542,6 +700,7 @@ const Quote = () => {
                             <div className="md:col-span-12">
                               <div style={{ marginLeft: "30px" }}>
                                 <Table
+                                  id="tablaCalculos"
                                   selectionMode="single"
                                   hideHeader
                                   aria-label="Example static collection table"
@@ -553,23 +712,23 @@ const Quote = () => {
                                   <TableBody>
                                     <TableRow key="1">
                                       <TableCell>Neto</TableCell>
-                                      <TableCell>$</TableCell>
+                                      <TableCell id="netoTotal">$0.00</TableCell>
                                     </TableRow>
                                     <TableRow key="2">
                                       <TableCell>Descuento</TableCell>
-                                      <TableCell>$</TableCell>
+                                      <TableCell id="descuentoTotal">$0.00</TableCell>
                                     </TableRow>
                                     <TableRow key="3">
                                       <TableCell>Sub Total</TableCell>
-                                      <TableCell>$</TableCell>
+                                      <TableCell id="subtotalTotal">$0.00</TableCell>
                                     </TableRow>
                                     <TableRow key="4">
                                       <TableCell>Impuestos</TableCell>
-                                      <TableCell>$</TableCell>
+                                      <TableCell id="impuestosTotal">$0.00</TableCell>
                                     </TableRow>
                                     <TableRow key="5">
                                       <TableCell>Total</TableCell>
-                                      <TableCell>$</TableCell>
+                                      <TableCell id="total">$0.00</TableCell>
                                     </TableRow>
                                   </TableBody>
                                 </Table>
@@ -660,7 +819,10 @@ const Quote = () => {
                               size="sm"
                             >
                               {categorias.map((categoria) => (
-                                <SelectItem key={categoria.id} value={categoria.id}>
+                                <SelectItem
+                                  key={categoria.id}
+                                  value={categoria.id}
+                                >
                                   {categoria.nombre}
                                 </SelectItem>
                               ))}
@@ -668,11 +830,11 @@ const Quote = () => {
                           </div>
                           <div className="md:col-span-12">
                             <Table
+                              id="tablaEnModal"
                               removeWrapper
                               aria-label="Example static collection table"
                             >
                               <TableHeader>
-                                <TableColumn>Imagen</TableColumn>
                                 <TableColumn>Código</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
                                 <TableColumn>Marca</TableColumn>
@@ -681,13 +843,39 @@ const Quote = () => {
                                 <TableColumn>Precio Uni.</TableColumn>
                                 <TableColumn>Descuento</TableColumn>
                                 <TableColumn>Total</TableColumn>
+                                <TableColumn>Acciones</TableColumn>
                               </TableHeader>
                               <TableBody>
-                                {/* <TableRow key="1">
-                                        <TableCell>Tony Reichert</TableCell>
-                                        <TableCell>CEO</TableCell>
-                                        <TableCell>Active</TableCell>
-                                      </TableRow>                                       */}
+                                {datos.map((data,index) => (
+                                  <TableRow key={data.id}>
+                                    <TableCell>{data.codigoEmpresa}</TableCell>
+                                    <TableCell>{data.nombre}</TableCell>
+                                    <TableCell>{data.marca}</TableCell>
+                                    <TableCell>
+                                      <Input
+                                        size="sm"
+                                        type="number"
+                                        value={cantidadesUsuario[index] || ""} // Usar la cantidad del estado correspondiente
+                                        onChange={(e) =>
+                                          handleCantidadChange(e, index)
+                                        }
+                                        placeholder=""
+                                      />
+                                    </TableCell>
+                                    <TableCell>{data.existencia}</TableCell>
+                                    <TableCell>{data.precio}</TableCell>
+                                    <TableCell>{data.descuento}</TableCell>
+                                    <TableCell>{data.total}</TableCell>
+                                    <TableCell>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => agregarFila(data,index)}
+                                      >
+                                        +
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
                               </TableBody>
                             </Table>
                           </div>

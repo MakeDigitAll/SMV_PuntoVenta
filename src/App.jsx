@@ -56,6 +56,8 @@ import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 import Quote from "./views/sales/Quote.jsx";
 import Seller from "./views/sellers/Seller.jsx";
+import SalesCustomer from "./views/marketing/SalesperCustomer.jsx";
+import ClientReport from "./views/marketing/ClientReport.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -155,6 +157,14 @@ const App = () => {
         {
           path: "/Marketing",
           element: <ItemsSMarketing />,
+        },
+        {
+          path: "/Marketing/SalesCustomer",
+          element: <SalesCustomer />,
+        },
+        {
+          path: "/Marketing/ClientReport",
+          element: <ClientReport />,
         },
         {
           path: "/Web",
