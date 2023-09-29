@@ -55,6 +55,8 @@ import Chat from "./views/chat/chat.jsx";
 import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 import Quote from "./views/sales/Quote.jsx";
+import Notifications from "./views/notifications/Notification.jsx";
+import TestNotify from "./views/notifications/TestNotification.jsx";
 import Seller from "./views/sellers/Seller.jsx";
 import FillOrder from "./views/sales/FillOrder.jsx";
 import Promotions from "./views/sales/promotions.jsx";
@@ -197,6 +199,14 @@ const App = () => {
           path: "/Sellers/Seller",
           element: <Seller />,
         },
+        {
+          path: "/Sellers/:id/ViewSeller",
+          element: <Seller />
+        },
+        {
+          path: "/Sellers/:id/EditSeller",
+          element: <Seller />
+        },  
         {
           path: "/Settings/Users",
           element: <Users />,
