@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import { TbPlus, TbReload } from "react-icons/tb";
 import React, { useState, useEffect, useCallback } from "react";
 import AddExcelClients from "../Excel/addExcel/addExcelClients";
+import Images from "../../components/images/Images";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "Imagen", uid: "imagen", sortable: true },
@@ -153,7 +154,7 @@ const ClientList = () => {
       case "imagen":
         return (
           <div className="flex flex-col">
-            <img src={`aca va la API/${data.imagen}`}  />
+            <Images idImage={data.id} designType="tabla" ruta={"/api/images/clientImage/"}/> 
           </div>
         );
         case "nombreCliente":

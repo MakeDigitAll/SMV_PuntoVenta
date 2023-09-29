@@ -58,6 +58,11 @@ import Quote from "./views/sales/Quote.jsx";
 import Notifications from "./views/notifications/Notification.jsx";
 import TestNotify from "./views/notifications/TestNotification.jsx";
 import Seller from "./views/sellers/Seller.jsx";
+import FillOrder from "./views/sales/FillOrder.jsx";
+import Promotions from "./views/sales/promotions.jsx";
+import Visits from "./views/sales/Views.jsx";
+import SalesCustomer from "./views/marketing/SalesperCustomer.jsx";
+import ClientReport from "./views/marketing/ClientReport.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -76,7 +81,7 @@ const App = () => {
         },
         {
           path: "/settings/user",
-          element: <User />,
+          element: <User/>,
         },
         {
           path: "/Products/ProductList",
@@ -159,6 +164,14 @@ const App = () => {
           element: <ItemsSMarketing />,
         },
         {
+          path: "/Marketing/SalesCustomer",
+          element: <SalesCustomer />,
+        },
+        {
+          path: "/Marketing/ClientReport",
+          element: <ClientReport />,
+        },
+        {
           path: "/Web",
           element: <ItemsSWeb />,
         },
@@ -239,6 +252,10 @@ const App = () => {
           element: <Inventory />,
         },
         {
+          path: "/Sales/Inventory",
+          element: <Inventory />,
+        },
+        {
           path: "/Store/InventoryXWarehouse",
           element: <InventoryWarehouse />,
         },
@@ -295,12 +312,16 @@ const App = () => {
           element: <Quote />,
         },
         {
-          path: "/Notifications",
-          element: <Notifications />
+          path: "/Sales/fillOrder",
+          element: <FillOrder />,
         },
         {
-          path: "/TestNotify",
-          element: <TestNotify />
+          path: "/Sales/Promotions",
+          element: <Promotions />,
+        },
+        {
+          path: "/Sales/Visits",
+          element: <Visits />,
         },
       ],
     },

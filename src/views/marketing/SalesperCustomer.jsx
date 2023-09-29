@@ -13,58 +13,60 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
+  Chip,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookOnline, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import { MdArrowDropDown, MdPeopleOutline, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
+const statusOptions = [
+    { name: "Active", uid: "active" },
+    { name: "Paused", uid: "paused" },
+    { name: "Vacation", uid: "vacation" },
+  ];
 const columns = [
-  { name: "Imagen", uid: "Imagen", sortable: true },
-  { name: "CodFab", uid: "CodFab", sortable: true },
-  { name: "CodEmp", uid: "CodEmp", sortable: true },
-  { name: "Nombre", uid: "Nombre", sortable: true },
-  { name: "Marca", uid: "Marca", sortable: true },
-  { name: "Minímo", uid: "Minimo", sortable: true },
-  { name: "Máximo", uid: "Maximo", sortable: true },
-  { name:"Total", uid: "Total",sortable:true},
-  { name:"Detalles", uid: "Detalles",sortable:true},
+  { name: "No.Cliente", uid: "noCliente", sortable: true },
+  { name: "Cliente", uid: "cliente", sortable: true },
+  { name: "No.Venta", uid: "noVenta", sortable: true },
+  { name: "Fecha", uid: "fecha", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
+  { name: "Monto", uid: "monto", sortable: true },
+  { name: "Total", uid: "total", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
-
 const INITIAL_VISIBLE_COLUMNS = [
-  "Imagen",
-  "CodFab",
-  "CodEmp",
-  "Nombre",
-  "Marca",
-  "Minimo",
-  "Maximo",
-  "Total",
-  "Detalles",
+  "noCliente",
+  "cliente",
+  "noVenta",
+  "fecha",
+  "vendedor",
+  "monto",
+  "total",
   "Actions",
 ];
-
-const   Inventory = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-      }
+const SalesCustomer = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const marcaOptions = [];
+  function contarmarca() {
+    for (let i = 0; i < data.length; i++) {
+      marcaOptions.push({ name: data[i].folio, uid: data[i].id });
     }
+  }
+
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/inventarioGeneralReporteInventario");
+      const response = await fetch("http://localhost:4000/ReporteVentasCliente");
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        contarmarca();
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -109,21 +111,22 @@ const   Inventory = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+      data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
+      console.log("Filtering by client:", filteredUsers);
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+        Array.from(statusFilter).includes(data.cliente)
       );
     }
-
+    
     return filteredUsers;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
-
+ 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
@@ -145,59 +148,55 @@ const   Inventory = () => {
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
+    const statusColorMap = {
+      Nueva: "primary",
+      Ganada: "success",
+      Perdida: "warning",
+      Cancelada: "error",
+      Vencida: "danger",
+    };
 
     switch (columnKey) {
-        case "Imagen":
-            return <User avatarProps={{ radius: "lg", src: data.imagen }} />;
-        case "CodFab":
+      case "noCliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.codigoFabricante}</p>
+            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
           </div>
         );
-      case "CodEmp":
+      case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.codigoEmpresa}
-            </p>
+            <p className="text-bold text-small capitalize">{data.cliente}</p>
           </div>
         );
-        
-      case "Nombre":
+      case "noVenta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.nombre}</p>
+            <p className="text-bold text-small capitalize">{data.numeroVenta}</p>
           </div>
         );
-      case "Marca":
+      case "fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.marca}</p>
+            <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-      case "Minimo":
+      case "vendedor":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.minimo}</p>
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
-      case "Maximo":
+      case "monto":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.maximo}</p>
+            <p className="text-bold text-small capitalize">{data.monto}</p>
           </div>
         );
-        case "Total":
+      case "total":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.total}</p>
-          </div>
-        );
-        case "Detalles":
-        return (
-          <div className="flex flex-col">
-            {/* <p className="text-bold text-small capitalize">{data.status}</p> */}
           </div>
         );
       case "Actions":
@@ -252,11 +251,9 @@ const   Inventory = () => {
     setFilterValue("");
     setPage(1);
   }, []);
-
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -291,8 +288,8 @@ const   Inventory = () => {
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <MdBookOnline sx={{ mr: 0.5 }} fontSize="inherit" />
-              Inventario
+              <MdPeopleOutline sx={{ mr: 0.5 }} fontSize="inherit" />
+              Ventas por Cliente
             </Typography>
           </Breadcrumbs>
         </div>
@@ -305,45 +302,26 @@ const   Inventory = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Nombre del Producto"
+              placeholder="Cliente"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
-            />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Marca
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            
+            />          
           </div>
+
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Inventario
+              Actualizar Ventas
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nueva Inventario
+
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+              onClick={() => navigate(`/Sales/Quotes/NewQuote`)}
+            >
+              Nueva Venta por Cliente
             </Button>
           </div>
         </div>
@@ -401,7 +379,7 @@ const   Inventory = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Inventario por página:
+            Ventas por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -418,6 +396,7 @@ const   Inventory = () => {
     filterValue,
     onSearchChange,
     statusFilter,
+    marcaOptions,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
@@ -428,7 +407,7 @@ const   Inventory = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} Inventario en total
+            {data.length} Ventas en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -486,7 +465,7 @@ const   Inventory = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              align={column.uid === "Actions" ? "center" : "start"}
               allowsSorting={column.sortable}
             >
               {column.name}
@@ -494,20 +473,20 @@ const   Inventory = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentra Inventario"}
+          emptyContent={"No se encuentran ventas"}
           items={sortedItems}
         >
-          {filteredItems.map((item) => (
+          {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
   );
 };
 
-export default Inventory;
+export default SalesCustomer;

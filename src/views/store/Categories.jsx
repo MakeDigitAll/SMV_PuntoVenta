@@ -17,7 +17,7 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookmarkAdded, MdCategory, MdList, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore, MdWarehouse } from "react-icons/md";
+import { MdArrowDropDown, MdBook, MdBookmarkAdded, MdCategory, MdList, MdMoneyOffCsred, MdSave, MdSearch, MdShoppingCart, MdStore, MdTag, MdWarehouse } from "react-icons/md";
 
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
@@ -27,6 +27,14 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import AddExcelCategories from "../Excel/addExcel/addExcelCategories";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "Nombre", uid: "nombre", sortable: true },
@@ -133,6 +141,85 @@ const Categories = () => {
     });
   }, [sortDescriptor, items]);
 
+  //Modal
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [modalMode, setModalMode] = useState("create");
+  const [selectedData, setSelectedData] = useState(null);
+  const [datosCrear, setDatosCrear] = useState({
+    nombre: "",
+    sku: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const integerValue = parseInt(value, 10);
+    if (!isNaN(integerValue)) {
+      setDatosCrear((prevDatosCrear) => ({
+        ...prevDatosCrear,
+        [name]: integerValue,
+      }));
+      console.log(prevDatosCrear);
+    } else {
+      // Puedes manejar el caso en el que el usuario ingrese un valor no válido aquí.
+    }
+  };
+  
+  const handleCreateClick = () => {
+    setModalMode("create");
+    onOpen();
+    setDatosCrear({
+      nombre: "",
+      sku: "",
+    });
+  };
+
+  const handleVer = (item) => {
+    setModalMode("view");
+    const selectedItem = data.find((entry) => entry.id === item);
+    setSelectedData(selectedItem);
+    onOpen(); // Abrir el modal
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!datosCrear.sku || isNaN(datosCrear.sku)) {
+      toast.warning("El campo SKU debe ser un número válido", { theme: "colored" });
+      return;
+    }
+    
+    const updatedData = {
+      //Crear
+      nombre: datosCrear.nombre,
+      sku: parseFloat(datosCrear.sku),
+    };
+    try {
+      if (modalMode === "create") {
+        // Crear nuevo elemento
+        const response = await fetch("http://localhost:4000/Categoria", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        if (response.ok) {
+          // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
+          toast.success("Elemento creado exitosamente", { theme: "colored" });
+          onClose(true);
+          loadTask();
+        } else {
+          // Si la solicitud no es exitosa, maneja el error
+          console.error("Error al crear el elemento", response.statusText);
+          // Puedes mostrar un mensaje de error al usuario si es necesario
+        }
+      }
+    } catch (error) {
+      toast.error("Error al Guardar", { theme: "colored" });
+      // Manejar el error, mostrar un mensaje al usuario, etc.
+    }
+  };
+
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
@@ -159,7 +246,7 @@ const Categories = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
+                <DropdownItem onPress={() => handleVer(data.id)}>View</DropdownItem>
                 <DropdownItem>Edit</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
@@ -276,8 +363,9 @@ const Categories = () => {
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Categorías
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Categoría
+            <Button size="sm" color="primary" endContent={<TbPlus />}
+            onClick={handleCreateClick}>
+              Nueva Categoría
             </Button>
           </div>
         </div>
@@ -440,6 +528,75 @@ const Categories = () => {
           )}
         </TableBody>
       </Table>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="top-center"
+        size="3xl"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                {modalMode === "create" && "Crear Categoría"}
+                {modalMode === "edit" && "Editar Categoría"}
+                {modalMode === "view" && "Ver Categoría"}
+              </ModalHeader>
+              <ModalBody>
+                <div className="rounded px-4 md:p-8 mb-6">
+                  <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                      <div className="md:col-span-6"></div>
+                      <div className="md:col-span-12">
+                        <Input
+                          autoFocus
+                          endContent={
+                            <MdCategory className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                          }
+                          label="Nombre de Categoría"
+                          isRequired
+                          type="text"
+                          placeholder=" "
+                          variant="bordered"
+                          onChange={handleChange}
+                          disabled={modalMode === 'view'} // Deshabilitar input en modo "ver"
+                        />
+                      </div>
+                      <div className="md:col-span-12">
+                        <Input
+                          endContent={
+                            <MdBook className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                          }
+                          label="Sku"
+                          isRequired
+                          placeholder=" "
+                          type="number"
+                          variant="bordered"
+                          onChange={handleChange}
+                          disabled={modalMode === 'view'} // Deshabilitar input en modo "ver"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="lg:col-span-2"></div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Cerrar
+                </Button>
+                <Button
+                  endContent={<MdSave />}
+                  color="primary"
+                  onClick={handleSubmit}
+                >
+                  Guardar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+//surtir pedidos
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
@@ -18,6 +19,7 @@ import {
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -27,24 +29,29 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 const columns = [
   { name: "ID", uid: "id", sortable: true },
-  { name: "Codigo", uid: "codigo", sortable: true },
-  { name: "Nombre", uid: "nombre", sortable: true },
-  { name: "Cantidad", uid: "cantidad", sortable: true },
-  { name: "Falta", uid: "falta", sortable: true },
-  { name: "Surtir", uid: "surtir", sortable: true },
-  { name: "Disponibles", uid: "disponibles", sortable: true },
-  { name: "Series", uid: "series", sortable: true },
+  { name: "Folio", uid: "folio", sortable: true },
+  { name: "Fecha", uid: "fecha", sortable: true },
+  { name: "Cliente", uid: "cliente", sortable: true },
+  { name: "Monto", uid: "monto", sortable: true },
+  { name: "Estatus", uid: "estatus", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
+  { name: "Factura", uid: "factura", sortable: true },
+  { name: "Surtido", uid: "surtido", sortable: true },
+  { name:"Parcial", uid: "parcial",sortable:true},
   { name: "Acciones", uid: "Actions" },
 ];
+
 const INITIAL_VISIBLE_COLUMNS = [
-  "Folio",
-  "Fecha",
-  "Cliente",
-  "Monto",
-  "Estatus",
-  "Factura",
-  "Surtido",
-  "Parcial",
+  "id",
+  "folio",
+  "fecha",
+  "cliente",
+  "monto",
+  "estatus",
+  "vendedor",
+  "factura",
+  "surtido",
+  "parcial",
   "Actions",
 ];
 
@@ -58,7 +65,7 @@ const FillOrder = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/    ");
+      const response = await fetch("http://localhost:4000/PedidosPendientesSurtir");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -144,19 +151,25 @@ const FillOrder = () => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "Folio":
+      case "id":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.id}</p>
+          </div>
+        );
+      case "folio":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
-        case "Fecha":
+        case "fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-      case "Cliente":
+      case "cliente":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
@@ -165,25 +178,31 @@ const FillOrder = () => {
           </div>
         );
         
-      case "Monto":
+      case "monto":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.monto}</p>
           </div>
         );
-      case "Estatus":
+      case "estatus":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.estatus}</p>
           </div>
         );
-      case "Factura":
+        case "vendedor":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+          </div>
+        );
+      case "factura":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.factura}</p>
           </div>
         );
-      case "Surtido":
+      case "surtido":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.surtido}</p>
@@ -296,16 +315,28 @@ const FillOrder = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Cliente"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
+  <Input
+    isClearable
+    size="sm"
+    className="w-[450px] sm:max-w-[44%]"
+    placeholder="Cliente"
+    startContent={<MdSearch />}
+    value={filterValue}
+    onClear={() => onClear()}
+    onValueChange={onSearchChange}
+  />
+  <Input
+    isClearable
+    size="sm"
+    className="w-[450px] sm:max-w-[44%]"
+    placeholder="Folio"
+    startContent={<MdSearch />}
+    value={filterValue}
+    onClear={() => onClear()}
+    onValueChange={onSearchChange}
+  />
+ 
+
             <Dropdown>
               <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
                 <Button
@@ -489,13 +520,13 @@ const FillOrder = () => {
           emptyContent={"No se encuentran Pedidos por surtir"}
           items={sortedItems}
         >
-          {(item) => (
+          {filteredItems.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

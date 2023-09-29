@@ -26,6 +26,7 @@ import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import UserImage from "./UserImage";
+import Images from "../../components/images/Images";
 const columns = [
   { name: "Imagen", uid: "Imagen" },
   { name: "Nombre(s)", uid: "Nombre", sortable: true },
@@ -46,7 +47,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Sucursales",
   "Grupo",
   "vendedor",
-  "perfilSeguridad"
+  "perfilSeguridad",
 ];
 
 const Users = () => {
@@ -60,7 +61,6 @@ const Users = () => {
         setData(data);
         setIsLoading(false);
       }
-
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -72,6 +72,23 @@ const Users = () => {
   useEffect(() => {
     loadTask();
   }, []);
+
+  const [nombre, setNombre] = useState(""); // Estado para almacenar el valor del filtro
+  const [correo,setCorreo]= useState("");
+  // Función para filtrar los datos en función del valor del filtro
+  const filtrarDatos = data.filter((dato) =>
+      dato.nombre.toLowerCase().includes(nombre.toLowerCase()) &&
+      dato.email.toLowerCase().includes(correo.toLowerCase())
+  );
+
+  // Manejar el cambio en el campo de filtro
+  const handleChangeNombre = (event) => {
+    setNombre(event.target.value);
+  };
+  const handelChangeCorreo = (event) =>{
+    setCorreo(event.target.value);
+  }
+
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -151,8 +168,9 @@ const Users = () => {
         return <UserImage idUsuario={data.id} designType="avatar" />;
       case "ID":
         return (
-          <div className="flex flex-col">
+          <div className="flex flex-col">            
             <p className="text-bold text-small capitalize">{data.id}</p>
+            
           </div>
         );
       case "Nombre":
@@ -169,22 +187,20 @@ const Users = () => {
             <p className="text-bold text-small capitalize">{data.email}</p>
           </div>
         );
-        case "Vendedor":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {data.vendedor}
-              </p>
-            </div>
-          );
-          case "Perfil de seguridad":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {data.perfilSeguridad}
-              </p>
-            </div>
-          );
+      case "Vendedor":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+          </div>
+        );
+      case "Perfil de seguridad":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {data.perfilSeguridad}
+            </p>
+          </div>
+        );
       case "Actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -195,8 +211,16 @@ const Users = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/SeeUser`)}>View User</DropdownItem>
-                <DropdownItem onClick={() => navigate(`/Settings/User/${user.id}/EditUser`)}>Edit User</DropdownItem>
+                <DropdownItem
+                  onClick={() => navigate(`/Settings/User/${user.id}/SeeUser`)}
+                >
+                  View User
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => navigate(`/Settings/User/${user.id}/EditUser`)}
+                >
+                  Edit User
+                </DropdownItem>
                 <DropdownItem>Delete User</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -205,7 +229,7 @@ const Users = () => {
       default:
         return cellValue;
     }
-  }, []);
+  }, [navigate]);
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -254,6 +278,18 @@ const Users = () => {
       setFilterValueName("");
     } else if (field === "email") {
       setFilterValueEmail("");
+    }
+    setPage(1);
+  }, []);
+
+  const onClear2 = useCallback((field) => {
+    setNombre("");
+    setCorreo("")
+    setPage(1);
+    if (field === "nombre") {
+      setNombre("");
+    } else if (field === "email") {
+      setCorreo("");
     }
     setPage(1);
   }, []);
@@ -308,23 +344,23 @@ const Users = () => {
           <div className="flex flex-wrap space space-x-4 ">
             <Input
               isClearable
+              type="text"
               size="md"
               className="w-[450px] sm:max-w-[44%]"
               placeholder="Nombre/ Apellido"
               startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
+              onChange={handleChangeNombre}
+              // value={nombre}
             />
             <Input
               isClearable
+              type="text"
               size="md"
               className="w-[450px] sm:max-w-[44%]"
               placeholder="Correo electronico"
               startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
+              onChange={handelChangeCorreo}
+              // value={correo}
             />
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
@@ -502,13 +538,13 @@ const Users = () => {
           }
           items={sortedItems}
         >
-          {(item) => (
+          {filtrarDatos.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

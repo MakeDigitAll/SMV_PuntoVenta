@@ -1,3 +1,4 @@
+//Promotions
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
@@ -17,7 +18,8 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookOnline, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -26,32 +28,34 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 const columns = [
-  { name: "Imagen", uid: "Imagen", sortable: true },
-  { name: "CodFab", uid: "CodFab", sortable: true },
-  { name: "CodEmp", uid: "CodEmp", sortable: true },
-  { name: "Nombre", uid: "Nombre", sortable: true },
-  { name: "Marca", uid: "Marca", sortable: true },
-  { name: "Minímo", uid: "Minimo", sortable: true },
-  { name: "Máximo", uid: "Maximo", sortable: true },
-  { name:"Total", uid: "Total",sortable:true},
-  { name:"Detalles", uid: "Detalles",sortable:true},
+  { name: "ID", uid: "id", sortable: true },
+  { name: "Imagen", uid: "imagen", sortable: true },
+  { name: "Codigo Empresa", uid: "codigoEmpresa", sortable: true },
+  { name: "Nombre", uid: "nombre", sortable: true },
+  { name: "Desde", uid: "desde", sortable: true },
+  { name: "Hasta", uid: "hasta", sortable: true },
+  { name: "Precio base", uid: "precioBase", sortable: true },
+  { name: "Descuento", uid: "descuento", sortable: true },
+  { name: "Precio", uid: "precio", sortable: true },
+  { name:"Activo", uid: "activo",sortable:true},
   { name: "Acciones", uid: "Actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "Imagen",
-  "CodFab",
-  "CodEmp",
-  "Nombre",
-  "Marca",
-  "Minimo",
-  "Maximo",
-  "Total",
-  "Detalles",
+  "id",
+  "imagen",
+  "codigoEmpresa",
+  "nombre",
+  "desde",
+  "hasta",
+  "precioBase",
+  "descuento",
+  "precio",
+  "activo",
   "Actions",
 ];
 
-const   Inventory = () => {
+const Promotions = () => {
     const marcaOptions = [];
     function contarmarca() {
       for (let i = 0; i < data.length; i++) {
@@ -61,7 +65,7 @@ const   Inventory = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/inventarioGeneralReporteInventario");
+      const response = await fetch("http://localhost:4000/ListadoProductosDescuento");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -109,7 +113,7 @@ const   Inventory = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+        data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -117,7 +121,7 @@ const   Inventory = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+        Array.from(statusFilter).includes(data.cliente)
       );
     }
 
@@ -147,57 +151,66 @@ const   Inventory = () => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-        case "Imagen":
-            return <User avatarProps={{ radius: "lg", src: data.imagen }} />;
-        case "CodFab":
+      case "id":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.codigoFabricante}</p>
+            <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "CodEmp":
+        case "imagen":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.codigoEmpresa}
-            </p>
+            <Images idImage={data.imagen} designType="tabla" ruta={"http://localhost:4000/ListadoProductosDescuento"}/> 
           </div>
         );
-        
-      case "Nombre":
+      case "codigoEmpresa":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.codigoEmpresa}</p>
+          </div>
+        );
+        case "nombre":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
-      case "Marca":
+      case "desde":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.marca}</p>
+            <p className="text-bold text-small capitalize">
+              {data.desde}
+            </p>
+          </div>
+        ); 
+      case "hasta":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.hasta}</p>
           </div>
         );
-      case "Minimo":
+      case "precioBase":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.minimo}</p>
+            <p className="text-bold text-small capitalize">{data.precioBase}</p>
           </div>
         );
-      case "Maximo":
+        case "descuento":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.maximo}</p>
+            <p className="text-bold text-small capitalize">{data.descuento}</p>
           </div>
         );
-        case "Total":
+      case "precio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.total}</p>
+            <p className="text-bold text-small capitalize">{data.precio}</p>
           </div>
         );
-        case "Detalles":
+      case "activo":
         return (
           <div className="flex flex-col">
-            {/* <p className="text-bold text-small capitalize">{data.status}</p> */}
+            <p className="text-bold text-small capitalize">{data.activo}</p>
           </div>
         );
       case "Actions":
@@ -291,8 +304,8 @@ const   Inventory = () => {
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <MdBookOnline sx={{ mr: 0.5 }} fontSize="inherit" />
-              Inventario
+              <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
+              Promotions
             </Typography>
           </Breadcrumbs>
         </div>
@@ -301,16 +314,28 @@ const   Inventory = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Nombre del Producto"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
+  <Input
+    isClearable
+    size="sm"
+    className="w-[450px] sm:max-w-[44%]"
+    placeholder="Cliente"
+    startContent={<MdSearch />}
+    value={filterValue}
+    onClear={() => onClear()}
+    onValueChange={onSearchChange}
+  />
+  <Input
+    isClearable
+    size="sm"
+    className="w-[450px] sm:max-w-[44%]"
+    placeholder="Folio"
+    startContent={<MdSearch />}
+    value={filterValue}
+    onClear={() => onClear()}
+    onValueChange={onSearchChange}
+  />
+ 
+
             <Dropdown>
               <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
                 <Button
@@ -318,7 +343,7 @@ const   Inventory = () => {
                   endContent={<MdArrowDropDown className="text-small" />}
                   variant="flat"
                 >
-                  Marca
+                  Modalidad
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -340,10 +365,7 @@ const   Inventory = () => {
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Inventario
-            </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nueva Inventario
+              Actualizar Promociones
             </Button>
           </div>
         </div>
@@ -401,7 +423,7 @@ const   Inventory = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Inventario por página:
+            Pedidos por Surtir por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -428,7 +450,7 @@ const   Inventory = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} Inventario en total
+            {data.length} Pedidos por surtir en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -494,20 +516,20 @@ const   Inventory = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentra Inventario"}
+          emptyContent={"No se encuentran Pedidos por surtir"}
           items={sortedItems}
         >
-          {filteredItems.map((item) => (
+          {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
   );
 };
 
-export default Inventory;
+export default Promotions;

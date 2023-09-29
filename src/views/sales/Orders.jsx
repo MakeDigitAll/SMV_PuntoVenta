@@ -171,11 +171,11 @@ const Orders = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...data];
+    let filteredUsers = [...pedidosData];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+        data.folio.toString().includes(filterValue.toString())
       );
     }
     if (
@@ -183,7 +183,7 @@ const Orders = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+        Array.from(statusFilter).includes(data.folio)
       );
     }
 
@@ -487,7 +487,7 @@ const Orders = () => {
                 className="text-foreground"
               >
                 <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Orders
+                Pedidos
               </Typography>
             </Breadcrumbs>
           </div>
@@ -502,7 +502,7 @@ const Orders = () => {
                 className="w-[450px] sm:max-w-[44%]"
                 placeholder="Modalidad"
                 startContent={<MdSearch />}
-                value={filterValue}
+                // value={filterValue}
                 onClear={() => onClear()}
                 onValueChange={onSearchChange}
               />
@@ -521,11 +521,11 @@ const Orders = () => {
             <div className="flex flex-wrap place-content-end space-x-2">
             <AddExcelOrders/>
               <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar Cotizaciones
+                Actualizar Pedidos
               </Button>
 
               <Button size="sm" color="primary" endContent={<TbPlus />}>
-                Nueva cotizacion
+                Nuevo Pedido
               </Button>
             </div>
           </div>
@@ -678,16 +678,16 @@ const Orders = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran productos"}
+          emptyContent={"No se encuentran Pedidos"}
           items={filteredListadoProd}
         >
-          {(item) => (
+          {filteredItems.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

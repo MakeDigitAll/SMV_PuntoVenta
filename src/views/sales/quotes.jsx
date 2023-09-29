@@ -117,7 +117,8 @@ const Quotes = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+      data.cliente.toLowerCase().includes(filterValue2.toLowerCase())&&
+        data.folio.toString().includes(filterValue.toString())
       );
     }
     if (
@@ -125,7 +126,8 @@ const Quotes = () => {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.nombre)
+        Array.from(statusFilter).includes(data.cliente)&&
+        Array.from(statusFilter).includes(data.folio)
       );
     }
 

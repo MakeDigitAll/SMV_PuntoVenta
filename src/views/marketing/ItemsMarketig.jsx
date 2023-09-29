@@ -19,7 +19,7 @@ const itemsMarketing = [
         id: 1,
         name: "Rpt. Clientes",
         icon: RiFileUserFill,
-        address: "RptCientes",
+        address: "ClientReport",
     },
     {
         id: 2,
@@ -39,7 +39,7 @@ const itemsMarketing = [
         id: 4,
         name: "Ventas por Cliente",
         icon: BiMoneyWithdraw,
-        address: "VentasCliente",
+        address: "SalesCustomer",
         roleId: "0",
     },
     {
@@ -116,7 +116,7 @@ const ItemsSMarketing = () => {
                             shadow="md"
                             key={index}
                             isPressable
-                            //onPress={() => navigate(`/${item.address}`)}
+                            onPress={() => navigate(`/Marketing/${item.address}`)}
                             >
                                 <CardBody className="overflow-visible py-2">
                                     <div className="flex justify-center items-center">
