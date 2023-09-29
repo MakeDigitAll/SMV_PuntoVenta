@@ -492,7 +492,7 @@ const Visits = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran Pedidos por surtir"}
+          emptyContent={"No se encuentran Visitas"}
           items={sortedItems}
         >
           {(item) => (

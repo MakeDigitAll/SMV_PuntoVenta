@@ -520,13 +520,13 @@ const FillOrder = () => {
           emptyContent={"No se encuentran Pedidos por surtir"}
           items={sortedItems}
         >
-          {(item) => (
+          {filteredItems.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>

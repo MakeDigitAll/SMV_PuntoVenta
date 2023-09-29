@@ -91,6 +91,7 @@ const Payment = () => {
   const loadTask = async () => {
     const response = await fetch('http://localhost:4000/Pagos');
     const data = await response.json();
+    setData(data);
     setPagosData(data);
     console.log(data);
   }
@@ -200,14 +201,14 @@ const Payment = () => {
       case "id":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{PagosData.id}</p>
+            <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
       case "folio":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {PagosData.folio}
+              {data.folio}
             </p>
           </div>
         );
@@ -594,7 +595,7 @@ const Payment = () => {
           emptyContent={"No se encuentran pagos"}
           items={PedidosData}
         >
-          {PagosData.map((item) => (
+          {filteredItems.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>

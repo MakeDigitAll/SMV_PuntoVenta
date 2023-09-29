@@ -497,13 +497,13 @@ const   Inventory = () => {
           emptyContent={"No se encuentra Inventario"}
           items={sortedItems}
         >
-          {(item) => (
+          {filteredItems.map((item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>
