@@ -36,7 +36,7 @@ const columns = [
   { name: "Nombre", uid: "nombre", sortable: true },
   { name: "Telefono", uid: "telefono", sortable: true },
   { name: "Sucursal", uid: "sucursal", sortable: true },
-  { name: "Fecha Alta", uid: "fechaAlta", sortable: true },
+  { name: "Fecha Alta", uid: "fechaAlta", sortable: true, format: '{0:dd/MM/yyyy}' },
   { name: "Ref. Web", uid: "refWeb", sortable: true },
   { name: "Clientes", uid: "clientes", sortable: true },
   { name: "Acciones", uid: "actions" },
@@ -199,6 +199,7 @@ const SellersList = () => {
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
+    
     switch (columnKey) {
       case "imagen":
         return (

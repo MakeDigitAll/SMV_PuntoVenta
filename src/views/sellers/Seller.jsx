@@ -81,9 +81,10 @@ const Seller = () => {
     telefono: "",
     sucursal: "",
     fechaAlta: "",
-    referenciaWeb: false,
+    referenciaWeb: "",
     clientes: "",
   });
+  console.log(task);
 
 
   async function loadTask(id) {
@@ -103,8 +104,6 @@ const Seller = () => {
 
       const url = window.location.pathname
       let arr = url.split('/');
-      //console.log("lo de abajo trae arr");
-      //console.log(arr[3]);
 
       if (arr[3] === 'EditSeller') {
         setIsInputDisabled(false);
@@ -173,11 +172,18 @@ const Seller = () => {
           },
         }
       );
-      navigate('/Sellers');
-      // console.log(result.data.id);
-      // if (result) {
-      //   console.log(result);
-      // }
+      if (result.status === 200) {
+        toast.success("Guardando Vendedor", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        navigate('/Sellers');
+      } else {
+        toast.error("Error al Guardar Vendedor", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
     } catch (error) {
       toast.error("Error al guardar los datos", {
         position: "bottom-right",
@@ -211,11 +217,19 @@ const Seller = () => {
           },
         }
       );
-      navigate('/Sellers');
-      // console.log(result.data.id);
-      // if (result) {
-      //   console.log(result);
-      // }
+      if (result.status === 200) {
+        toast.success("Guardando Vendedor", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        navigate('/Sellers');
+      } else {
+        toast.error("Error al Editar Vendedor", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+      
     } catch (error) {
       toast.error("Error al Editar los datos", {
         position: "bottom-right",
@@ -228,16 +242,18 @@ const Seller = () => {
     e.preventDefault();
 
     if (params.id) {
-      console.log('quiero editar');
-      console.log('Id: ', params.id)
       // Si params.id existe, significa que estás editando, así que ejecuta handleEditing
       await handleEditing(e);
     } else {
-      console.log('quiero agregar uno nuevo');
-      console.log(params.id)
       // Si params.id no existe, significa que estás creando, así que ejecuta handleSubmit
       await handleSubmit(e);
     }
+  }
+
+  const [value, setValue] = useState();
+
+  const handleSelectionChange = (e) => {
+    setValue(e.target.value)
   }
 
 
@@ -384,9 +400,23 @@ const Seller = () => {
                                 </div>
 
                                 <div className="md:col-span-6">
-                                  <label htmlFor="estado">Sucursal</label>
-                                  <Select
+                                  <Input
                                     value={task.sucursal}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    type="text"
+                                    label="Sucursal"
+                                    id="sucursal"
+                                    name="sucursal"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    disabled={isInputDisabled}
+                                  />
+                                  {/* <label htmlFor="estado">Sucursal</label> */}
+                                  {/* <Select
+                                    value={task.sucursal}
+                                    onChange={handleSelectionChange}
                                     id="sucursal"
                                     size="small"
                                     label=" "
@@ -399,10 +429,23 @@ const Seller = () => {
                                         {estado}
                                       </MenuItem>
                                     ))}
-                                  </Select>
+                                  </Select> */}
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
+                                    value={task.fechaAlta}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    type="text"
+                                    label="Fecha Alta"
+                                    id="fechaAlta"
+                                    name="fechaAlta"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    disabled={isInputDisabled}
+                                  />
+                                  {/* <Input
                                     value={task.fechaAlta}
                                     onChange={handleChange}
                                     id="fechaAlta"
@@ -414,7 +457,7 @@ const Seller = () => {
                                     placeholder=" "
                                     variant="faded"
                                     disabled={isInputDisabled}
-                                  />
+                                  /> */}
                                 </div>
                                 <div className="md:col-span-6">
                                   <div className="flex items-center space-x-2">
