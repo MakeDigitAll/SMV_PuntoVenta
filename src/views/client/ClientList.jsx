@@ -365,8 +365,13 @@ const ClientList = () => {
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Clientes
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Cliente
+            <Button
+              onPress={() => navigate(`/Customers/NewClient`)}
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+            >
+              Nuevo cliente
             </Button>
           </div>
         </div>

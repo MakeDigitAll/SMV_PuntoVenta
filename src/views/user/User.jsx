@@ -499,7 +499,7 @@ const User = () => {
                                     size={"sm"}
                                     type="password"
                                     label="Confirmar Password"
-                                    name="confirmPassword" // Asegúrate de que el nombre coincida con el campo de Contraseña
+                                    name="confirmPassword" 
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"

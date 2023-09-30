@@ -63,6 +63,7 @@ import Promotions from "./views/sales/promotions.jsx";
 import Visits from "./views/sales/Views.jsx";
 import SalesCustomer from "./views/marketing/SalesperCustomer.jsx";
 import ClientReport from "./views/marketing/ClientReport.jsx";
+import NewClient from "./views/client/NewClientList.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -322,6 +323,10 @@ const App = () => {
         {
           path: "/Sales/Visits",
           element: <Visits />,
+        },
+        {
+          path: "/Customers/NewClient",
+          element: <NewClient />,
         },
       ],
     },
