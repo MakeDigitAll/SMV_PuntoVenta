@@ -33,8 +33,6 @@ import Orders from "./views/sales/Orders.jsx";
 import AddExcelBrands from "./views/Excel/addExcel/addExcelBrands.jsx";
 import Payment from "./views/sales/Payment.jsx";
 import PurchaseOrders from "./views/store/PurchaseOrders.jsx";
-
-//import PosHome from "./views/pos/PosHome.jsx";
 import Inventory from "./views/store/Inventory.jsx";
 import BulkTransfers from "./views/store/BulkTransfers.jsx";
 import Transfers from "./views/store/Transfers.jsx";
@@ -82,7 +80,7 @@ const App = () => {
         },
         {
           path: "/settings/user",
-          element: <User/>,
+          element: <User />,
         },
         {
           path: "/Products/ProductList",
