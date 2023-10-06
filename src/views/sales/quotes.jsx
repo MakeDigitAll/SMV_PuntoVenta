@@ -14,6 +14,8 @@ import {
   DropdownItem,
   Pagination,
   Chip,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
@@ -44,7 +46,7 @@ const columns = [
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "iD",
+  "id",
   "folio",
   "fecha",
   "pedido",
@@ -85,6 +87,10 @@ const Quotes = () => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const clientesOptions = data.map((item) => item.cliente.toLowerCase());
+  const vendedoresOptions = data.map((item) => item.vendedor.toLowerCase());
+  const origenOptions = data.map((item) => item.origen.toLowerCase());
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -112,29 +118,82 @@ const Quotes = () => {
     );
   }, [visibleColumns]);
 
+  const [selectedCliente, setSelectedCliente] = useState("");
+  const [selectedVendedor, setSelectedVendedor] = useState("");
+  const [selectedOrigen, setSelectedOrigen] = useState("");
+  const [modalidad, setModalidad] = useState("");
+
+  const handleClienteChange = (event) => {
+    setSelectedCliente(event.target.value);
+  };
+  const handleVendedorChange = (event) => {
+    setSelectedVendedor(event.target.value);
+  };
+  const handleOrigenChange = (event) => {
+    setSelectedOrigen(event.target.value);
+    console.log("Origen seleccionado:", event.target.value);
+  };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
-      data.cliente.toLowerCase().includes(filterValue2.toLowerCase())&&
         data.folio.toString().includes(filterValue.toString())
       );
     }
+
+    // Filtra por cliente seleccionado
+    if (selectedCliente) {
+      const selectedClienteLower = selectedCliente.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.cliente.toLowerCase() === selectedClienteLower
+      );
+    }
+    // Filtra por vendedor seleccionado
+    if (selectedVendedor) {
+      const selectedVendedorLower = selectedVendedor.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.vendedor.toLowerCase() === selectedVendedorLower
+      );
+    }
+
+    // Filtra por origen seleccionado
+    if (selectedOrigen) {
+      const selectedOrigenLower = selectedOrigen.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.origen.toLowerCase() === selectedOrigenLower
+      );
+    }
+
+    if (modalidad) {
+      filteredUsers = filteredUsers.filter((data) =>
+        data.fecha.toLowerCase().includes(modalidad.toLowerCase())
+      );
+    }
+
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.cliente)&&
         Array.from(statusFilter).includes(data.folio)
       );
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
-
+  }, [
+    data,
+    hasSearchFilter,
+    statusFilter,
+    filterValue,
+    selectedCliente,
+    selectedVendedor,
+    selectedOrigen,
+    modalidad,
+  ]);  
+  
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -164,43 +223,43 @@ const Quotes = () => {
     };
 
     switch (columnKey) {
-      case "ID":
+      case "id":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-      case "Folio":
+      case "folio":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
-      case "Fecha":
+      case "fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-      case "Pedido":
+      case "pedido":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.pedido}</p>
           </div>
         );
-      case "Cliente":
+      case "cliente":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.cliente}</p>
           </div>
         );
-      case "Vendedor":
+      case "vendedor":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
-      case "Origen":
+      case "origen":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.origen}</p>
@@ -320,6 +379,20 @@ const Quotes = () => {
     setFilterValue("");
     setPage(1);
   }, []);
+
+  const onSearchChange2 = React.useCallback((value) => {
+    if (value) {
+      setModalidad(value);
+      setPage(1);
+    } else {
+      setModalidad("");
+    }
+  }, []);
+
+  const onClear2 = useCallback(() => {
+    setModalidad("");
+    setPage(1);
+  }, []);
   const topContent = React.useMemo(() => {
     return (
       <>
@@ -373,9 +446,9 @@ const Quotes = () => {
               className="w-[450px] sm:max-w-[44%]"
               placeholder="Modalidad"
               startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
+              value={modalidad}
+              onClear={() => onClear2()}
+              onValueChange={onSearchChange2}
             />
             <Input
               isClearable
@@ -387,81 +460,54 @@ const Quotes = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+              <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Clientes"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedCliente}
+                  onChange={handleClienteChange}
                 >
-                  Cliente
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+                  {clientesOptions.map((clientesOption) => (
+                    <SelectItem key={clientesOption} value={clientesOption}>
+                      {clientesOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+              <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Vendedor"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedVendedor}
+                  onChange={handleVendedorChange}
                 >
-                  Vendedor
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+                  {vendedoresOptions.map((vendedoresOption) => (
+                    <SelectItem key={vendedoresOption} value={vendedoresOption}>
+                      {vendedoresOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+            <div className="w-[300px] sm:max-w-[44%]">
+              <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Origen"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedOrigen}
+                  onChange={handleOrigenChange}
                 >
-                  Origen
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  {origenOptions.map((origenOption) => (
+                    <SelectItem key={origenOption} value={origenOption}>
+                      {origenOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+                </div>
           </div>
 
           <div className="flex flex-wrap place-content-end space-x-2">
@@ -630,7 +676,7 @@ const Quotes = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran productos"}
+          emptyContent={"No se encuentran cotizaciones"}
           items={sortedItems}
         >
           {(item) => (

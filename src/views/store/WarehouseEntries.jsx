@@ -13,6 +13,8 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import {
@@ -116,8 +118,21 @@ const WarehouseEntries = () => {
     );
   }, [visibleColumns]);
 
+  const tipoOptions = data.map((item) => item.tipo.toLowerCase());
+  const [selectedTipo, setSelectedTipos] = useState("");
+
+  const handleTipoChange = (event) => {
+    setSelectedTipos(event.target.value);
+  };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
+
+    if (selectedTipo) {
+      const selectedTipoLower = selectedTipo.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.tipo.toLowerCase() === selectedTipoLower
+      );
+    }
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
@@ -134,7 +149,7 @@ const WarehouseEntries = () => {
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, statusFilter, filterValue,selectedTipo]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -405,31 +420,22 @@ const WarehouseEntries = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+            <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Tipo"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedTipo}
+                  onChange={handleTipoChange}
                 >
-                  Tipo
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  {tipoOptions.map((tipoOption) => (
+                    <SelectItem key={tipoOption} value={tipoOption}>
+                      {tipoOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button

@@ -13,25 +13,33 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  Spacer,
+  User,
+  Checkbox,
 } from "@nextui-org/react";
-import { format } from 'timeago.js';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdAlignHorizontalCenter, MdArrowDropDown, MdCreditCard, MdFilterList, MdImportContacts, MdMonetizationOn, MdPriceChange, MdPriceCheck, MdSearch } from "react-icons/md";
+import { MdArrowDropDown, MdBook, MdBookmarkAdded, MdCategory, MdList, MdMoneyOffCsred, MdSave, MdSearch, MdShoppingCart, MdStore, MdTag, MdWarehouse } from "react-icons/md";
+
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiListCheck, RiListOrdered, RiSdCardFill, RiUser2Fill } from "react-icons/ri";
-import { useNavigate, useParams } from "react-router-dom";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
+import AddExcelCategories from "../Excel/addExcel/addExcelCategories";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
 const columns = [
-  { name: "ID", uid: "id" },
-  { name: "Nombre Categoria", uid: "nombre", sortable: true },
-  { name: "SKU", uid: "sku", sortable: true },
-  { name: "Acciones", uid: "Actions", sortable: true },
+  { name: "ID", uid: "id", sortable: true },
+  { name: "Nombre", uid: "nombre", sortable: true },
+  { name: "Sku", uid: "sku", sortable: true },
+  { name: "Acciones", uid: "Actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -41,26 +49,44 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 
-
 const Categories = () => {
-
-  let [dataDisable, setDataDisable] = useState([]);
+    const marcaOptions = [];
+    function contarmarca() {
+      for (let i = 0; i < data.length; i++) {
+        marcaOptions.push({ name: data[i].nombre, uid: data[i].id });
+      }
+    }
   const [data, setData] = useState([]);
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const [updatedData, setUpdatedData] = useState([]);
-  const { isOpen: isOpenSecondModal, onOpen: onOpenSecondModal, onClose: onCloseSecondModal, onOpenChange: onOpenChangeSecondModal } = useDisclosure();
-
-
+  async function loadTask() {
+    try {
+      const response = await fetch("http://localhost:4000/Categoria");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+  useEffect(() => {
+    loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue2, setFilterValue2]= React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter] = React.useState("all");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter2, setStatusFilter2] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
@@ -68,9 +94,8 @@ const Categories = () => {
   });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(data.length / rowsPerPage);
-
   const hasSearchFilter = Boolean(filterValue);
+  const hasSearchFilter2 = Boolean(filterValue2);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -84,24 +109,36 @@ const Categories = () => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.folio.toLowerCase().includes(filterValue.toLowerCase()) +
-          user.fecha.toLowerCase().includes(filterValue.toLocaleLowerCase()) +
-          user.clientes.toLowerCase().includes(filterValue.toLocaleLowerCase())
+      filteredUsers = filteredUsers.filter((data) =>
+        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+    if (hasSearchFilter2) {
+      filteredUsers = filteredUsers.filter((data) =>
+        data.sku.toString().includes(filterValue2.toString())
       );
     }
     if (
       statusFilter !== "all" &&
-      Array.from(statusFilter).length !== data.length
+      Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.email)
+      filteredUsers = filteredUsers.filter((data) =>
+        Array.from(statusFilter).includes(data.nombre)
+      );
+    }
+    if (
+      statusFilter2 !== "all" &&
+      Array.from(statusFilter2).length !== statusOptions.length
+    ) {
+      filteredUsers = filteredUsers.filter((data) =>
+        Array.from(statusFilter2).includes(data.sku)
       );
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, hasSearchFilter2, statusFilter, statusFilter2, filterValue, filterValue2]);
+
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -120,295 +157,104 @@ const Categories = () => {
     });
   }, [sortDescriptor, items]);
 
-
-
-  const [task, setTask] = useState({
+  //Modal
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [modalMode, setModalMode] = useState("create");
+  const [selectedData, setSelectedData] = useState(null);
+  const [datosCrear, setDatosCrear] = useState({
     nombre: "",
     sku: "",
   });
 
-  const [validationNombre, setValidationNombre] = useState('valid')
-  const [validationSKU, setValidationSKU] = useState('valid')
-
-
-
-  const [isInputDisabled, setIsInputDisabled] = useState(false);
-  const [modeModal, setModeModal] = useState("create", "edit", "view");
-  const [updateCounter, setUpdateCounter] = useState(0);
-  const [editCounter, setEditCounter] = useState(0); // Paso 1
-  const [disableCounter, setDisableCounter] = useState(0); // Paso 1
-
-  async function loadTask() {
-    try {
-      const response = await fetch(`http://localhost:4000/Categorias`);
-      const data = await response.json();
-      if (response.ok) {
-        setData(data);
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const integerValue = parseInt(value, 10);
+    if (!isNaN(integerValue)) {
+      setDatosCrear((prevDatosCrear) => ({
+        ...prevDatosCrear,
+        [name]: integerValue,
+      }));
+      console.log(prevDatosCrear);
+    } else {
+      // Puedes manejar el caso en el que el usuario ingrese un valor no válido aquí.
     }
-  }
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateCounter, editCounter, disableCounter])
-
-  const [showButton, setShowButton] = useState(false);
-
-  const handleCreate = () => {
-    setModeModal("create");
-    setShowButton(true);
+  };
+  
+  const handleCreateClick = () => {
+    setModalMode("create");
     onOpen();
-    setTask({
+    setDatosCrear({
       nombre: "",
       sku: "",
     });
   };
 
-  const handleView = (id) => {
-    setModeModal("view");
+  const handleVer = (item) => {
+    setModalMode("view");
+    const selectedItem = data.find((entry) => entry.id === item);
+    setSelectedData(selectedItem);
+    onOpen(); // Abrir el modal
+  };
 
-    setIsInputDisabled(true);
-    async function viewModal() {
-      try {
-        const response = await fetch(`http://localhost:4000/Categorias/${id}`);
-        const data = await response.json();
-        console.log(data)
-        if (response.ok) {
-          setTask({
-            id: data.id,
-            nombre: data.nombre,
-            sku: data.sku,
-          })
-          setShowButton(false);
-          onOpen();
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    viewModal();
-  }
+  const handleEditar = (item) => {
+    setModalMode("edit");
+    onOpen(); // Abrir el modal
+  };
 
-
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {};
-
-    !task.nombre ? setValidationNombre('invalid') : setValidationNombre('valid');
-    !task.sku ? setValidationSKU('invalid') : setValidationSKU('valid');
-    if (!task.nombre || !task.sku) {
-      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (!datosCrear.sku || isNaN(datosCrear.sku)) {
+      toast.warning("El campo SKU debe ser un número válido", { theme: "colored" });
       return;
     }
+    
+    const updatedData = {
+      //Crear
+      nombre: datosCrear.nombre,
+      sku: parseFloat(datosCrear.sku),
+    };
     try {
-      const datosListado = {
-        nombre: task.nombre,
-        sku: task.sku,
-      };
-      const res = await fetch(`http://localhost:4000/Categorias`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datosListado),
-      });
-      if (res.ok) {
-        toast.success("Categoría guardada Correctamente", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-        onClose(true);
-        setUpdateCounter((prevCounter) => prevCounter + 1);
-      } else {
-        console.error("Error al crear el elemento", res.statusText);
-      }
-    } catch (error) {
-      toast.error("Error al guardar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  }
-
-
-  const handleEdit = (id) => {
-    console.log(id)
-    setModeModal("edit");
-    setIsInputDisabled(false);
-    async function editModal() {
-      try {
-        const response = await fetch(`http://localhost:4000/Categorias/${id}`);
-        const data = await response.json();
-        if (response.ok) {
-          setTask({
-            id: data.id,
-            nombre: data.nombre,
-            sku: data.sku,
-          })
-          setShowButton(true);
-          onOpen();
-        }
-      } catch (err) {
-        console.log(err);
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    editModal();
-  }
-
-
-  async function handleEditing(e) {
-    e.preventDefault();
-
-    const newErrors = {};
-
-    !task.nombre ? setValidationNombre('invalid') : setValidationNombre('valid');
-    !task.sku ? setValidationSKU('invalid') : setValidationSKU('valid');
-    if (!task.nombre || !task.sku) {
-      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const datosListado = {
-      id: task.id,
-      nombre: task.nombre,
-      sku: task.sku,
-    };
-
-    async function edit() {
-      try {
-        const res = await fetch(`http://localhost:4000/CategoriasEdit/${datosListado.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datosListado),
-        });
-        if (res.ok) {
-          toast.success("Categoría Editada Correctamente", {
-            position: "bottom-right",
-            theme: "colored",
-          });
-          onClose(true);
-          setEditCounter((prevCounter) => prevCounter + 1);
-
-        } else {
-          toast.error("Error al actualizar Categoría", {
-            position: "bottom-right",
-            theme: "colored",
-          });
-        }
-      } catch (error) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    edit();
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTask({
-      ...task,
-      [name]: value,
-    });
-    // Limpia el mensaje de error cuando el usuario comienza a escribir en el campo
-    setErrors({
-      ...errors,
-      [name]: "", // Esto eliminará el mensaje de error correspondiente
-    });
-  };
-
-  const handleDisable = (id) => {
-    console.log("Este es el id a deshabilitar: ", id);
-    onOpenSecondModal();
-  };
-
-  async function handleDisableTrue(id) {
-    const datoDisable = {
-      id: task.id
-    };
-    console.log(datoDisable.id);
-
-    async function disable() {
-      try {
-        const res = await fetch(`http://localhost:4000/CategoriasDisable/${datoDisable.id}`, {
+      if (modalMode === "create") {
+        // Crear nuevo elemento
+        const response = await fetch("http://localhost:4000/Categoria", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(datoDisable),
+          body: JSON.stringify(updatedData),
         });
-        if (res.ok) {
-          toast.warning("Dehabilitando Categoría", {
-            position: "bottom-right",
-            theme: "colored",
-          });
-          setDisableCounter((prevCounter) => prevCounter + 1);
-          onCloseSecondModal(true);
+
+        if (response.ok) {
+          // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
+          toast.success("Elemento creado exitosamente", { theme: "colored" });
+          onClose(true);
+          loadTask();
         } else {
-          toast.error("Error al deshabilitar Categoría", {
-            position: "bottom-right",
-            theme: "colored",
-          });
+          // Si la solicitud no es exitosa, maneja el error
+          console.error("Error al crear el elemento", response.statusText);
+          // Puedes mostrar un mensaje de error al usuario si es necesario
         }
-      } catch (error) {
-        toast.error("Error al deshabilitar Categoría", {
-          position: "bottom-right",
-          theme: "colored",
-        });
       }
+    } catch (error) {
+      toast.error("Error al Guardar", { theme: "colored" });
+      // Manejar el error, mostrar un mensaje al usuario, etc.
     }
-    disable();
-  }
-
-
-
-
+  };
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
-    switch (columnKey) {
 
-      case "id":
+    switch (columnKey) {
+      case "Nombre":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
-      case "fecha":
+        case "Sku":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {format(data.fecha)}
-            </p>
-          </div>
-        );
-      case "folio":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.folio}</p>
+            <p className="text-bold text-small capitalize">{data.sku}</p>
           </div>
         );
       case "Actions":
@@ -421,9 +267,9 @@ const Categories = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={() => handleView(data.id)}>Ver Forma de Pago</DropdownItem>
-                <DropdownItem onPress={() => handleEdit(data.id)}>Editar Forma de Pago</DropdownItem>
-                <DropdownItem className="text-danger" onPress={() => handleDisable(data.id)}>Deshabilitar Forma de Pago</DropdownItem>
+                <DropdownItem onPress={() => handleVer(data.id)}>View</DropdownItem>
+                <DropdownItem onPress={handleEditar}>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -464,10 +310,25 @@ const Categories = () => {
     setPage(1);
   }, []);
 
+  const onSearchChange2 = React.useCallback((value2) => {
+    if (value2) {
+      setFilterValue2(value2);
+      setPage(1);
+    } else {
+      setFilterValue2("");
+    }
+  }, []);
+  
+  const onClear2 = useCallback(() => {
+    setFilterValue2("");
+    setPage(1);
+  }, []);
+  
+
   const topContent = React.useMemo(() => {
     return (
       <>
-
+        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -498,23 +359,12 @@ const Categories = () => {
               <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
               Inicio
             </Link>
-            <Link
-              className="text-foreground"
-              underline="hover"
-              sx={{ display: "flex", alignItems: "center" }}
-              color="foreground"
-              href="#"
-              onClick={() => navigate(`/Store`)}
-            >
-              <RiListCheck sx={{ mr: 0.5 }} fontSize="inherit" />
-              Almacén
-            </Link>
             <Typography
               sx={{ display: "flex", alignItems: "center" }}
               className="text-foreground"
             >
-              <RiListCheck sx={{ mr: 0.5 }} fontSize="inherit" />
-              Categorias
+              <MdCategory sx={{ mr: 0.5 }} fontSize="inherit" />
+              Categorías
             </Typography>
           </Breadcrumbs>
         </div>
@@ -522,21 +372,37 @@ const Categories = () => {
           className="flex flex-col gap-4"
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
-          <Spacer y={8} />
-          <div className="flex flex-wrap place-content-end space-x-2">
-
-            <Button
-              onPress={handleCreate}
+          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
+            <Input
+              isClearable
               size="sm"
-              color="primary"
-              endContent={<TbPlus />}
-            >
-              Nueva Categoria
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Nombre"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+          </div>
+          <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="SKU"
+              startContent={<MdSearch />}
+              value={filterValue2}
+              onClear={() => onClear2()}
+              onValueChange={(newValue) => onSearchChange2(newValue)} 
+            />
+          <div className="flex flex-wrap place-content-end space-x-2">
+            <AddExcelCategories/>
+            <Button size="sm" color="warning" endContent={<TbReload />}>
+              Actualizar Categorías
             </Button>
-
-
-
-
+            <Button size="sm" color="primary" endContent={<TbPlus />}
+            onClick={handleCreateClick}>
+              Nueva Categoría
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -592,10 +458,10 @@ const Categories = () => {
               </DropdownMenu>
             </Dropdown>
           </div>
-          <label className="flex items-center text-small">
-            Categorias por página:
+          <label className="flex items-center text-default-400 text-small">
+            Categorías por página:
             <select
-              className="bg-transparent outline-none text-small"
+              className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
               <option value="5">5</option>
@@ -604,16 +470,23 @@ const Categories = () => {
             </select>
           </label>
         </div>
-
       </>
     );
-  }, [filterValue, onSearchChange, visibleColumns, onRowsPerPageChange, navigate, onClear]);
+  }, [
+    filterValue,
+    onSearchChange,
+    statusFilter,
+    visibleColumns,
+    onRowsPerPageChange,
+    navigate,
+    onClear,
+  ]);
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small">
+        <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
-            {data.length} Categorias en total
+            {data.length} Categorías en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"
@@ -659,10 +532,8 @@ const Categories = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        classNames={{
-          wrapper: "max-h-[382px]",
-        }}
         selectedKeys={selectedKeys}
+        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -673,14 +544,17 @@ const Categories = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={"center"}
+              align={column.uid === "actions" ? "center" : "start"}
               allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No payment methods found"} items={sortedItems}>
+        <TableBody
+          emptyContent={"No se encuentran Categorías"}
+          items={sortedItems}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
@@ -690,78 +564,69 @@ const Categories = () => {
           )}
         </TableBody>
       </Table>
-
-
       <Modal
         isOpen={isOpen}
-        placement="top-center"
         onOpenChange={onOpenChange}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <form onChange={handleChange} onSubmit={modeModal == "create" ? handleSubmit : handleEditing} >
-                <ModalHeader className="flex flex-col gap-1">
-                  {modeModal === "create" && "Nueva Categoría"}
-                  {modeModal === "edit" && "Editar Categoría"}
-                  {modeModal === "view" && "Detalles de la Categoría"}
-                </ModalHeader>
-                <ModalBody>
-                  <Input
-                    id='nombre'
-                    name='nombre'
-                    value={modeModal !== "create" ? task.nombre : undefined}
-                    onChange={handleChange}
-                    label='Nombre de la Categoria'
-                    variant="bordered"
-                    isDisabled={isInputDisabled}
-                    validationState={validationNombre}
-                    required
-                  />
-                  <Input
-                    id='sku'
-                    name='sku'
-                    value={modeModal !== "create" ? task.sku : undefined}
-                    onChange={handleChange}
-                    label='SKU'
-                    variant="bordered"
-                    isDisabled={isInputDisabled}
-                    validationState={validationSKU}
-                    required
-                  />
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="flat" onPress={onClose}>
-                    Cerrar
-                  </Button>
-                  {showButton && (
-                    <Button id="BtnGuardar" color="primary" type="submit">
-                      Guardar
-                    </Button>
-                  )}
-                </ModalFooter>
-              </form>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-      <Modal
-        isOpen={isOpenSecondModal}
-        onOpenChange={onOpenChangeSecondModal}
         placement="top-center"
+        size="3xl"
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTA CATEGORIA? </ModalHeader>
+              <ModalHeader>
+                {modalMode === "create" && "Crear Categoría"}
+                {modalMode === "edit" && "Editar Categoría"}
+                {modalMode === "view" && "Ver Categoría"}
+              </ModalHeader>
               <ModalBody>
+                <div className="rounded px-4 md:p-8 mb-6">
+                  <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                      <div className="md:col-span-6"></div>
+                      <div className="md:col-span-12">
+                        <Input
+                          autoFocus
+                          endContent={
+                            <MdCategory className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                          }
+                          label="Nombre de Categoría"
+                          isRequired
+                          type="text"
+                          placeholder=" "
+                          variant="bordered"
+                          onChange={handleChange}
+                          disabled={modalMode === 'view'} // Deshabilitar input en modo "ver"
+                        />
+                      </div>
+                      <div className="md:col-span-12">
+                        <Input
+                          endContent={
+                            <MdBook className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                          }
+                          label="Sku"
+                          isRequired
+                          placeholder=" "
+                          type="number"
+                          variant="bordered"
+                          onChange={handleChange}
+                          disabled={modalMode === 'view'} // Deshabilitar input en modo "ver"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="lg:col-span-2"></div>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
-                  Close
+                  Cerrar
                 </Button>
-                <Button color="primary" onPress={handleDisableTrue}>
-                  Aceptar
+                <Button
+                  endContent={<MdSave />}
+                  color="primary"
+                  onClick={handleSubmit}
+                >
+                  Guardar
                 </Button>
               </ModalFooter>
             </>
@@ -771,6 +636,5 @@ const Categories = () => {
     </div>
   );
 };
-
 
 export default Categories;
