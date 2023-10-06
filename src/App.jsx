@@ -326,6 +326,14 @@ const App = () => {
           path: "/Customers/NewClient",
           element: <NewClient />,
         },
+        {
+          path: "/Customers/:id/ViewClient",
+          element: <NewClient />,
+        },
+        {
+          path:"/Customers/:id/EditClient",
+          element: <NewClient />,
+        }
       ],
     },
   ]);

@@ -28,6 +28,7 @@ import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
+import Images from "../../components/images/Images.tsx";
 const Seller = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageDefault, setImageDefault] = useState(true);
@@ -87,13 +88,20 @@ const Seller = () => {
   console.log(task);
 
 
+  const [validationImagen, setValidationImagen] = useState('valid')
+  const [validationNombre, setValidationNombre] = useState('valid')
+  const [validationTelefono, setValidationTelefono] = useState('valid')
+  const [validationSucursal, setValidationSucursal] = useState('valid')
+  const [validationFechaAlta, setValidationFechaAlta] = useState('valid')
+  const [validationClientes, setValidationClientes] = useState('valid')
+  const [idVendedor, setIdVendedor] = useState('');
+
   async function loadTask(id) {
 
     try {
       const response = await fetch(`http://localhost:4000/ListadoVendedores/${id}`);
       const data = await response.json();
       setTask({
-        imagen: data.imagen,
         nombre: data.nombre,
         telefono: data.telefono,
         sucursal: data.sucursal,
@@ -101,7 +109,7 @@ const Seller = () => {
         referenciaWeb: data.referenciaWeb,
         clientes: data.clientes,
       });
-
+      setIdVendedor(id);
       const url = window.location.pathname
       let arr = url.split('/');
 
@@ -150,6 +158,19 @@ const Seller = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     const newErrors = {};
+
+    !task.imagen ? setValidationImagen('invalid') : setValidationImagen('valid');
+    !task.nombre ? setValidationNombre('invalid') : setValidationNombre('valid');
+    !task.telefono ? setValidationTelefono('invalid') : setValidationTelefono('valid');
+    !task.sucursal ? setValidationSucursal('invalid') : setValidationSucursal('valid');
+    !task.fechaAlta ? setValidationFechaAlta('invalid') : setValidationFechaAlta('valid');
+    !task.clientes ? setValidationClientes('invalid') : setValidationClientes('valid');
+
+    if (!task.imagen || !task.nombre || !task.telefono || !task.sucursal || !task.fechaAlta || !task.clientes) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
+    }
+
+    
     try {
       const formData = new FormData();
       const document = JSON.stringify({
@@ -195,6 +216,19 @@ const Seller = () => {
   async function handleEditing(e) {
     e.preventDefault();
     const newErrors = {};
+
+    !task.imagen ? setValidationImagen('invalid') : setValidationImagen('valid');
+    !task.nombre ? setValidationNombre('invalid') : setValidationNombre('valid');
+    !task.telefono ? setValidationTelefono('invalid') : setValidationTelefono('valid');
+    !task.sucursal ? setValidationSucursal('invalid') : setValidationSucursal('valid');
+    !task.fechaAlta ? setValidationFechaAlta('invalid') : setValidationFechaAlta('valid');
+    !task.clientes ? setValidationClientes('invalid') : setValidationClientes('valid');
+
+    if (!task.imagen || !task.nombre || !task.telefono || !task.sucursal || !task.fechaAlta || !task.clientes) {
+      toast.error("Favor de llenar todos lo campos", { position: "bottom-right", theme: "colored", }); return;
+    }
+
+
     try {
       const formData = new FormData();
       const document = JSON.stringify({
@@ -309,7 +343,10 @@ const Seller = () => {
                         <h2 className="font-large text-lg text-foreground">
                           Imagen de Vendedor
                         </h2>
-                        {imageDefault ? (
+                       {idVendedor && selectedImage == null ? (                          
+                          <><br /><Images idImage={idVendedor} designType="avatarBig" ruta="api/sellerImage/" /></>
+                        ):(
+                          imageDefault ? (
                           <Image
                             src="/Blank-Avatar.png"
                             alt=""
@@ -325,8 +362,10 @@ const Seller = () => {
                             alt=""
                             width={300}
                             height={300}
-                          />
-                        )}
+                          />                                                     
+                        )         
+                        )
+                        }           
                         <Spacer y={6} />
                         <input
                           size={"sm"}
@@ -340,6 +379,8 @@ const Seller = () => {
                           name="imagen"
                           accept="image/*"
                           onChange={handleImageChange}
+                          validationState={validationImagen}
+                          required
                         />
                         <Button
                           id="BTNimagen"
@@ -381,6 +422,8 @@ const Seller = () => {
                                     placeholder=" "
                                     variant="faded"
                                     disabled={isInputDisabled}
+                                    validationState={validationNombre}
+                                    required
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -396,6 +439,8 @@ const Seller = () => {
                                     placeholder=" "
                                     variant="faded"
                                     disabled={isInputDisabled}
+                                    validationState={validationTelefono}
+                                    required
                                   />
                                 </div>
 
@@ -412,6 +457,8 @@ const Seller = () => {
                                     placeholder=" "
                                     variant="faded"
                                     disabled={isInputDisabled}
+                                    validationState={validationSucursal}
+                                    required
                                   />
                                   {/* <label htmlFor="estado">Sucursal</label> */}
                                   {/* <Select
@@ -444,6 +491,8 @@ const Seller = () => {
                                     placeholder=" "
                                     variant="faded"
                                     disabled={isInputDisabled}
+                                    validationState={validationFechaAlta}
+                                    required
                                   />
                                   {/* <Input
                                     value={task.fechaAlta}
@@ -485,6 +534,8 @@ const Seller = () => {
                                     placeholder=" "
                                     variant="faded"
                                     disabled={isInputDisabled}
+                                    validationState={validationClientes}
+                                    required
                                   />
                                 </div>
                               </div>

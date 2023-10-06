@@ -10,6 +10,7 @@ import {
     Checkbox,
     Select,
     MenuItem,
+    Table, TableHeader, TableColumn, TableBody, TableRow,
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -21,16 +22,20 @@ import {
     RiDashboard2Fill,
 } from "react-icons/ri";
 import { MdCamera, MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
+import Facturation from './Facturation'
 const NewClient = () => {
     const [status, useStatus] = useState(false);
     const [selectedImage, setSelectedImage] = useState("");
     const imageDefault = selectedImage === "";
+    const params = useParams();
+    const [idVendedor, setIdVendedor] = useState('');
+    const [isInputDisabled, setIsInputDisabled] = useState(false);
     const [user, setUser] = useState({
         nombre: "",
         apellido: "",
@@ -41,26 +46,111 @@ const NewClient = () => {
         passwordConfirm: "",
     });
     const [validationErrors, setValidationErrors] = useState({
+        imagen: "",
         nombre: "",
-        apellido: "",
+        nombreComercial: "",
+        razonSocial: "",
+        contacto: "",
+        rfc: "",
+        numerodecliente: "",
+        telefono: "",
+        giro: "",
+        vendedor: "",
         email: "",
         emailConfirm: "",
-        password: "",
-        confirmPassword: "",
         direccion: "",
+        formaPago: "",
+        metodoPago: "",
+        cfdi: "",
+        condicionesPago: "",
+        diasCredito: "",
+        limiteCredito: "",
+        saldoPendiente: "",
+        creditoDisponible: "",
+        nombreContacto: "",
+        apellidoContacto: "",
+        emailContacto: "",
+        emailContactoConfirm: "",
+        contacto2: "",
+        comentario: "",
+        direccionContacto: "",
         colonia: "",
         ciudad: "",
         estado: "",
         codigoPostal: "",
-        telefonoContacto: "",
-        telefonoCelular: "",
-        perfilSeguridad: "",
-        vendedor: "",
+        password: "",
+        passwordValidation: "",
+        status: "",
+        validacion: "",
+        fecha: "",
+        tipo: "",
+        detalle: "",
+        cargo: "",
+        abono: "",
+        tc: "",
+        saldo: "",
     });
+
+    const [clientData, setClientData] = useState({
+        imagen: "",
+        nombre: "",
+        nombreComercial: "",
+        razonSocial: "",
+        contacto: "",
+        rfc: "",
+        telefono: "",
+        whatsapp: "",
+        giro: "",
+        numerodecliente: "",
+        vendedor: "",
+        email: "",
+        direccion: "",
+    });
+
+    async function loadTask(id) {
+        //console.log(id);
+
+        try {
+            const response = await fetch(`http://localhost:4000/ListadoClientes/${id}`);
+            const data = await response.json();
+            console.log(data.direccion)
+            setClientData({
+                nombre: data.nombre,
+                nombreComercial: data.nombreComercial,
+                razonSocial: data.razonSocial,
+                contacto: data.contacto,
+                rfc: data.rfc,
+                telefono: data.telefono,
+                giro: data.giro,
+                vendedor: data.vendedor,
+                email: data.email,
+                emailConfirm: data.email,
+                direccion: data.direccion,
+            });
+            setIdVendedor(id);
+            const url = window.location.pathname
+            let arr = url.split('/');
+            console.log(arr[3]);
+              if (arr[3] === 'ViewClient') {
+                setIsInputDisabled(false);
+              }
+              if (arr[3] === 'ViewClient') {
+                 setIsInputDisabled(true);
+                // document.getElementById('BTNguardar').style.display = 'none';
+                // document.getElementById('BTNimagen').style.display = 'none';
+              }
+
+        } catch {
+            toast.error("Error al cargar los datos", {
+                position: "bottom-right",
+                theme: "colored",
+            });
+        }
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUser({ ...user, [name]: value });
+        setClientData({ ...clientData, [name]: value });
         setValidationErrors({ ...validationErrors, [name]: "" });
     };
     const fileInputRef = useRef(null);
@@ -73,17 +163,17 @@ const NewClient = () => {
             ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
             : "";
         if (
-            !user.imagen ||
-            !user.nombre ||
-            !user.apellido ||
-            !user.password ||
-            !user.direccion ||
-            !user.colonia ||
-            !user.estado ||
-            !user.codigoPostal ||
-            !user.telefonoContacto ||
-            !user.telefonoCelular ||
-            !user.perfilSeguridad ||
+            !clientData.imagen ||
+            !clientData.nombre ||
+            !clientData.nombreComercial ||
+            !clientData.razonSocial ||
+            !clientData.contacto ||
+            !clientData.rfc ||
+            !clientData.telefono ||
+            !clientData.giro ||
+            !clientData.vendedor ||
+            !clientData.email ||
+            !clientData.direccion ||
             passwordValidationState !== "valid" ||
             confirmPasswordValidationState !== "valid" ||
             emailConfirmValidationState !== "valid"
@@ -92,29 +182,23 @@ const NewClient = () => {
                 theme: "colored",
             });
         }
-        user.password !== user.confirmPassword || user.email !== user.emailConfirm
+        clientData.password !== clientData.confirmPassword || clientData.email !== clientData.emailConfirm
             ? toast.error("Las contraseñas o correos no coinciden", {
                 theme: "colored",
             })
             : "";
         const errors = {};
-        !user.nombre ? (errors.nombre = "Llena este campo") : "";
-        !user.apellido ? (errors.apellido = "Llena este campo") : "";
-        !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
-        !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
-        !user.direccion ? (errors.direccion = "Llena este campo") : "";
-        !user.colonia ? (errors.colonia = "Llena este campo") : "";
-        !user.status ? (errors.status = "Llena este campo") : "";
-        !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
-        !user.estado ? (errors.estado = "Llena este campo") : "";
-        !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
-        !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
-        !user.telefonoContacto
-            ? (errors.telefonoContacto = "Llena este campo")
-            : "";
-        !user.email ? (errors.email = "Llena este campo") : "";
-        !user.password ? (errors.password = "Llena este campo") : "";
-        !user.imagen ? (errors.imagen = "Llena este campo") : "";
+        !clientData.nombre ? (errors.nombre = "Llena este campo") : "";
+        !clientData.nombreComercial ? (errors.apellido = "Llena este campo") : "";
+        !clientData.razonSocial ? (errors.perfilSeguridad = "Llena este campo") : "";
+        !clientData.contacto ? (errors.vendedor = "Llena este campo") : "";
+        !clientData.rfc ? (errors.direccion = "Llena este campo") : "";
+        !clientData.telefono ? (errors.colonia = "Llena este campo") : "";
+        !clientData.giro ? (errors.status = "Llena este campo") : "";
+        !clientData.vendedor ? (errors.ciudad = "Llena este campo") : "";
+        !clientData.email ? (errors.estado = "Llena este campo") : "";
+        !clientData.direccion ? (errors.codigoPostal = "Llena este campo") : "";
+        !clientData.imagen ? (errors.imagen = "Llena este campo") : "";
         if (Object.keys(errors).length > 0) {
             setValidationErrors(errors);
             return;
@@ -123,19 +207,24 @@ const NewClient = () => {
 
         const formData = new FormData();
         const document = JSON.stringify({
-            nombre: user.nombre,
-            apellido: user.apellido,
-            email: user.email,
-            password: user.password,
-            perfilSeguridad: user.perfilSeguridad,
-            vendedor: user.vendedor,
+            nombre: clientData.nombre,
+            nombreComercial: clientData.nombreComercial,
+            razonSocial: clientData.razonSocial,
+            contacto: clientData.contacto,
+            rfc: clientData.rfc,
+            telefono: clientData.telefono,
+            numerodecliente: clientData.numerodecliente,
+            email: clientData.email,
+            vendedor: clientData.vendedor,
+            giro: clientData.giro,
+            direccion: clientData.direccion,
         });
 
         formData.append("document", document);
         formData.append("image", selectedImage);
         try {
             const result = await http.post(
-                `http://localhost:4000/api/createuser`,
+                `http://localhost:4000/ListadoClientes`,
                 formData,
                 {
                     headers: {
@@ -143,36 +232,144 @@ const NewClient = () => {
                     },
                 }
             );
-            console.log(result.data.id);
-            if (result) {
-                const formData2 = new FormData();
-                const document2 = JSON.stringify({
-                    idUsuario: result.data.id,
-                    direccion: user.direccion,
-                    colonia: user.colonia,
-                    status: user.status,
-                    ciudad: user.ciudad,
-                    estado: user.estado,
-                    codigoPostal: user.codigoPostal,
-                    telefonoContacto: user.telefonoContacto,
-                    telefonoCelular: user.telefonoCelular,
-                });
-                formData2.append("document2", document2);
-                const response = await http.post(
-                    `http://localhost:4000/api/createUserData`,
-                    formData2,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
-                );
-
-                if (response.status == 200 ? true : false) {
-                    toast.success("Usuario creado correctamente", { theme: "colored" });
-                    navigate("/Settings/Users");
-                }
+            if (response.status == 200 ? true : false) {
+                toast.success("Usuario creado correctamente", { theme: "colored" });
+                navigate("/Settings/Users");
             }
+            // if (result) {
+            //     const formData2 = new FormData();
+            //     const document2 = JSON.stringify({
+            //         idCliente: result.data.id,
+            //         formaPago: clientData.formaPago,
+            //         metodoPago: clientData.metodoPago,
+            //         cfdi: clientData.cfdi,
+            //         condicionesPago: clientData.condicionesPago,
+            //         diasCredito: clientData.diasCredito,
+            //         limiteCredito: clientData.limiteCredito,
+            //         saldoPendiente: clientData.saldoPendiente,
+            //         creditoDisponible: clientData.creditoDisponible,
+            //     });
+            //     formData2.append("document2", document2);
+            //     const response = await http.post(
+            //         `http://localhost:4000/ClientesFacturacion`,
+            //         formData2,
+            //         {
+            //             headers: {
+            //                 "Content-Type": "multipart/form-data",
+            //             },
+            //         }
+            //     );
+            //     console.log(response.data.id);
+            //     if (response.status == 200 ? true : false) {
+            //         toast.success("Usuario creado correctamente", { theme: "colored" });
+            //         //navigate("/Settings/Users");
+            //     }
+
+            //     if (response) {
+            //         const formData3 = new FormData();
+            //         const document3 = JSON.stringify({
+            //             idCliente: response.data.id,
+            //             nombreContacto: clientData.nombreContacto,
+            //             apellidoContacto: clientData.apellidoContacto,
+            //             emailContacto: clientData.emailContacto,
+            //             contacto2: clientData.contacto2,
+            //             comentario: clientData.comentario,
+            //             direccionContacto: clientData.direccionContacto,
+            //         });
+            //         formData3.append("document3", document3);
+            //         const res = await http.post(
+            //             `http://localhost:4000/ClientesContactos`,
+            //             formData3,
+            //             {
+            //                 headers: {
+            //                     "Content-Type": "multipart/form-data",
+            //                 },
+            //             }
+            //         );
+            //         console.log(res.data.id);
+            //         if (res.status == 200 ? true : false) {
+            //             toast.success("Usuario creado correctamente", { theme: "colored" });
+            //             //navigate("/Settings/Users");
+            //         }
+
+            //         if (res) {
+            //             const formData4 = new FormData();
+            //             const document4 = JSON.stringify({
+            //                 idCliente: res.data.id,
+            //                 colonia: clientData.colonia,
+            //                 ciudad: clientData.ciudad,
+            //                 estado: clientData.estado,
+            //                 codigoPostal: clientData.codigoPostal,
+            //             });
+            //             formData4.append("document4", document4);
+            //             const respuesta = await http.post(
+            //                 `http://localhost:4000/ClientesDireccionEnvio`,
+            //                 formData4,
+            //                 {
+            //                     headers: {
+            //                         "Content-Type": "multipart/form-data",
+            //                     },
+            //                 }
+            //             );
+            //             console.log(respuesta.data.id);
+            //             if (respuesta.status == 200 ? true : false) {
+            //                 toast.success("Usuario creado correctamente", { theme: "colored" });
+            //                 //navigate("/Settings/Users");
+            //             }
+            //             if (respuesta) {
+            //                 const formData5 = new FormData();
+            //                 const document5 = JSON.stringify({
+            //                     idCliente: respuesta.data.id,
+            //                     password: clientData.password,
+            //                     status: clientData.status,
+            //                     validacion: clientData.valitacion,
+            //                 });
+            //                 formData5.append("document5", document5);
+            //                 const resultado = await http.post(
+            //                     `http://localhost:4000/ClientesAccesoWeb`,
+            //                     formData5,
+            //                     {
+            //                         headers: {
+            //                             "Content-Type": "multipart/form-data",
+            //                         },
+            //                     }
+            //                 );
+            //                 console.log(resultado);
+            //                 if (resultado.status == 200 ? true : false) {
+            //                     toast.success("Usuario creado correctamente", { theme: "colored" });
+            //                     //navigate("/Settings/Users");
+            //                 }
+            //                 if (resultado); {
+            //                     const formData6 = new FormData();
+            //                     const document6 = JSON.stringify({
+            //                         idCliente: resultado.data.id,
+            //                         fecha: clientData.fecha,
+            //                         tipo: clientData.tipo,
+            //                         detalle: clientData.detalle,
+            //                         abono: clientData.abono,
+            //                         tc: clientData.tc,
+            //                         saldo: clientData.saldo
+            //                     });
+            //                     formData5.append("document6", document6);
+            //                     const resultado = await http.post(
+            //                         `http://localhost:4000/ClientesEstadoCuenta`,
+            //                         formData6,
+            //                         {
+            //                             headers: {
+            //                                 "Content-Type": "multipart/form-data",
+            //                             },
+            //                         }
+            //                     );
+            //                     console.log(resultado);
+            //                     if (resultado.status == 200 ? true : false) {
+            //                         toast.success("Usuario creado correctamente", { theme: "colored" });
+            //                         navigate("/Settings/Users");
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         } catch (error) {
             null;
         }
@@ -180,10 +377,10 @@ const NewClient = () => {
     const validateEmail = (value) =>
         value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
     const validationState = useMemo(() => {
-        if (user.email === "") return undefined;
+        if (clientData.email === "") return undefined;
 
-        return validateEmail(user.email) ? "valid" : "invalid";
-    }, [user.email]);
+        return validateEmail(clientData.email) ? "valid" : "invalid";
+    }, [clientData.email]);
     const navigate = useNavigate();
     const [selected, setSelected] = useState("photos");
     const estadosDeMexico = [
@@ -235,10 +432,11 @@ const NewClient = () => {
         return user.emailConfirm === user.email ? "valid" : "invalid";
     }, [user.emailConfirm, user.email]);
     useEffect(() => {
-        status != "View"
-            ? (document.getElementById("button-file").style.display = "flex")
-            : (document.getElementById("button-file").style.display = "none");
-    });
+        if (params.id) {
+            loadTask(params.id)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.id])
     const handleTime = (moment) => {
         // Actualiza el valor de la fecha en tu estado o donde lo estés almacenando
         setUser({ ...user, fecha: moment });
@@ -271,18 +469,7 @@ const NewClient = () => {
                                         sx={{ display: "flex", alignItems: "center" }}
                                         color="foreground"
                                         href="#"
-                                        onClick={() => navigate(`/Home`)}
-                                    >
-                                        <MdSettings sx={{ mr: 0.5 }} fontSize="inherit" />
-                                        Configuración
-                                    </Link>
-                                    <Link
-                                        className="text-foreground"
-                                        underline="hover"
-                                        sx={{ display: "flex", alignItems: "center" }}
-                                        color="foreground"
-                                        href="#"
-                                        onClick={() => navigate(`/Home`)}
+                                        onClick={() => navigate(`/Customers`)}
                                     >
                                         <MdPeopleAlt sx={{ mr: 0.5 }} fontSize="inherit" />
                                         Clientes
@@ -333,7 +520,7 @@ const NewClient = () => {
                                                         display: "none",
                                                         borderColor: selectedImage ? "" : "red",
                                                     }}
-                                                    value={user.imagen}
+                                                    value={clientData.imagen}
                                                     onChange={(event) => {
                                                         setSelectedImage(event.target.files[0]);
                                                     }}
@@ -352,24 +539,23 @@ const NewClient = () => {
                                             </div>
                                             <div>
                                                 <div>
-                                                    <div className="md:col-span-3 text-center">
-                                                        <div style={{ paddingLeft: "140px" }}>
+                                                <Spacer y={5} />
+                                                    <div className="md:col-span-5 text-center">
+                                                        <div style={{ paddingLeft: "90px" }}>
                                                             <Input
-                                                                id="Numero de cliente"
-                                                                isDisabled={status ? true : false}
-                                                                value={user.Numerodecliente}
+                                                                id="numerodecliente"
+                                                                value={clientData.numerodecliente}
                                                                 onChange={handleChange}
                                                                 size={"sm"}
-                                                                type="Numero de cliente"
+                                                                type="number"
                                                                 label="Numero de cliente"
-                                                                name="Numero de cliente"
+                                                                name="numerodecliente"
                                                                 labelPlacement="outside"
-                                                                placeholder="***Nuevo***"
+                                                                placeholder=" "
                                                                 variant="faded"
-                                                                error={validationErrors.Numerodecliente !== ""}
-                                                                errorMessage={validationErrors.Numerodecliente}
-                                                                readOnly={true}
-                                                                className="text-sm w-24"
+                                                                error={validationErrors.numerodecliente !== ""}
+                                                                errorMessage={validationErrors.numerodecliente}
+                                                                isDisabled={status ? true : false}
 
                                                             />
 
@@ -397,16 +583,14 @@ const NewClient = () => {
                                                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                                                 <Spacer y={6} />
                                                                 <div className="md:col-span-6"></div>
-                                                                <div className="md:col-span-6">
+                                                                <div className="md:col-span-9">
                                                                     <Input
-                                                                        id="nombre"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.nombre}
+                                                                        id="nombreComercial"
+                                                                        disabled={isInputDisabled}
                                                                         onValueChange={handleChange}
                                                                         size={"sm"}
-                                                                        type="text"
-                                                                        label="Nombre (s)"
-                                                                        name="nombre"
+                                                                        label="Nombre Comercial"
+                                                                        name="nombreComercial"
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
                                                                         variant="faded"
@@ -414,15 +598,14 @@ const NewClient = () => {
                                                                         errorMessage={validationErrors.nombre}
                                                                     />
                                                                 </div>
-                                                                <div className="md:col-span-6">
+                                                                <div className="md:col-span-3">
                                                                     <Input
                                                                         size={"sm"}
-                                                                        type="text"
-                                                                        label="Nombre comercial"
-                                                                        id="Nombre comercial"
+                                                                        disabled={isInputDisabled}
+                                                                        label="Giro"
+                                                                        id="giro"
                                                                         isDisabled={status ? true : false}
-                                                                        name="Nombre comercial"
-                                                                        value={user.nombreComercial}
+                                                                        name="giro"
                                                                         onChange={handleChange}
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
@@ -432,102 +615,87 @@ const NewClient = () => {
                                                                     />
                                                                 </div>
 
-                                                                <div className="md:col-span-6">
+                                                                <div className="md:col-span-4">
                                                                     <Input
-                                                                        id="Razon social"
-                                                                        value={user.razonSocial}
-                                                                        isDisabled={status ? true : false}
+                                                                        id="telefono"
+                                                                        disabled={isInputDisabled}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
-                                                                        type="Razon social"
-                                                                        label="Razon social"
-                                                                        name="Razon social"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        id="Contacto"
-                                                                        value={user.contacto}
-                                                                        isDisabled={status ? true : false}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="Contacto"
-                                                                        label="Contacto"
-                                                                        name="Contacto"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-12">
-                                                                    <Input
-                                                                        id="RFC"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.rfc}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="RFC"
-                                                                        label="RFC"
-                                                                        name="RFC"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-
-                                                                    />
-                                                                </div>
-
-
-                                                                <div className="md:col-span-3">
-                                                                    <Input
-                                                                        id="Telefono"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.telefono}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="Telefono"
-                                                                        label="telefono"
+                                                                        label="Telefono"
                                                                         name="telefono"
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
                                                                         variant="faded"
-                                                                        error={
-                                                                            validationErrors.telefono !== ""
-                                                                        }
-                                                                        errorMessage={
-                                                                            validationErrors.telefono
-                                                                        }
+
+                                                                    />
+                                                                </div>
+                                                                <div className="md:col-span-4">
+                                                                    <Input
+                                                                        id="whatsapp"
+                                                                        disabled={isInputDisabled}
+                                                                        onChange={handleChange}
+                                                                        size={"sm"}
+                                                                        label="WhatsApp"
+                                                                        name="whatsapp"
+                                                                        labelPlacement="outside"
+                                                                        placeholder=" "
+                                                                        variant="faded"
+
+                                                                    />
+                                                                </div>
+                                                                <div className="md:col-span-4">
+                                                                    <Input
+                                                                        id="correo"
+                                                                        disabled={isInputDisabled}
+                                                                        onChange={handleChange}
+                                                                        size={"sm"}
+                                                                        label="Correo Elect"
+                                                                        name="rfc"
+                                                                        labelPlacement="outside"
+                                                                        placeholder=" "
+                                                                        variant="faded"
+
                                                                     />
                                                                 </div>
                                                                 <div className="md:col-span-3">
-                                                                    <label htmlFor="estado">Giro</label>
-                                                                    <Select
-                                                                        id="giro"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.giro}
+                                                                    <Input
+                                                                        id="contactoPrincipal"
+                                                                        disabled={isInputDisabled}
                                                                         onChange={handleChange}
-                                                                        size="small"
-                                                                        label=" "
-                                                                        name="giro"
-                                                                        variant="outlined"
+                                                                        size={"sm"}
+                                                                        label="Contacto Principal"
+                                                                        name="contactoPrincipal"
+                                                                        labelPlacement="outside"
+                                                                        placeholder=" "
+                                                                        variant="faded"
+                                                                    />
+                                                                </div>
+                                                                <div className="md:col-span-3">
+                                                                    <Input
+                                                                        id="condicionesPago"
+                                                                        disabled={isInputDisabled}
+                                                                        onChange={handleChange}
+                                                                        size={"sm"}
+                                                                        type="number"
+                                                                        label="Condiciones de Pago"
+                                                                        name="condicionesPago"
+                                                                        labelPlacement="outside"
+                                                                        placeholder=" "
+                                                                        variant="faded"
                                                                         error={validationErrors.giro !== ""}
                                                                         errorMessage={validationErrors.giro}
 
                                                                     >
-                                                                    </Select>
+                                                                    </Input>
                                                                 </div>
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="vendedor"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.vendedor}
+                                                                        value={clientData.vendedor}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
-                                                                        type="vendedor"
                                                                         label="Vendedor"
                                                                         name="vendedor"
                                                                         labelPlacement="outside"
@@ -540,7 +708,8 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="email"
-                                                                        value={user.email}
+                                                                        disabled={isInputDisabled}
+                                                                        value={clientData.email}
                                                                         isDisabled={status ? true : false}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
@@ -564,8 +733,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="emailConfirm"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.emailConfirm}
+                                                                        value={clientData.emailConfirm}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="email"
@@ -592,11 +762,11 @@ const NewClient = () => {
                                                                 <div className="md:col-span-12">
                                                                     <Input
                                                                         id="direccion"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.direccion}
+                                                                        value={clientData.direccion}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
-                                                                        type="direccion"
                                                                         label="Dirección"
                                                                         name="direccion"
                                                                         labelPlacement="outside"
@@ -609,169 +779,7 @@ const NewClient = () => {
                                                             </div>
                                                         </Tab>
                                                         <Tab key="music" title="Facturacion">
-                                                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
-                                                                <Spacer y={6} />
-                                                                <div className="md:col-span-6"></div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        id="Forma de pago"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.formaPago}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="Forma de pago"
-                                                                        label="Forma de pago"
-                                                                        name="Forma de pago"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.formaPago !== ""}
-                                                                        errorMessage={validationErrors.formaPago}
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        size={"sm"}
-                                                                        type="Metodo de pago"
-                                                                        label="Metodo de pago"
-                                                                        id="Metodo de pago"
-                                                                        isDisabled={status ? true : false}
-                                                                        name="Metodo de pago"
-                                                                        value={user.metodoPago}
-                                                                        onChange={handleChange}
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.metodoPago !== ""}
-                                                                        errorMessage={validationErrors.metodoPago}
-                                                                    />
-                                                                </div>
-
-
-
-                                                                <div className="md:col-span-4">
-                                                                    <Input
-                                                                        id="CFDI"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.cfdi}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="CFDI"
-                                                                        label="CFDI"
-                                                                        name="CFDI"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.cfdi !== ""}
-                                                                        errorMessage={validationErrors.cfdi}
-                                                                    />
-                                                                </div>
-
-
-
-                                                                <div className="md:col-span-4">
-                                                                    <Input
-                                                                        id="Condiciones de pago"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.condicionesPago}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="Condiciones de pago"
-                                                                        label="Condiciones de pago"
-                                                                        name="Condiciones de pago"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.condicionesPago !== ""}
-                                                                        errorMessage={validationErrors.condicionesPago}
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-4">
-                                                                    <Input
-                                                                        id="Dias de credito"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.diasCredito}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        label="Dias de credito"
-                                                                        name="Dias de credito"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={
-                                                                            validationErrors.diasCredito !== ""
-                                                                        }
-                                                                        errorMessage={
-                                                                            validationErrors.diasCredito
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-4">
-                                                                    <Input
-                                                                        id="Limite de credito"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.limiteCredito}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="text"
-                                                                        label="Limite de credito"
-                                                                        name="Limite de credito"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={
-                                                                            validationErrors.limiteCredito !== ""
-                                                                        }
-                                                                        errorMessage={
-                                                                            validationErrors.limiteCredito
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-4">
-                                                                    <Input
-                                                                        id="Saldo pendiente"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.saldoPendiente}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="text"
-                                                                        label="Saldo pendiente"
-                                                                        name="Saldo pendiente"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        readOnly={true}
-                                                                        error={
-                                                                            validationErrors.saldoPendiente !== ""
-                                                                        }
-                                                                        errorMessage={
-                                                                            validationErrors.saldoPendiente
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-4">
-                                                                    <Input
-                                                                        id="Credito disponible"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.creditoDisponible}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="text"
-                                                                        label="Credito disponible"
-                                                                        name="Credito disponible"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        readOnly={true}
-                                                                        error={
-                                                                            validationErrors.creditoDisponible !== ""
-                                                                        }
-                                                                        errorMessage={
-                                                                            validationErrors.creditoDisponible
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                            </div>
+                                                        <Facturation id={1} />                                                            
                                                         </Tab>
                                                         <Tab key="Contacts" title="Contactos">
                                                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
@@ -780,8 +788,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="nombre"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.nombre}
+                                                                        value={clientData.nombreContacto}
                                                                         onValueChange={handleChange}
                                                                         size={"sm"}
                                                                         type="text"
@@ -790,32 +799,34 @@ const NewClient = () => {
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
                                                                         variant="faded"
-                                                                        error={validationErrors.nombre !== ""}
-                                                                        errorMessage={validationErrors.nombre}
+                                                                        error={validationErrors.nombreContacto !== ""}
+                                                                        errorMessage={validationErrors.nombreContacto}
                                                                     />
                                                                 </div>
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         size={"sm"}
+                                                                        disabled={isInputDisabled}
                                                                         type="text"
                                                                         label="Apellido (s)"
                                                                         id="apellido"
                                                                         isDisabled={status ? true : false}
                                                                         name="apellido"
-                                                                        value={user.apellido}
+                                                                        value={clientData.apellidoContacto}
                                                                         onChange={handleChange}
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
                                                                         variant="faded"
-                                                                        error={validationErrors.apellido !== ""}
-                                                                        errorMessage={validationErrors.apellido}
+                                                                        error={validationErrors.apellidoContacto !== ""}
+                                                                        errorMessage={validationErrors.apellidoContacto}
                                                                     />
 
                                                                 </div>
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="email"
-                                                                        value={user.email}
+                                                                        disabled={isInputDisabled}
+                                                                        value={clientData.emailContacto}
                                                                         isDisabled={status ? true : false}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
@@ -839,8 +850,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="emailConfirm"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.emailConfirm}
+                                                                        value={clientData.emailContactoConfirm}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="email"
@@ -866,26 +878,28 @@ const NewClient = () => {
                                                                 </div>
                                                                 <div className="md:col-span-6">
                                                                     <Input
-                                                                        id="Contacto"
+                                                                        id="Contacto2"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.contacto}
+                                                                        value={clientData.contacto2}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
-                                                                        type="Contacto"
+                                                                        type="Contacto2"
                                                                         label="Contacto"
-                                                                        name="Contacto"
+                                                                        name="Contacto2"
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
                                                                         variant="faded"
-                                                                        error={validationErrors.contacto !== ""}
-                                                                        errorMessage={validationErrors.contacto}
+                                                                        error={validationErrors.contacto2 !== ""}
+                                                                        errorMessage={validationErrors.contacto2}
                                                                     />
                                                                 </div>
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="Comentario"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.comentario}
+                                                                        value={clientData.comentario}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         label="Comentario"
@@ -904,8 +918,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-12">
                                                                     <Input
                                                                         id="direccion"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.direccion}
+                                                                        value={clientData.direccionContacto}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="direccion"
@@ -914,142 +929,43 @@ const NewClient = () => {
                                                                         labelPlacement="outside"
                                                                         placeholder=" "
                                                                         variant="faded"
-                                                                        error={validationErrors.direccion !== ""}
-                                                                        errorMessage={validationErrors.direccion}
+                                                                        error={validationErrors.direccionContacto !== ""}
+                                                                        errorMessage={validationErrors.direccionContacto}
                                                                     />
                                                                 </div>
 
                                                             </div>
                                                         </Tab>
-                                                        <Tab key="Addres" title="Direccion de envio">
+                                                        <Tab key="Addres" title="Direcciones de envio">
                                                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                                                 <Spacer y={6} />
                                                                 <div className="md:col-span-6"></div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        id="nombre"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.nombre}
-                                                                        onValueChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="text"
-                                                                        label="Nombre (s)"
-                                                                        name="nombre"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.nombre !== ""}
-                                                                        errorMessage={validationErrors.nombre}
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        size={"sm"}
-                                                                        type="text"
-                                                                        label="Apellido (s)"
-                                                                        id="apellido"
-                                                                        isDisabled={status ? true : false}
-                                                                        name="apellido"
-                                                                        value={user.apellido}
-                                                                        onChange={handleChange}
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.apellido !== ""}
-                                                                        errorMessage={validationErrors.apellido}
-                                                                    />
-                                                                </div>
                                                                 <div className="md:col-span-12">
-                                                                    <Input
-                                                                        id="direccion"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.direccion}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="direccion"
-                                                                        label="Dirección"
-                                                                        name="direccion"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.direccion !== ""}
-                                                                        errorMessage={validationErrors.direccion}
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        size={"sm"}
-                                                                        type="colonia"
-                                                                        label="Colonia"
-                                                                        id="colonia"
-                                                                        isDisabled={status ? true : false}
-                                                                        name="colonia"
-                                                                        value={user.colonia}
-                                                                        onChange={handleChange}
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.colonia !== ""}
-                                                                        errorMessage={validationErrors.colonia}
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-6">
-                                                                    <Input
-                                                                        id="ciudad"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.ciudad}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="ciudad"
-                                                                        label="Ciudad"
-                                                                        name="ciudad"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.ciudad !== ""}
-                                                                        errorMessage={validationErrors.ciudad}
-                                                                    />
-                                                                </div>
-
-                                                                <div className="md:col-span-5">
-                                                                    <label htmlFor="estado">Estado</label>
-                                                                    <Select
-                                                                        id="estado"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.estado}
-                                                                        onChange={handleChange}
-                                                                        size="small"
-                                                                        label=" "
-                                                                        name="estado"
-                                                                        variant="outlined"
-                                                                        error={validationErrors.estado !== ""}
-                                                                        errorMessage={validationErrors.estado}
-                                                                    >
-                                                                        {estadosDeMexico.map((estado) => (
-                                                                            <MenuItem key={estado} value={estado}>
-                                                                                {estado}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </Select>
-                                                                </div>
-
-                                                                <div className="md:col-span-3">
-                                                                    <Input
-                                                                        id="codigoPostal"
-                                                                        isDisabled={status ? true : false}
-                                                                        value={user.codigoPostal}
-                                                                        onChange={handleChange}
-                                                                        size={"sm"}
-                                                                        type="codigoPostal"
-                                                                        label="Código Postal"
-                                                                        name="codigoPostal"
-                                                                        labelPlacement="outside"
-                                                                        placeholder=" "
-                                                                        variant="faded"
-                                                                        error={validationErrors.codigoPostal !== ""}
-                                                                        errorMessage={validationErrors.codigoPostal}
-                                                                    />
-                                                                </div>
+                                                                <Table
+                                                                removeWrapper
+                                                                aria-label="Example static collection table">
+                                                                    <TableHeader>
+                                                                        <TableColumn>Nombre</TableColumn>
+                                                                        <TableColumn>Dirección</TableColumn>
+                                                                        <TableColumn>Colonia</TableColumn>
+                                                                        <TableColumn>Ciudad</TableColumn>
+                                                                        <TableColumn>Estado</TableColumn>
+                                                                        </TableHeader>
+                                                                        <TableBody>
+                                                                            {/* {datos.map((data,index) => (
+                                                                            <TableRow key={data.id}>
+                                                                                <TableCell>{}</TableCell>
+                                                                                <TableCell>{}</TableCell>
+                                                                                <TableCell>{}</TableCell>
+                                                                                <TableCell>{}</TableCell>
+                                                                                <TableCell>{}</TableCell>
+                                                                                <TableCell>{}</TableCell>
+                                                                                <TableCell>{}</TableCell>
+                                                                                </TableRow>
+                                                                                ))} */}
+                                                                                </TableBody>
+                                                                                </Table>
+                                                                                </div>
                                                             </div>
                                                         </Tab>
                                                         <Tab key="WEB" title="Acceso web">
@@ -1059,8 +975,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="password"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.password}
+                                                                        value={clientData.password}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="password"
@@ -1085,8 +1002,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="confirmPassword"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.confirmPassword}
+                                                                        value={clientData.passwordValidation}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="password"
@@ -1115,8 +1033,9 @@ const NewClient = () => {
                                                                     <label htmlFor="status">Status</label>
                                                                     <Select
                                                                         id="status"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.status}
+                                                                        value={clientData.status}
                                                                         onChange={handleChange}
                                                                         size="small"
                                                                         label=" "
@@ -1136,8 +1055,9 @@ const NewClient = () => {
                                                                     <label htmlFor="status">Validacion</label>
                                                                     <Select
                                                                         id="Validacion"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.Validacion}
+                                                                        value={clientData.Validacion}
                                                                         onChange={handleChange}
                                                                         size="small"
                                                                         label=" "
@@ -1159,37 +1079,39 @@ const NewClient = () => {
                                                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                                                 <Spacer y={6} />
                                                                 <div className="md:col-span-6"></div>
-                                                                
-                                                                <div className="md:col-span-3">
-                                                               
-    <Datetime
-        id="Fecha"
-        value={user.fecha}
-        onChange={handleTime}
-        inputProps={{
-            disabled: status,
-            placeholder: "Fecha", 
-            style: {
-                color: "#333",
-                backgroundColor: "#f0f0f0",
-                border: "1px solid #ccc", 
-                borderRadius: "5px", 
-                padding: "5px", 
-                fontSize: "14px", 
-                width: "100%",
-            },
-        }}
-        input={true}
-        timeFormat={false}
-        dateFormat="DD/MM/YYYY"
-    />
-</div>
 
-<div className="md:col-span-3">
+                                                                <div className="md:col-span-3">
+
+                                                                    <Datetime
+                                                                        id="Fecha"
+                                                                        disabled={isInputDisabled}
+                                                                        value={clientData.fecha}
+                                                                        onChange={handleTime}
+                                                                        inputProps={{
+                                                                            disabled: status,
+                                                                            placeholder: "Fecha",
+                                                                            style: {
+                                                                                color: "#333",
+                                                                                backgroundColor: "#f0f0f0",
+                                                                                border: "1px solid #ccc",
+                                                                                borderRadius: "5px",
+                                                                                padding: "5px",
+                                                                                fontSize: "14px",
+                                                                                width: "100%",
+                                                                            },
+                                                                        }}
+                                                                        input={true}
+                                                                        timeFormat={false}
+                                                                        dateFormat="DD/MM/YYYY"
+                                                                    />
+                                                                </div>
+
+                                                                <div className="md:col-span-3">
                                                                     <Input
                                                                         id="Tipo"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.tipo}
+                                                                        value={clientData.tipo}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="Tipo"
@@ -1209,8 +1131,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-3">
                                                                     <Input
                                                                         id="Detalle"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.detalle}
+                                                                        value={clientData.detalle}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="Detalle"
@@ -1230,8 +1153,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-3">
                                                                     <Input
                                                                         id="Cargo"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.cargo}
+                                                                        value={clientData.cargo}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="Cargo"
@@ -1251,8 +1175,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="Abono"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.abono}
+                                                                        value={clientData.abono}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="Abono"
@@ -1272,8 +1197,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="Tc"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.tc}
+                                                                        value={clientData.tc}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="Tc"
@@ -1293,8 +1219,9 @@ const NewClient = () => {
                                                                 <div className="md:col-span-6">
                                                                     <Input
                                                                         id="Saldo"
+                                                                        disabled={isInputDisabled}
                                                                         isDisabled={status ? true : false}
-                                                                        value={user.saldo}
+                                                                        value={clientData.saldo}
                                                                         onChange={handleChange}
                                                                         size={"sm"}
                                                                         type="Saldo"
