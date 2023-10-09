@@ -174,7 +174,7 @@ const Categories = () => {
         ...prevDatosCrear,
         [name]: integerValue,
       }));
-      console.log(prevDatosCrear);
+      
     } else {
       // Puedes manejar el caso en el que el usuario ingrese un valor no válido aquí.
     }

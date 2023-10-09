@@ -142,7 +142,7 @@ const User = () => {
           },
         }
       );
-      console.log(result.data.id);
+      
       if (result) {
         const formData2 = new FormData();
         const document2 = JSON.stringify({

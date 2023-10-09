@@ -39,7 +39,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return json.body.accessToken;
       } else throw new Error(response.statusText);
     } catch (error) {
-      console.log(error);
+      
       return null;
     }
   }

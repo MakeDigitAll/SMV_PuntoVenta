@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -25,12 +25,9 @@ import {
   Badge,
 } from "@nextui-org/react";
 import {
-  TbBrand4Chan,
   TbBrandAppgallery,
-  TbBrandBing,
   TbDotsVertical,
   TbPlus,
-  TbReload,
   TbTicket,
 } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch } from "react-icons/md";
@@ -43,7 +40,6 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { MdBook, MdSave } from "react-icons/md";
 import Crop from "../../components/crop/Crop";
-import MarcaImage from "../user/UserImage";
 import http from "../../components/axios/Axios";
 import Images from "../../components/images/Images";
 const columns = [
@@ -64,37 +60,12 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 const Brands = () => {
-  const handleSubmit = async () => {
-    const formData = new FormData();
-    const document = JSON.stringify({
-      marca: brand.nombre,
-      catalogo: brand.catalogo,
-      productos: 2,
-    });
-    formData.append("document", document);
-    formData.append("image", file);
-    try {
-      const result = await http.post(
-        `http://localhost:4000/CreateMarcasProducto`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(result.data.id);
-      if (result.status == 200) {
-        toast.success("Marca creada correctamente", { theme: "colored" });
-      }
-    } catch (error) {
-      null;
-    }
-  };
+  const [tipoModal, setTipoModal] = useState("Crear");
   const {
     isOpen: isOpenOuter,
     onOpen: onOpenOuter,
     onOpenChange: onOpenChangeOuter,
+    onClose: onCloseOuter,
   } = useDisclosure();
   const [photoURL, setPhotoURL] = React.useState("");
   const [openCrop, setOpenCrop] = React.useState(false);
@@ -141,6 +112,65 @@ const Brands = () => {
   useEffect(() => {
     loadTask();
   }, []);
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    const document = JSON.stringify({
+      marca: brand.nombre,
+      catalogo: brand.catalogo,
+      productos: 2,
+    });
+    formData.append("document", document);
+    formData.append("image", file);
+    try {
+      const result = await http.post(
+        `http://localhost:4000/CreateMarcasProducto`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (result.status == 200) {
+        setData([...data, result.data]);
+        toast.success("Marca creada correctamente", { theme: "colored" });
+        onCloseOuter();
+        setBrand({
+          nombre: "",
+          catalogo: "",
+          logo: "",
+        });
+        setPhotoURL("");
+      }
+    } catch (error) {
+      null;
+    }
+  };
+  const openBrand = (id) => {
+    onOpenOuter();
+    setTipoModal("Ver");
+    async function loadBrand() {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/MarcasProducto/${id}`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setBrand({
+            nombre: data.marca,
+            catalogo: data.catalogo,
+          });
+        }
+      } catch {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        setIsLoading(false);
+      }
+    }
+    loadBrand();
+  };
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -198,87 +228,74 @@ const Brands = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-  const renderCell = React.useCallback(
-    (data, columnKey) => {
-      const cellValue = data[columnKey];
-      switch (columnKey) {
-        case "Imagen":
-          return (
-            <Images
-              idImage={data.id}
-              designType="tabla"
-              ruta={"/api/marcasImage/"}
-            />
-          );
-        case "ID":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{data.id}</p>
-            </div>
-          );
-        case "Marca":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{data.marca}</p>
-            </div>
-          );
-        case "Catalogo":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{data.catalogo}</p>
-            </div>
-          );
-        case "Productos":
-          return (
-            <div className="flex flex-col" style={{ marginLeft: "20px" }}>
-              <p
-                className="text-bold text-small capitalize items-center"
+  const renderCell = React.useCallback((data, columnKey) => {
+    const cellValue = data[columnKey];
+    switch (columnKey) {
+      case "Imagen":
+        return (
+          <Images
+            idImage={data.id}
+            designType="tabla"
+            ruta={"/api/marcasImage/"}
+          />
+        );
+      case "ID":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.id}</p>
+          </div>
+        );
+      case "Marca":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.marca}</p>
+          </div>
+        );
+      case "Catalogo":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.catalogo}</p>
+          </div>
+        );
+      case "Productos":
+        return (
+          <div className="flex flex-col" style={{ marginLeft: "20px" }}>
+            <p
+              className="text-bold text-small capitalize items-center"
+              color="primary"
+            >
+              {" "}
+              <Badge
+                content={data.productos}
+                size="lg"
                 color="primary"
-              >
-                {" "}
-                <Badge
-                  content={data.productos}
-                  size="lg"
-                  color="primary"
-                ></Badge>{" "}
-              </p>
-            </div>
-          );
-        case "Actions":
-          return (
-            <div className="relative flex justify-center items-center gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light">
-                    <TbDotsVertical className="text-default-300" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem
-                    onClick={() =>
-                      navigate(`/Settings/User/${user.id}/SeeUser`)
-                    }
-                  >
-                    Ver Marca
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={() =>
-                      navigate(`/Settings/User/${user.id}/EditUser`)
-                    }
-                  >
-                    Edit Marca
-                  </DropdownItem>
-                  <DropdownItem>Eliminar Marca</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [navigate]
-  );
+              ></Badge>{" "}
+            </p>
+          </div>
+        );
+      case "Actions":
+        return (
+          <div className="relative flex justify-center items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <TbDotsVertical className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem onPress={() => openBrand(data.id)}>
+                  Ver Marca
+                </DropdownItem>
+                <DropdownItem>Edit Marca</DropdownItem>
+                <DropdownItem>Eliminar Marca</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -442,7 +459,7 @@ const Brands = () => {
             <ModalContent>
               {(onClose) => (
                 <>
-                  <ModalHeader>Nueva marca</ModalHeader>
+                  <ModalHeader>{tipoModal} marca</ModalHeader>
                   <ModalBody>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-2 flex-wrap space-y-6">
@@ -480,32 +497,34 @@ const Brands = () => {
                             onChange={handleEditChange}
                           />
                         </div>
-                        <div className="md:col-span-12">
-                          <input
-                            height={"lg"}
-                            type="file"
-                            id="imagen"
-                            ref={fileInputRef}
-                            style={{
-                              display: "none",
-                              borderColor: photoURL ? "" : "red",
-                            }}
-                            value={brand.logo}
-                            onChange={handleChange}
-                            name="imagen"
-                          />
-                          <Button
-                            autoFocus
-                            size="md"
-                            color="primary"
-                            variant="flat"
-                            endContent={<MdSearch />}
-                            onClick={handleFileButtonClick}
-                            id="button-file"
-                          >
-                            Agregar logotipo
-                          </Button>
-                        </div>
+                        {tipoModal == "Ver" ? null : (
+                          <div className="md:col-span-12">
+                            <input
+                              height={"lg"}
+                              type="file"
+                              id="imagen"
+                              ref={fileInputRef}
+                              style={{
+                                display: "none",
+                                borderColor: photoURL ? "" : "red",
+                              }}
+                              value={brand.logo}
+                              onChange={handleChange}
+                              name="imagen"
+                            />
+                            <Button
+                              id="buttonfile"
+                              size="md"
+                              color="primary"
+                              variant="flat"
+                              endContent={<MdSearch />}
+                              className="text-align: right justify-end"
+                              onClick={handleFileButtonClick}
+                            >
+                              Agregar logotipo
+                            </Button>
+                          </div>
+                        )}
                       </div>
                       <div className="col-span-1 flex-wrap space-y-3">
                         <br />
@@ -534,14 +553,16 @@ const Brands = () => {
                     <Button color="danger" variant="flat" onPress={onClose}>
                       Cerrar
                     </Button>
-                    <Button
-                      endContent={<MdSave />}
-                      color="primary"
-                      type="submit"
-                      onPress={handleSubmit}
-                    >
-                      Guardar
-                    </Button>
+                    {tipoModal == "Ver" ? null : (
+                      <Button
+                        endContent={<MdSave />}
+                        color="primary"
+                        type="submit"
+                        onPress={handleSubmit}
+                      >
+                        Guardar
+                      </Button>
+                    )}
                   </ModalFooter>
                 </>
               )}
@@ -562,7 +583,9 @@ const Brands = () => {
     photoURL,
     navigate,
     brand.nombre,
+    brand.catalogo,
     brand.logo,
+    handleEditChange,
     handleSubmit,
   ]);
   const bottomContent = React.useMemo(() => {

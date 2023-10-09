@@ -186,7 +186,7 @@ const ExchangeRate = () => {
       try {
         const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
         const data = await response.json();
-        console.log(data)
+        
         if (response.ok) {
           setTask({
             id: data.id,
@@ -256,7 +256,7 @@ const ExchangeRate = () => {
 
 
   const handleEdit = (id) => {
-    console.log(id)
+    
     setModeModal("edit");
     setIsInputDisabled(false);
     async function editModal() {
@@ -274,7 +274,7 @@ const ExchangeRate = () => {
           onOpen();
         }
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -356,7 +356,7 @@ const ExchangeRate = () => {
   };
 
   const handleDisable = (id) => {
-    console.log("Este es el id a deshabilitar: ", id);
+    
     onOpenSecondModal();
   };
 
@@ -364,7 +364,7 @@ const ExchangeRate = () => {
     const datoDisable = {
       id: task.id
     };
-    console.log(datoDisable.id);
+    
 
     async function disable() {
       try {

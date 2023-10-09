@@ -95,7 +95,7 @@ const SellersList = () => {
     const datoDisable = {
       id: id
     };
-    console.log(datoDisable.id);
+    
     try {
       const res = await fetch(`http://localhost:4000/ListadoVendedoresDisable/${id}`, {
         method: "POST",

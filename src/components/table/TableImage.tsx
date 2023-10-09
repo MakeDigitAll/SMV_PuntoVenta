@@ -18,7 +18,7 @@ const TableImage = (idUsuario: string | undefined) => {
          // Establecer la imagen por defecto si idUsuario es undefined
       }
     } catch (error) {
-      console.log("Error:" + error);
+      
        // Establecer la imagen por defecto en caso de error
     }
   }, [idUsuario]);

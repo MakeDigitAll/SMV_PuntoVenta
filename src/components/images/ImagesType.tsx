@@ -16,7 +16,7 @@ const TableImage = (idImage: string, ruta: string) => {
         // Establecer la imagen por defecto si idImage es undefined
       }
     } catch (error) {
-      console.log("Error:" + error);
+      
       // Establecer la imagen por defecto en caso de error
     }
   }, [idImage]);

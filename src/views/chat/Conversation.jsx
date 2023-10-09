@@ -17,7 +17,7 @@ const Conversation = (data) => {
         );
         setuserData(data);
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",

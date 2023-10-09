@@ -52,7 +52,7 @@ const VerAlmacen = () => {
       }
     
       useEffect(() => {
-        console.log(params)
+        
         if (params.id) {
           loadTask(params.id)
         }

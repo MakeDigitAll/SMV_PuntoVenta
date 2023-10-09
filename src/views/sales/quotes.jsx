@@ -131,7 +131,7 @@ const Quotes = () => {
   };
   const handleOrigenChange = (event) => {
     setSelectedOrigen(event.target.value);
-    console.log("Origen seleccionado:", event.target.value);
+    
   };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];

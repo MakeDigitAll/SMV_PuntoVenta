@@ -180,7 +180,7 @@ const Commissions = () => {
       try {
         const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
         const data = await response.json();
-        console.log(data)
+        
         if (response.ok) {
           setTask({
             id: data.id,
@@ -250,7 +250,7 @@ const Commissions = () => {
 
 
   const handleEdit = (id) => {
-    console.log(id)
+    
     setModeModal("edit");
     setIsInputDisabled(false);
     async function editModal() {
@@ -268,7 +268,7 @@ const Commissions = () => {
           onOpen();
         }
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -350,7 +350,7 @@ const Commissions = () => {
   };
 
   const handleDisable = (id) => {
-    console.log("Este es el id a deshabilitar: ", id);
+    
     onOpenSecondModal();
   };
 
@@ -358,7 +358,7 @@ const Commissions = () => {
     const datoDisable = {
       id: task.id
     };
-    console.log(datoDisable.id);
+    
 
     async function disable() {
       try {

@@ -236,7 +236,7 @@ const WarehouseEntries = () => {
 
         if (response.ok) {
           // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
-          console.log("Elemento creado exitosamente");
+          
           onClose(true);
           window.location.reload();
         } else {

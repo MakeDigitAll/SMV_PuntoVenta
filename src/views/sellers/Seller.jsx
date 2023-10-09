@@ -85,7 +85,7 @@ const Seller = () => {
     referenciaWeb: "",
     clientes: "",
   });
-  console.log(task);
+  
 
 
   const [validationImagen, setValidationImagen] = useState('valid')

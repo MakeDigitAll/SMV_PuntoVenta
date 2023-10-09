@@ -58,7 +58,7 @@ const Crop = ({ photoURL, setOpenCrop, setPhotoURL, setFile, aspect }) => {
         theme: "colored",
         autoClose: 2500,
       });
-      console.log(error);
+      
     }
   };
   const noCropImage = () => {

@@ -63,7 +63,7 @@ const ClientList = () => {
       const data = await response.json();
       if (response.ok) {
         setData(data);
-        console.log(data[0].id);
+        
       }
     } catch {
       toast.error("Error al cargar los datos", {

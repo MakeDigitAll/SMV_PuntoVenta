@@ -10,7 +10,7 @@ const Notifications = () => {
     async function sendNotification() {
         if (!("Notification" in window)) {
             // El navegador no admite notificaciones.
-            console.log("Tu navegador no admite notificaciones");
+            
         } else if (Notification.permission === "granted") {
             // Permiso para mostrar notificaciones ya concedido.
             const notification = new Notification("¡Notificación enviada!", { body: "Esto es un mensaje de notificación." });
@@ -38,7 +38,7 @@ const Notifications = () => {
             }
         } else {
             // El usuario ha denegado el permiso para mostrar notificaciones.
-            console.log("Has bloqueado las notificaciones. Debes habilitarlas en la configuración del navegador.");
+            
         }
     }
 

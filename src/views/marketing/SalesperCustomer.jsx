@@ -113,7 +113,7 @@ const SalesCustomer = () => {
       filteredUsers = filteredUsers.filter((data) =>
       data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
-      console.log("Filtering by client:", filteredUsers);
+      
     }
     if (
       statusFilter !== "all" &&
