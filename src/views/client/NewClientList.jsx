@@ -50,6 +50,9 @@ import {
   MdPerson,
   MdPostAdd,
   MdStreetview,
+  MdPhone,
+  MdWhatsapp,
+  MdEmail,
 } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
@@ -460,6 +463,11 @@ const NewClient = () => {
     onOpen();
     setDatosE([...datosE, nuevosDatos]);
   };
+  const handleCreateContact = (nuevosDatosContact) => {
+    setModalMode("create");
+    onOpen();
+    setDatosC([...datosC, nuevosDatosContact]);
+  };
   const [idCliente, setIdCliente] = useState("");
   const [task2, setTask2] = useState({
     nombre: "",
@@ -471,6 +479,17 @@ const NewClient = () => {
     codigoPostal: "",
   });
   const [datosE, setDatosE] = useState([]);
+  const [datosC, setDatosC] = useState([]);
+  const [task3, setTask3] = useState({
+    nombreContacto: "",
+    telefonoContacto: "",
+    celularContacto: "",
+    whatsAppContacto: "",
+    emailContacto: "",
+    puestoContacto: "",
+    ubicacionContacto: "",
+    comentariosContacto: "",
+  });
 
   async function loadDireccionesE(id) {
     try {
@@ -514,7 +533,8 @@ const NewClient = () => {
 
   const handleChange2 = (e) =>
     setTask2({ ...task2, [e.target.name]: e.target.value });
-
+    const handleChange3 = (e) =>
+    setTask3({ ...task3, [e.target.name]: e.target.value });
   async function handleSubmitModal(e) {
     e.preventDefault();
     // if (!task2.nombre || !task2.direccion || !task2.colonia || !task2.ciudad || !task2.estado
@@ -914,166 +934,271 @@ const NewClient = () => {
                               <Facturation id={1} />
                             </Tab>
                             <Tab key="Contacts" title="Contactos">
-                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
                                 <div className="md:col-span-6"></div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="nombre"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.nombreContacto}
-                                    onValueChange={handleChange}
-                                    size={"sm"}
-                                    type="text"
-                                    label="Nombre (s)"
-                                    name="nombre"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={
-                                      validationErrors.nombreContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.nombreContacto
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    size={"sm"}
-                                    disabled={isInputDisabled}
-                                    type="text"
-                                    label="Apellido (s)"
-                                    id="apellido"
-                                    isDisabled={status ? true : false}
-                                    name="apellido"
-                                    value={clientData.apellidoContacto}
-                                    onChange={handleChange}
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={
-                                      validationErrors.apellidoContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.apellidoContacto
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="email"
-                                    disabled={isInputDisabled}
-                                    value={clientData.emailContacto}
-                                    isDisabled={status ? true : false}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="email"
-                                    label="Email"
-                                    name="email"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    color={
-                                      validationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      validationState === "invalid" &&
-                                      "Ingresa un correo valido"
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="emailConfirm"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.emailContactoConfirm}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="email"
-                                    label="Confirmar email"
-                                    name="emailConfirm"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    color={
-                                      emailConfirmValidationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      emailConfirmValidationState ===
-                                        "invalid" &&
-                                      "El correo de confirmación debe coincidir con el correo"
-                                    }
-                                    validationState={
-                                      emailConfirmValidationState
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="Contacto2"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.contacto2}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="Contacto2"
-                                    label="Contacto"
-                                    name="Contacto2"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.contacto2 !== ""}
-                                    errorMessage={validationErrors.contacto2}
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="Comentario"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.comentario}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    label="Comentario"
-                                    name="Comentario"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.comentario !== ""}
-                                    errorMessage={validationErrors.diasCredito}
-                                  />
-                                </div>
+                                <div
+                                    className="md:col-span-12"
+                                    style={{
+                                      marginLeft: "590px",
+                                      marginRight: "70px",
+                                    }}
+                                  >
+                                    <Button
+                                      id="BTN3"
+                                      size="sm"
+                                      color="primary"
+                                      endContent={<TbPlus />}
+                                      className="text-align: right justify-end"
+                                      onClick={handleCreateContact}
+                                    >
+                                      Nuevo contacto
+                                    </Button>
+                                    </div>
                                 <div className="md:col-span-12">
-                                  <Input
-                                    id="direccion"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.direccionContacto}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="direccion"
-                                    label="Dirección"
-                                    name="direccion"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={
-                                      validationErrors.direccionContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.direccionContacto
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            </Tab>
+                                <Table
+                                      removeWrapper
+                                      aria-label="Example static collection table"
+                                    >
+                                      <TableHeader>
+                                        <TableColumn>Nombre</TableColumn>
+                                        <TableColumn>Contacto</TableColumn>
+                                        <TableColumn>Correo electronico</TableColumn>
+                                        <TableColumn>Comentarios</TableColumn>
+                                        <TableColumn>Direccion/Ubicacion</TableColumn>
+                                        <TableColumn>Acciones</TableColumn>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {datosC.map((data, index) => (
+                                          <TableRow key={index}>
+                                            <TableCell>{data.contacto}</TableCell>
+                                            <TableCell>
+                                              {data.id}
+                                            </TableCell>
+                                            <TableCell>
+                                              {data.email}
+                                            </TableCell>
+                                            <TableCell>{data.comentarios}</TableCell>
+                                            <TableCell>{data.ubicacion}</TableCell>
+                                            <TableCell>
+                                            <div className="relative flex justify-center items-center gap-2">
+                                            <Dropdown>
+                                              <DropdownTrigger>
+                                                <Button
+                                                  isIconOnly
+                                                  size="sm"
+                                                  variant="light"
+                                                >
+                                                  <TbDotsVertical className="text-default-300" />
+                                                </Button>
+                                              </DropdownTrigger>
+                                              <DropdownMenu>
+                                                <DropdownItem>View</DropdownItem>
+                                                <DropdownItem>Edit</DropdownItem>
+                                                <DropdownItem>Delete</DropdownItem>
+                                              </DropdownMenu>
+                                            </Dropdown>
+                                          </div>
+                                          </TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                    <Modal
+                                      isOpen={isOpen}
+                                      onOpenChange={onOpenChange}
+                                      placement="center"
+                                      size="5xl"
+                                      scrollBehavior="inside"
+                                    >
+                                      <ModalContent>
+                                        {(onClose) => (
+                                          <>
+                                            <ModalHeader>
+                                              {modalMode === "create" &&
+                                                "Crear Contacto"}
+                                              {modalMode === "edit" &&
+                                                "Editar Contacto"}
+                                              {modalMode === "view" &&
+                                                "Ver Contacto"}
+                                            </ModalHeader>
+                                            <ModalBody>
+                                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                                                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                                                  <div className="md:col-span-6"></div>
+                                                  <div className="md:col-span-12">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPeopleAlt className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Nombre"
+                                                      isRequired
+                                                      type="text"
+                                                      name="nombreContacto"
+                                                      value={task3.nombreContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Telefono"
+                                                      isRequired
+                                                      type="text"
+                                                      name="telefonoContacto"
+                                                      value={task3.telefonoContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Celular"
+                                                      isRequired
+                                                      type="text"
+                                                      name="celularContacto"
+                                                      value={task3.celularContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdWhatsapp className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="WhatsApp"
+                                                      isRequired
+                                                      type="text"
+                                                      name="whatsAppContacto"
+                                                      value={task3.whatsAppContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Correo electronico"
+                                                      isRequired
+                                                      type="text"
+                                                      name="emailContacto"
+                                                      value={task3.emailContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdStreetview className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Puesto"
+                                                      isRequired
+                                                      type="text"
+                                                      name="puestoContacto"
+                                                      value={task3.puestoContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdLocationCity className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Direccion/Ubicacion"
+                                                      isRequired
+                                                      type="text"
+                                                      name="ubicacionContacto"
+                                                      value={task3.ubicacionContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-12">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPeople className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Comentarios"
+                                                      isRequired
+                                                      type="text"
+                                                      name="comentariosContacto"
+                                                      value={task3.comentariosContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                              
+                                                  
+                                                </div>
+                                              </div>
+                                            </ModalBody>
+                                            <ModalFooter>
+                                              <Button
+                                                color="danger"
+                                                variant="flat"
+                                                onPress={onClose}
+                                              >
+                                                Cerrar
+                                              </Button>
+                                              <Button
+                                                id="BTN2guardar"
+                                                endContent={<MdSave />}
+                                                color="primary"
+                                                onClick={handleSubmitModal}
+                                              >
+                                                Guardar
+                                              </Button>
+                                            </ModalFooter>
+                                          </>
+                                        )}
+                                      </ModalContent>
+                                    </Modal>
+                                    </div>
+                                    </div>
+                                    </Tab>
                             <Tab key="Addres" title="Direcciones de envio">
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
