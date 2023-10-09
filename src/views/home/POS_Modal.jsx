@@ -15,37 +15,36 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-
 const POS_Modal = () => {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const navigate = useNavigate();
-    const [tasks, setTask] = useState([]);
-    const loadTask = async () => {
-        try {
-          const response = await fetch(`http://localhost:4000/Almacenes`);
-          const data = await response.json();
-          setTask(data);
-        } catch (error) {
-          toast.error("¡Error al Cargar lo Datos!", {
-            position: "bottom-right",
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            autoClose: 5000,
-            theme: "colored",
-          });
-        }
-      };
-      useEffect(() => {
-        loadTask();
-      }, []);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const navigate = useNavigate();
+  const [tasks, setTask] = useState([]);
+  const loadTask = async () => {
+    // try {
+    //   const response = await fetch(`http://localhost:4000/Almacenes`);
+    //   const data = await response.json();
+    //   setTask(data);
+    // } catch (error) {
+    //   toast.error("¡Error al Cargar lo Datos!", {
+    //     position: "bottom-right",
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     autoClose: 5000,
+    //     theme: "colored",
+    //   });
+    // }
+  };
+  useEffect(() => {
+    loadTask();
+  }, []);
   return (
     <div>
-        <Button color="primary" onPress={onOpen}>
-          Almacenes
-        </Button>
+      <Button color="primary" onPress={onOpen}>
+        Almacenes
+      </Button>
       <Modal
         backdrop={"blur"}
         isOpen={isOpen}

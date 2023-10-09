@@ -82,10 +82,10 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data)
-          console.log(data);
+          
         }
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -254,10 +254,10 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data)
-          console.log(data);
+          
         }
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",

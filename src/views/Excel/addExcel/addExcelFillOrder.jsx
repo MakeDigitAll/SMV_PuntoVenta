@@ -4,27 +4,28 @@ import ExcelJS from 'exceljs';
 import 'handsontable/dist/handsontable.full.css';
 import { Button } from '@nextui-org/react';
 import { HotTable } from '@handsontable/react';
-
+import { toast } from 'react-toastify';
 Modal.setAppElement("#root");
-
-const AddExcelProducts = () => {
+const AddExcelFillOrder = () => {
   const headers = [
     " ",
-    "Código Empresa",
-    "Código Fabricante",
-    "Nombre",
-    "Marca",
-    "Categoría",
-    "Existencia",
-    "BackOrder",
-    "Cantidad",
-    "Precio",
-    "Descuento",
-    "Total",
+    "Nombre del cliente",
+    "Numero cliente",
+    "Numero comercial",
+    "Nombre comercial",
+    "Razon social",
+    "Contacto",
+    "RFC",
+    "Telefono",
+    "Email",
+    "Vendedor",
+    "Giro",
+    "Activo",
+    "Registro",
   ];
 
   const [data, setData] = useState([
-    [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
   ]);
 
   const settings = {
@@ -44,7 +45,7 @@ const AddExcelProducts = () => {
 
   const handleDownloadTemplate = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("products template");
+    const worksheet = workbook.addWorksheet("FillOrders template");
 
     // Agrega los encabezados, excepto la primera celda
     const headersWithoutFirstCell = headers.slice(1);
@@ -92,23 +93,24 @@ const AddExcelProducts = () => {
   const handleSaveToDatabase = async () => {
     try {
       const datosAEnviar = data.map((row) => ({
-        codigoEmpresa: row[1] !== " " ? row[1] : null,
-        codigoFabricante: row[2] !== " " ? row[2] : null,
-        nombre: row[3] !== " " ? row[3] : null,
-        marca: row[4] !== " " ? row[4] : null,
-        categoria: row[5] !== " " ? row[5] : null,
-        existencia: row[6] !== " " ? row[6] : null,
-        backOrder: row[7] !== " " ? row[7] : null,
-        cantidad: row[8] !== " " ? row[8] : null,
-        precio: row[9] !== " " ? row[9] : null,
-        descuento: row[10] !== " " ? row[10] : null,
-        total: row[11] !== " " ? row[11] : null,
+        nombreCliente: row[1] !== " " ? row[1] : null,
+        numeroCliente: row[2] !== " " ? row[2] : null,
+        numeroComercial: row[3] !== " " ? row[3] : null,
+        nombreComercial: row[4] !== " " ? row[4] : null,
+        razonSocial: row[5] !== " " ? row[5] : null,
+        contacto: row[6] !== " " ? row[6] : null,
+        rfc: row[7] !== " " ? row[7] : null,
+        telefono: row[8] !== " " ? row[8] : null,
+        email: row[9] !== " " ? row[9] : null,
+        vendedor: row[10] !== " " ? row[10] : null,
+        giro: row[11] !== " " ? row[11] : null,
+        activo: row[12] !== " " ? row[11] : null,
+        registro: row[13] !== " " ? row[13] : null,
       }));
 
-      // Realiza un mapeo individual para cada valor
       const responseArray = await Promise.all(
         datosAEnviar.map(async (valor) => {
-          const response = await fetch(`http://localhost:4000/Productos`, {
+          const response = await fetch(`http://localhost:4000/PedidosPendientesSurtir`, {
             method: "POST",
             body: JSON.stringify(valor),
             headers: {
@@ -122,20 +124,19 @@ const AddExcelProducts = () => {
       const allResponsesOk = responseArray.every((response) => response.ok);
 
       if (allResponsesOk) {
-        alert("Los datos se han guardado en la base de datos.");
-        
+        toast.success("Usuario creado correctamente", { theme: "colored" });
       } else {
-        alert("Hubo un problema al guardar los datos en la base de datos.");
+        toast.error("Hubo un problema al guardar los datos en la base de datos.", { theme: "colored" });
       }
     } catch (error) {
-      console.error("Error al guardar los datos:", error);
+      toast.error("Error al guardar los datos:", error);
     }
   };
 
   return (
     <div style={{ position: "relative", zIndex: "0" }}>
       <Button size="sm" color="success" onClick={() => setModalIsOpen(true)}>
-        Upload Products
+        Upload Clients
       </Button>
       <Modal
         isOpen={modalIsOpen}
@@ -200,4 +201,4 @@ const AddExcelProducts = () => {
   );
 };
 
-export default AddExcelProducts;
+export default AddExcelFillOrder;

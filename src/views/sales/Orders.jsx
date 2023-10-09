@@ -114,7 +114,7 @@ const Orders = () => {
       const response = await fetch("http://localhost:4000/Pedidos");
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
+        
         setPedidosData(data);
       }
     } catch {
@@ -141,7 +141,7 @@ const Orders = () => {
       return false;
     }
   });
- console.log(pedidosData);
+ 
 
   function handleClickBreadCrumbs(event) {
     event.preventDefault();

@@ -89,7 +89,7 @@ const PurchaseOrders = () => {
       }
       const data = await response.json();
       setordenCompraData(data);
-      console.log(data);
+      
     } catch (error) {
       console.error('Error al obtener los datos:', error);
     }
@@ -108,7 +108,7 @@ const PurchaseOrders = () => {
   //     setPagosesData(pagosstatus);
   //     setPagosesFolioFiltrado(" ");
   
-  //     console.log(data);
+  //     
   //   } catch (error) {
   //     console.error('Error al obtener los datos de pagos:', error);
   //   }

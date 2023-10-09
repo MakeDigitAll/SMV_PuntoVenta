@@ -28,7 +28,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
         );
         setUserData(data);
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -53,7 +53,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
           position: "bottom-right",
           theme: "colored",
         });
-        console.log(err);
+        
       }
     };
     if (chat !== null) fetchMessages();

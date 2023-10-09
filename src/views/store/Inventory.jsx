@@ -15,6 +15,8 @@ import {
   Pagination,
   User,
   Checkbox,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdBookOnline, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
@@ -105,9 +107,21 @@ const   Inventory = () => {
     );
   }, [visibleColumns]);
 
+  const marcasOptions = data.map((item) => item.marca.toLowerCase());
+  const [selectedMarca, setSelectedMarca] = useState("");
+
+  const handleMarcaChange = (event) => {
+    setSelectedMarca(event.target.value);
+  };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
 
+    if (selectedMarca) {
+      const selectedMarcaLower = selectedMarca.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.marca.toLowerCase() === selectedMarcaLower
+      );
+    }
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
         data.nombre.toLowerCase().includes(filterValue.toLowerCase())
@@ -123,7 +137,7 @@ const   Inventory = () => {
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, statusFilter, filterValue,selectedMarca]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -153,7 +167,7 @@ const   Inventory = () => {
         case "CodFab":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.codigoFabricante}</p>
+            <p className="text-bold text-small capitalize">{data.codigoFabrica}</p>
           </div>
         );
       case "CodEmp":
@@ -312,31 +326,22 @@ const   Inventory = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+            <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Marca"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedMarca}
+                  onChange={handleMarcaChange}
                 >
-                  Marca
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  {marcasOptions.map((marcaOption) => (
+                    <SelectItem key={marcaOption} value={marcaOption}>
+                      {marcaOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
             
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">

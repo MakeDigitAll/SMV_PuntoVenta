@@ -14,7 +14,8 @@ import {
   DropdownItem,
   Pagination,
   User,
-  Checkbox,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
@@ -68,7 +69,7 @@ const InventoryWarehouse = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/inventarioGeneralReporteInventario");
+      const response = await fetch("http://localhost:4000/inventarioXAlmacen");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -111,9 +112,21 @@ const InventoryWarehouse = () => {
     );
   }, [visibleColumns]);
 
+  const marcasOptions = data.map((item) => item.marca.toLowerCase());
+  const [selectedMarca, setSelectedMarca] = useState("");
+
+  const handleMarcaChange = (event) => {
+    setSelectedMarca(event.target.value);
+  };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
 
+    if (selectedMarca) {
+      const selectedMarcaLower = selectedMarca.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.marca.toLowerCase() === selectedMarcaLower
+      );
+    }
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
         data.nombre.toLowerCase().includes(filterValue.toLowerCase())
@@ -129,7 +142,7 @@ const InventoryWarehouse = () => {
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, statusFilter, filterValue,selectedMarca,]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -196,7 +209,7 @@ const InventoryWarehouse = () => {
             <p className="text-bold text-small capitalize">{data.existencia}</p>
           </div>
         );
-      case "Ubicación":
+      case "Ubicacion":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.ubicacion}</p>
@@ -337,31 +350,22 @@ const InventoryWarehouse = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+            <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Marca"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedMarca}
+                  onChange={handleMarcaChange}
                 >
-                  Marca
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  {marcasOptions.map((marcaOption) => (
+                    <SelectItem key={marcaOption} value={marcaOption}>
+                      {marcaOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
             
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">

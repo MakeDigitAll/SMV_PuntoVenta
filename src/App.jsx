@@ -33,8 +33,6 @@ import Orders from "./views/sales/Orders.jsx";
 import AddExcelBrands from "./views/Excel/addExcel/addExcelBrands.jsx";
 import Payment from "./views/sales/Payment.jsx";
 import PurchaseOrders from "./views/store/PurchaseOrders.jsx";
-
-//import PosHome from "./views/pos/PosHome.jsx";
 import Inventory from "./views/store/Inventory.jsx";
 import BulkTransfers from "./views/store/BulkTransfers.jsx";
 import Transfers from "./views/store/Transfers.jsx";
@@ -55,14 +53,15 @@ import Chat from "./views/chat/chat.jsx";
 import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 import Quote from "./views/sales/Quote.jsx";
-import Notifications from "./views/notifications/Notification.jsx";
-import TestNotify from "./views/notifications/TestNotification.jsx";
 import Seller from "./views/sellers/Seller.jsx";
 import FillOrder from "./views/sales/FillOrder.jsx";
 import Promotions from "./views/sales/promotions.jsx";
 import Visits from "./views/sales/Views.jsx";
 import SalesCustomer from "./views/marketing/SalesperCustomer.jsx";
 import ClientReport from "./views/marketing/ClientReport.jsx";
+import NewClient from "./views/client/NewClientList.jsx";
+import ProviderList from "./views/providers/ProviderList.jsx";
+import Provider from "./views/providers/Provider.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -81,7 +80,7 @@ const App = () => {
         },
         {
           path: "/settings/user",
-          element: <User/>,
+          element: <User />,
         },
         {
           path: "/Products/ProductList",
@@ -201,12 +200,12 @@ const App = () => {
         },
         {
           path: "/Sellers/:id/ViewSeller",
-          element: <Seller />
+          element: <Seller />,
         },
         {
           path: "/Sellers/:id/EditSeller",
-          element: <Seller />
-        },  
+          element: <Seller />,
+        },
         {
           path: "/Settings/Users",
           element: <Users />,
@@ -322,6 +321,26 @@ const App = () => {
         {
           path: "/Sales/Visits",
           element: <Visits />,
+        },
+        {
+          path: "/Customers/NewClient",
+          element: <NewClient />,
+        },
+        {
+          path: "/Customers/:id/ViewClient",
+          element: <NewClient />,
+        },
+        {
+          path: "/Customers/:id/EditClient",
+          element: <NewClient />,
+        },
+        {
+          path: "/Providers",
+          element: <ProviderList />,
+        },
+        {
+          path: "/Provider/NewProvider",
+          element: <Provider />,
         },
       ],
     },

@@ -204,12 +204,12 @@ const CatalogueofMotifs = () => {
 
   const handleEdit = (item) => {
     onOpen();
-     console.log("Elemento a editar:", item);
+     
     
      setModalMode("edit"); // Establecer el modo en "edit"
      const selectedItem = data.find((entry) => entry.id === item);
     
-     console.log("Elemento seleccionado:", selectedItem);
+     
      
     if (selectedItem !=null) {
       setEditingItem(selectedItem);
@@ -238,7 +238,7 @@ const CatalogueofMotifs = () => {
       clase: formData.clase,
       DateModification: isoDateString,
     };
-    console.log(updatedData2);
+    
     try {
       if (modalMode === "create") {
         // Crear nuevo elemento

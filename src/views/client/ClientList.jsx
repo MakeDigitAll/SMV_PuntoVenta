@@ -1,7 +1,7 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Button, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Pagination } from "@nextui-org/react";
 import { MdArrowDropDown, MdCategory, MdDelete, MdEdit, MdRemoveRedEye, MdSearch } from "react-icons/md";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -13,6 +13,9 @@ import AddExcelClients from "../Excel/addExcel/addExcelClients";
 import Images from "../../components/images/Images";
 const columns = [
   { name: "Imagen", uid: "imagen", sortable: true },
+  { name: "Nombre del cliente", uid: "nombreComercial", sortable: true },
+  { name: "# Cliente", uid: "numeroCliente", sortable: true },
+  { name: "# Comercial", uid: "numeroCliente", sortable: true },
   { name: "Nombre Comercial", uid: "nombreComercial", sortable: true },
   { name: "Contacto Principal", uid: "contacto", sortable: true },
   { name: "Telefono", uid: "telefono", sortable: true },
@@ -20,8 +23,8 @@ const columns = [
   { name: "Vendedor", uid: "vendedor", sortable: true },
   { name: "Activo", uid: "activo", sortable: true },
   { name: "Registro", uid: "registro", sortable: true },
-  { name: "Actualizacion", uid: "actualizacion", sortable: true },
-  { name: "Acciones", uid: "Actions", sortable: true },
+  { name: "Actualizado", uid: "actualizacion", sortable: true },
+  { name: "Actions", uid: "Actions", sortable: true },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
@@ -50,6 +53,7 @@ const ClientList = () => {
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -141,10 +145,10 @@ const ClientList = () => {
       case "imagen":
         return (
           <div className="flex flex-col">
-            <Images idImage={data.id} designType="tabla" ruta={"/api/images/clientImage/"}/> 
+            <Images idImage={data.id} designType="tabla" ruta={"/api/images/clientImage/"} />
           </div>
         );
-        case "nombreCliente":
+      case "nombreCliente":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.nombreCliente}</p>
@@ -222,20 +226,38 @@ const ClientList = () => {
             <p className="text-bold text-small capitalize">{data.actualizado}</p>
           </div>
         );
+        // case "Actions":
+        // return (
+        //   <div className="relative flex justify-center items-center gap-2">
+        //     <Dropdown>
+        //       <DropdownTrigger>
+        //         <Button isIconOnly size="sm" variant="light">
+        //           <TbDotsVertical className="text-default-300" />
+        //         </Button>
+        //       </DropdownTrigger>
+        //       <DropdownMenu>
+        //         <DropdownItem onClick={() => navigate(`/Sellers/${data.id}/ViewSeller`)} >Ver Vendedor</DropdownItem>
+        //         <DropdownItem onClick={() => navigate(`/Sellers/${data.id}/EditSeller`)}>Editar Vendedor</DropdownItem>
+        //         <DropdownItem className="text-danger" color="danger" onClick={() => handleDisable(data.id)}>
+        //           Deshabilitar Vendedor</DropdownItem>
+        //       </DropdownMenu>
+        //     </Dropdown>
+        //   </div>
+        // );
       case "Actions":
         return (
           <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
+            <Tooltip content="Ver Cliente">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdRemoveRedEye />
+                <MdRemoveRedEye onClick={() => navigate(`/Customers/${data.id}/ViewClient`)}/>
               </span>
             </Tooltip>
-            <Tooltip content="Edit user">
+            <Tooltip content="Editar Cliente">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdEdit />
+                <MdEdit onClick={() => navigate(`/Customers/${data.id}/EditClient`)}/>
               </span>
             </Tooltip>
-            <Tooltip color="danger" content="Delete user">
+            <Tooltip color="danger" content="Deshabilitar Cliente">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
                 <MdDelete />
               </span>
@@ -352,8 +374,13 @@ const ClientList = () => {
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Clientes
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}>
-              Nuevo Cliente
+            <Button
+              onPress={() => navigate(`/Customers/NewClient`)}
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+            >
+              Nuevo cliente
             </Button>
           </div>
         </div>

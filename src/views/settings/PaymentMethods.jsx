@@ -182,7 +182,7 @@ const PaymentMethodList = () => {
       try {
         const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
         const data = await response.json();
-        console.log(data)
+        
         if (response.ok) {
           setTask({
             id: data.id,
@@ -252,7 +252,7 @@ const PaymentMethodList = () => {
 
 
   const handleEdit = (id) => {
-    console.log(id)
+    
     setModeModal("edit");
     setIsInputDisabled(false);
     async function editModal() {
@@ -270,7 +270,7 @@ const PaymentMethodList = () => {
           onOpen();
         }
       } catch (err) {
-        console.log(err);
+        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -352,7 +352,7 @@ const PaymentMethodList = () => {
   };
 
   const handleDisable = (id) => {
-    console.log("Este es el id a deshabilitar: ", id);
+    
     onOpenSecondModal();
   };
 
@@ -360,7 +360,7 @@ const PaymentMethodList = () => {
     const datoDisable = {
       id: task.id
     };
-    console.log(datoDisable.id);
+    
 
     async function disable() {
       try {

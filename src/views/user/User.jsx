@@ -142,7 +142,7 @@ const User = () => {
           },
         }
       );
-      console.log(result.data.id);
+      
       if (result) {
         const formData2 = new FormData();
         const document2 = JSON.stringify({
@@ -499,7 +499,7 @@ const User = () => {
                                     size={"sm"}
                                     type="password"
                                     label="Confirmar Password"
-                                    name="confirmPassword" // Asegúrate de que el nombre coincida con el campo de Contraseña
+                                    name="confirmPassword" 
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"

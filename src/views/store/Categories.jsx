@@ -80,11 +80,13 @@ const Categories = () => {
   }
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue2, setFilterValue2]= React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter2, setStatusFilter2] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
@@ -93,6 +95,7 @@ const Categories = () => {
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
+  const hasSearchFilter2 = Boolean(filterValue2);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -110,6 +113,11 @@ const Categories = () => {
         data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
+    if (hasSearchFilter2) {
+      filteredUsers = filteredUsers.filter((data) =>
+        data.sku.toString().includes(filterValue2.toString())
+      );
+    }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
@@ -118,9 +126,17 @@ const Categories = () => {
         Array.from(statusFilter).includes(data.nombre)
       );
     }
+    if (
+      statusFilter2 !== "all" &&
+      Array.from(statusFilter2).length !== statusOptions.length
+    ) {
+      filteredUsers = filteredUsers.filter((data) =>
+        Array.from(statusFilter2).includes(data.sku)
+      );
+    }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, hasSearchFilter2, statusFilter, statusFilter2, filterValue, filterValue2]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -158,7 +174,7 @@ const Categories = () => {
         ...prevDatosCrear,
         [name]: integerValue,
       }));
-      console.log(prevDatosCrear);
+      
     } else {
       // Puedes manejar el caso en el que el usuario ingrese un valor no válido aquí.
     }
@@ -177,6 +193,11 @@ const Categories = () => {
     setModalMode("view");
     const selectedItem = data.find((entry) => entry.id === item);
     setSelectedData(selectedItem);
+    onOpen(); // Abrir el modal
+  };
+
+  const handleEditar = (item) => {
+    setModalMode("edit");
     onOpen(); // Abrir el modal
   };
 
@@ -247,7 +268,7 @@ const Categories = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem onPress={() => handleVer(data.id)}>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem onPress={handleEditar}>Edit</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -288,6 +309,21 @@ const Categories = () => {
     setFilterValue("");
     setPage(1);
   }, []);
+
+  const onSearchChange2 = React.useCallback((value2) => {
+    if (value2) {
+      setFilterValue2(value2);
+      setPage(1);
+    } else {
+      setFilterValue2("");
+    }
+  }, []);
+  
+  const onClear2 = useCallback(() => {
+    setFilterValue2("");
+    setPage(1);
+  }, []);
+  
 
   const topContent = React.useMemo(() => {
     return (
@@ -354,9 +390,9 @@ const Categories = () => {
               className="w-[450px] sm:max-w-[44%]"
               placeholder="SKU"
               startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
+              value={filterValue2}
+              onClear={() => onClear2()}
+              onValueChange={(newValue) => onSearchChange2(newValue)} 
             />
           <div className="flex flex-wrap place-content-end space-x-2">
             <AddExcelCategories/>

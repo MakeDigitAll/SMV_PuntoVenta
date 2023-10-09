@@ -20,7 +20,6 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
 import db from "../../axios/Database";
-import { useNavigate } from "react-router-dom";
 const lngs = {
   En: { nativeName: "English" },
   Es: { nativeName: "Español" },
@@ -32,7 +31,7 @@ const Header = () => {
   const islight = theme === "light";
   const handleChange = () => {
     const nextTheme = islight ? "dark" : "light";
-    window.localStorage.setItem("data-theme", nextTheme); // you can use any storage
+    window.localStorage.setItem("data-theme", nextTheme);
     setTheme(nextTheme);
   };
   const imgLogo = theme === "dark";
@@ -68,13 +67,12 @@ const Header = () => {
         auth.signOut();
       }
     } catch (e) {
-      console.log(e);
+      
     }
   }
 
-  
   async function openNotifications() {
-    console.log('quiero cambiar a las notificaciones')
+    
   }
 
   return (
@@ -92,6 +90,7 @@ const Header = () => {
                 alt=""
                 width={100}
                 height={100}
+                href={"/"}
               />
             ) : (
               <Image
@@ -100,6 +99,7 @@ const Header = () => {
                 alt=""
                 width={100}
                 height={100}
+                href={"/"}
               />
             )}
           </div>
@@ -184,8 +184,7 @@ const Header = () => {
                         <span className="ml-2">Ver todas</span>
                       </a>
                     </DropdownItem>
-                    <DropdownItem
-                      onPress={openNotifications}>
+                    <DropdownItem onPress={openNotifications}>
                       Notificaciones
                     </DropdownItem>
                   </DropdownMenu>
@@ -222,8 +221,8 @@ const Header = () => {
                       <User
                         name={
                           auth.getUser()?.nombre +
-                          " " +
-                          auth.getUser()?.apellido || ""
+                            " " +
+                            auth.getUser()?.apellido || ""
                         }
                         description={auth.getUser()?.email || ""}
                         classNames={{

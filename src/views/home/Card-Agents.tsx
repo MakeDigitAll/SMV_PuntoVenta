@@ -2,7 +2,7 @@ import { Avatar, AvatarGroup, Card, CardBody } from "@nextui-org/react";
 import React from "react";
 import UserImage from "../user/UserImage";
 export const CardAgents = ({ dataInf }: { dataInf: any[] }) => {
-  console.log(dataInf)
+  
   return (
     <Card className=" bg-default-50 rounded-xl shadow-md px-4 py-6 w-full">
       <CardBody className="py-5 gap-6">

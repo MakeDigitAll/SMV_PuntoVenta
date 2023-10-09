@@ -13,8 +13,8 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdMonetizationOn, MdMoney, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
@@ -105,9 +105,21 @@ const Transfers = () => {
     );
   }, [visibleColumns]);
 
+  const sucursalOptions = data.map((item) => item.deSucursal.toLowerCase());
+  const [selectedSucursal, setSelectedSucursal] = useState("");
+
+  const handleSucursalChange = (event) => {
+    setSelectedSucursal(event.target.value);
+  };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
 
+    if (selectedSucursal) {
+      const selectedSucursalLower = selectedSucursal.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.deSucursal.toLowerCase() === selectedSucursalLower
+      );
+    }
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
         data.nombre.toLowerCase().includes(filterValue.toLowerCase())
@@ -123,7 +135,7 @@ const Transfers = () => {
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, statusFilter, filterValue,selectedSucursal,]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -317,31 +329,22 @@ const Transfers = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+            <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="de Sucursal"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedSucursal}
+                  onChange={handleSucursalChange}
                 >
-                  De Sucursal
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  {sucursalOptions.map((sucursalOption) => (
+                    <SelectItem key={sucursalOption} value={sucursalOption}>
+                      {sucursalOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
             
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">

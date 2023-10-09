@@ -93,7 +93,7 @@ const Payment = () => {
     const data = await response.json();
     setData(data);
     setPagosData(data);
-    console.log(data);
+    
   }
 
   useEffect(() => {

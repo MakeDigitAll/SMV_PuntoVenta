@@ -42,7 +42,7 @@ const Chat = () => {
         const { data } = await API.get(`/chat/${auth.getUser()?.id}`);
         setChats(data);
       } catch (err) {
-        console.log(err);
+        
       }
     };
     getChats();

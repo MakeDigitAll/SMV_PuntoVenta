@@ -100,10 +100,10 @@ const CollectionDay = () => {
       Array.from(visibleColumns).includes(column.uid)
     );
   }, [visibleColumns]);
-  console.log(data);
+  
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
-    console.log(filteredUsers.filter((u) => u.serie.toLowerCase().includes(filterValue.toLocaleLowerCase())) );
+    
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter(

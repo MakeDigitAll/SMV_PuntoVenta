@@ -13,8 +13,8 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdBookmarkAdded, MdList, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
@@ -106,13 +106,26 @@ const Logistics = () => {
       Array.from(visibleColumns).includes(column.uid)
     );
   }, [visibleColumns]);
+ 
+  const choferesOptions = data.map((item) => item.chofer.toLowerCase());
+  const [selectedChoferes, setSelectedChoferes] = useState("");
 
+  const handleChoferChange = (event) => {
+    setSelectedChoferes(event.target.value);
+  };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((data) =>
         data.cliente.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+    // Filtra por chofer seleccionado
+    if (selectedChoferes) {
+      const selectedChoferLower = selectedChoferes.toLowerCase();
+      filteredUsers = filteredUsers.filter(
+        (data) => data.chofer.toLowerCase() === selectedChoferLower
       );
     }
     if (
@@ -125,7 +138,7 @@ const Logistics = () => {
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, statusFilter, filterValue]);
+  }, [data, hasSearchFilter, statusFilter, filterValue, selectedChoferes]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -159,7 +172,7 @@ const Logistics = () => {
         case "FechaVenta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fecha}</p>
+            <p className="text-bold text-small capitalize">{data.fechaVenta}</p>
           </div>
         );
       case "Cliente":
@@ -180,7 +193,7 @@ const Logistics = () => {
       case "FechaCompra":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fechaCompra}</p>
+            <p className="text-bold text-small capitalize">{data.fechaCompromiso}</p>
           </div>
         );
       case "Turno":
@@ -324,31 +337,22 @@ const Logistics = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
+            <div className="w-[300px] sm:max-w-[44%]">
+                <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Choferes"
                   size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
+                  value={selectedChoferes}
+                  onChange={handleChoferChange}
                 >
-                  Choferes
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  {choferesOptions.map((choferesOption) => (
+                    <SelectItem key={choferesOption} value={choferesOption}>
+                      {choferesOption}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
             
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">

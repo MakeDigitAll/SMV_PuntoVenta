@@ -26,7 +26,9 @@ const Images = ({
       <Image src={imagen} width={50} height={70} className="center"></Image>
     );
   } else if (designType === "avatar") {
-    return <Avatar src={imagen} className="center"></Avatar>;
+    return <Avatar src={imagen} className="center" ></Avatar>;
+  } else if (designType === "avatarBig") {
+    return <Avatar src={imagen} className="min-h-[250px] min-w-[250px]" ></Avatar>;    
   } else {
     return (
       <Image src={imagen} width={50} height={70} className="center"></Image>

@@ -329,13 +329,13 @@ const NewBranch = () => {
       // const nuevaSucursal = await response.json();
       // const nuevaSucursalId = nuevaSucursal.id; // Obtén el ID de la sucursal
       if (!response2.ok) {
-        // console.log("Error al almacenar Sucursales Datos");
+        // 
         return;
       }
       toast.success("Sucursal Guardada Correctamente", { theme: "colored" });
       // Almacena el ID de la sucursal en un estado o variable
       //  setNuevaSucursalId(nuevaSucursalId);
-      //  console.log(nuevaSucursalId);
+      //  
       setShowConfirmationModal(true);
       //  setShowFormulario(true);
       // Ambas solicitudes POST se completaron con éxito
@@ -385,14 +385,14 @@ const NewBranch = () => {
         });
       } else {
         // Muestra un mensaje de error o realiza alguna acción para indicar que el registro ya existe
-        // console.log("El registro ya existe en la tabla");
+        // 
       }
     }
   };
 
   const handleEdit = (itemId) => {
     const selectedItem = data.find((item) => item.id === itemId);
-    // console.log(selectedItem);
+    // 
     if (selectedItem) {
       // Configura el estado del formulario modal con los datos del elemento seleccionado
       setFormData({
@@ -414,7 +414,7 @@ const NewBranch = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if(!nuevaSucursalId){
-    //   console.log(nuevaSucursalId);
+    //   
     //   return;
     // }
 
@@ -438,11 +438,11 @@ const NewBranch = () => {
         });
         if (response.ok) {
           const result = await response.json();
-          console.log(result);
+          
           toast.success("Almacén Creado",{theme: "colored"});
           onClose(true);
           setData2([...data2, result]);
-          console.log(data2);
+          
           loadTask();
         } else {
           const json = await response.json();

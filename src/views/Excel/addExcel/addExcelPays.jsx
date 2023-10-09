@@ -99,7 +99,7 @@ const AddExcelPays = () => {
   
       if (allResponsesOk) {
         alert('Los datos se han guardado en la base de datos.');
-        console.log(datosAEnviar);
+        
       } else {
         alert('Hubo un problema al guardar los datos en la base de datos.');
       }

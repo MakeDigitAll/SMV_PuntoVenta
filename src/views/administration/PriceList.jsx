@@ -68,7 +68,7 @@ const PriceList = () => {
       clientes: task.clientes,
     };
 
-    console.log(datosListado);
+    
       try {
         await fetch(`http://localhost:4000/ListadoPrecios`, {
           method: "POST",
@@ -80,7 +80,7 @@ const PriceList = () => {
         
        
       } catch (error) {
-        console.log("todo fallo")
+        
         toast.warning(error.message);
       }
   }
