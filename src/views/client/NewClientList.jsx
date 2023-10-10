@@ -50,6 +50,9 @@ import {
   MdPerson,
   MdPostAdd,
   MdStreetview,
+  MdPhone,
+  MdWhatsapp,
+  MdEmail,
 } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
@@ -344,6 +347,11 @@ const NewClient = () => {
     onOpen();
     setDatosE([...datosE, nuevosDatos]);
   };
+  const handleCreateContact = (nuevosDatosContact) => {
+    setModalMode("create");
+    onOpen();
+    setDatosC([...datosC, nuevosDatosContact]);
+  };
   const [idCliente, setIdCliente] = useState("");
   const [task2, setTask2] = useState({
     nombre: "",
@@ -355,6 +363,17 @@ const NewClient = () => {
     codigoPostal: "",
   });
   const [datosE, setDatosE] = useState([]);
+  const [datosC, setDatosC] = useState([]);
+  const [task3, setTask3] = useState({
+    nombreContacto: "",
+    telefonoContacto: "",
+    celularContacto: "",
+    whatsAppContacto: "",
+    emailContacto: "",
+    puestoContacto: "",
+    ubicacionContacto: "",
+    comentariosContacto: "",
+  });
 
   async function loadDireccionesE(id) {
     try {
@@ -398,7 +417,7 @@ const NewClient = () => {
 
   const handleChange2 = (e) =>
     setTask2({ ...task2, [e.target.name]: e.target.value });
-  const handleChange3 = (e) =>
+    const handleChange3 = (e) =>
     setTask3({ ...task3, [e.target.name]: e.target.value });
   async function handleSubmitModal(e) {
     e.preventDefault();
@@ -801,269 +820,271 @@ const NewClient = () => {
                               <Facturation id={1} />
                             </Tab>
                             <Tab key="Contacts" title="Contactos">
-                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
                                 <div className="md:col-span-6"></div>
                                 <div
-                                  className="md:col-span-12"
-                                  style={{
-                                    marginLeft: "590px",
-                                    marginRight: "70px",
-                                  }}
-                                >
-                                  <Button
-                                    id="BTN3"
-                                    size="sm"
-                                    color="primary"
-                                    endContent={<TbPlus />}
-                                    className="text-align: right justify-end"
-                                    onClick={handleCreateContact}
+                                    className="md:col-span-12"
+                                    style={{
+                                      marginLeft: "590px",
+                                      marginRight: "70px",
+                                    }}
                                   >
-                                    Nuevo contacto
-                                  </Button>
-                                </div>
+                                    <Button
+                                      id="BTN3"
+                                      size="sm"
+                                      color="primary"
+                                      endContent={<TbPlus />}
+                                      className="text-align: right justify-end"
+                                      onClick={handleCreateContact}
+                                    >
+                                      Nuevo contacto
+                                    </Button>
+                                    </div>
                                 <div className="md:col-span-12">
-                                  <Table
-                                    removeWrapper
-                                    aria-label="Example static collection table"
-                                  >
-                                    <TableHeader>
-                                      <TableColumn>Nombre</TableColumn>
-                                      <TableColumn>Contacto</TableColumn>
-                                      <TableColumn>Correo electronico</TableColumn>
-                                      <TableColumn>Comentarios</TableColumn>
-                                      <TableColumn>Direccion/Ubicacion</TableColumn>
-                                      <TableColumn>Acciones</TableColumn>
-                                    </TableHeader>
-                                    <TableBody>
-                                      {datosC.map((data, index) => (
-                                        <TableRow key={index}>
-                                          <TableCell>{data.contacto}</TableCell>
-                                          <TableCell>
-                                            {data.id}
-                                          </TableCell>
-                                          <TableCell>
-                                            {data.email}
-                                          </TableCell>
-                                          <TableCell>{data.comentarios}</TableCell>
-                                          <TableCell>{data.ubicacion}</TableCell>
-                                          <TableCell>
+                                <Table
+                                      removeWrapper
+                                      aria-label="Example static collection table"
+                                    >
+                                      <TableHeader>
+                                        <TableColumn>Nombre</TableColumn>
+                                        <TableColumn>Contacto</TableColumn>
+                                        <TableColumn>Correo electronico</TableColumn>
+                                        <TableColumn>Comentarios</TableColumn>
+                                        <TableColumn>Direccion/Ubicacion</TableColumn>
+                                        <TableColumn>Acciones</TableColumn>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {datosC.map((data, index) => (
+                                          <TableRow key={index}>
+                                            <TableCell>{data.contacto}</TableCell>
+                                            <TableCell>
+                                              {data.id}
+                                            </TableCell>
+                                            <TableCell>
+                                              {data.email}
+                                            </TableCell>
+                                            <TableCell>{data.comentarios}</TableCell>
+                                            <TableCell>{data.ubicacion}</TableCell>
+                                            <TableCell>
                                             <div className="relative flex justify-center items-center gap-2">
-                                              <Dropdown>
-                                                <DropdownTrigger>
-                                                  <Button
-                                                    isIconOnly
-                                                    size="sm"
-                                                    variant="light"
-                                                  >
-                                                    <TbDotsVertical className="text-default-300" />
-                                                  </Button>
-                                                </DropdownTrigger>
-                                                <DropdownMenu>
-                                                  <DropdownItem>View</DropdownItem>
-                                                  <DropdownItem>Edit</DropdownItem>
-                                                  <DropdownItem>Delete</DropdownItem>
-                                                </DropdownMenu>
-                                              </Dropdown>
-                                            </div>
+                                            <Dropdown>
+                                              <DropdownTrigger>
+                                                <Button
+                                                  isIconOnly
+                                                  size="sm"
+                                                  variant="light"
+                                                >
+                                                  <TbDotsVertical className="text-default-300" />
+                                                </Button>
+                                              </DropdownTrigger>
+                                              <DropdownMenu>
+                                                <DropdownItem>View</DropdownItem>
+                                                <DropdownItem>Edit</DropdownItem>
+                                                <DropdownItem>Delete</DropdownItem>
+                                              </DropdownMenu>
+                                            </Dropdown>
+                                          </div>
                                           </TableCell>
-                                        </TableRow>
-                                      ))}
-                                    </TableBody>
-                                  </Table>
-                                  <Modal
-                                    isOpen={isOpen}
-                                    onOpenChange={onOpenChange}
-                                    placement="center"
-                                    size="5xl"
-                                    scrollBehavior="inside"
-                                  >
-                                    <ModalContent>
-                                      {(onClose) => (
-                                        <>
-                                          <ModalHeader>
-                                            {modalMode === "create" &&
-                                              "Crear Contacto"}
-                                            {modalMode === "edit" &&
-                                              "Editar Contacto"}
-                                            {modalMode === "view" &&
-                                              "Ver Contacto"}
-                                          </ModalHeader>
-                                          <ModalBody>
-                                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
-                                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
-                                                <div className="md:col-span-6"></div>
-                                                <div className="md:col-span-12">
-                                                  <Input
-                                                    endContent={
-                                                      <MdPeopleAlt className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Nombre"
-                                                    isRequired
-                                                    type="text"
-                                                    name="nombreContacto"
-                                                    value={task3.nombreContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                    <Modal
+                                      isOpen={isOpen}
+                                      onOpenChange={onOpenChange}
+                                      placement="center"
+                                      size="5xl"
+                                      scrollBehavior="inside"
+                                    >
+                                      <ModalContent>
+                                        {(onClose) => (
+                                          <>
+                                            <ModalHeader>
+                                              {modalMode === "create" &&
+                                                "Crear Contacto"}
+                                              {modalMode === "edit" &&
+                                                "Editar Contacto"}
+                                              {modalMode === "view" &&
+                                                "Ver Contacto"}
+                                            </ModalHeader>
+                                            <ModalBody>
+                                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                                                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                                                  <div className="md:col-span-6"></div>
+                                                  <div className="md:col-span-12">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPeopleAlt className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Nombre"
+                                                      isRequired
+                                                      type="text"
+                                                      name="nombreContacto"
+                                                      value={task3.nombreContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Telefono"
+                                                      isRequired
+                                                      type="text"
+                                                      name="telefonoContacto"
+                                                      value={task3.telefonoContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Celular"
+                                                      isRequired
+                                                      type="text"
+                                                      name="celularContacto"
+                                                      value={task3.celularContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdWhatsapp className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="WhatsApp"
+                                                      isRequired
+                                                      type="text"
+                                                      name="whatsAppContacto"
+                                                      value={task3.whatsAppContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Correo electronico"
+                                                      isRequired
+                                                      type="text"
+                                                      name="emailContacto"
+                                                      value={task3.emailContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdStreetview className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Puesto"
+                                                      isRequired
+                                                      type="text"
+                                                      name="puestoContacto"
+                                                      value={task3.puestoContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-6">
+                                                    <Input
+                                                      endContent={
+                                                        <MdLocationCity className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Direccion/Ubicacion"
+                                                      isRequired
+                                                      type="text"
+                                                      name="ubicacionContacto"
+                                                      value={task3.ubicacionContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="md:col-span-12">
+                                                    <Input
+                                                      endContent={
+                                                        <MdPeople className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                      }
+                                                      label="Comentarios"
+                                                      isRequired
+                                                      type="text"
+                                                      name="comentariosContacto"
+                                                      value={task3.comentariosContacto}
+                                                      placeholder=" "
+                                                      variant="bordered"
+                                                      onChange={handleChange3}
+                                                      disabled={
+                                                        modalMode === "view"
+                                                      }
+                                                    />
+                                                  </div>
+                                              
+                                                  
                                                 </div>
-                                                <div className="md:col-span-6">
-                                                  <Input
-                                                    endContent={
-                                                      <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Telefono"
-                                                    isRequired
-                                                    type="text"
-                                                    name="telefonoContacto"
-                                                    value={task3.telefonoContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
-                                                </div>
-                                                <div className="md:col-span-6">
-                                                  <Input
-                                                    endContent={
-                                                      <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Celular"
-                                                    isRequired
-                                                    type="text"
-                                                    name="celularContacto"
-                                                    value={task3.celularContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
-                                                </div>
-                                                <div className="md:col-span-6">
-                                                  <Input
-                                                    endContent={
-                                                      <MdWhatsapp className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="WhatsApp"
-                                                    isRequired
-                                                    type="text"
-                                                    name="whatsAppContacto"
-                                                    value={task3.whatsAppContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-
-                                                  />
-                                                </div>
-                                                <div className="md:col-span-6">
-                                                  <Input
-                                                    endContent={
-                                                      <MdEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Correo electronico"
-                                                    isRequired
-                                                    type="text"
-                                                    name="emailContacto"
-                                                    value={task3.emailContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
-                                                </div>
-                                                <div className="md:col-span-6">
-                                                  <Input
-                                                    endContent={
-                                                      <MdStreetview className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Puesto"
-                                                    isRequired
-                                                    type="text"
-                                                    name="puestoContacto"
-                                                    value={task3.puestoContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
-                                                </div>
-                                                <div className="md:col-span-6">
-                                                  <Input
-                                                    endContent={
-                                                      <MdLocationCity className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Direccion/Ubicacion"
-                                                    isRequired
-                                                    type="text"
-                                                    name="ubicacionContacto"
-                                                    value={task3.ubicacionContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
-                                                </div>
-                                                <div className="md:col-span-12">
-                                                  <Input
-                                                    endContent={
-                                                      <MdPeople className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                                                    }
-                                                    label="Comentarios"
-                                                    isRequired
-                                                    type="text"
-                                                    name="comentariosContacto"
-                                                    value={task3.comentariosContacto}
-                                                    placeholder=" "
-                                                    variant="bordered"
-                                                    onChange={handleChange3}
-                                                    disabled={
-                                                      modalMode === "view"
-                                                    }
-                                                  />
-                                                </div>
-
-
                                               </div>
-                                            </div>
-                                          </ModalBody>
-                                          <ModalFooter>
-                                            <Button
-                                              color="danger"
-                                              variant="flat"
-                                              onPress={onClose}
-                                            >
-                                              Cerrar
-                                            </Button>
-                                            <Button
-                                              id="BTN2guardar"
-                                              endContent={<MdSave />}
-                                              color="primary"
-                                              onClick={handleSubmitModal}
-                                            >
-                                              Guardar
-                                            </Button>
-                                          </ModalFooter>
-                                        </>
-                                      )}
-                                    </ModalContent>
-                                  </Modal>
-                                </div>
-                              </div>
-                            </Tab>
+                                            </ModalBody>
+                                            <ModalFooter>
+                                              <Button
+                                                color="danger"
+                                                variant="flat"
+                                                onPress={onClose}
+                                              >
+                                                Cerrar
+                                              </Button>
+                                              <Button
+                                                id="BTN2guardar"
+                                                endContent={<MdSave />}
+                                                color="primary"
+                                                onClick={handleSubmitModal}
+                                              >
+                                                Guardar
+                                              </Button>
+                                            </ModalFooter>
+                                          </>
+                                        )}
+                                      </ModalContent>
+                                    </Modal>
+                                    </div>
+                                    </div>
+                                    </Tab>
                             <Tab key="Addres" title="Direcciones de envio">
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
