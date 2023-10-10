@@ -47,30 +47,15 @@ const ClientList = () => {
     }
   }
   const [data, setData] = useState([]);
-  async function loadTask() {
-    try {
-      const response = await fetch("http://localhost:4000/ListadoClientes");
-      const data = await response.json();
-      if (response.ok) {
-        setData(data);
-        
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  }
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  
 
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [disableCounter, setDisableCounter] = useState(0); 
+  const params = useParams();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
@@ -131,6 +116,67 @@ const ClientList = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+
+  async function loadTask() {
+    try {
+      const response = await fetch("http://localhost:4000/ListadoClientes");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+        
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  useEffect(() => {
+    loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  const handleDisable = async (id) => {
+    const datoDisable = {
+      id: id
+    };
+    console.log(datoDisable);
+    try {
+      const res = await fetch(`http://localhost:4000/ListadoClientesDisabled/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datoDisable),
+      });
+
+      if (res.ok) {
+        toast.warning("Deshabilitando Cliente", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        setDisableCounter((prevCounter) => prevCounter + 1);
+      } else {
+        toast.error("Error al deshabilitar Cliente", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    } catch (error) {
+      toast.error("Error al deshabilitar Cliente", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    } finally {
+      // Después de deshabilitar, vuelva a cargar los datos para reflejar los cambios
+      setIsDataLoading(true);
+      await loadTask();
+      setIsDataLoading(false);
+    }
+  };
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
@@ -226,24 +272,6 @@ const ClientList = () => {
             <p className="text-bold text-small capitalize">{data.actualizado}</p>
           </div>
         );
-        // case "Actions":
-        // return (
-        //   <div className="relative flex justify-center items-center gap-2">
-        //     <Dropdown>
-        //       <DropdownTrigger>
-        //         <Button isIconOnly size="sm" variant="light">
-        //           <TbDotsVertical className="text-default-300" />
-        //         </Button>
-        //       </DropdownTrigger>
-        //       <DropdownMenu>
-        //         <DropdownItem onClick={() => navigate(`/Sellers/${data.id}/ViewSeller`)} >Ver Vendedor</DropdownItem>
-        //         <DropdownItem onClick={() => navigate(`/Sellers/${data.id}/EditSeller`)}>Editar Vendedor</DropdownItem>
-        //         <DropdownItem className="text-danger" color="danger" onClick={() => handleDisable(data.id)}>
-        //           Deshabilitar Vendedor</DropdownItem>
-        //       </DropdownMenu>
-        //     </Dropdown>
-        //   </div>
-        // );
       case "Actions":
         return (
           <div className="relative flex items-center gap-2">
@@ -259,7 +287,7 @@ const ClientList = () => {
             </Tooltip>
             <Tooltip color="danger" content="Deshabilitar Cliente">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <MdDelete />
+                <MdDelete onClick={() => handleDisable(data.id)}/>
               </span>
             </Tooltip>
           </div>

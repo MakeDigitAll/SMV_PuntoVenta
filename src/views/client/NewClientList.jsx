@@ -126,54 +126,57 @@ const NewClient = () => {
 
   const [clientData, setClientData] = useState({
     imagen: "",
-    nombre: "",
     nombreComercial: "",
-    razonSocial: "",
-    contacto: "",
-    rfc: "",
-    telefono: "",
-    whatsapp: "",
     giro: "",
-    numerodecliente: "",
-    vendedor: "",
-    email: "",
-    direccion: "",
+    telefono: "",
+    whatsApp: "",
+    correo: "",
+    contactoPrincipal: "",
+    condicionesPago: "",
+    cuenta: "",
+    vendedorAsignado: "",
+    listaPrecios: "",
+    diasCredito: "",
+    limiteCredito: "",
+    saldoPendiente: "",
+    creditoDisponible: "",
   });
 
   async function loadTask(id) {
-    //
-
     try {
       const response = await fetch(
         `http://localhost:4000/ListadoClientes/${id}`
       );
       const data = await response.json();
-      
       setClientData({
-        nombre: data.nombre,
+        id: data.id,
         nombreComercial: data.nombreComercial,
-        razonSocial: data.razonSocial,
-        contacto: data.contacto,
-        rfc: data.rfc,
-        telefono: data.telefono,
         giro: data.giro,
-        vendedor: data.vendedor,
-        email: data.email,
-        emailConfirm: data.email,
-        direccion: data.direccion,
+        telefono: data.telefono,
+        whatsApp: data.whatsApp,
+        correo: data.email,
+        contactoPrincipal: data.contacto,
+        condicionesPago: data.condicionesPago,
+        cuenta: data.cuenta,
+        vendedorAsignado: data.vendedor,
+        listaPrecios: data.listaPrecios,
+        diasCredito: data.diasCredito,
+        limiteCredito: data.limiteCredito,
+        saldoPendiente: data.saldoPentiente,
+        creditoDisponible: data.creditoDisponible,
       });
       setIdVendedor(id);
       const url = window.location.pathname;
       let arr = url.split("/");
-      
+
       if (arr[3] === "ViewClient") {
         setIsInputDisabled(false);
       }
       if (arr[3] === "ViewClient") {
         setIsInputDisabled(true);
-        // document.getElementById('BTNguardar').style.display = 'none';
-        // document.getElementById('BTNimagen').style.display = 'none';
+        document.getElementById('btnGuardar').style.display = 'none';
         document.getElementById("BTN3").style.display = "none";
+        document.getElementById("ButtonImage").style.display = "none";
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -194,68 +197,24 @@ const NewClient = () => {
   };
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage
-      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
-      : "";
-    if (
-      !clientData.imagen ||
-      !clientData.nombre ||
-      !clientData.nombreComercial ||
-      !clientData.razonSocial ||
-      !clientData.contacto ||
-      !clientData.rfc ||
-      !clientData.telefono ||
-      !clientData.giro ||
-      !clientData.vendedor ||
-      !clientData.email ||
-      !clientData.direccion ||
-      passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" ||
-      emailConfirmValidationState !== "valid"
-    ) {
-      toast.error("Llena todos los campos correctamente", {
-        theme: "colored",
-      });
-    }
-    clientData.password !== clientData.confirmPassword ||
-    clientData.email !== clientData.emailConfirm
-      ? toast.error("Las contraseñas o correos no coinciden", {
-          theme: "colored",
-        })
-      : "";
-    const errors = {};
-    !clientData.nombre ? (errors.nombre = "Llena este campo") : "";
-    !clientData.nombreComercial ? (errors.apellido = "Llena este campo") : "";
-    !clientData.razonSocial
-      ? (errors.perfilSeguridad = "Llena este campo")
-      : "";
-    !clientData.contacto ? (errors.vendedor = "Llena este campo") : "";
-    !clientData.rfc ? (errors.direccion = "Llena este campo") : "";
-    !clientData.telefono ? (errors.colonia = "Llena este campo") : "";
-    !clientData.giro ? (errors.status = "Llena este campo") : "";
-    !clientData.vendedor ? (errors.ciudad = "Llena este campo") : "";
-    !clientData.email ? (errors.estado = "Llena este campo") : "";
-    !clientData.direccion ? (errors.codigoPostal = "Llena este campo") : "";
-    !clientData.imagen ? (errors.imagen = "Llena este campo") : "";
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      return;
-    }
     setValidationErrors({});
 
     const formData = new FormData();
     const document = JSON.stringify({
-      nombre: clientData.nombre,
       nombreComercial: clientData.nombreComercial,
-      razonSocial: clientData.razonSocial,
-      contacto: clientData.contacto,
-      rfc: clientData.rfc,
-      telefono: clientData.telefono,
-      numerodecliente: clientData.numerodecliente,
-      email: clientData.email,
-      vendedor: clientData.vendedor,
       giro: clientData.giro,
-      direccion: clientData.direccion,
+      telefono: clientData.telefono,
+      whatsApp: clientData.whatsApp,
+      correo: clientData.correo,
+      contactoPrincipal: clientData.contactoPrincipal,
+      condicionesPago: clientData.condicionesPago,
+      cuenta: clientData.cuenta,
+      vendedorAsignado: clientData.vendedorAsignado,
+      listaPrecios: clientData.listaPrecios,
+      diasCredito: clientData.diasCredito,
+      limiteCredito: clientData.limiteCredito,
+      saldoPendiente: clientData.saldoPendiente,
+      creditoDisponible: clientData.creditoDisponible,
     });
 
     formData.append("document", document);
@@ -270,155 +229,80 @@ const NewClient = () => {
           },
         }
       );
-      if (response.status == 200 ? true : false) {
-        toast.success("Usuario creado correctamente", { theme: "colored" });
-        navigate("/Settings/Users");
-      }
-      // if (result) {
-      //     const formData2 = new FormData();
-      //     const document2 = JSON.stringify({
-      //         idCliente: result.data.id,
-      //         formaPago: clientData.formaPago,
-      //         metodoPago: clientData.metodoPago,
-      //         cfdi: clientData.cfdi,
-      //         condicionesPago: clientData.condicionesPago,
-      //         diasCredito: clientData.diasCredito,
-      //         limiteCredito: clientData.limiteCredito,
-      //         saldoPendiente: clientData.saldoPendiente,
-      //         creditoDisponible: clientData.creditoDisponible,
-      //     });
-      //     formData2.append("document2", document2);
-      //     const response = await http.post(
-      //         `http://localhost:4000/ClientesFacturacion`,
-      //         formData2,
-      //         {
-      //             headers: {
-      //                 "Content-Type": "multipart/form-data",
-      //             },
-      //         }
-      //     );
-      //     
-      //     if (response.status == 200 ? true : false) {
-      //         toast.success("Usuario creado correctamente", { theme: "colored" });
-      //         //navigate("/Settings/Users");
-      //     }
+      if (result.status == 200) {
+        toast.success("Cliente creado correctamente", { theme: "colored" });
+      };
+      navigate("/Customers");
 
-      //     if (response) {
-      //         const formData3 = new FormData();
-      //         const document3 = JSON.stringify({
-      //             idCliente: response.data.id,
-      //             nombreContacto: clientData.nombreContacto,
-      //             apellidoContacto: clientData.apellidoContacto,
-      //             emailContacto: clientData.emailContacto,
-      //             contacto2: clientData.contacto2,
-      //             comentario: clientData.comentario,
-      //             direccionContacto: clientData.direccionContacto,
-      //         });
-      //         formData3.append("document3", document3);
-      //         const res = await http.post(
-      //             `http://localhost:4000/ClientesContactos`,
-      //             formData3,
-      //             {
-      //                 headers: {
-      //                     "Content-Type": "multipart/form-data",
-      //                 },
-      //             }
-      //         );
-      //         
-      //         if (res.status == 200 ? true : false) {
-      //             toast.success("Usuario creado correctamente", { theme: "colored" });
-      //             //navigate("/Settings/Users");
-      //         }
-
-      //         if (res) {
-      //             const formData4 = new FormData();
-      //             const document4 = JSON.stringify({
-      //                 idCliente: res.data.id,
-      //                 colonia: clientData.colonia,
-      //                 ciudad: clientData.ciudad,
-      //                 estado: clientData.estado,
-      //                 codigoPostal: clientData.codigoPostal,
-      //             });
-      //             formData4.append("document4", document4);
-      //             const respuesta = await http.post(
-      //                 `http://localhost:4000/ClientesDireccionEnvio`,
-      //                 formData4,
-      //                 {
-      //                     headers: {
-      //                         "Content-Type": "multipart/form-data",
-      //                     },
-      //                 }
-      //             );
-      //             
-      //             if (respuesta.status == 200 ? true : false) {
-      //                 toast.success("Usuario creado correctamente", { theme: "colored" });
-      //                 //navigate("/Settings/Users");
-      //             }
-      //             if (respuesta) {
-      //                 const formData5 = new FormData();
-      //                 const document5 = JSON.stringify({
-      //                     idCliente: respuesta.data.id,
-      //                     password: clientData.password,
-      //                     status: clientData.status,
-      //                     validacion: clientData.valitacion,
-      //                 });
-      //                 formData5.append("document5", document5);
-      //                 const resultado = await http.post(
-      //                     `http://localhost:4000/ClientesAccesoWeb`,
-      //                     formData5,
-      //                     {
-      //                         headers: {
-      //                             "Content-Type": "multipart/form-data",
-      //                         },
-      //                     }
-      //                 );
-      //                 
-      //                 if (resultado.status == 200 ? true : false) {
-      //                     toast.success("Usuario creado correctamente", { theme: "colored" });
-      //                     //navigate("/Settings/Users");
-      //                 }
-      //                 if (resultado); {
-      //                     const formData6 = new FormData();
-      //                     const document6 = JSON.stringify({
-      //                         idCliente: resultado.data.id,
-      //                         fecha: clientData.fecha,
-      //                         tipo: clientData.tipo,
-      //                         detalle: clientData.detalle,
-      //                         abono: clientData.abono,
-      //                         tc: clientData.tc,
-      //                         saldo: clientData.saldo
-      //                     });
-      //                     formData5.append("document6", document6);
-      //                     const resultado = await http.post(
-      //                         `http://localhost:4000/ClientesEstadoCuenta`,
-      //                         formData6,
-      //                         {
-      //                             headers: {
-      //                                 "Content-Type": "multipart/form-data",
-      //                             },
-      //                         }
-      //                     );
-      //                     
-      //                     if (resultado.status == 200 ? true : false) {
-      //                         toast.success("Usuario creado correctamente", { theme: "colored" });
-      //                         navigate("/Settings/Users");
-      //                     }
-      //                 }
-      //             }
-      //         }
-      //     }
-      // }
     } catch (error) {
-      null;
+      toast.error("Error al guardar Cliente", {
+        position: "bottom-right",
+        theme: "colored",
+      });
     }
   }
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-  const validationState = useMemo(() => {
-    if (clientData.email === "") return undefined;
 
-    return validateEmail(clientData.email) ? "valid" : "invalid";
-  }, [clientData.email]);
+  async function handleEditing(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    const document = JSON.stringify({
+      nombreComercial: clientData.nombreComercial,
+      giro: clientData.giro,
+      telefono: clientData.telefono,
+      whatsApp: clientData.whatsApp,
+      correo: clientData.correo,
+      contactoPrincipal: clientData.contactoPrincipal,
+      condicionesPago: clientData.condicionesPago,
+      cuenta: clientData.cuenta,
+      vendedorAsignado: clientData.vendedorAsignado,
+      listaPrecios: clientData.listaPrecios,
+      diasCredito: clientData.diasCredito,
+      limiteCredito: clientData.limiteCredito,
+      saldoPendiente: clientData.saldoPendiente,
+      creditoDisponible: clientData.creditoDisponible,
+    });
+
+    formData.append("document", document);
+    formData.append("image", selectedImage);
+    try {
+      const result = await http.put(
+        `http://localhost:4000/ListadoClientesEditing/${params.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (result.status == 200) {
+        toast.success("Cliente Editado Correctamente", { theme: "colored" });
+      };
+      navigate("/Customers");
+
+    } catch (error) {
+      toast.error("Error al Editar Cliente", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+      console.log(error);
+    }
+  }
+
+  async function handleFormSubmit(e){
+    e.preventDefault();
+
+    if(params.id){
+      console.log(params.id);
+      console.log("quiero Editar");
+      await handleEditing(e);
+    } else {
+      console.log("quiero crear uno nuevo");
+      await handleSubmit(e);
+    }
+  }
+
+
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
   const estadosDeMexico = [
@@ -642,7 +526,7 @@ const NewClient = () => {
                   </Typography>
                 </Breadcrumbs>
               </div>
-              <form onChange={handleChange} onSubmit={handleSubmit}>
+              <form onChange={handleChange} onSubmit={handleFormSubmit}>
                 <Spacer y={6} />
                 {/* <div className="bg-white rounded shadow-2xl px-4 md:p-8 mb-6"></div> */}
                 <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
@@ -686,12 +570,12 @@ const NewClient = () => {
                           name="imagen"
                         />
                         <Button
+                          id="ButtonImage"
                           autoFocus
                           size="auto"
                           color="success"
                           endContent={<MdCamera />}
                           onClick={handleFileButtonClick}
-                          id="button-file"
                         >
                           Agregar foto de perfil
                         </Button>
@@ -703,18 +587,15 @@ const NewClient = () => {
                             <div style={{ paddingLeft: "90px" }}>
                               <Input
                                 id="numerodecliente"
-                                value={clientData.numerodecliente}
+                                value={clientData.id}
                                 onChange={handleChange}
+                                disabled={true}
                                 size={"sm"}
-                                type="number"
                                 label="Numero de cliente"
                                 name="numerodecliente"
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                error={validationErrors.numerodecliente !== ""}
-                                errorMessage={validationErrors.numerodecliente}
-                                isDisabled={status ? true : false}
                               />
                             </div>
                             <div style={{ paddingInline: "140px" }}></div>
@@ -741,34 +622,27 @@ const NewClient = () => {
                                     id="nombreComercial"
                                     disabled={isInputDisabled}
                                     onValueChange={handleChange}
+                                    value={clientData.nombreComercial}
                                     size={"sm"}
                                     label="Nombre Comercial"
                                     name="nombreComercial"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.nombre !== ""}
-                                    errorMessage={validationErrors.nombre}
                                   />
                                 </div>
                                 <div className="md:col-span-3">
                                   <Input
                                     size={"sm"}
                                     disabled={isInputDisabled}
+                                    onChange={handleChange}
+                                    value={clientData.giro}
                                     label="Giro"
                                     id="giro"
-                                    isDisabled={status ? true : false}
                                     name="giro"
-                                    onChange={handleChange}
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={
-                                      validationErrors.nombreComercial !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.nombreComercial
-                                    }
                                   />
                                 </div>
 
@@ -777,6 +651,7 @@ const NewClient = () => {
                                     id="telefono"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.telefono}
                                     size={"sm"}
                                     label="Telefono"
                                     name="telefono"
@@ -787,12 +662,13 @@ const NewClient = () => {
                                 </div>
                                 <div className="md:col-span-4">
                                   <Input
-                                    id="whatsapp"
+                                    id="whatsApp"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.whatsApp}
                                     size={"sm"}
                                     label="WhatsApp"
-                                    name="whatsapp"
+                                    name="whatsApp"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
@@ -803,19 +679,21 @@ const NewClient = () => {
                                     id="correo"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.correo}
                                     size={"sm"}
-                                    label="Correo Elect"
-                                    name="rfc"
+                                    label="Correo Electronico"
+                                    name="correo"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
                                   />
                                 </div>
-                                <div className="md:col-span-3">
+                                <div className="md:col-span-4">
                                   <Input
                                     id="contactoPrincipal"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.contactoPrincipal}
                                     size={"sm"}
                                     label="Contacto Principal"
                                     name="contactoPrincipal"
@@ -824,108 +702,116 @@ const NewClient = () => {
                                     variant="faded"
                                   />
                                 </div>
-                                <div className="md:col-span-3">
+                                <div className="md:col-span-4">
                                   <Input
                                     id="condicionesPago"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.condicionesPago}
                                     size={"sm"}
-                                    type="number"
                                     label="Condiciones de Pago"
                                     name="condicionesPago"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.giro !== ""}
-                                    errorMessage={validationErrors.giro}
                                   ></Input>
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
-                                    id="vendedor"
+                                    id="cuenta"
                                     disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.vendedor}
+                                    value={clientData.cuenta}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    label="Vendedor"
-                                    name="vendedor"
+                                    label="Cuenta"
+                                    name="cuenta"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.vendedor !== ""}
-                                    errorMessage={validationErrors.vendedor}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="email"
+                                    id="vendedorAsignado"
                                     disabled={isInputDisabled}
-                                    value={clientData.email}
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
+                                    value={clientData.vendedorAsignado}
                                     size={"sm"}
-                                    type="email"
-                                    label="Email"
-                                    name="email"
+                                    label="Vendedor Asignado"
+                                    name="vendedorAsignado"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      validationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      validationState === "invalid" &&
-                                      "Ingresa un correo valido"
-                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="emailConfirm"
+                                    id="listaPrecios"
                                     disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.emailConfirm}
+                                    value={clientData.listaPrecios}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="email"
-                                    label="Confirmar email"
-                                    name="emailConfirm"
+                                    label="Lista de Precios"
+                                    name="listaPrecios"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      emailConfirmValidationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      emailConfirmValidationState ===
-                                        "invalid" &&
-                                      "El correo de confirmación debe coincidir con el correo"
-                                    }
-                                    validationState={
-                                      emailConfirmValidationState
-                                    }
                                   />
                                 </div>
-                                <div className="md:col-span-12">
+                                <div className="md:col-span-6">
                                   <Input
-                                    id="direccion"
+                                    id="diasCredito"
                                     disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.direccion}
+                                    value={clientData.diasCredito}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    label="Dirección"
-                                    name="direccion"
+                                    label="Días de Crédito"
+                                    name="diasCredito"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.direccion !== ""}
-                                    errorMessage={validationErrors.direccion}
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="limiteCredito"
+                                    disabled={isInputDisabled}
+                                    value={clientData.limiteCredito}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Limite de Crédito M.N"
+                                    name="limiteCredito"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="saldoPendiente"
+                                    disabled={isInputDisabled}
+                                    value={clientData.saldoPendiente}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Saldo Pendiente M.N"
+                                    name="saldoPendiente"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="creditoDisponible"
+                                    disabled={isInputDisabled}
+                                    value={clientData.creditoDisponible}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Crédito Disponible M.N"
+                                    name="creditoDisponible"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
                                   />
                                 </div>
                               </div>
@@ -1350,10 +1236,10 @@ const NewClient = () => {
                                                     placeholder=" "
                                                     type="text"
                                                     variant="bordered"
-                                                    // onChange={handleChange}
-                                                    // disabled={
-                                                    //   modalMode === "view"
-                                                    // } // Deshabilitar input en modo "ver"
+                                                  // onChange={handleChange}
+                                                  // disabled={
+                                                  //   modalMode === "view"
+                                                  // } // Deshabilitar input en modo "ver"
                                                   />
                                                 </div>
                                                 <div className="md:col-span-6">
@@ -1562,13 +1448,13 @@ const NewClient = () => {
                                     variant="faded"
                                     color={
                                       confirmPasswordValidationState ===
-                                      "invalid"
+                                        "invalid"
                                         ? "danger"
                                         : "default"
                                     }
                                     errorMessage={
                                       confirmPasswordValidationState ===
-                                        "invalid" &&
+                                      "invalid" &&
                                       "La contraseña de confirmación debe coincidir con la contraseña"
                                     }
                                     validationState={
@@ -1867,6 +1753,7 @@ const NewClient = () => {
                           </Button>
                         )}{" "}
                         <Button
+                          id="btnGuardar"
                           className="min-w-[200px]"
                           color="success"
                           type="submit"
