@@ -58,6 +58,12 @@ const Quote = () => {
     dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
+    pedido: "",
+    cliente: "",
+    vendedor: "",
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
     nombre: "",
     apellido: "",
     email: "",
@@ -75,6 +81,17 @@ const Quote = () => {
     vendedor: "",
   });
 
+
+  const [dataQuote, setDataQuote] = useState({
+    pedido: "",
+    cliente: "",
+    vendedor: "",
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
+    fecha: format(new Date(), "yyyy-MM-dd"),
+  });
+
   const datosCliente = () => {
     async function loadDatosCliente() {
       try {
@@ -82,10 +99,10 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data)
-          
+
         }
       } catch (err) {
-        
+
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -105,23 +122,28 @@ const Quote = () => {
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
+
+  const [isChecked, setIsChecked] = useState(false);
+  function handleCheckboxChange() {
+    setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
+    console.log(isChecked);
+  }
+
+
+
   async function handleSubmit(e) {
     e.preventDefault();
     !selectedImage
       ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
       : "";
     if (
-      !user.imagen ||
-      !user.nombre ||
-      !user.apellido ||
-      !user.password ||
-      !user.direccion ||
-      !user.colonia ||
-      !user.estado ||
-      !user.codigoPostal ||
-      !user.telefonoContacto ||
-      !user.telefonoCelular ||
-      !user.perfilSeguridad ||
+      !dataQuote.imagen ||
+      !dataQuote.pedido ||
+      !dataQuote.cliente ||
+      !dataQuote.vendedor ||
+      !dataQuote.recurrenciaa ||
+      !dataQuote.origen ||
+      !dataQuote.monto ||
       passwordValidationState !== "valid" ||
       confirmPasswordValidationState !== "valid" ||
       emailConfirmValidationState !== "valid"
@@ -130,29 +152,15 @@ const Quote = () => {
         theme: "colored",
       });
     }
-    user.password !== user.confirmPassword || user.email !== user.emailConfirm
-      ? toast.error("Las contraseñas o correos no coinciden", {
-        theme: "colored",
-      })
-      : "";
+
     const errors = {};
-    !user.nombre ? (errors.nombre = "Llena este campo") : "";
-    !user.apellido ? (errors.apellido = "Llena este campo") : "";
-    !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
-    !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
-    !user.direccion ? (errors.direccion = "Llena este campo") : "";
-    !user.colonia ? (errors.colonia = "Llena este campo") : "";
-    !user.status ? (errors.status = "Llena este campo") : "";
-    !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
-    !user.estado ? (errors.estado = "Llena este campo") : "";
-    !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
-    !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
-    !user.telefonoContacto
-      ? (errors.telefonoContacto = "Llena este campo")
-      : "";
-    !user.email ? (errors.email = "Llena este campo") : "";
-    !user.password ? (errors.password = "Llena este campo") : "";
-    !user.imagen ? (errors.imagen = "Llena este campo") : "";
+    !dataQuote.pedido ? (errors.pedido = "Llena este campo") : "";
+    !dataQuote.cliente ? (errors.cliente = "Llena este campo") : "";
+    !dataQuote.vendedor ? (errors.vendedor = "Llena este campo") : "";
+    !dataQuote.recurrenciaa ? (errors.recurrenciaa = "Llena este campo") : "";
+    !dataQuote.origen ? (errors.origen = "Llena este campo") : "";
+    !dataQuote.monto ? (errors.monto = "Llena este campo") : "";
+    !dataQuote.imagen ? (errors.imagen = "Llena este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -161,19 +169,20 @@ const Quote = () => {
 
     const formData = new FormData();
     const document = JSON.stringify({
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      password: user.password,
-      perfilSeguridad: user.perfilSeguridad,
-      vendedor: user.vendedor,
+      pedido: dataQuote.pedido,
+      cliente: dataQuote.cliente,
+      vendedor: dataQuote.vendedor,
+      recurrenciaa: isChecked ? 1 : 0,
+      origen: dataQuote.origen,
+      monto: dataQuote.monto,
     });
+    console.log(document.recurrenciaa);
 
     formData.append("document", document);
     formData.append("image", selectedImage);
     try {
       const result = await http.post(
-        `http://localhost:4000/api/createuser`,
+        `http://localhost:4000/Cotizaciones`,
         formData,
         {
           headers: {
@@ -181,37 +190,18 @@ const Quote = () => {
           },
         }
       );
-      if (result) {
-        const formData2 = new FormData();
-        const document2 = JSON.stringify({
-          idUsuario: result.data.id,
-          direccion: user.direccion,
-          colonia: user.colonia,
-          status: user.status,
-          ciudad: user.ciudad,
-          estado: user.estado,
-          codigoPostal: user.codigoPostal,
-          telefonoContacto: user.telefonoContacto,
-          telefonoCelular: user.telefonoCelular,
-        });
-        formData2.append("document2", document2);
-        const response = await http.post(
-          `http://localhost:4000/api/createUserData`,
-          formData2,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (response.status == 200 ? true : false) {
-          toast.success("Usuario creado correctamente", { theme: "colored" });
-          navigate("/Settings/Users");
-        }
-      }
-    } catch (error) { }
+      if (response.status == 200) {
+        toast.success("Cotización Creada Correctamente", { theme: "colored" });
+      };
+      navigate("/Sales/Quotes");
+    } catch (error) {
+      toast.error("Error al guardar Cotización", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
   }
+
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
   const validationState = useMemo(() => {
@@ -254,10 +244,10 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data)
-          
+
         }
       } catch (err) {
-        
+
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -301,9 +291,9 @@ const Quote = () => {
   useEffect(() => {
     loadCMarcas();
   }, []);
-  
-  const [datos,setData]=useState([]);
-  const loadTask= async()=>{
+
+  const [datos, setData] = useState([]);
+  const loadTask = async () => {
     try {
       const response = await fetch("http://localhost:4000/Productos");
       const data = await response.json();
@@ -322,8 +312,8 @@ const Quote = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [datos2,setData2]=useState([]);
-  const loadTask2= async()=>{
+  const [datos2, setData2] = useState([]);
+  const loadTask2 = async () => {
     try {
       const response = await fetch("http://localhost:4000/ProductosCotizados");
       const data = await response.json();
@@ -344,7 +334,7 @@ const Quote = () => {
 
   const [filasAgregadas, setFilasAgregadas] = useState([]);
   const [cantidadesUsuario, setCantidadesUsuario] = useState([]);
-  function adaptarDatos(data,cantidad) {
+  function adaptarDatos(data, cantidad) {
     return {
       codigo: data.codigoEmpresa,
       nombre: data.nombre,
@@ -356,7 +346,7 @@ const Quote = () => {
       total: data.total,
     };
   }
-  const agregarFila = (data,index) => {
+  const agregarFila = (data, index) => {
     const cantidad = parseFloat(cantidadesUsuario[index]);
 
     // Verifica si la cantidad es un número válido
@@ -376,21 +366,21 @@ const Quote = () => {
     let subtotalTotal = 0;
     let impuestosTotal = 0;
     let total = 0;
-  
+
     for (const fila of filas) {
       const neto = fila.cantidad * fila.precioUnitario;
       const descuentoValor = (neto * fila.descuento) / 100;
       const subtotal = neto - descuentoValor;
       const impuestos = subtotal * 0.10; // Cambia el valor del impuesto según tu necesidad
-  
+
       netoTotal += neto;
       descuentoTotal += descuentoValor;
       subtotalTotal += subtotal;
       impuestosTotal += impuestos;
     }
-  
+
     total = subtotalTotal + impuestosTotal;
-  
+
     return {
       netoTotal,
       descuentoTotal,
@@ -399,7 +389,7 @@ const Quote = () => {
       total,
     };
   }
-  
+
   const calcularTotales = () => {
     const tablaResumen = document.getElementById('tablaCalculos');
     const totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
@@ -510,20 +500,20 @@ const Quote = () => {
                             <div className="md:col-span-6"></div>
                             <div className="md:col-span-12">
                               <Input
-                                id="nombre"
-                                value={user.nombre}
+                                id="cliente"
+                                value={dataQuote.cliente}
                                 onValueChange={handleChange}
                                 onChange={handleFiltroChange}
                                 size="sm"
                                 isRequired
                                 type="text"
                                 label="Nombre"
-                                name="nombre"
+                                name="cliente"
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                error={validationErrors.nombre !== ""}
-                                errorMessage={validationErrors.nombre}
+                                error={validationErrors.cliente !== ""}
+                                errorMessage={validationErrors.cliente}
                                 endContent={
                                   <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
                                 }
@@ -533,33 +523,33 @@ const Quote = () => {
                               <Input
                                 size={"sm"}
                                 type="text"
-                                label="Vendedor"
+                                label="vendedor"
                                 id="apellido"
                                 isRequired
                                 isDisabled
-                                name="apellido"
-                                value={user.apellido}
+                                name="vendedor"
+                                value={dataQuote.vendedor}
                                 onChange={handleChange}
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                error={validationErrors.apellido !== ""}
-                                errorMessage={validationErrors.apellido}
+                                error={validationErrors.vendedor !== ""}
+                                errorMessage={validationErrors.vendedor}
                                 endContent={<MdPerson />}
                               />
                             </div>
 
                             <div className="md:col-span-4">
                               <Input
-                                id="dateQuote"
+                                id="fecha"
                                 isRequired
-                                value={user.dateQuote}
+                                value={dataQuote.fecha}
                                 onChange={handleChange}
                                 size={"sm"}
                                 isDisabled
                                 type="date"
                                 label="Fecha de la Cotización"
-                                name="dateQuote"
+                                name="fecha"
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
@@ -576,7 +566,13 @@ const Quote = () => {
                               />
                             </div>
                             <div className="md:col-span-6">
-                              <Checkbox isRequired>Es recurrente</Checkbox>
+                              <Checkbox
+                                isRequired
+                                isChecked={isChecked}
+                                onChange={handleCheckboxChange}
+                              >
+                                Es recurrente
+                              </Checkbox>
                             </div>
                           </div>
                         </div>
@@ -623,6 +619,7 @@ const Quote = () => {
                                 placeholder="Seleccione"
                                 size="sm"
                                 isRequired
+                                value={dataQuote.origen}
                               >
                                 {envios.map((envios) => (
                                   <SelectItem key={envios} value={envios}>
@@ -888,7 +885,7 @@ const Quote = () => {
                                 <TableColumn>Acciones</TableColumn>
                               </TableHeader>
                               <TableBody>
-                                {datos.map((data,index) => (
+                                {datos.map((data, index) => (
                                   <TableRow key={data.id}>
                                     <TableCell>{data.codigoEmpresa}</TableCell>
                                     <TableCell>{data.nombre}</TableCell>
@@ -911,7 +908,7 @@ const Quote = () => {
                                     <TableCell>
                                       <Button
                                         size="sm"
-                                        onClick={() => agregarFila(data,index)}
+                                        onClick={() => agregarFila(data, index)}
                                       >
                                         +
                                       </Button>

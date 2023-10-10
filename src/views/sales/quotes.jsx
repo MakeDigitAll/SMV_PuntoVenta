@@ -121,7 +121,9 @@ const Quotes = () => {
   const [selectedCliente, setSelectedCliente] = useState("");
   const [selectedVendedor, setSelectedVendedor] = useState("");
   const [selectedOrigen, setSelectedOrigen] = useState("");
-  const [modalidad, setModalidad] = useState("");
+  const [modalidad, setModalidad] = useState("");  
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [disableCounter, setDisableCounter] = useState(0); 
 
   const handleClienteChange = (event) => {
     setSelectedCliente(event.target.value);
@@ -218,8 +220,48 @@ const Quotes = () => {
       Nueva: "primary",
       Ganada: "success",
       Perdida: "warning",
-      Cancelada: "error",
+      Cancelada: "danger",
       Vencida: "danger",
+    };
+
+    const handleDisable = async (id) => {
+      const datoDisable = {
+        id: id
+      };
+      console.log(datoDisable);
+      try {
+        const res = await fetch(`http://localhost:4000/CotizacionesDisable/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datoDisable),
+        });
+  
+        if (res.ok) {
+          toast.warning("Deshabilitando Cotización ", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setDisableCounter((prevCounter) => prevCounter + 1);
+        } else {
+          toast.error("Error al deshabilitar Cotización", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      } catch (error) {
+        toast.error("Error al deshabilitar Cotización", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+
+      } finally {
+        // Después de deshabilitar, vuelva a cargar los datos para reflejar los cambios
+        setIsDataLoading(true);
+        await loadTask();
+        setIsDataLoading(false);
+      }
     };
 
     switch (columnKey) {
@@ -337,9 +379,9 @@ const Quotes = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.id}/ViewQuote`)}>Ver Cotización</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.id}/EditQuote`)}>Editar Ccotización</DropdownItem>
+                <DropdownItem color="danger" className="text-danger" onPress={() => handleDisable(data.id)}>Deshabilitar Cotización</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>

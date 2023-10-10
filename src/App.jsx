@@ -311,6 +311,14 @@ const App = () => {
           element: <Quote />,
         },
         {
+          path: "/Sales/Quotes/:id/ViewQuote",
+          element: <Quote />
+        },
+        {
+          path: "/Sales/Quotes/:id/EditQuote",
+          element: <Quote />
+        },
+        {
           path: "/Sales/fillOrder",
           element: <FillOrder />,
         },
