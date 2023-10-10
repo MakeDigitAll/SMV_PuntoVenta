@@ -123,54 +123,57 @@ const NewClient = () => {
 
   const [clientData, setClientData] = useState({
     imagen: "",
-    nombre: "",
     nombreComercial: "",
-    razonSocial: "",
-    contacto: "",
-    rfc: "",
-    telefono: "",
-    whatsapp: "",
     giro: "",
-    numerodecliente: "",
-    vendedor: "",
-    email: "",
-    direccion: "",
+    telefono: "",
+    whatsApp: "",
+    correo: "",
+    contactoPrincipal: "",
+    condicionesPago: "",
+    cuenta: "",
+    vendedorAsignado: "",
+    listaPrecios: "",
+    diasCredito: "",
+    limiteCredito: "",
+    saldoPendiente: "",
+    creditoDisponible: "",
   });
 
   async function loadTask(id) {
-    //
-
     try {
       const response = await fetch(
         `http://localhost:4000/ListadoClientes/${id}`
       );
       const data = await response.json();
-      
       setClientData({
-        nombre: data.nombre,
+        id: data.id,
         nombreComercial: data.nombreComercial,
-        razonSocial: data.razonSocial,
-        contacto: data.contacto,
-        rfc: data.rfc,
-        telefono: data.telefono,
         giro: data.giro,
-        vendedor: data.vendedor,
-        email: data.email,
-        emailConfirm: data.email,
-        direccion: data.direccion,
+        telefono: data.telefono,
+        whatsApp: data.whatsApp,
+        correo: data.email,
+        contactoPrincipal: data.contacto,
+        condicionesPago: data.condicionesPago,
+        cuenta: data.cuenta,
+        vendedorAsignado: data.vendedor,
+        listaPrecios: data.listaPrecios,
+        diasCredito: data.diasCredito,
+        limiteCredito: data.limiteCredito,
+        saldoPendiente: data.saldoPentiente,
+        creditoDisponible: data.creditoDisponible,
       });
       setIdVendedor(id);
       const url = window.location.pathname;
       let arr = url.split("/");
-      
+
       if (arr[3] === "ViewClient") {
         setIsInputDisabled(false);
       }
       if (arr[3] === "ViewClient") {
         setIsInputDisabled(true);
-        // document.getElementById('BTNguardar').style.display = 'none';
-        // document.getElementById('BTNimagen').style.display = 'none';
+        document.getElementById('btnGuardar').style.display = 'none';
         document.getElementById("BTN3").style.display = "none";
+        document.getElementById("ButtonImage").style.display = "none";
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -191,68 +194,24 @@ const NewClient = () => {
   };
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage
-      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
-      : "";
-    if (
-      !clientData.imagen ||
-      !clientData.nombre ||
-      !clientData.nombreComercial ||
-      !clientData.razonSocial ||
-      !clientData.contacto ||
-      !clientData.rfc ||
-      !clientData.telefono ||
-      !clientData.giro ||
-      !clientData.vendedor ||
-      !clientData.email ||
-      !clientData.direccion ||
-      passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" ||
-      emailConfirmValidationState !== "valid"
-    ) {
-      toast.error("Llena todos los campos correctamente", {
-        theme: "colored",
-      });
-    }
-    clientData.password !== clientData.confirmPassword ||
-    clientData.email !== clientData.emailConfirm
-      ? toast.error("Las contraseñas o correos no coinciden", {
-          theme: "colored",
-        })
-      : "";
-    const errors = {};
-    !clientData.nombre ? (errors.nombre = "Llena este campo") : "";
-    !clientData.nombreComercial ? (errors.apellido = "Llena este campo") : "";
-    !clientData.razonSocial
-      ? (errors.perfilSeguridad = "Llena este campo")
-      : "";
-    !clientData.contacto ? (errors.vendedor = "Llena este campo") : "";
-    !clientData.rfc ? (errors.direccion = "Llena este campo") : "";
-    !clientData.telefono ? (errors.colonia = "Llena este campo") : "";
-    !clientData.giro ? (errors.status = "Llena este campo") : "";
-    !clientData.vendedor ? (errors.ciudad = "Llena este campo") : "";
-    !clientData.email ? (errors.estado = "Llena este campo") : "";
-    !clientData.direccion ? (errors.codigoPostal = "Llena este campo") : "";
-    !clientData.imagen ? (errors.imagen = "Llena este campo") : "";
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      return;
-    }
     setValidationErrors({});
 
     const formData = new FormData();
     const document = JSON.stringify({
-      nombre: clientData.nombre,
       nombreComercial: clientData.nombreComercial,
-      razonSocial: clientData.razonSocial,
-      contacto: clientData.contacto,
-      rfc: clientData.rfc,
-      telefono: clientData.telefono,
-      numerodecliente: clientData.numerodecliente,
-      email: clientData.email,
-      vendedor: clientData.vendedor,
       giro: clientData.giro,
-      direccion: clientData.direccion,
+      telefono: clientData.telefono,
+      whatsApp: clientData.whatsApp,
+      correo: clientData.correo,
+      contactoPrincipal: clientData.contactoPrincipal,
+      condicionesPago: clientData.condicionesPago,
+      cuenta: clientData.cuenta,
+      vendedorAsignado: clientData.vendedorAsignado,
+      listaPrecios: clientData.listaPrecios,
+      diasCredito: clientData.diasCredito,
+      limiteCredito: clientData.limiteCredito,
+      saldoPendiente: clientData.saldoPendiente,
+      creditoDisponible: clientData.creditoDisponible,
     });
 
     formData.append("document", document);
@@ -267,155 +226,80 @@ const NewClient = () => {
           },
         }
       );
-      if (response.status == 200 ? true : false) {
-        toast.success("Usuario creado correctamente", { theme: "colored" });
-        navigate("/Settings/Users");
-      }
-      // if (result) {
-      //     const formData2 = new FormData();
-      //     const document2 = JSON.stringify({
-      //         idCliente: result.data.id,
-      //         formaPago: clientData.formaPago,
-      //         metodoPago: clientData.metodoPago,
-      //         cfdi: clientData.cfdi,
-      //         condicionesPago: clientData.condicionesPago,
-      //         diasCredito: clientData.diasCredito,
-      //         limiteCredito: clientData.limiteCredito,
-      //         saldoPendiente: clientData.saldoPendiente,
-      //         creditoDisponible: clientData.creditoDisponible,
-      //     });
-      //     formData2.append("document2", document2);
-      //     const response = await http.post(
-      //         `http://localhost:4000/ClientesFacturacion`,
-      //         formData2,
-      //         {
-      //             headers: {
-      //                 "Content-Type": "multipart/form-data",
-      //             },
-      //         }
-      //     );
-      //     
-      //     if (response.status == 200 ? true : false) {
-      //         toast.success("Usuario creado correctamente", { theme: "colored" });
-      //         //navigate("/Settings/Users");
-      //     }
+      if (result.status == 200) {
+        toast.success("Cliente creado correctamente", { theme: "colored" });
+      };
+      navigate("/Customers");
 
-      //     if (response) {
-      //         const formData3 = new FormData();
-      //         const document3 = JSON.stringify({
-      //             idCliente: response.data.id,
-      //             nombreContacto: clientData.nombreContacto,
-      //             apellidoContacto: clientData.apellidoContacto,
-      //             emailContacto: clientData.emailContacto,
-      //             contacto2: clientData.contacto2,
-      //             comentario: clientData.comentario,
-      //             direccionContacto: clientData.direccionContacto,
-      //         });
-      //         formData3.append("document3", document3);
-      //         const res = await http.post(
-      //             `http://localhost:4000/ClientesContactos`,
-      //             formData3,
-      //             {
-      //                 headers: {
-      //                     "Content-Type": "multipart/form-data",
-      //                 },
-      //             }
-      //         );
-      //         
-      //         if (res.status == 200 ? true : false) {
-      //             toast.success("Usuario creado correctamente", { theme: "colored" });
-      //             //navigate("/Settings/Users");
-      //         }
-
-      //         if (res) {
-      //             const formData4 = new FormData();
-      //             const document4 = JSON.stringify({
-      //                 idCliente: res.data.id,
-      //                 colonia: clientData.colonia,
-      //                 ciudad: clientData.ciudad,
-      //                 estado: clientData.estado,
-      //                 codigoPostal: clientData.codigoPostal,
-      //             });
-      //             formData4.append("document4", document4);
-      //             const respuesta = await http.post(
-      //                 `http://localhost:4000/ClientesDireccionEnvio`,
-      //                 formData4,
-      //                 {
-      //                     headers: {
-      //                         "Content-Type": "multipart/form-data",
-      //                     },
-      //                 }
-      //             );
-      //             
-      //             if (respuesta.status == 200 ? true : false) {
-      //                 toast.success("Usuario creado correctamente", { theme: "colored" });
-      //                 //navigate("/Settings/Users");
-      //             }
-      //             if (respuesta) {
-      //                 const formData5 = new FormData();
-      //                 const document5 = JSON.stringify({
-      //                     idCliente: respuesta.data.id,
-      //                     password: clientData.password,
-      //                     status: clientData.status,
-      //                     validacion: clientData.valitacion,
-      //                 });
-      //                 formData5.append("document5", document5);
-      //                 const resultado = await http.post(
-      //                     `http://localhost:4000/ClientesAccesoWeb`,
-      //                     formData5,
-      //                     {
-      //                         headers: {
-      //                             "Content-Type": "multipart/form-data",
-      //                         },
-      //                     }
-      //                 );
-      //                 
-      //                 if (resultado.status == 200 ? true : false) {
-      //                     toast.success("Usuario creado correctamente", { theme: "colored" });
-      //                     //navigate("/Settings/Users");
-      //                 }
-      //                 if (resultado); {
-      //                     const formData6 = new FormData();
-      //                     const document6 = JSON.stringify({
-      //                         idCliente: resultado.data.id,
-      //                         fecha: clientData.fecha,
-      //                         tipo: clientData.tipo,
-      //                         detalle: clientData.detalle,
-      //                         abono: clientData.abono,
-      //                         tc: clientData.tc,
-      //                         saldo: clientData.saldo
-      //                     });
-      //                     formData5.append("document6", document6);
-      //                     const resultado = await http.post(
-      //                         `http://localhost:4000/ClientesEstadoCuenta`,
-      //                         formData6,
-      //                         {
-      //                             headers: {
-      //                                 "Content-Type": "multipart/form-data",
-      //                             },
-      //                         }
-      //                     );
-      //                     
-      //                     if (resultado.status == 200 ? true : false) {
-      //                         toast.success("Usuario creado correctamente", { theme: "colored" });
-      //                         navigate("/Settings/Users");
-      //                     }
-      //                 }
-      //             }
-      //         }
-      //     }
-      // }
     } catch (error) {
-      null;
+      toast.error("Error al guardar Cliente", {
+        position: "bottom-right",
+        theme: "colored",
+      });
     }
   }
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-  const validationState = useMemo(() => {
-    if (clientData.email === "") return undefined;
 
-    return validateEmail(clientData.email) ? "valid" : "invalid";
-  }, [clientData.email]);
+  async function handleEditing(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    const document = JSON.stringify({
+      nombreComercial: clientData.nombreComercial,
+      giro: clientData.giro,
+      telefono: clientData.telefono,
+      whatsApp: clientData.whatsApp,
+      correo: clientData.correo,
+      contactoPrincipal: clientData.contactoPrincipal,
+      condicionesPago: clientData.condicionesPago,
+      cuenta: clientData.cuenta,
+      vendedorAsignado: clientData.vendedorAsignado,
+      listaPrecios: clientData.listaPrecios,
+      diasCredito: clientData.diasCredito,
+      limiteCredito: clientData.limiteCredito,
+      saldoPendiente: clientData.saldoPendiente,
+      creditoDisponible: clientData.creditoDisponible,
+    });
+
+    formData.append("document", document);
+    formData.append("image", selectedImage);
+    try {
+      const result = await http.put(
+        `http://localhost:4000/ListadoClientesEditing/${params.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (result.status == 200) {
+        toast.success("Cliente Editado Correctamente", { theme: "colored" });
+      };
+      navigate("/Customers");
+
+    } catch (error) {
+      toast.error("Error al Editar Cliente", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+      console.log(error);
+    }
+  }
+
+  async function handleFormSubmit(e){
+    e.preventDefault();
+
+    if(params.id){
+      console.log(params.id);
+      console.log("quiero Editar");
+      await handleEditing(e);
+    } else {
+      console.log("quiero crear uno nuevo");
+      await handleSubmit(e);
+    }
+  }
+
+
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
   const estadosDeMexico = [
@@ -514,7 +398,8 @@ const NewClient = () => {
 
   const handleChange2 = (e) =>
     setTask2({ ...task2, [e.target.name]: e.target.value });
-
+  const handleChange3 = (e) =>
+    setTask3({ ...task3, [e.target.name]: e.target.value });
   async function handleSubmitModal(e) {
     e.preventDefault();
     // if (!task2.nombre || !task2.direccion || !task2.colonia || !task2.ciudad || !task2.estado
@@ -622,7 +507,7 @@ const NewClient = () => {
                   </Typography>
                 </Breadcrumbs>
               </div>
-              <form onChange={handleChange} onSubmit={handleSubmit}>
+              <form onChange={handleChange} onSubmit={handleFormSubmit}>
                 <Spacer y={6} />
                 {/* <div className="bg-white rounded shadow-2xl px-4 md:p-8 mb-6"></div> */}
                 <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
@@ -666,12 +551,12 @@ const NewClient = () => {
                           name="imagen"
                         />
                         <Button
+                          id="ButtonImage"
                           autoFocus
                           size="auto"
                           color="success"
                           endContent={<MdCamera />}
                           onClick={handleFileButtonClick}
-                          id="button-file"
                         >
                           Agregar foto de perfil
                         </Button>
@@ -683,18 +568,15 @@ const NewClient = () => {
                             <div style={{ paddingLeft: "90px" }}>
                               <Input
                                 id="numerodecliente"
-                                value={clientData.numerodecliente}
+                                value={clientData.id}
                                 onChange={handleChange}
+                                disabled={true}
                                 size={"sm"}
-                                type="number"
                                 label="Numero de cliente"
                                 name="numerodecliente"
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                error={validationErrors.numerodecliente !== ""}
-                                errorMessage={validationErrors.numerodecliente}
-                                isDisabled={status ? true : false}
                               />
                             </div>
                             <div style={{ paddingInline: "140px" }}></div>
@@ -721,34 +603,27 @@ const NewClient = () => {
                                     id="nombreComercial"
                                     disabled={isInputDisabled}
                                     onValueChange={handleChange}
+                                    value={clientData.nombreComercial}
                                     size={"sm"}
                                     label="Nombre Comercial"
                                     name="nombreComercial"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.nombre !== ""}
-                                    errorMessage={validationErrors.nombre}
                                   />
                                 </div>
                                 <div className="md:col-span-3">
                                   <Input
                                     size={"sm"}
                                     disabled={isInputDisabled}
+                                    onChange={handleChange}
+                                    value={clientData.giro}
                                     label="Giro"
                                     id="giro"
-                                    isDisabled={status ? true : false}
                                     name="giro"
-                                    onChange={handleChange}
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={
-                                      validationErrors.nombreComercial !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.nombreComercial
-                                    }
                                   />
                                 </div>
 
@@ -757,6 +632,7 @@ const NewClient = () => {
                                     id="telefono"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.telefono}
                                     size={"sm"}
                                     label="Telefono"
                                     name="telefono"
@@ -767,12 +643,13 @@ const NewClient = () => {
                                 </div>
                                 <div className="md:col-span-4">
                                   <Input
-                                    id="whatsapp"
+                                    id="whatsApp"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.whatsApp}
                                     size={"sm"}
                                     label="WhatsApp"
-                                    name="whatsapp"
+                                    name="whatsApp"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
@@ -783,19 +660,21 @@ const NewClient = () => {
                                     id="correo"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.correo}
                                     size={"sm"}
-                                    label="Correo Elect"
-                                    name="rfc"
+                                    label="Correo Electronico"
+                                    name="correo"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
                                   />
                                 </div>
-                                <div className="md:col-span-3">
+                                <div className="md:col-span-4">
                                   <Input
                                     id="contactoPrincipal"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.contactoPrincipal}
                                     size={"sm"}
                                     label="Contacto Principal"
                                     name="contactoPrincipal"
@@ -804,108 +683,116 @@ const NewClient = () => {
                                     variant="faded"
                                   />
                                 </div>
-                                <div className="md:col-span-3">
+                                <div className="md:col-span-4">
                                   <Input
                                     id="condicionesPago"
                                     disabled={isInputDisabled}
                                     onChange={handleChange}
+                                    value={clientData.condicionesPago}
                                     size={"sm"}
-                                    type="number"
                                     label="Condiciones de Pago"
                                     name="condicionesPago"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.giro !== ""}
-                                    errorMessage={validationErrors.giro}
                                   ></Input>
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
-                                    id="vendedor"
+                                    id="cuenta"
                                     disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.vendedor}
+                                    value={clientData.cuenta}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    label="Vendedor"
-                                    name="vendedor"
+                                    label="Cuenta"
+                                    name="cuenta"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.vendedor !== ""}
-                                    errorMessage={validationErrors.vendedor}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="email"
+                                    id="vendedorAsignado"
                                     disabled={isInputDisabled}
-                                    value={clientData.email}
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
+                                    value={clientData.vendedorAsignado}
                                     size={"sm"}
-                                    type="email"
-                                    label="Email"
-                                    name="email"
+                                    label="Vendedor Asignado"
+                                    name="vendedorAsignado"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      validationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      validationState === "invalid" &&
-                                      "Ingresa un correo valido"
-                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="emailConfirm"
+                                    id="listaPrecios"
                                     disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.emailConfirm}
+                                    value={clientData.listaPrecios}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="email"
-                                    label="Confirmar email"
-                                    name="emailConfirm"
+                                    label="Lista de Precios"
+                                    name="listaPrecios"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      emailConfirmValidationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      emailConfirmValidationState ===
-                                        "invalid" &&
-                                      "El correo de confirmación debe coincidir con el correo"
-                                    }
-                                    validationState={
-                                      emailConfirmValidationState
-                                    }
                                   />
                                 </div>
-                                <div className="md:col-span-12">
+                                <div className="md:col-span-6">
                                   <Input
-                                    id="direccion"
+                                    id="diasCredito"
                                     disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.direccion}
+                                    value={clientData.diasCredito}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    label="Dirección"
-                                    name="direccion"
+                                    label="Días de Crédito"
+                                    name="diasCredito"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.direccion !== ""}
-                                    errorMessage={validationErrors.direccion}
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="limiteCredito"
+                                    disabled={isInputDisabled}
+                                    value={clientData.limiteCredito}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Limite de Crédito M.N"
+                                    name="limiteCredito"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="saldoPendiente"
+                                    disabled={isInputDisabled}
+                                    value={clientData.saldoPendiente}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Saldo Pendiente M.N"
+                                    name="saldoPendiente"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="creditoDisponible"
+                                    disabled={isInputDisabled}
+                                    value={clientData.creditoDisponible}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Crédito Disponible M.N"
+                                    name="creditoDisponible"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
                                   />
                                 </div>
                               </div>
@@ -917,160 +804,263 @@ const NewClient = () => {
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
                                 <div className="md:col-span-6"></div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="nombre"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.nombreContacto}
-                                    onValueChange={handleChange}
-                                    size={"sm"}
-                                    type="text"
-                                    label="Nombre (s)"
-                                    name="nombre"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={
-                                      validationErrors.nombreContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.nombreContacto
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    size={"sm"}
-                                    disabled={isInputDisabled}
-                                    type="text"
-                                    label="Apellido (s)"
-                                    id="apellido"
-                                    isDisabled={status ? true : false}
-                                    name="apellido"
-                                    value={clientData.apellidoContacto}
-                                    onChange={handleChange}
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={
-                                      validationErrors.apellidoContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.apellidoContacto
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="email"
-                                    disabled={isInputDisabled}
-                                    value={clientData.emailContacto}
-                                    isDisabled={status ? true : false}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="email"
-                                    label="Email"
-                                    name="email"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    color={
-                                      validationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      validationState === "invalid" &&
-                                      "Ingresa un correo valido"
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="emailConfirm"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.emailContactoConfirm}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="email"
-                                    label="Confirmar email"
-                                    name="emailConfirm"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    color={
-                                      emailConfirmValidationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      emailConfirmValidationState ===
-                                        "invalid" &&
-                                      "El correo de confirmación debe coincidir con el correo"
-                                    }
-                                    validationState={
-                                      emailConfirmValidationState
-                                    }
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="Contacto2"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.contacto2}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="Contacto2"
-                                    label="Contacto"
-                                    name="Contacto2"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.contacto2 !== ""}
-                                    errorMessage={validationErrors.contacto2}
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    id="Comentario"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.comentario}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    label="Comentario"
-                                    name="Comentario"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.comentario !== ""}
-                                    errorMessage={validationErrors.diasCredito}
-                                  />
+                                <div
+                                  className="md:col-span-12"
+                                  style={{
+                                    marginLeft: "590px",
+                                    marginRight: "70px",
+                                  }}
+                                >
+                                  <Button
+                                    id="BTN3"
+                                    size="sm"
+                                    color="primary"
+                                    endContent={<TbPlus />}
+                                    className="text-align: right justify-end"
+                                    onClick={handleCreateContact}
+                                  >
+                                    Nuevo contacto
+                                  </Button>
                                 </div>
                                 <div className="md:col-span-12">
-                                  <Input
-                                    id="direccion"
-                                    disabled={isInputDisabled}
-                                    isDisabled={status ? true : false}
-                                    value={clientData.direccionContacto}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="direccion"
-                                    label="Dirección"
-                                    name="direccion"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={
-                                      validationErrors.direccionContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.direccionContacto
-                                    }
-                                  />
+                                  <Table
+                                    removeWrapper
+                                    aria-label="Example static collection table"
+                                  >
+                                    <TableHeader>
+                                      <TableColumn>Nombre</TableColumn>
+                                      <TableColumn>Contacto</TableColumn>
+                                      <TableColumn>Correo electronico</TableColumn>
+                                      <TableColumn>Comentarios</TableColumn>
+                                      <TableColumn>Direccion/Ubicacion</TableColumn>
+                                      <TableColumn>Acciones</TableColumn>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {datosC.map((data, index) => (
+                                        <TableRow key={index}>
+                                          <TableCell>{data.contacto}</TableCell>
+                                          <TableCell>
+                                            {data.id}
+                                          </TableCell>
+                                          <TableCell>
+                                            {data.email}
+                                          </TableCell>
+                                          <TableCell>{data.comentarios}</TableCell>
+                                          <TableCell>{data.ubicacion}</TableCell>
+                                          <TableCell>
+                                            <div className="relative flex justify-center items-center gap-2">
+                                              <Dropdown>
+                                                <DropdownTrigger>
+                                                  <Button
+                                                    isIconOnly
+                                                    size="sm"
+                                                    variant="light"
+                                                  >
+                                                    <TbDotsVertical className="text-default-300" />
+                                                  </Button>
+                                                </DropdownTrigger>
+                                                <DropdownMenu>
+                                                  <DropdownItem>View</DropdownItem>
+                                                  <DropdownItem>Edit</DropdownItem>
+                                                  <DropdownItem>Delete</DropdownItem>
+                                                </DropdownMenu>
+                                              </Dropdown>
+                                            </div>
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                  <Modal
+                                    isOpen={isOpen}
+                                    onOpenChange={onOpenChange}
+                                    placement="center"
+                                    size="5xl"
+                                    scrollBehavior="inside"
+                                  >
+                                    <ModalContent>
+                                      {(onClose) => (
+                                        <>
+                                          <ModalHeader>
+                                            {modalMode === "create" &&
+                                              "Crear Contacto"}
+                                            {modalMode === "edit" &&
+                                              "Editar Contacto"}
+                                            {modalMode === "view" &&
+                                              "Ver Contacto"}
+                                          </ModalHeader>
+                                          <ModalBody>
+                                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                                                <div className="md:col-span-6"></div>
+                                                <div className="md:col-span-12">
+                                                  <Input
+                                                    endContent={
+                                                      <MdPeopleAlt className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Nombre"
+                                                    isRequired
+                                                    type="text"
+                                                    name="nombreContacto"
+                                                    value={task3.nombreContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-6">
+                                                  <Input
+                                                    endContent={
+                                                      <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Telefono"
+                                                    isRequired
+                                                    type="text"
+                                                    name="telefonoContacto"
+                                                    value={task3.telefonoContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-6">
+                                                  <Input
+                                                    endContent={
+                                                      <MdPhone className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Celular"
+                                                    isRequired
+                                                    type="text"
+                                                    name="celularContacto"
+                                                    value={task3.celularContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-6">
+                                                  <Input
+                                                    endContent={
+                                                      <MdWhatsapp className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="WhatsApp"
+                                                    isRequired
+                                                    type="text"
+                                                    name="whatsAppContacto"
+                                                    value={task3.whatsAppContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-6">
+                                                  <Input
+                                                    endContent={
+                                                      <MdEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Correo electronico"
+                                                    isRequired
+                                                    type="text"
+                                                    name="emailContacto"
+                                                    value={task3.emailContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-6">
+                                                  <Input
+                                                    endContent={
+                                                      <MdStreetview className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Puesto"
+                                                    isRequired
+                                                    type="text"
+                                                    name="puestoContacto"
+                                                    value={task3.puestoContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-6">
+                                                  <Input
+                                                    endContent={
+                                                      <MdLocationCity className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Direccion/Ubicacion"
+                                                    isRequired
+                                                    type="text"
+                                                    name="ubicacionContacto"
+                                                    value={task3.ubicacionContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+                                                <div className="md:col-span-12">
+                                                  <Input
+                                                    endContent={
+                                                      <MdPeople className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                                    }
+                                                    label="Comentarios"
+                                                    isRequired
+                                                    type="text"
+                                                    name="comentariosContacto"
+                                                    value={task3.comentariosContacto}
+                                                    placeholder=" "
+                                                    variant="bordered"
+                                                    onChange={handleChange3}
+                                                    disabled={
+                                                      modalMode === "view"
+                                                    }
+                                                  />
+                                                </div>
+
+
+                                              </div>
+                                            </div>
+                                          </ModalBody>
+                                          <ModalFooter>
+                                            <Button
+                                              color="danger"
+                                              variant="flat"
+                                              onPress={onClose}
+                                            >
+                                              Cerrar
+                                            </Button>
+                                            <Button
+                                              id="BTN2guardar"
+                                              endContent={<MdSave />}
+                                              color="primary"
+                                              onClick={handleSubmitModal}
+                                            >
+                                              Guardar
+                                            </Button>
+                                          </ModalFooter>
+                                        </>
+                                      )}
+                                    </ModalContent>
+                                  </Modal>
                                 </div>
                               </div>
                             </Tab>
@@ -1225,10 +1215,10 @@ const NewClient = () => {
                                                     placeholder=" "
                                                     type="text"
                                                     variant="bordered"
-                                                    // onChange={handleChange}
-                                                    // disabled={
-                                                    //   modalMode === "view"
-                                                    // } // Deshabilitar input en modo "ver"
+                                                  // onChange={handleChange}
+                                                  // disabled={
+                                                  //   modalMode === "view"
+                                                  // } // Deshabilitar input en modo "ver"
                                                   />
                                                 </div>
                                                 <div className="md:col-span-6">
@@ -1437,13 +1427,13 @@ const NewClient = () => {
                                     variant="faded"
                                     color={
                                       confirmPasswordValidationState ===
-                                      "invalid"
+                                        "invalid"
                                         ? "danger"
                                         : "default"
                                     }
                                     errorMessage={
                                       confirmPasswordValidationState ===
-                                        "invalid" &&
+                                      "invalid" &&
                                       "La contraseña de confirmación debe coincidir con la contraseña"
                                     }
                                     validationState={
@@ -1742,6 +1732,7 @@ const NewClient = () => {
                           </Button>
                         )}{" "}
                         <Button
+                          id="btnGuardar"
                           className="min-w-[200px]"
                           color="success"
                           type="submit"
