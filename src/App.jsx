@@ -40,7 +40,7 @@ import InventoryWarehouse from "./views/store/InventoryXWarehouse.jsx";
 import Brands from "./views/store/Brands.jsx";
 import FillOrders from "./views/store/FillOrders.jsx";
 import Logistics from "./views/store/Logistics.jsx";
-import WarehouseEntries from "./views/store/warehouseEntries.jsx";
+import WarehouseEntries from "./views/store/WarehouseEntries.jsx";
 import Categories from "./views/store/Categories.jsx";
 import NewTransfer from "./views/store/NewTransfer.jsx";
 import WarehouseOutputs from "./views/store/WarehouseOutputs.jsx";
