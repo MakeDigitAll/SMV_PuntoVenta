@@ -5,7 +5,7 @@ import { CardBalance2 } from "./CardBalance2";
 import { CardBalance3 } from "./CardBalance3";
 import { CardAgents } from "./Card-Agents";
 import { CardTransactions } from "./card-transactions";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { toast } from "react-toastify";
 import React from "react";
 const Chart = dynamic(() => import("./Steam").then((mod) => mod.Steam), {

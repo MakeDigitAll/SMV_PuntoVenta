@@ -16,7 +16,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiCoinFill, RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 
 

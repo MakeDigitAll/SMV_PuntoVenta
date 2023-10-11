@@ -1,4 +1,4 @@
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { Card, CardBody } from "@nextui-org/react";
 import {
   BiArchiveIn,

@@ -55,7 +55,7 @@ import {
   MdEmail,
 } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import Datetime from "react-datetime";
