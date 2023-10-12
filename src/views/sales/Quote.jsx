@@ -66,16 +66,17 @@ const Quote = () => {
     monto: "",
   });
 
-  const [dataQuote, setDataQuote] = useState({
-    pedido: "",
-    cliente: "",
-    comentarios: "",
-    vendedor: "",
-    recurrenciaa: "",
-    origen: "",
-    monto: "",
-    fecha: format(new Date(), "yyyy-MM-dd"),
-  });
+  // const [dataQuote, setDataQuote] = useState({
+  //   pedido: "",
+  //   cliente: "",
+  //   comentarios: "",
+  //   descuento: "",
+  //   vendedor: "",
+  //   recurrenciaa: "",
+  //   origen: "",
+  //   monto: "",
+  //   fecha: format(new Date(), "yyyy-MM-dd"),
+  // });
 
   const datosCliente = () => {
     async function loadDatosCliente() {
@@ -97,8 +98,29 @@ const Quote = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-    setValidationErrors({ ...validationErrors, [name]: "" });
+    switch (name) {
+      case "descuento":
+        var valor = parseFloat(value);
+        if (valor > 0 && valor <= 100) {
+
+          setDataQuote((prevState) => ({
+            ...Number(prevState),
+            [name]: value,
+          }));
+        } else {
+          toast.error("El descuento debe ser mayor a 0 y menor a 100", {
+            theme: "colored",
+          });
+        }
+        break;
+      default:
+        break;
+    }
+
+    setDataQuote((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
   const fileInputRef = useRef(null);
   const handleFileButtonClick = () => {
@@ -374,6 +396,22 @@ const Quote = () => {
   };
 
   //------------------------------------------------------------------------------------------------------------//
+  //                                      Código para agregar productos a la cotización                         //
+  //------------------------------------------------------------------------------------------------------------//
+
+  const [dataQuote, setDataQuote] = useState({
+    pedido: "",
+    cliente: "",
+    comentarios: "",
+    descuento: "",
+    vendedor: "",
+    productosCotización: [],
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
+    fecha: format(new Date(), "yyyy-MM-dd"),
+  });
+
 
   // -- Codigo para cargar productos
   const [productos, setProductos] = useState([]);
@@ -396,6 +434,7 @@ const Quote = () => {
     }
     loadProducts();
   };
+
 
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
@@ -1031,8 +1070,11 @@ const Quote = () => {
                           <div className="md:col-span-12">
                             <Input
                               type="number"
+                              name="descuento"
                               placeholder="00.00"
                               color="success"
+                              value={dataQuote.descuento}
+                              onChange={handleChange}
                               endContent={<MdPercent />}
                               label="Porcentaje"
                             />
