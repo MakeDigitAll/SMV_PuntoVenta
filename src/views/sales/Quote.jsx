@@ -78,7 +78,7 @@ const Quote = () => {
     telefonoContacto: "",
     telefonoCelular: "",
     perfilSeguridad: "",
-    vendedor: "",
+    // vendedor: "",
   });
 
 

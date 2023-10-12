@@ -24,7 +24,7 @@ import {
         id: 1,
         name: "Nueva Venta",
         icon: TbMoneybag,
-        address: { onOpen },
+        address:() => navigate(`/${"PointofSale/NewSale"}`),
         roleId: "0",
       },
       {
@@ -45,14 +45,14 @@ import {
         id: 4,
         name: "Clientes",
         icon: RiGroupFill,
-        address: { onOpen },
+        address:() => navigate(`/${"PointofSale/Customers"}`),
         roleId: "0",
       },
       {
         id: 5,
         name: "Reportes",
         icon: RiUser2Fill,
-        address: { onOpen },
+        address: () => navigate(`/${"PointofSale/Reports"}`),
         roleId: "0",
       },
     ];
