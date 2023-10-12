@@ -46,6 +46,7 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
+import { use } from "i18next";
 const Quote = () => {
   const [user, setUser] = useState({
     nombre: "",
@@ -129,6 +130,8 @@ const Quote = () => {
     setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
     console.log(isChecked);
   }
+
+  
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -303,11 +306,17 @@ const Quote = () => {
   const agregarFila = (data, index) => {
     const cantidad = parseFloat(cantidadesUsuario[index]);
 
-    // Verifica si la cantidad es un número válido
-    if (!isNaN(cantidad)) {
-      const datosAdaptados = adaptarDatos(data, cantidad);
+    const nuevoProducto = filasAgregadas.find(
+      (fila) => fila.codigo === data.codigoEmpresa
+    );
 
-      // Agrega la fila adaptada a la lista de filas agregadas en el estado
+    if (nuevoProducto) {
+      toast.warning("El producto ya ha sido agregado a la cotización.");
+      return;
+    }
+    // Verifica si la cantidad es un número válido
+    if (!isNaN(cantidad) || cantidad > 0) {
+      const datosAdaptados = adaptarDatos(data, cantidad);
       setFilasAgregadas([...filasAgregadas, datosAdaptados]);
     } else {
       toast.warning("Por favor, ingrese una cantidad válida.");
@@ -371,12 +380,26 @@ const Quote = () => {
   useEffect(() => {
     // Esta función se ejecutará cuando el componente esté montado
     calcularTotales();
+    console.log(filasAgregadas);
   }, [filasAgregadas]);
 
   const handleCantidadChange = (event, index) => {
     const nuevasCantidades = [...cantidadesUsuario];
     nuevasCantidades[index] = event.target.value;
     setCantidadesUsuario(nuevasCantidades);
+  };
+
+  const handleCantidadChange2 = (event, index) => {
+    const { name, value } = event.target;
+  
+    const nuevasFilas = [...filasAgregadas];
+
+    nuevasFilas[index] = {
+      ...nuevasFilas[index],
+      [name]: value
+    };
+    
+    setFilasAgregadas(nuevasFilas);
   };
 
   const [filtro, setFiltro] = useState(""); // Estado para almacenar el valor del filtro
@@ -401,7 +424,7 @@ const Quote = () => {
     pedido: "",
     cliente: "",
     comentarios: "",
-    descuento: "",
+    descuento: 0,
     vendedor: "",
     productosCotización: [],
     recurrenciaa: "",
@@ -940,7 +963,32 @@ const Quote = () => {
                                           <TableCell>{fila.codigo}</TableCell>
                                           <TableCell>{fila.nombre}</TableCell>
                                           <TableCell>{fila.marca}</TableCell>
-                                          <TableCell>{fila.cantidad}</TableCell>
+                                          <TableCell>
+                                            <Input
+                                              size={"sm"}
+                                              className="w-20"
+                                              type="number"
+                                              label="Cantidad"
+                                              name="cantidad"
+                                              labelPlacement="outside"
+                                              placeholder=" "
+                                              variant="faded"
+                                              error={
+                                                validationErrors.cantidad !==
+                                                ""
+                                              }
+                                              errorMessage={
+                                                validationErrors.cantidad
+                                              }
+                                              value={fila.cantidad}
+                                              onChange={(event) =>
+                                                handleCantidadChange2(
+                                                  event,
+                                                  index
+                                                )
+                                              }
+                                            />
+                                            </TableCell>
                                           <TableCell>
                                             {fila.inventario}
                                           </TableCell>
