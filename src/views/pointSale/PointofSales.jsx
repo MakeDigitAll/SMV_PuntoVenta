@@ -32,7 +32,10 @@ const PointofSale = () => {
             underline="hover"
             sx={{ display: "flex", alignItems: "center" }}
             color="foreground"
+            onClick={() => navigate(`/${"PointOfSale/Acces"}`)}
+
           >
+            
             <RiBox1Fill sx={{ mr: 0.5 }} fontSize="inherit" />
             Almacén
           </Link>
