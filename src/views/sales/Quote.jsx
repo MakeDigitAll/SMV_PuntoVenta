@@ -661,20 +661,25 @@ const Quote = () => {
                               >
                                 <div>
                                   {isResultSearchCliente ? (
-                                    <Card isHoverable={true}>
+                                    <div>
                                       {filterCliente
                                         .slice(0, 5)
                                         .map((vendedor, index) => (
-                                          <CardBody
-                                            key={vendedor.id}
-                                            onClick={() =>
-                                              handleClienteClick(vendedor)
-                                            }
+                                          <Card
+                                            className="grid grid-cols-3 mt-1"
+                                            isHoverable={true}
                                           >
-                                            <p>{vendedor.nombreComercial}</p>
-                                          </CardBody>
+                                            <CardBody
+                                              key={vendedor.id}
+                                              onClick={() =>
+                                                handleClienteClick(vendedor)
+                                              }
+                                            >
+                                              <p>{vendedor.nombreComercial}</p>
+                                            </CardBody>
+                                          </Card>
                                         ))}
-                                    </Card>
+                                    </div>
                                   ) : (
                                     <p></p>
                                   )}
