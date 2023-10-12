@@ -21,6 +21,8 @@ import {
   ModalFooter,
   useDisclosure,
   SelectItem,
+  Card,
+  CardBody,
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -45,8 +47,6 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 const Quote = () => {
-  const [selectedImage, setSelectedImage] = useState("");
-  const imageDefault = selectedImage === "";
   const [user, setUser] = useState({
     nombre: "",
     apellido: "",
@@ -64,27 +64,12 @@ const Quote = () => {
     recurrenciaa: "",
     origen: "",
     monto: "",
-    nombre: "",
-    apellido: "",
-    email: "",
-    emailConfirm: "",
-    password: "",
-    confirmPassword: "",
-    direccion: "",
-    colonia: "",
-    ciudad: "",
-    estado: "",
-    codigoPostal: "",
-    telefonoContacto: "",
-    telefonoCelular: "",
-    perfilSeguridad: "",
-    vendedor: "",
   });
-
 
   const [dataQuote, setDataQuote] = useState({
     pedido: "",
     cliente: "",
+    comentarios: "",
     vendedor: "",
     recurrenciaa: "",
     origen: "",
@@ -98,11 +83,9 @@ const Quote = () => {
         const response = await fetch(`http://localhost:4000/Clientes`);
         const data = await response.json();
         if (response.ok) {
-          setProductos(data)
-
+          setProductos(data);
         }
       } catch (err) {
-
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -111,7 +94,6 @@ const Quote = () => {
     }
     loadDatosCliente();
   };
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -122,22 +104,15 @@ const Quote = () => {
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
-
   const [isChecked, setIsChecked] = useState(false);
   function handleCheckboxChange() {
     setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
     console.log(isChecked);
   }
 
-
-
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage
-      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
-      : "";
     if (
-      !dataQuote.imagen ||
       !dataQuote.pedido ||
       !dataQuote.cliente ||
       !dataQuote.vendedor ||
@@ -172,14 +147,11 @@ const Quote = () => {
       pedido: dataQuote.pedido,
       cliente: dataQuote.cliente,
       vendedor: dataQuote.vendedor,
-      recurrenciaa: isChecked ? 1 : 0,
+      recurrenciaa: isChecked,
       origen: dataQuote.origen,
       monto: dataQuote.monto,
     });
     console.log(document.recurrenciaa);
-
-    formData.append("document", document);
-    formData.append("image", selectedImage);
     try {
       const result = await http.post(
         `http://localhost:4000/Cotizaciones`,
@@ -192,7 +164,7 @@ const Quote = () => {
       );
       if (response.status == 200) {
         toast.success("Cotización Creada Correctamente", { theme: "colored" });
-      };
+      }
       navigate("/Sales/Quotes");
     } catch (error) {
       toast.error("Error al guardar Cotización", {
@@ -210,22 +182,9 @@ const Quote = () => {
     return validateEmail(user.email) ? "valid" : "invalid";
   }, [user.email]);
   const navigate = useNavigate();
-  const [selected, setSelected] = useState("photos");
   const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
 
-  const passwordValidationState = useMemo(() => {
-    if (user.password === "") return undefined;
-    return user.password.length >= 8 ? "valid" : "invalid";
-  }, [user.password]);
-  const confirmPasswordValidationState = useMemo(() => {
-    if (user.confirmPassword === "") return undefined;
-    return user.password === user.confirmPassword ? "valid" : "invalid";
-  }, [user.confirmPassword]);
-  const emailConfirmValidationState = useMemo(() => {
-    if (user.emailConfirm === "") return undefined;
-    return user.emailConfirm === user.email ? "valid" : "invalid";
-  }, [user.emailConfirm, user.email]);
-
+  // -- Estados de los modales
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenDiscount,
@@ -233,33 +192,8 @@ const Quote = () => {
     onClose: onCloseDiscount,
   } = useDisclosure();
 
-
-  const [productos, setProductos] = useState([]);
-
-  const handleOpenAddProduct = () => {
-    onOpen();
-    async function loadProducts() {
-      try {
-        const response = await fetch(`http://localhost:4000/Productos`);
-        const data = await response.json();
-        if (response.ok) {
-          setProductos(data)
-
-        }
-      } catch (err) {
-
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    loadProducts();
-  };
-
   const handleOpenAddDiscount = () => {
     onOpenDiscount();
-
   };
   const [categorias, setCategorias] = useState([]);
   const [marca, setmarca] = useState([]);
@@ -306,7 +240,7 @@ const Quote = () => {
         theme: "colored",
       });
     }
-  }
+  };
   useEffect(() => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -326,7 +260,7 @@ const Quote = () => {
         theme: "colored",
       });
     }
-  }
+  };
   useEffect(() => {
     loadTask2();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -356,9 +290,13 @@ const Quote = () => {
       // Agrega la fila adaptada a la lista de filas agregadas en el estado
       setFilasAgregadas([...filasAgregadas, datosAdaptados]);
     } else {
-      toast.warning('Por favor, ingrese una cantidad válida.');
+      toast.warning("Por favor, ingrese una cantidad válida.");
     }
   };
+
+  // ------------------------------------------------------------------------------------------------------------//
+  //                                      Código para calcular totales                                           //
+  //------------------------------------------------------------------------------------------------------------//
 
   function calcularTotalesTablaResumen(filas) {
     let netoTotal = 0;
@@ -371,7 +309,7 @@ const Quote = () => {
       const neto = fila.cantidad * fila.precioUnitario;
       const descuentoValor = (neto * fila.descuento) / 100;
       const subtotal = neto - descuentoValor;
-      const impuestos = subtotal * 0.10; // Cambia el valor del impuesto según tu necesidad
+      const impuestos = subtotal * 0.1; // Cambia el valor del impuesto según tu necesidad
 
       netoTotal += neto;
       descuentoTotal += descuentoValor;
@@ -391,7 +329,7 @@ const Quote = () => {
   }
 
   const calcularTotales = () => {
-    const tablaResumen = document.getElementById('tablaCalculos');
+    const tablaResumen = document.getElementById("tablaCalculos");
     const totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
     // Actualiza los valores en la tabla de resumen
     tablaResumen.querySelector(
@@ -421,7 +359,7 @@ const Quote = () => {
     setCantidadesUsuario(nuevasCantidades);
   };
 
-  const [filtro, setFiltro] = useState(''); // Estado para almacenar el valor del filtro
+  const [filtro, setFiltro] = useState(""); // Estado para almacenar el valor del filtro
 
   // Función para filtrar los datos en función del valor del filtro
   const filtrarDatos = () => {
@@ -433,6 +371,108 @@ const Quote = () => {
   // Manejar el cambio en el campo de filtro
   const handleFiltroChange = (event) => {
     setFiltro(event.target.value);
+  };
+
+  //------------------------------------------------------------------------------------------------------------//
+
+  // -- Codigo para cargar productos
+  const [productos, setProductos] = useState([]);
+
+  const handleOpenAddProduct = () => {
+    onOpen();
+    async function loadProducts() {
+      try {
+        const response = await fetch(`http://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
+  };
+
+  //--Codigo Para Buscar Cliente
+  const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
+  const [idCliente, setIdCliente] = useState("");
+
+  //almacena todos los vendedores de la base de datos
+  const [vendedores, setVendedores] = useState([]);
+  //para buscar vendedor por nombre
+  const [searchNombreVendedor, setSearchNombreVendedor] = useState("");
+  const [nombreSelectedVendedor, setNombreSelectedVendedor] = useState("");
+
+  //para mostrar los resultados de la busqueda
+  const [isResultSearchVendedor, setIsResultSearchVendedor] = useState(false);
+  //para almacenar los resultados de la busqueda
+  const [filterVendedor, setFilterVendedor] = useState([]);
+  //para almacenar los resultados de la busqueda
+  const [idVendedor, setIdVendedor] = useState("");
+
+  //fechaCotizacion
+  const [fechaCotizacion, setFechaCotizacion] = useState();
+
+  //Es recurrente
+  const [isRecurrente, setIsRecurrente] = useState(false);
+
+  // Query para traer todos los Vendedores
+  const getVendedores = () => {
+    async function getVendedores() {
+      try {
+        const response = await fetch(`http://localhost:4000/ListadoVendedores`);
+        const data = await response.json();
+        if (response.ok) {
+          setVendedores(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    getVendedores();
+  };
+
+  useEffect(() => {
+    getVendedores();
+  }, []);
+  //buscar vendedor
+  const buscarVendedor = () => {
+    let usuariosSearch = vendedores.filter((cliente) =>
+      cliente.nombre.toLowerCase().includes(searchNombreVendedor.toLowerCase())
+    );
+
+    if (
+      usuariosSearch.length > 0 &&
+      usuariosSearch.length !== vendedores.length
+    ) {
+      setIsResultSearchVendedor(true);
+      setFilterVendedor(usuariosSearch);
+    } else {
+      setIsResultSearchVendedor(false);
+    }
+  };
+
+  useEffect(() => {
+    buscarVendedor();
+
+    if (searchNombreVendedor === nombreSelectedVendedor) {
+      setIsResultSearchVendedor(false);
+    }
+  }, [searchNombreVendedor]);
+
+  const handleVendedorClick = (vendedor) => {
+    setIdVendedor(vendedor.id);
+    setNombreSelectedVendedor(vendedor.nombre);
+    setSearchNombreVendedor(vendedor.nombre);
+    setIsResultSearchVendedor(false);
+    setFechaCotizacion(format(new Date(), "yyyy-MM-dd"));
   };
 
   return (
@@ -501,9 +541,8 @@ const Quote = () => {
                             <div className="md:col-span-12">
                               <Input
                                 id="cliente"
-                                value={dataQuote.cliente}
-                                onValueChange={handleChange}
-                                onChange={handleFiltroChange}
+                                value={searchNombreVendedor}
+                                onValueChange={setSearchNombreVendedor}
                                 size="sm"
                                 isRequired
                                 type="text"
@@ -511,6 +550,7 @@ const Quote = () => {
                                 name="cliente"
                                 labelPlacement="outside"
                                 placeholder=" "
+                                autoComplete="off"
                                 variant="faded"
                                 error={validationErrors.cliente !== ""}
                                 errorMessage={validationErrors.cliente}
@@ -518,17 +558,43 @@ const Quote = () => {
                                   <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
                                 }
                               />
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  zIndex: "100",
+                                }}
+                              >
+                                <div>
+                                  {isResultSearchVendedor ? (
+                                    <Card isHoverable={true}>
+                                      {filterVendedor
+                                        .slice(0, 5)
+                                        .map((vendedor, index) => (
+                                          <CardBody
+                                            key={vendedor.id}
+                                            onClick={() =>
+                                              handleVendedorClick(vendedor)
+                                            }
+                                          >
+                                            <p>{vendedor.nombre}</p>
+                                          </CardBody>
+                                        ))}
+                                    </Card>
+                                  ) : (
+                                    <p></p>
+                                  )}
+                                </div>
+                              </div>
                             </div>
                             <div className="md:col-span-8">
                               <Input
                                 size={"sm"}
                                 type="text"
-                                label="vendedor"
-                                id="apellido"
+                                label="ID Vendedor"
                                 isRequired
                                 isDisabled
                                 name="vendedor"
-                                value={dataQuote.vendedor}
+                                value={idVendedor}
                                 onChange={handleChange}
                                 labelPlacement="outside"
                                 placeholder=" "
@@ -543,8 +609,7 @@ const Quote = () => {
                               <Input
                                 id="fecha"
                                 isRequired
-                                value={dataQuote.fecha}
-                                onChange={handleChange}
+                                value={fechaCotizacion}
                                 size={"sm"}
                                 isDisabled
                                 type="date"
@@ -568,8 +633,8 @@ const Quote = () => {
                             <div className="md:col-span-6">
                               <Checkbox
                                 isRequired
-                                isChecked={isChecked}
-                                onChange={handleCheckboxChange}
+                                isChecked={isRecurrente}
+                                onChange={setIsRecurrente}
                               >
                                 Es recurrente
                               </Checkbox>
@@ -721,6 +786,7 @@ const Quote = () => {
                                 minRows={8}
                                 label="Comentarios de la Cotización"
                                 labelPlacement="outside"
+                                value={dataQuote.comentarios}
                                 placeholder=" "
                                 defaultValue=" "
                               />
@@ -751,19 +817,27 @@ const Quote = () => {
                                   <TableBody>
                                     <TableRow key="1">
                                       <TableCell>Neto</TableCell>
-                                      <TableCell id="netoTotal">$0.00</TableCell>
+                                      <TableCell id="netoTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="2">
                                       <TableCell>Descuento</TableCell>
-                                      <TableCell id="descuentoTotal">$0.00</TableCell>
+                                      <TableCell id="descuentoTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="3">
                                       <TableCell>Sub Total</TableCell>
-                                      <TableCell id="subtotalTotal">$0.00</TableCell>
+                                      <TableCell id="subtotalTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="4">
                                       <TableCell>Impuestos</TableCell>
-                                      <TableCell id="impuestosTotal">$0.00</TableCell>
+                                      <TableCell id="impuestosTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="5">
                                       <TableCell>Total</TableCell>
