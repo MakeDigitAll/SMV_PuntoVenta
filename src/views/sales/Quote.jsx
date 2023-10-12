@@ -401,16 +401,15 @@ const Quote = () => {
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
   const [idCliente, setIdCliente] = useState("");
 
-  //almacena todos los vendedores de la base de datos
-  const [vendedores, setVendedores] = useState([]);
+  //almacena todos los clientes de la base de datos
   //para buscar vendedor por nombre
-  const [searchNombreVendedor, setSearchNombreVendedor] = useState("");
-  const [nombreSelectedVendedor, setNombreSelectedVendedor] = useState("");
+  const [searchNombreCliente, setSearchNombreCliente] = useState("");
+  const [nombreSelectedCliente, setNombreSelectedCliente] = useState("");
 
   //para mostrar los resultados de la busqueda
-  const [isResultSearchVendedor, setIsResultSearchVendedor] = useState(false);
+  const [isResultSearchCliente, setIsResultSearchCliente] = useState(false);
   //para almacenar los resultados de la busqueda
-  const [filterVendedor, setFilterVendedor] = useState([]);
+  const [filterCliente, setFilterCliente] = useState([]);
   //para almacenar los resultados de la busqueda
   const [idVendedor, setIdVendedor] = useState("");
 
@@ -421,13 +420,13 @@ const Quote = () => {
   const [isRecurrente, setIsRecurrente] = useState(false);
 
   // Query para traer todos los Vendedores
-  const getVendedores = () => {
-    async function getVendedores() {
+  const getClientes = () => {
+    async function getClientes() {
       try {
-        const response = await fetch(`http://localhost:4000/ListadoVendedores`);
+        const response = await fetch(`http://localhost:4000/ListadoClientes`);
         const data = await response.json();
         if (response.ok) {
-          setVendedores(data);
+          setClientes(data);
         }
       } catch (err) {
         toast.error("Error al cargar los datos", {
@@ -436,42 +435,42 @@ const Quote = () => {
         });
       }
     }
-    getVendedores();
+    getClientes();
   };
 
   useEffect(() => {
-    getVendedores();
+    getClientes();
   }, []);
   //buscar vendedor
-  const buscarVendedor = () => {
-    let usuariosSearch = vendedores.filter((cliente) =>
-      cliente.nombre.toLowerCase().includes(searchNombreVendedor.toLowerCase())
+  const buscarCliente = () => {
+    let usuariosSearch = clientes.filter((cliente) =>
+      cliente.nombreComercial.toLowerCase().includes(searchNombreCliente)
     );
 
     if (
       usuariosSearch.length > 0 &&
-      usuariosSearch.length !== vendedores.length
+      usuariosSearch.length !== clientes.length
     ) {
-      setIsResultSearchVendedor(true);
-      setFilterVendedor(usuariosSearch);
+      setIsResultSearchCliente(true);
+      setFilterCliente(usuariosSearch);
     } else {
-      setIsResultSearchVendedor(false);
+      setIsResultSearchCliente(false);
     }
   };
 
   useEffect(() => {
-    buscarVendedor();
+    buscarCliente();
 
-    if (searchNombreVendedor === nombreSelectedVendedor) {
-      setIsResultSearchVendedor(false);
+    if (searchNombreCliente === nombreSelectedCliente) {
+      setIsResultSearchCliente(false);
     }
-  }, [searchNombreVendedor]);
+  }, [searchNombreCliente]);
 
-  const handleVendedorClick = (vendedor) => {
-    setIdVendedor(vendedor.id);
-    setNombreSelectedVendedor(vendedor.nombre);
-    setSearchNombreVendedor(vendedor.nombre);
-    setIsResultSearchVendedor(false);
+  const handleClienteClick = (cliente) => {
+    setIdCliente(cliente.id);
+    setNombreSelectedCliente(cliente.nombreComercial);
+    setSearchNombreCliente(cliente.nombreComercial);
+    setIsResultSearchCliente(false);
     setFechaCotizacion(format(new Date(), "yyyy-MM-dd"));
   };
 
@@ -541,12 +540,12 @@ const Quote = () => {
                             <div className="md:col-span-12">
                               <Input
                                 id="cliente"
-                                value={searchNombreVendedor}
-                                onValueChange={setSearchNombreVendedor}
+                                value={searchNombreCliente}
+                                onValueChange={setSearchNombreCliente}
                                 size="sm"
                                 isRequired
                                 type="text"
-                                label="Nombre"
+                                label="Nombre del Cliente"
                                 name="cliente"
                                 labelPlacement="outside"
                                 placeholder=" "
@@ -565,18 +564,18 @@ const Quote = () => {
                                 }}
                               >
                                 <div>
-                                  {isResultSearchVendedor ? (
+                                  {isResultSearchCliente ? (
                                     <Card isHoverable={true}>
-                                      {filterVendedor
+                                      {filterCliente
                                         .slice(0, 5)
                                         .map((vendedor, index) => (
                                           <CardBody
                                             key={vendedor.id}
                                             onClick={() =>
-                                              handleVendedorClick(vendedor)
+                                              handleClienteClick(vendedor)
                                             }
                                           >
-                                            <p>{vendedor.nombre}</p>
+                                            <p>{vendedor.nombreComercial}</p>
                                           </CardBody>
                                         ))}
                                     </Card>
