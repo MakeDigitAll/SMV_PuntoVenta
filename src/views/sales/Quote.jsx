@@ -434,7 +434,7 @@ const Quote = () => {
 
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
-  const [idCliente, setIdCliente] = useState("");
+  const [idCliente, setIdCliente] = useState();
 
   //almacena todos los clientes de la base de datos
   //para buscar vendedor por nombre
@@ -456,6 +456,9 @@ const Quote = () => {
 
   //para almacenar los datos del cliente seleccionado
   const [clienteInfo, setClienteInfo] = useState([]);
+
+  //para el envio
+  const [envio, setEnvio] = useState("");
 
   // Query para traer todos los Vendedores
   const getClientes = () => {
@@ -890,6 +893,7 @@ const Quote = () => {
                                 size="sm"
                                 isRequired
                                 value={dataQuote.origen}
+                                onChange={(e) => setEnvio(e.target.value)}
                               >
                                 {envios.map((envios) => (
                                   <SelectItem key={envios} value={envios}>
