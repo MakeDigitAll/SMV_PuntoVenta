@@ -334,9 +334,9 @@ const Quote = () => {
 
     for (const fila of filas) {
       const neto = fila.cantidad * fila.precioUnitario;
-      const descuentoValor = (neto * fila.descuento) / 100;
+      const descuentoValor = (neto * fila.descuento) / 100; 
       const subtotal = neto - descuentoValor;
-      const impuestos = subtotal * 0.1; // Cambia el valor del impuesto según tu necesidad
+      const impuestos = subtotal * 0.16; // Cambia el valor del impuesto según tu necesidad
 
       netoTotal += neto;
       descuentoTotal += descuentoValor;
@@ -378,8 +378,7 @@ const Quote = () => {
   useEffect(() => {
     // Esta función se ejecutará cuando el componente esté montado
     calcularTotales();
-    console.log(filasAgregadas);
-  }, [filasAgregadas]);
+  }, [filasAgregadas /*, dataQuote.descuento*/]);
 
   const handleCantidadChange = (event, index) => {
     const nuevasCantidades = [...cantidadesUsuario];
@@ -387,17 +386,26 @@ const Quote = () => {
     setCantidadesUsuario(nuevasCantidades);
   };
 
-  const handleCantidadChange2 = (event, index) => {
+  const handleProductosCotizados = (event, index) => {
     const { name, value } = event.target;
 
+    if (value <= Number(filasAgregadas[index].inventario)) {
+  
     const nuevasFilas = [...filasAgregadas];
 
     nuevasFilas[index] = {
       ...nuevasFilas[index],
-      [name]: value,
+      [name]: Number(value),
+      ["total"]: Number(value) * Number(nuevasFilas[index].precioUnitario) - (Number(value) * Number(nuevasFilas[index].precioUnitario) * Number(nuevasFilas[index].descuento) / 100),
     };
 
     setFilasAgregadas(nuevasFilas);
+
+    } else {
+      toast.error("La cantidad debe ser mayor a cero y menor al inventario", {
+        theme: "colored",
+      });
+    }
   };
 
   const [filtro, setFiltro] = useState(""); // Estado para almacenar el valor del filtro
@@ -422,7 +430,6 @@ const Quote = () => {
     pedido: "",
     cliente: "",
     comentarios: "",
-    descuento: 0,
     vendedor: "",
     productosCotización: [],
     recurrenciaa: "",
@@ -1022,10 +1029,8 @@ const Quote = () => {
                                               size={"sm"}
                                               className="w-20"
                                               type="number"
-                                              label="Cantidad"
                                               name="cantidad"
-                                              labelPlacement="outside"
-                                              placeholder=" "
+                                              placeholder=""
                                               variant="faded"
                                               error={
                                                 validationErrors.cantidad !== ""
@@ -1035,7 +1040,7 @@ const Quote = () => {
                                               }
                                               value={fila.cantidad}
                                               onChange={(event) =>
-                                                handleCantidadChange2(
+                                                handleProductosCotizados(
                                                   event,
                                                   index
                                                 )
@@ -1046,10 +1051,10 @@ const Quote = () => {
                                             {fila.inventario}
                                           </TableCell>
                                           <TableCell>
-                                            {fila.precioUnitario}
+                                            ${fila.precioUnitario}
                                           </TableCell>
                                           <TableCell>
-                                            {fila.descuento}
+                                            {fila.descuento}%
                                           </TableCell>
                                           <TableCell>{fila.total}</TableCell>
                                         </TableRow>
@@ -1097,6 +1102,12 @@ const Quote = () => {
                                 label="Comentarios de la Cotización"
                                 labelPlacement="outside"
                                 value={dataQuote.comentarios}
+                                onChange={(e) =>
+                                  setDataQuote({
+                                    ...dataQuote,
+                                    comentarios: e.target.value,
+                                  })
+                                }
                                 placeholder=" "
                                 defaultValue=" "
                               />
