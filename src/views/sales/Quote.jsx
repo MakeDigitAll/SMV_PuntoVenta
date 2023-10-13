@@ -131,8 +131,6 @@ const Quote = () => {
     console.log(isChecked);
   }
 
-  
-
   async function handleSubmit(e) {
     e.preventDefault();
     if (
@@ -391,14 +389,14 @@ const Quote = () => {
 
   const handleCantidadChange2 = (event, index) => {
     const { name, value } = event.target;
-  
+
     const nuevasFilas = [...filasAgregadas];
 
     nuevasFilas[index] = {
       ...nuevasFilas[index],
-      [name]: value
+      [name]: value,
     };
-    
+
     setFilasAgregadas(nuevasFilas);
   };
 
@@ -502,9 +500,42 @@ const Quote = () => {
     getClientes();
   };
 
+  //
+
+  const [direccionesCliente, setDireccionesCliente] = useState([]);
+
+  const getDireccionCliente = () => {
+    async function getDireccionCliente() {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/ClientesDireccionEnvio/${idCliente}`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          console.log(data);
+          setDireccionesCliente(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    getDireccionCliente();
+  };
+
   useEffect(() => {
     getClientes();
   }, []);
+
+  //cuando halla un idCliente buscar sus direcciones
+  useEffect(() => {
+    if (idCliente) {
+      getDireccionCliente();
+    }
+  }, [idCliente]);
+
   //buscar vendedor
   const buscarCliente = () => {
     let usuariosSearch = clientes.filter((cliente) =>
@@ -752,163 +783,181 @@ const Quote = () => {
                             <div className="md:col-span-6"></div>
                             <div className="md:col-span-12">
                               {idVendedor ? (
-                                <Card>
-                                  <CardBody>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Nombre Comercial: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.nombreComercial}</p>
-                                    </div>
+                                <div>
+                                  <Select
+                                    isRequired
+                                    labelPlacement={"outside"}
+                                    label="Información del Cliente"
+                                    placeholder="General"
+                                    size="sm"
+                                  >
+                                    {direccionesCliente.map((direcciones) => (
+                                      <SelectItem
+                                        key={direcciones.id}
+                                        value={direcciones.nombreDireccion}
+                                      >
+                                        {direcciones.nombreDireccion}
+                                      </SelectItem>
+                                    ))}
+                                  </Select>
+                                  <Card>
+                                    <CardBody>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Nombre Comercial: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.nombreComercial}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Condiciones de Pago: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.condicionesPago}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Condiciones de Pago: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.condicionesPago}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Contacto: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.contacto}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Contacto: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.contacto}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Credito Disponible: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.creditoDisponible}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Credito Disponible: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.creditoDisponible}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Cuenta: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.cuenta}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Cuenta: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.cuenta}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Dias Credito: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.diasCredito}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Dias Credito: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.diasCredito}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Direccion: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.direccion}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Direccion: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.direccion}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Correo Electronico: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.email}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Correo Electronico: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.email}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Giro: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.giro}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Giro: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.giro}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Limite Credito: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.limiteCredito}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Limite Credito: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.limiteCredito}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Lista Precios: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.listaPrecios}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Lista Precios: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.listaPrecios}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Saldo Pentiente: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.saldoPentiente}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Saldo Pentiente: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.saldoPentiente}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        Telefono: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.telefono}</p>
-                                    </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Telefono: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.telefono}</p>
+                                      </div>
 
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <p className="text-small text-default-500">
-                                        WhatsApp: &nbsp;
-                                      </p>
-                                      <p>{clienteInfo.whatsApp}</p>
-                                    </div>
-                                  </CardBody>
-                                </Card>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          WhatsApp: &nbsp;
+                                        </p>
+                                        <p>{clienteInfo.whatsApp}</p>
+                                      </div>
+                                    </CardBody>
+                                  </Card>
+                                </div>
                               ) : (
                                 <></>
                               )}
@@ -979,8 +1028,7 @@ const Quote = () => {
                                               placeholder=" "
                                               variant="faded"
                                               error={
-                                                validationErrors.cantidad !==
-                                                ""
+                                                validationErrors.cantidad !== ""
                                               }
                                               errorMessage={
                                                 validationErrors.cantidad
@@ -993,7 +1041,7 @@ const Quote = () => {
                                                 )
                                               }
                                             />
-                                            </TableCell>
+                                          </TableCell>
                                           <TableCell>
                                             {fila.inventario}
                                           </TableCell>
