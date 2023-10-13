@@ -73,7 +73,7 @@ const Quotes = () => {
       const response = await fetch("http://localhost:4000/Cotizaciones");
       const data = await response.json();
       if (response.ok) {
-        //setData(data);
+        setData(data);
         contarmarca();
       }
     } catch {
@@ -387,14 +387,14 @@ const Quotes = () => {
                   Ver Cotización
                 </DropdownItem>
                 <DropdownItem
-                  onPress={() => navigate(`/Sales/Quotes/${data.id}/EditQuote`)}
+                  onPress={() => navigate(`/Sales/Quotes/${data.folio}/EditQuote`)}
                 >
                   Editar Ccotización
                 </DropdownItem>
                 <DropdownItem
                   color="danger"
                   className="text-danger"
-                  onPress={() => handleDisable(data.id)}
+                  onPress={() => handleDisable(data.folio)}
                 >
                   Deshabilitar Cotización
                 </DropdownItem>

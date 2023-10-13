@@ -250,6 +250,22 @@ const Quote = () => {
   const [datos, setData] = useState([]);
   const loadTask = async () => {
     try {
+      const response = await fetch("http://localhost:4000/Productos");
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data);
+        setData(data)
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  };
+
+  const loadTask3 = async () => {
+    try {
       const response = await fetch("http://localhost:4000/Cotizaciones/1");
       const data = await response.json();
       if (response.ok) {
@@ -266,6 +282,8 @@ const Quote = () => {
       });
     }
   };
+
+
   useEffect(() => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
