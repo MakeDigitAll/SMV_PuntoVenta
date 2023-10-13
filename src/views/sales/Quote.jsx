@@ -250,10 +250,14 @@ const Quote = () => {
   const [datos, setData] = useState([]);
   const loadTask = async () => {
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch("http://localhost:4000/Cotizaciones/1");
       const data = await response.json();
       if (response.ok) {
-        setData(data);
+        console.log(data);
+        // setDataQuote({
+        //   ...dataQuote,
+        //   pedido: data.pedido,
+        // }
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -288,7 +292,7 @@ const Quote = () => {
   }, []);
 
   const [filasAgregadas, setFilasAgregadas] = useState([]);
-  const [cantidadesUsuario, setCantidadesUsuario] = useState([]);
+  const [cantidadProducto, setcantidadProducto] = useState([]);
   function adaptarDatos(data, cantidad) {
     return {
       codigo: data.codigoEmpresa,
@@ -302,7 +306,7 @@ const Quote = () => {
     };
   }
   const agregarFila = (data, index) => {
-    const cantidad = parseFloat(cantidadesUsuario[index]);
+    const cantidad = parseFloat(cantidadProducto[index]);
 
     const nuevoProducto = filasAgregadas.find(
       (fila) => fila.codigo === data.codigoEmpresa
@@ -381,9 +385,9 @@ const Quote = () => {
   }, [filasAgregadas /*, dataQuote.descuento*/]);
 
   const handleCantidadChange = (event, index) => {
-    const nuevasCantidades = [...cantidadesUsuario];
+    const nuevasCantidades = [...cantidadProducto];
     nuevasCantidades[index] = event.target.value;
-    setCantidadesUsuario(nuevasCantidades);
+    setcantidadProducto(nuevasCantidades);
   };
 
   const handleProductosCotizados = (event, index) => {
@@ -1491,7 +1495,7 @@ const Quote = () => {
                                       <Input
                                         size="sm"
                                         type="number"
-                                        value={cantidadesUsuario[index] || ""} // Usar la cantidad del estado correspondiente
+                                        value={cantidadProducto[index] || ""} // Usar la cantidad del estado correspondiente
                                         onChange={(e) =>
                                           handleCantidadChange(e, index)
                                         }

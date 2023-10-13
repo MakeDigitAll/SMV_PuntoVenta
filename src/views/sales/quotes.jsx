@@ -73,7 +73,7 @@ const Quotes = () => {
       const response = await fetch("http://localhost:4000/Cotizaciones");
       const data = await response.json();
       if (response.ok) {
-        setData(data);
+        //setData(data);
         contarmarca();
       }
     } catch {
