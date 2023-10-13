@@ -247,6 +247,8 @@ const Quote = () => {
     loadCMarcas();
   }, []);
 
+  const [cotizacionData, setCotizacionData] = useState();
+
   const [datos, setData] = useState([]);
   const loadTask = async () => {
     try {
@@ -254,7 +256,7 @@ const Quote = () => {
       const data = await response.json();
       if (response.ok) {
         console.log(data);
-        setData(data)
+        setData(data);
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -264,16 +266,15 @@ const Quote = () => {
     }
   };
 
-  const loadTask3 = async () => {
+  const getCotizacion = async (folioCotizacion) => {
+    var folio = Number(folioCotizacion);
     try {
-      const response = await fetch("http://localhost:4000/Cotizaciones/1");
+      const response = await fetch(
+        "http://localhost:4000/Cotizaciones/" + folio
+      );
       const data = await response.json();
       if (response.ok) {
         console.log(data);
-        // setDataQuote({
-        //   ...dataQuote,
-        //   pedido: data.pedido,
-        // }
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -282,7 +283,6 @@ const Quote = () => {
       });
     }
   };
-
 
   useEffect(() => {
     loadTask();
@@ -484,6 +484,25 @@ const Quote = () => {
     }
     loadProducts();
   };
+  //--------------------------------------------------------------------------------------//
+  //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
+  //--------------------------------------------------------------------------------------//
+
+  var [isEditable, setIsEditable] = useState(false);
+  useEffect(() => {
+    //obtener la url
+    const url = window.location.href;
+    //separrar la url por /
+    const urlSeparada = url.split("/");
+    //si al url en la posicion 6 es igual a EditQuote
+    if (urlSeparada[6] === "EditQuote") {
+      setIsEditable(true);
+      getCotizacion(urlSeparada[5]);
+    } else if (urlSeparada[6] === "ViewQuote") {
+      setIsEditable(false);
+      getCotizacion(urlSeparada[5]);
+    }
+  }, [dataQuote, window.location.href]);
 
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
