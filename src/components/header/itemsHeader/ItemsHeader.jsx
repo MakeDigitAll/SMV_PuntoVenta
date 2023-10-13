@@ -129,7 +129,7 @@ const ItemsHeader = () => {
       id: 11,
       name: "Punto de venta",
       icon: RiStore3Line,
-      address: {onOpen},
+      address: () => navigate(`/${"PointofSale"}`),
       roleId: "0",
     },
     {

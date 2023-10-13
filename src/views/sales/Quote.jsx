@@ -49,16 +49,27 @@ const Quote = () => {
   const params = useParams();
   
   const [validationErrors, setValidationErrors] = useState({
-    idCliente: "",
-    idVendedor: "",
-    recurrencia: "",
-    envio: "",
-    comentarios: "",
-    neto: "",
-    descuento: "",
-    subtotal: "",
-    impuestos: "",
-    total: "",
+    pedido: "",
+    cliente: "",
+    vendedor: "",
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
+    nombre: "",
+    apellido: "",
+    email: "",
+    emailConfirm: "",
+    password: "",
+    confirmPassword: "",
+    direccion: "",
+    colonia: "",
+    ciudad: "",
+    estado: "",
+    codigoPostal: "",
+    telefonoContacto: "",
+    telefonoCelular: "",
+    perfilSeguridad: "",
+    // vendedor: "",
   });
 
 
