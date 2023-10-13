@@ -33,28 +33,24 @@ const statusOptions = [
   { name: "Vacation", uid: "vacation" },
 ];
 const columns = [
-  { name: "ID", uid: "id", sortable: true },
   { name: "Folio", uid: "folio", sortable: true },
   { name: "Fecha", uid: "fecha", sortable: true },
   { name: "Pedido", uid: "pedido", sortable: true },
-  { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Recurrencia", uid: "recurrenciaa", sortable: true },
-  { name: "Origen", uid: "origen", sortable: true },
-  { name: "Monto", uid: "monto", sortable: true },
+  { name: "Cliente", uid: "idCliente", sortable: true },
+  { name: "Vendedor", uid: "idVendedor", sortable: true },
+  { name: "Recurrencia", uid: "recurrencia", sortable: true },
+  { name: "Total", uid: "total", sortable: true },
   { name: "Status", uid: "status", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
   "folio",
   "fecha",
   "pedido",
-  "cliente",
-  "vendedor",
+  "idCliente",
+  "idVendedor",
   "recurrencia",
-  "origen",
-  "monto",
+  "total",
   "status",
   "Actions",
 ];
@@ -88,9 +84,8 @@ const Quotes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clientesOptions = data.map((item) => item.cliente.toLowerCase());
-  const vendedoresOptions = data.map((item) => item.vendedor.toLowerCase());
-  const origenOptions = data.map((item) => item.origen.toLowerCase());
+  //const clientesOptions = data.map((item) => item.idCliente.toLowerCase());
+  //const vendedoresOptions = data.map((item) => item.idVendedor.toLowerCase());
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -121,9 +116,9 @@ const Quotes = () => {
   const [selectedCliente, setSelectedCliente] = useState("");
   const [selectedVendedor, setSelectedVendedor] = useState("");
   const [selectedOrigen, setSelectedOrigen] = useState("");
-  const [modalidad, setModalidad] = useState("");  
+  const [modalidad, setModalidad] = useState("");
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [disableCounter, setDisableCounter] = useState(0); 
+  const [disableCounter, setDisableCounter] = useState(0);
 
   const handleClienteChange = (event) => {
     setSelectedCliente(event.target.value);
@@ -133,7 +128,7 @@ const Quotes = () => {
   };
   const handleOrigenChange = (event) => {
     setSelectedOrigen(event.target.value);
-    
+
   };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
@@ -148,24 +143,17 @@ const Quotes = () => {
     if (selectedCliente) {
       const selectedClienteLower = selectedCliente.toLowerCase();
       filteredUsers = filteredUsers.filter(
-        (data) => data.cliente.toLowerCase() === selectedClienteLower
+        (data) => data.idCliente.toLowerCase() === selectedClienteLower
       );
     }
     // Filtra por vendedor seleccionado
     if (selectedVendedor) {
       const selectedVendedorLower = selectedVendedor.toLowerCase();
       filteredUsers = filteredUsers.filter(
-        (data) => data.vendedor.toLowerCase() === selectedVendedorLower
+        (data) => data.idVendedor.toLowerCase() === selectedVendedorLower
       );
     }
 
-    // Filtra por origen seleccionado
-    if (selectedOrigen) {
-      const selectedOrigenLower = selectedOrigen.toLowerCase();
-      filteredUsers = filteredUsers.filter(
-        (data) => data.origen.toLowerCase() === selectedOrigenLower
-      );
-    }
 
     if (modalidad) {
       filteredUsers = filteredUsers.filter((data) =>
@@ -192,10 +180,10 @@ const Quotes = () => {
     selectedVendedor,
     selectedOrigen,
     modalidad,
-  ]);  
-  
+  ]);
+
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
-  
+
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -237,7 +225,7 @@ const Quotes = () => {
           },
           body: JSON.stringify(datoDisable),
         });
-  
+
         if (res.ok) {
           toast.warning("Deshabilitando Cotización ", {
             position: "bottom-right",
@@ -379,9 +367,9 @@ const Quotes = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.id}/ViewQuote`)}>Ver Cotización</DropdownItem>
-                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.id}/EditQuote`)}>Editar Ccotización</DropdownItem>
-                <DropdownItem color="danger" className="text-danger" onPress={() => handleDisable(data.id)}>Deshabilitar Cotización</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.folio}/ViewQuote`)}>Ver Cotización</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.folio}/EditQuote`)}>Editar Ccotización</DropdownItem>
+                <DropdownItem color="danger" className="text-danger" onPress={() => handleDisable(data.folio)}>Deshabilitar Cotización</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -502,24 +490,19 @@ const Quotes = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-              <div className="w-[300px] sm:max-w-[44%]">
-                <Select
-                  labelPlacement={"outside"}
-                  label=""
-                  placeholder="Clientes"
-                  size="sm"
-                  value={selectedCliente}
-                  onChange={handleClienteChange}
-                >
-                  {clientesOptions.map((clientesOption) => (
-                    <SelectItem key={clientesOption} value={clientesOption}>
-                      {clientesOption}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
-              <div className="w-[300px] sm:max-w-[44%]">
-                <Select
+            <div className="w-[300px] sm:max-w-[44%]">
+              <Select
+                labelPlacement={"outside"}
+                label=""
+                placeholder="Clientes"
+                size="sm"
+                onChange={handleClienteChange}
+              >
+
+              </Select>
+            </div>
+            <div className="w-[300px] sm:max-w-[44%]">
+              <Select
                   labelPlacement={"outside"}
                   label=""
                   placeholder="Vendedor"
@@ -527,15 +510,10 @@ const Quotes = () => {
                   value={selectedVendedor}
                   onChange={handleVendedorChange}
                 >
-                  {vendedoresOptions.map((vendedoresOption) => (
-                    <SelectItem key={vendedoresOption} value={vendedoresOption}>
-                      {vendedoresOption}
-                    </SelectItem>
-                  ))}
                 </Select>
-              </div>
+            </div>
             <div className="w-[300px] sm:max-w-[44%]">
-              <Select
+              {/* <Select
                   labelPlacement={"outside"}
                   label=""
                   placeholder="Origen"
@@ -548,8 +526,8 @@ const Quotes = () => {
                       {origenOption}
                     </SelectItem>
                   ))}
-                </Select>
-                </div>
+                </Select> */}
+            </div>
           </div>
 
           <div className="flex flex-wrap place-content-end space-x-2">
@@ -722,7 +700,7 @@ const Quotes = () => {
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.folio}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
