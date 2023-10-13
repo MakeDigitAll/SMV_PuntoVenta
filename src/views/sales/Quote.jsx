@@ -875,7 +875,6 @@ const Quote = () => {
                             </div>
                             <div className="md:col-span-6">
                               <Checkbox
-                                isRequired
                                 isDisabled={isOnlyRead}
                                 onChange={setIsRecurrente}
                               >
@@ -894,7 +893,6 @@ const Quote = () => {
                             <Spacer y={6} />
                             <div className="md:col-span-12">
                               <Select
-                                isRequired
                                 labelPlacement={"outside"}
                                 label="Información del Cliente"
                                 placeholder="General"
