@@ -334,7 +334,7 @@ const Quote = () => {
 
     for (const fila of filas) {
       const neto = fila.cantidad * fila.precioUnitario;
-      const descuentoValor = (neto * fila.descuento) / 100; 
+      const descuentoValor = (neto * fila.descuento) / 100;
       const subtotal = neto - descuentoValor;
       const impuestos = subtotal * 0.16; // Cambia el valor del impuesto según tu necesidad
 
@@ -390,17 +390,20 @@ const Quote = () => {
     const { name, value } = event.target;
 
     if (value <= Number(filasAgregadas[index].inventario)) {
-  
-    const nuevasFilas = [...filasAgregadas];
+      const nuevasFilas = [...filasAgregadas];
 
-    nuevasFilas[index] = {
-      ...nuevasFilas[index],
-      [name]: Number(value),
-      ["total"]: Number(value) * Number(nuevasFilas[index].precioUnitario) - (Number(value) * Number(nuevasFilas[index].precioUnitario) * Number(nuevasFilas[index].descuento) / 100),
-    };
+      nuevasFilas[index] = {
+        ...nuevasFilas[index],
+        [name]: Number(value),
+        ["total"]:
+          Number(value) * Number(nuevasFilas[index].precioUnitario) -
+          (Number(value) *
+            Number(nuevasFilas[index].precioUnitario) *
+            Number(nuevasFilas[index].descuento)) /
+            100,
+      };
 
-    setFilasAgregadas(nuevasFilas);
-
+      setFilasAgregadas(nuevasFilas);
     } else {
       toast.error("La cantidad debe ser mayor a cero y menor al inventario", {
         theme: "colored",

@@ -88,9 +88,9 @@ const Quotes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clientesOptions = data.map((item) => item.cliente.toLowerCase());
-  const vendedoresOptions = data.map((item) => item.vendedor.toLowerCase());
-  const origenOptions = data.map((item) => item.origen.toLowerCase());
+  const clientesOptions = data.map((item) => item);
+  const vendedoresOptions = data.map((item) => item);
+  const origenOptions = data.map((item) => item);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -121,9 +121,9 @@ const Quotes = () => {
   const [selectedCliente, setSelectedCliente] = useState("");
   const [selectedVendedor, setSelectedVendedor] = useState("");
   const [selectedOrigen, setSelectedOrigen] = useState("");
-  const [modalidad, setModalidad] = useState("");  
+  const [modalidad, setModalidad] = useState("");
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [disableCounter, setDisableCounter] = useState(0); 
+  const [disableCounter, setDisableCounter] = useState(0);
 
   const handleClienteChange = (event) => {
     setSelectedCliente(event.target.value);
@@ -133,7 +133,6 @@ const Quotes = () => {
   };
   const handleOrigenChange = (event) => {
     setSelectedOrigen(event.target.value);
-    
   };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
@@ -192,10 +191,9 @@ const Quotes = () => {
     selectedVendedor,
     selectedOrigen,
     modalidad,
-  ]);  
-  
+  ]);
+
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
-  
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -226,18 +224,21 @@ const Quotes = () => {
 
     const handleDisable = async (id) => {
       const datoDisable = {
-        id: id
+        id: id,
       };
       console.log(datoDisable);
       try {
-        const res = await fetch(`http://localhost:4000/CotizacionesDisable/${id}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datoDisable),
-        });
-  
+        const res = await fetch(
+          `http://localhost:4000/CotizacionesDisable/${id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(datoDisable),
+          }
+        );
+
         if (res.ok) {
           toast.warning("Deshabilitando Cotización ", {
             position: "bottom-right",
@@ -255,7 +256,6 @@ const Quotes = () => {
           position: "bottom-right",
           theme: "colored",
         });
-
       } finally {
         // Después de deshabilitar, vuelva a cargar los datos para reflejar los cambios
         setIsDataLoading(true);
@@ -379,9 +379,25 @@ const Quotes = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.id}/ViewQuote`)}>Ver Cotización</DropdownItem>
-                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.id}/EditQuote`)}>Editar Ccotización</DropdownItem>
-                <DropdownItem color="danger" className="text-danger" onPress={() => handleDisable(data.id)}>Deshabilitar Cotización</DropdownItem>
+                <DropdownItem
+                  onPress={() =>
+                    navigate(`/Sales/Quotes/${data.folio}/ViewQuote`)
+                  }
+                >
+                  Ver Cotización
+                </DropdownItem>
+                <DropdownItem
+                  onPress={() => navigate(`/Sales/Quotes/${data.id}/EditQuote`)}
+                >
+                  Editar Ccotización
+                </DropdownItem>
+                <DropdownItem
+                  color="danger"
+                  className="text-danger"
+                  onPress={() => handleDisable(data.id)}
+                >
+                  Deshabilitar Cotización
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -502,54 +518,78 @@ const Quotes = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-              <div className="w-[300px] sm:max-w-[44%]">
-                <Select
-                  labelPlacement={"outside"}
-                  label=""
-                  placeholder="Clientes"
-                  size="sm"
-                  value={selectedCliente}
-                  onChange={handleClienteChange}
-                >
-                  {clientesOptions.map((clientesOption) => (
-                    <SelectItem key={clientesOption} value={clientesOption}>
-                      {clientesOption}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
-              <div className="w-[300px] sm:max-w-[44%]">
-                <Select
-                  labelPlacement={"outside"}
-                  label=""
-                  placeholder="Vendedor"
-                  size="sm"
-                  value={selectedVendedor}
-                  onChange={handleVendedorChange}
-                >
-                  {vendedoresOptions.map((vendedoresOption) => (
-                    <SelectItem key={vendedoresOption} value={vendedoresOption}>
-                      {vendedoresOption}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
             <div className="w-[300px] sm:max-w-[44%]">
               <Select
-                  labelPlacement={"outside"}
-                  label=""
-                  placeholder="Origen"
-                  size="sm"
-                  value={selectedOrigen}
-                  onChange={handleOrigenChange}
-                >
-                  {origenOptions.map((origenOption) => (
-                    <SelectItem key={origenOption} value={origenOption}>
-                      {origenOption}
-                    </SelectItem>
-                  ))}
-                </Select>
-                </div>
+                labelPlacement={"outside"}
+                label=""
+                placeholder="Clientes"
+                size="sm"
+                value={selectedCliente}
+                onChange={handleClienteChange}
+              >
+                {clientesOptions.map(
+                  (clientesOption) => (
+                    console.log(clientesOption),
+                    (
+                      <SelectItem
+                        key={clientesOption.folio}
+                        value={clientesOption.folio}
+                      >
+                        {clientesOption.folio}
+                      </SelectItem>
+                    )
+                  )
+                )}
+              </Select>
+            </div>
+            <div className="w-[300px] sm:max-w-[44%]">
+              <Select
+                labelPlacement={"outside"}
+                label=""
+                placeholder="Vendedor"
+                size="sm"
+                value={selectedVendedor}
+                onChange={handleVendedorChange}
+              >
+                {vendedoresOptions.map(
+                  (vendedoresOption) => (
+                    console.log(vendedoresOption),
+                    (
+                      <SelectItem
+                        key={vendedoresOption.folio}
+                        value={vendedoresOption.folio}
+                      >
+                        {vendedoresOption.folio}
+                      </SelectItem>
+                    )
+                  )
+                )}
+              </Select>
+            </div>
+            <div className="w-[300px] sm:max-w-[44%]">
+              <Select
+                labelPlacement={"outside"}
+                label=""
+                placeholder="Origen"
+                size="sm"
+                value={selectedOrigen}
+                onChange={handleOrigenChange}
+              >
+                {origenOptions.map(
+                  (origenOption) => (
+                    console.log(origenOption),
+                    (
+                      <SelectItem
+                        key={origenOption.folio}
+                        value={origenOption.folio}
+                      >
+                        {origenOption.folio}
+                      </SelectItem>
+                    )
+                  )
+                )}
+              </Select>
+            </div>
           </div>
 
           <div className="flex flex-wrap place-content-end space-x-2">
@@ -590,11 +630,16 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
+                {columns.map(
+                  (column) => (
+                    console.log(column),
+                    (
+                      <DropdownItem key={column.uid} className="capitalize">
+                        {column.name}
+                      </DropdownItem>
+                    )
+                  )
+                )}
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -615,11 +660,16 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
+                {columns.map(
+                  (column) => (
+                    console.log(column),
+                    (
+                      <DropdownItem key={column.uid} className="capitalize">
+                        {column.name}
+                      </DropdownItem>
+                    )
+                  )
+                )}
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -708,13 +758,16 @@ const Quotes = () => {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "Actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
-            >
-              {column.name}
-            </TableColumn>
+            console.log(column),
+            (
+              <TableColumn
+                key={column.uid}
+                align={column.uid === "Actions" ? "center" : "start"}
+                allowsSorting={column.sortable}
+              >
+                {column.name}
+              </TableColumn>
+            )
           )}
         </TableHeader>
         <TableBody
@@ -722,11 +775,14 @@ const Quotes = () => {
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
+            console.log(item),
+            (
+              <TableRow key={item.folio}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )
           )}
         </TableBody>
       </Table>
