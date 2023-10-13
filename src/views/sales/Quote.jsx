@@ -247,7 +247,12 @@ const Quote = () => {
     loadCMarcas();
   }, []);
 
-  const [cotizacionData, setCotizacionData] = useState();
+  const [cotizacionData, setCotizacionData] = useState({
+    fecha: format(new Date(), "yyyy-MM-dd"),
+    recurrencia: false,
+    comentarios: "",
+    envio: "",
+  });
 
   const [datos, setData] = useState([]);
   const loadTask = async () => {
@@ -273,7 +278,12 @@ const Quote = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        setCotizacionData(data);
+        setCotizacionData({
+          fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
+          recurrencia: Number(data.recurrencia),
+          comentarios: data.comentarios,
+          envio: data.envio,
+         });
         console.log(data);
         getDatosCliente(data.idCliente);
       }
@@ -284,6 +294,9 @@ const Quote = () => {
       });
     }
   };
+
+  console.log(cotizacionData);
+
 
   useEffect(() => {
     loadTask();
@@ -852,7 +865,7 @@ const Quote = () => {
                               <Input
                                 id="fecha"
                                 isRequired
-                                value={fechaCotizacion}
+                                value={cotizacionData.fecha}
                                 size={"sm"}
                                 isDisabled
                                 type="date"
@@ -1252,8 +1265,14 @@ const Quote = () => {
                                 size="sm"
                                 isDisabled={isOnlyRead}
                                 isRequired
-                                value={dataQuote.origen}
-                                onChange={(e) => setEnvio(e.target.value)}
+                                value={cotizacionData.envio}
+                                onChange={(e) => {
+                                  setCotizacionData({
+                                    ...cotizacionData,
+                                    envio: e.target.value,
+                                  });
+                                }
+                                }
                               >
                                 {envios.map((envios) => (
                                   <SelectItem key={envios} value={envios}>
@@ -1380,10 +1399,10 @@ const Quote = () => {
                                 label="Comentarios de la Cotización"
                                 isDisabled={isOnlyRead}
                                 labelPlacement="outside"
-                                value={dataQuote.comentarios}
+                                value={cotizacionData.comentarios}
                                 onChange={(e) =>
-                                  setDataQuote({
-                                    ...dataQuote,
+                                  setCotizacionData({
+                                    ...cotizacionData,
                                     comentarios: e.target.value,
                                   })
                                 }
