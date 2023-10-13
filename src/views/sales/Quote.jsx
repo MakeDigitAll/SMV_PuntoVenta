@@ -483,10 +483,17 @@ const Quote = () => {
   const [isRecurrente, setIsRecurrente] = useState(false);
 
   //para almacenar los datos del cliente seleccionado
-  const [clienteInfo, setClienteInfo] = useState([]);
+  const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
+  const [clienteInfoDireccion, setClienteInfoDireccion] = useState([]);
+  const [clienteInfoFacturacion, setClienteInfoFacturacion] = useState([]);
 
   //para el envio
   const [envio, setEnvio] = useState("");
+
+  //true o false para saber que informacion se muestra
+  const [showInfoGeneral, setShowInfoGeneral] = useState(false);
+  const [showInfoDireccion, setShowInfoDireccion] = useState(false);
+  const [showInfoFacturacion, setShowInfoFacturacion] = useState(false);
 
   // Query para traer todos los Vendedores
   const getClientes = () => {
@@ -569,18 +576,18 @@ const Quote = () => {
   }, [searchNombreCliente]);
 
   const handleClienteClick = (cliente) => {
-    console.log(cliente);
     setIdCliente(cliente.id);
     setNombreSelectedCliente(cliente.nombreComercial);
     setSearchNombreCliente(cliente.nombreComercial);
     setIdVendedor(cliente.vendedor);
     setIsResultSearchCliente(false);
     setFechaCotizacion(format(new Date(), "yyyy-MM-dd"));
-    setClienteData(cliente);
+    setShowInfoGeneral(true);
+    setClienteDataGeneral(cliente);
   };
 
-  const setClienteData = (cliente) => {
-    let clienteData = {
+  const setClienteDataGeneral = (cliente) => {
+    let clienteDataGeneral = {
       nombreComercial: cliente.nombreComercial,
       DateCreation: cliente.DateCreation,
       DateModification: cliente.DateModification,
@@ -605,7 +612,33 @@ const Quote = () => {
       vendedor: cliente.vendedor,
       whatsApp: cliente.whatsApp,
     };
-    setClienteInfo(clienteData);
+    setClienteInfoGeneral(clienteDataGeneral);
+  };
+
+  const handleClickDireccion = (direccion) => {
+    setClienteDireccion(direccion);
+  };
+
+  const setClienteDireccion = (direccion) => {
+    let clienteInfoDireccion = {
+      nombreDireccion: direccion.nombreDireccion,
+      calle: direccion.calle,
+      colonia: direccion.colonia,
+      ciudad: direccion.ciudad,
+      estado: direccion.estado,
+      codigoPostal: direccion.codigoPostal,
+      entreCalles: direccion.entreCalles[0] + " y " + direccion.entreCalles[1],
+      numeroInterior: direccion.numeroInterior,
+      numeroExterior: direccion.numeroExterior,
+      referencias: direccion.referencias,
+      apellidoRecibe: direccion.apellidoRecibe,
+    };
+    setClienteInfoDireccion(clienteInfoDireccion);
+  };
+
+  const handleClickFacturacion = (facturacion) => {
+    console.log("Facturacion");
+    console.log(facturacion);
   };
 
   return (
@@ -697,31 +730,27 @@ const Quote = () => {
                                   zIndex: "100",
                                 }}
                               >
-                                <div>
-                                  {isResultSearchCliente ? (
-                                    <div>
-                                      {filterCliente
-                                        .slice(0, 5)
-                                        .map((vendedor, index) => (
-                                          <Card
-                                            className="grid grid-cols-3 mt-1"
-                                            isHoverable={true}
+                                {isResultSearchCliente ? (
+                                  <div>
+                                    {filterCliente
+                                      .slice(0, 5)
+                                      .map((vendedor, index) => (
+                                        <Card isHoverable={true}>
+                                          <CardBody
+                                            key={vendedor.id}
+                                            onClick={() =>
+                                              handleClienteClick(vendedor)
+                                            }
+                                            className="grid grid-cols-2 mt-1"
                                           >
-                                            <CardBody
-                                              key={vendedor.id}
-                                              onClick={() =>
-                                                handleClienteClick(vendedor)
-                                              }
-                                            >
-                                              <p>{vendedor.nombreComercial}</p>
-                                            </CardBody>
-                                          </Card>
-                                        ))}
-                                    </div>
-                                  ) : (
-                                    <p></p>
-                                  )}
-                                </div>
+                                            <p>{vendedor.nombreComercial}</p>
+                                          </CardBody>
+                                        </Card>
+                                      ))}
+                                  </div>
+                                ) : (
+                                  <p></p>
+                                )}
                               </div>
                             </div>
                             <div className="md:col-span-8">
@@ -786,27 +815,44 @@ const Quote = () => {
                       <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                         <div className="md:col-span-12">
                           <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
-                            <Spacer y={2} />
-                            <div className="md:col-span-6"></div>
+                            <Spacer y={6} />
                             <div className="md:col-span-12">
-                              {idVendedor ? (
-                                <div>
-                                  <Select
-                                    isRequired
-                                    labelPlacement={"outside"}
-                                    label="Información del Cliente"
-                                    placeholder="General"
-                                    size="sm"
+                              <Select
+                                isRequired
+                                labelPlacement={"outside"}
+                                label="Información del Cliente"
+                                placeholder="General"
+                                size="sm"
+                              >
+                                {direccionesCliente.map((direcciones) => (
+                                  <SelectItem
+                                    key={direcciones.id}
+                                    value={direcciones.nombreDireccion}
+                                    onClick={() => {
+                                      direcciones.nombreDireccion
+                                        ? (setShowInfoGeneral(false),
+                                          setShowInfoDireccion(true),
+                                          setShowInfoFacturacion(false),
+                                          handleClickDireccion(direcciones))
+                                        : direcciones.facturacion
+                                        ? (setShowInfoGeneral(false),
+                                          setShowInfoDireccion(false),
+                                          setShowInfoFacturacion(true),
+                                          handleClickFacturacion(direcciones))
+                                        : (setShowInfoGeneral(true),
+                                          setShowInfoDireccion(false),
+                                          setShowInfoFacturacion(false),
+                                          setClienteInfoGeneral(
+                                            clienteInfoGeneral
+                                          ));
+                                    }}
                                   >
-                                    {direccionesCliente.map((direcciones) => (
-                                      <SelectItem
-                                        key={direcciones.id}
-                                        value={direcciones.nombreDireccion}
-                                      >
-                                        {direcciones.nombreDireccion}
-                                      </SelectItem>
-                                    ))}
-                                  </Select>
+                                    {direcciones.nombreDireccion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              {showInfoGeneral ? (
+                                <div>
                                   <Card>
                                     <CardBody>
                                       <div
@@ -817,7 +863,9 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Nombre Comercial: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.nombreComercial}</p>
+                                        <p>
+                                          {clienteInfoGeneral.nombreComercial}
+                                        </p>
                                       </div>
 
                                       <div
@@ -828,7 +876,9 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Condiciones de Pago: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.condicionesPago}</p>
+                                        <p>
+                                          {clienteInfoGeneral.condicionesPago}
+                                        </p>
                                       </div>
 
                                       <div
@@ -839,7 +889,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Contacto: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.contacto}</p>
+                                        <p>{clienteInfoGeneral.contacto}</p>
                                       </div>
 
                                       <div
@@ -850,7 +900,9 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Credito Disponible: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.creditoDisponible}</p>
+                                        <p>
+                                          {clienteInfoGeneral.creditoDisponible}
+                                        </p>
                                       </div>
 
                                       <div
@@ -861,7 +913,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Cuenta: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.cuenta}</p>
+                                        <p>{clienteInfoGeneral.cuenta}</p>
                                       </div>
 
                                       <div
@@ -872,7 +924,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Dias Credito: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.diasCredito}</p>
+                                        <p>{clienteInfoGeneral.diasCredito}</p>
                                       </div>
 
                                       <div
@@ -883,7 +935,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Direccion: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.direccion}</p>
+                                        <p>{clienteInfoGeneral.direccion}</p>
                                       </div>
 
                                       <div
@@ -894,7 +946,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Correo Electronico: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.email}</p>
+                                        <p>{clienteInfoGeneral.email}</p>
                                       </div>
 
                                       <div
@@ -905,7 +957,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Giro: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.giro}</p>
+                                        <p>{clienteInfoGeneral.giro}</p>
                                       </div>
 
                                       <div
@@ -916,7 +968,9 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Limite Credito: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.limiteCredito}</p>
+                                        <p>
+                                          {clienteInfoGeneral.limiteCredito}
+                                        </p>
                                       </div>
 
                                       <div
@@ -927,7 +981,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Lista Precios: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.listaPrecios}</p>
+                                        <p>{clienteInfoGeneral.listaPrecios}</p>
                                       </div>
 
                                       <div
@@ -938,7 +992,9 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Saldo Pentiente: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.saldoPentiente}</p>
+                                        <p>
+                                          {clienteInfoGeneral.saldoPentiente}
+                                        </p>
                                       </div>
 
                                       <div
@@ -949,7 +1005,7 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           Telefono: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.telefono}</p>
+                                        <p>{clienteInfoGeneral.telefono}</p>
                                       </div>
 
                                       <div
@@ -960,11 +1016,154 @@ const Quote = () => {
                                         <p className="text-small text-default-500">
                                           WhatsApp: &nbsp;
                                         </p>
-                                        <p>{clienteInfo.whatsApp}</p>
+                                        <p>{clienteInfoGeneral.whatsApp}</p>
                                       </div>
                                     </CardBody>
                                   </Card>
                                 </div>
+                              ) : showInfoDireccion ? (
+                                <div>
+                                  <Card>
+                                    <CardBody>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Nombre de la Direccion: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.nombreDireccion}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Calle: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.calle}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Colonia: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.colonia}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Ciudad: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.ciudad}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Estado: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.estado}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Codigo Postal: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.codigoPostal}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Entre Calles: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.entreCalles}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Numero Interior: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.numeroInterior}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Numero Exterior: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.numeroExterior}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Referencias: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.referencias}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Referencias: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.apellidoRecibe}
+                                        </p>
+                                      </div>
+                                    </CardBody>
+                                  </Card>
+                                </div>
+                              ) : showInfoFacturacion ? (
+                                <></>
                               ) : (
                                 <></>
                               )}
