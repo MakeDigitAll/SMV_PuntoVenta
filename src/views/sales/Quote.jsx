@@ -274,7 +274,7 @@ const Quote = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
+        setCotizacionData(data);
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -844,6 +844,7 @@ const Quote = () => {
                             <div className="md:col-span-6">
                               <Checkbox
                                 isRequired
+                                isDisabled={isEditable}
                                 isChecked={isRecurrente}
                                 onChange={setIsRecurrente}
                               >
@@ -1218,6 +1219,7 @@ const Quote = () => {
                                 label="Envío"
                                 placeholder="Seleccione"
                                 size="sm"
+                                isDisabled={isEditable}
                                 isRequired
                                 value={dataQuote.origen}
                                 onChange={(e) => setEnvio(e.target.value)}
@@ -1343,6 +1345,7 @@ const Quote = () => {
                               <Textarea
                                 minRows={8}
                                 label="Comentarios de la Cotización"
+                                isDisabled={isEditable}
                                 labelPlacement="outside"
                                 value={dataQuote.comentarios}
                                 onChange={(e) =>
