@@ -488,7 +488,7 @@ const Quote = () => {
   //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
   //--------------------------------------------------------------------------------------//
 
-  var [isEditable, setIsEditable] = useState(false);
+  var [isOnlyRead, setIsOnlyRead] = useState(false);
   useEffect(() => {
     //obtener la url
     const url = window.location.href;
@@ -496,10 +496,10 @@ const Quote = () => {
     const urlSeparada = url.split("/");
     //si al url en la posicion 6 es igual a EditQuote
     if (urlSeparada[6] === "EditQuote") {
-      setIsEditable(true);
+      setIsOnlyRead(false);
       getCotizacion(urlSeparada[5]);
     } else if (urlSeparada[6] === "ViewQuote") {
-      setIsEditable(false);
+      setIsOnlyRead(true);
       getCotizacion(urlSeparada[5]);
     }
   }, [dataQuote, window.location.href]);
@@ -755,6 +755,7 @@ const Quote = () => {
                                 onValueChange={setSearchNombreCliente}
                                 size="sm"
                                 isRequired
+                                isDisabled={isOnlyRead}
                                 type="text"
                                 label="Nombre del Cliente"
                                 name="cliente"
@@ -844,7 +845,7 @@ const Quote = () => {
                             <div className="md:col-span-6">
                               <Checkbox
                                 isRequired
-                                isDisabled={isEditable}
+                                isDisabled={isOnlyRead}
                                 isChecked={isRecurrente}
                                 onChange={setIsRecurrente}
                               >
@@ -1219,7 +1220,7 @@ const Quote = () => {
                                 label="Envío"
                                 placeholder="Seleccione"
                                 size="sm"
-                                isDisabled={isEditable}
+                                isDisabled={isOnlyRead}
                                 isRequired
                                 value={dataQuote.origen}
                                 onChange={(e) => setEnvio(e.target.value)}
@@ -1316,12 +1317,14 @@ const Quote = () => {
                                 color="primary"
                                 onPress={() => handleOpenAddProduct()}
                                 className="capitalize"
+                                isDisabled={isOnlyRead}
                               >
                                 Agregar productos
                               </Button>
                               <Button
                                 variant="flat"
                                 color="success"
+                                isDisabled={isOnlyRead}
                                 onPress={() => handleOpenAddDiscount()}
                                 className="capitalize"
                                 startContent={<MdDiscount />}
@@ -1345,7 +1348,7 @@ const Quote = () => {
                               <Textarea
                                 minRows={8}
                                 label="Comentarios de la Cotización"
-                                isDisabled={isEditable}
+                                isDisabled={isOnlyRead}
                                 labelPlacement="outside"
                                 value={dataQuote.comentarios}
                                 onChange={(e) =>
