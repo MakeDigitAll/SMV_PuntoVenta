@@ -39,24 +39,15 @@ import {
   MdSettings,
   MdUpload,
 } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 const Quote = () => {
   const [selectedImage, setSelectedImage] = useState("");
-  const imageDefault = selectedImage === "";
-  const [user, setUser] = useState({
-    nombre: "",
-    apellido: "",
-    email: "",
-    password: "",
-    imagen: "",
-    emailConfirm: "",
-    passwordConfirm: "",
-    dateQuote: format(new Date(), "yyyy-MM-dd"),
-  });
+  const params = useParams();
+  
   const [validationErrors, setValidationErrors] = useState({
     pedido: "",
     cliente: "",
@@ -83,13 +74,17 @@ const Quote = () => {
 
 
   const [dataQuote, setDataQuote] = useState({
-    pedido: "",
-    cliente: "",
-    vendedor: "",
-    recurrenciaa: "",
-    origen: "",
-    monto: "",
+    idCliente: "",
+    idVendedor: "",
     fecha: format(new Date(), "yyyy-MM-dd"),
+    recurrencia: "",
+    envio: "",
+    comentarios: "",
+    neto: "",
+    descuento: "",
+    subtotal: "",
+    impuestos: "",
+    total: "",
   });
 
   const datosCliente = () => {
@@ -118,10 +113,7 @@ const Quote = () => {
     setUser({ ...user, [name]: value });
     setValidationErrors({ ...validationErrors, [name]: "" });
   };
-  const fileInputRef = useRef(null);
-  const handleFileButtonClick = () => {
-    fileInputRef.current.click();
-  };
+  
 
   const [isChecked, setIsChecked] = useState(false);
   function handleCheckboxChange() {
@@ -133,19 +125,13 @@ const Quote = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage
-      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
-      : "";
+    
     if (
-      !dataQuote.imagen ||
-      !dataQuote.pedido ||
-      !dataQuote.cliente ||
-      !dataQuote.vendedor ||
-      !dataQuote.recurrenciaa ||
-      !dataQuote.origen ||
-      !dataQuote.monto ||
-      passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" ||
+      !dataQuote.idCliente ||
+      !dataQuote.idVendedor ||
+      !dataQuote.recurrencia ||
+      !dataQuote.envio ||
+      !dataQuote.comentarios ||
       emailConfirmValidationState !== "valid"
     ) {
       toast.error("Llena todos los campos correctamente", {
@@ -154,13 +140,12 @@ const Quote = () => {
     }
 
     const errors = {};
-    !dataQuote.pedido ? (errors.pedido = "Llena este campo") : "";
-    !dataQuote.cliente ? (errors.cliente = "Llena este campo") : "";
-    !dataQuote.vendedor ? (errors.vendedor = "Llena este campo") : "";
+    !dataQuote.idCliente ? (errors.idCliente = "Llena este campo") : "";
+    !dataQuote.idVendedor ? (errors.idVendedor = "Llena este campo") : "";
+    !dataQuote.recurrencia ? (errors.recurrencia = "Llena este campo") : "";
     !dataQuote.recurrenciaa ? (errors.recurrenciaa = "Llena este campo") : "";
-    !dataQuote.origen ? (errors.origen = "Llena este campo") : "";
-    !dataQuote.monto ? (errors.monto = "Llena este campo") : "";
-    !dataQuote.imagen ? (errors.imagen = "Llena este campo") : "";
+    !dataQuote.envio ? (errors.envio = "Llena este campo") : "";
+    !dataQuote.comentarios ? (errors.comentarios = "Llena este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -169,12 +154,17 @@ const Quote = () => {
 
     const formData = new FormData();
     const document = JSON.stringify({
-      pedido: dataQuote.pedido,
-      cliente: dataQuote.cliente,
-      vendedor: dataQuote.vendedor,
-      recurrenciaa: isChecked ? 1 : 0,
-      origen: dataQuote.origen,
-      monto: dataQuote.monto,
+      idCliente: dataQuote.idCliente,
+      idVendedor: dataQuote.idVendedor,
+      fecha: dataQuote.fecha,
+      recurrencia: isChecked ? 1 : 0,
+      envio: dataQuote.envio,
+      comentarios: dataQuote.comentarios,
+      neto: dataQuote.neto,
+      descuento: dataQuote.descuento,
+      subtotal: dataQuote.subtotal,
+      impuestos: dataQuote.impuestos,
+      total: dataQuote.total,
     });
     console.log(document.recurrenciaa);
 
@@ -202,29 +192,15 @@ const Quote = () => {
     }
   }
 
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-  const validationState = useMemo(() => {
-    if (user.email === "") return undefined;
+  
+  
 
-    return validateEmail(user.email) ? "valid" : "invalid";
-  }, [user.email]);
+   
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
   const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
 
-  const passwordValidationState = useMemo(() => {
-    if (user.password === "") return undefined;
-    return user.password.length >= 8 ? "valid" : "invalid";
-  }, [user.password]);
-  const confirmPasswordValidationState = useMemo(() => {
-    if (user.confirmPassword === "") return undefined;
-    return user.password === user.confirmPassword ? "valid" : "invalid";
-  }, [user.confirmPassword]);
-  const emailConfirmValidationState = useMemo(() => {
-    if (user.emailConfirm === "") return undefined;
-    return user.emailConfirm === user.email ? "valid" : "invalid";
-  }, [user.emailConfirm, user.email]);
+  
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -293,13 +269,15 @@ const Quote = () => {
   }, []);
 
   const [datos, setData] = useState([]);
-  const loadTask = async () => {
+  const loadTask = async (folio) => {
+    console.log(folio);
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch(`http://localhost:4000/Cotizaciones/${folio}`);
       const data = await response.json();
-      if (response.ok) {
-        setData(data);
-      }
+      setDataQuote({
+        folio: data.folio,
+      });
+      console.log(data.folio);
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -308,9 +286,11 @@ const Quote = () => {
     }
   }
   useEffect(() => {
-    loadTask();
+    if (params.folio){
+      loadTask(params.folio)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [params.folio]);
 
   const [datos2, setData2] = useState([]);
   const loadTask2 = async () => {
@@ -506,8 +486,7 @@ const Quote = () => {
                                 onChange={handleFiltroChange}
                                 size="sm"
                                 isRequired
-                                type="text"
-                                label="Nombre"
+                                label="Nombre del Cliente"
                                 name="cliente"
                                 labelPlacement="outside"
                                 placeholder=" "
@@ -553,16 +532,6 @@ const Quote = () => {
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                color={
-                                  validationState === "invalid"
-                                    ? "danger"
-                                    : "default"
-                                }
-                                errorMessage={
-                                  validationState === "invalid" &&
-                                  "Ingresa un correo valido"
-                                }
-                                validationState={validationState}
                               />
                             </div>
                             <div className="md:col-span-6">
@@ -658,7 +627,7 @@ const Quote = () => {
                                       <TableColumn>Inv.</TableColumn>
                                       <TableColumn>Precio Uni.</TableColumn>
                                       <TableColumn>Descuento</TableColumn>
-                                      <TableColumn>Total</TableColumn>
+                                      <TableColumn >Total</TableColumn>
                                     </TableHeader>
                                     <TableBody>
                                       {filasAgregadas.map((fila, index) => (
