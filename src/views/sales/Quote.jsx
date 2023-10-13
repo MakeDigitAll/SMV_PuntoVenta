@@ -255,7 +255,6 @@ const Quote = () => {
       const response = await fetch("http://localhost:4000/Productos");
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
         setData(data);
       }
     } catch {
@@ -275,6 +274,8 @@ const Quote = () => {
       const data = await response.json();
       if (response.ok) {
         setCotizacionData(data);
+        console.log(data);
+        getDatosCliente(data.idCliente);
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -504,8 +505,10 @@ const Quote = () => {
       setIsOnlyRead(true);
       setVariable("Ver Cotización");
       getCotizacion(urlSeparada[5]);
+    } else {
+      setIsOnlyRead(false);
     }
-  }, [dataQuote, window.location.href]);
+  }, []);
 
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
@@ -584,6 +587,26 @@ const Quote = () => {
       }
     }
     getDireccionCliente();
+  };
+
+  const getDatosCliente = (idCliente) => {
+    async function getDatosCliente() {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/ListadoClientes/${idCliente}`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setClienteDataGeneral(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    getDatosCliente();
   };
 
   useEffect(() => {
@@ -754,7 +777,10 @@ const Quote = () => {
                             <div className="md:col-span-12">
                               <Input
                                 id="cliente"
-                                value={searchNombreCliente}
+                                value={
+                                  searchNombreCliente ||
+                                  clienteInfoGeneral.nombreComercial
+                                }
                                 onValueChange={setSearchNombreCliente}
                                 size="sm"
                                 isRequired
@@ -809,7 +835,9 @@ const Quote = () => {
                                 isRequired
                                 isDisabled
                                 name="vendedor"
-                                value={idVendedor}
+                                value={
+                                  idVendedor || clienteInfoGeneral.vendedor
+                                }
                                 onChange={handleChange}
                                 labelPlacement="outside"
                                 placeholder=" "
@@ -849,7 +877,6 @@ const Quote = () => {
                               <Checkbox
                                 isRequired
                                 isDisabled={isOnlyRead}
-                                isChecked={isRecurrente}
                                 onChange={setIsRecurrente}
                               >
                                 Es recurrente
