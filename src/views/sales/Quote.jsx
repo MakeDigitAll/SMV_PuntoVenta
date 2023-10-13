@@ -489,6 +489,7 @@ const Quote = () => {
   //--------------------------------------------------------------------------------------//
 
   var [isOnlyRead, setIsOnlyRead] = useState(false);
+  var [variable, setVariable] = useState("Nueva Cotización");
   useEffect(() => {
     //obtener la url
     const url = window.location.href;
@@ -497,9 +498,11 @@ const Quote = () => {
     //si al url en la posicion 6 es igual a EditQuote
     if (urlSeparada[6] === "EditQuote") {
       setIsOnlyRead(false);
+      setVariable("Editar Cotización");
       getCotizacion(urlSeparada[5]);
     } else if (urlSeparada[6] === "ViewQuote") {
       setIsOnlyRead(true);
+      setVariable("Ver Cotización");
       getCotizacion(urlSeparada[5]);
     }
   }, [dataQuote, window.location.href]);
@@ -734,7 +737,7 @@ const Quote = () => {
                     className="text-foreground"
                   >
                     <MdPerson sx={{ mr: 0.5 }} fontSize="inherit" />
-                    Nueva cotización
+                    {variable}
                   </Typography>
                 </Breadcrumbs>
               </div>
