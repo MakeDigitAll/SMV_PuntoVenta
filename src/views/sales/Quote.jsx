@@ -27,8 +27,9 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { format } from "date-fns";
-
+import { format, set } from "date-fns";
+import {MdOutlineKeyboardArrowDown} from "react-icons/md";
+import {  Dropdown,  DropdownTrigger,  DropdownMenu,  DropdownSection,  DropdownItem} from "@nextui-org/react";
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
 import { RiDashboard2Fill } from "react-icons/ri";
@@ -47,6 +48,7 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import { use } from "i18next";
+import { is } from "date-fns/locale";
 const Quote = () => {
   const [user, setUser] = useState({
     nombre: "",
@@ -125,10 +127,16 @@ const Quote = () => {
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
+
   const [isChecked, setIsChecked] = useState(false);
+
   function handleCheckboxChange() {
-    setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
-    console.log(isChecked);
+    setCotizacionData({
+      ...cotizacionData,
+      recurrencia: cotizacionData.recurrencia === 1 ? 0 : 1,
+    });
+    setIsChecked(!isChecked);
+    console.log(cotizacionData.recurrencia);
   }
 
   async function handleSubmit(e) {
@@ -249,7 +257,7 @@ const Quote = () => {
 
   const [cotizacionData, setCotizacionData] = useState({
     fecha: format(new Date(), "yyyy-MM-dd"),
-    recurrencia: false,
+    recurrencia: 0,
     comentarios: "",
     envio: "",
   });
@@ -284,7 +292,7 @@ const Quote = () => {
           comentarios: data.comentarios,
           envio: data.envio,
          });
-        console.log(data);
+
         getDatosCliente(data.idCliente);
       }
     } catch {
@@ -294,9 +302,6 @@ const Quote = () => {
       });
     }
   };
-
-  console.log(cotizacionData);
-
 
   useEffect(() => {
     loadTask();
@@ -498,6 +503,10 @@ const Quote = () => {
     }
     loadProducts();
   };
+
+  // const handleRecurrenciaChange = (event) => {
+  //   const { name, value } = event.target;
+
   //--------------------------------------------------------------------------------------//
   //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
   //--------------------------------------------------------------------------------------//
@@ -541,9 +550,6 @@ const Quote = () => {
 
   //fechaCotizacion
   const [fechaCotizacion, setFechaCotizacion] = useState();
-
-  //Es recurrente
-  const [isRecurrente, setIsRecurrente] = useState(false);
 
   //para almacenar los datos del cliente seleccionado
   const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
@@ -889,7 +895,8 @@ const Quote = () => {
                             <div className="md:col-span-6">
                               <Checkbox
                                 isDisabled={isOnlyRead}
-                                onChange={setIsRecurrente}
+                                value={isChecked}
+                                onChange={handleCheckboxChange}
                               >
                                 Es recurrente
                               </Checkbox>
@@ -1256,28 +1263,51 @@ const Quote = () => {
                               )}
                             </div>
                             <div className="md:col-span-6">
-                              <Select
-                                labelPlacement={"outside"}
-                                label="Envío"
-                                placeholder="Seleccione"
-                                size="sm"
-                                isDisabled={isOnlyRead}
-                                isRequired
-                                value={cotizacionData.envio}
-                                onChange={(e) => {
-                                  setCotizacionData({
-                                    ...cotizacionData,
-                                    envio: e.target.value,
-                                  });
-                                }
-                                }
-                              >
-                                {envios.map((envios) => (
-                                  <SelectItem key={envios} value={envios}>
-                                    {envios}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                              <Dropdown>
+                                <DropdownTrigger>
+                                  <Input
+                                    size={"sm"}
+                                    type="text"
+                                    label="Envio"
+                                    isRequired
+                                    isDisabled={isOnlyRead}
+                                    name="envio"
+                                    value={cotizacionData.envio || "seleccione"}
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    endContent={<MdOutlineKeyboardArrowDown />}
+                                    error={validationErrors.envio !== ""}
+                                    errorMessage={validationErrors.envio}
+                                  />
+                                </DropdownTrigger>
+                                <DropdownMenu>
+                                  <DropdownItem
+                                    onClick={() => setCotizacionData({
+                                      ...cotizacionData,
+                                      envio: "No Aplica",
+                                    })}
+                                  >
+                                    No Aplica
+                                  </DropdownItem>
+                                  <DropdownItem
+                                    onClick={() => setCotizacionData({
+                                      ...cotizacionData,
+                                      envio: "Recoger en Oficina",
+                                    })}
+                                  >
+                                    Recoger en Oficina
+                                  </DropdownItem>
+                                  <DropdownItem
+                                    onClick={() => setCotizacionData({
+                                      ...cotizacionData,
+                                      envio: "Envio a domicilio",
+                                    })}
+                                  >
+                                    Envio a domicilio
+                                  </DropdownItem>
+                                </DropdownMenu>
+                              </Dropdown>
                             </div>
                           </div>
                         </div>
