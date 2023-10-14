@@ -3,7 +3,9 @@ import { Card, Spacer, Button, CardBody, Select, SelectItem } from "@nextui-org/
 import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../components/auth/AuthProvider";
 const AccesPoint = () => {
+  const auth = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedAlmacen, setSelectedAlmacen] = useState(null); //esto nos selecciona el almacen..;D; claro si es que jala
@@ -18,13 +20,13 @@ const AccesPoint = () => {
     } catch (error) {
       console.error("Error al cargar los datos:", error);
     }
-  }
+  } 
   useEffect(() => {
     loadTask();
   }, []);
   const handleAccess = () => {
+    auth.guardarTablaID(selectedAlmacen.target.value);
     navigate(`/PointofSale`);
-    //navigate(`/PointofSale/${selectedAlmacen}`);
   };
   const filteredData = selectedAlmacen
     ? data.filter((almacen) => almacen.id === selectedAlmacen)
@@ -80,8 +82,7 @@ const AccesPoint = () => {
                 <Button
                   size="sm"
                   color="primary"
-                  onClick={handleAccess}
-                >
+                  onClick={handleAccess}                >
                   Acceder
                 </Button>
               </CardBody>

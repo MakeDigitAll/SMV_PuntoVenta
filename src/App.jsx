@@ -377,6 +377,13 @@ const App = () => {
         },
       ],
     },
+    {
+      path: "/",
+      element: <ProtectedRoute />,
+      children: [
+
+      ]
+    }
   ]);
   return <RouterProvider router={router} />;
 };
