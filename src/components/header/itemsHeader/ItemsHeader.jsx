@@ -24,7 +24,7 @@ import {
   RiStore3Line,
   RiUser2Fill,
 } from "react-icons/ri";
-import { TbReport, TbReportAnalytics, TbWorld } from "react-icons/tb";
+import {  TbReport, TbReportAnalytics, TbWorld } from "react-icons/tb";
 import { MdSettings, MdShoppingCart, MdStorefront } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -129,7 +129,7 @@ const ItemsHeader = () => {
       id: 11,
       name: "Punto de venta",
       icon: RiStore3Line,
-      address: () => navigate(`/${"PointofSale"}`),
+      address: () => navigate(`/${"PointOfSale/Acces"}`),
       roleId: "0",
     },
     {

@@ -11,7 +11,9 @@ const AuthContext = createContext({
   getRefreshToken: () => {},
   getUser: () => ({} as User | undefined),
   signOut: () => {},
+  guardarTablaID:(id)=>{},
 });
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string>("");
@@ -23,6 +25,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     checkAuth();
   }, []);
+  function guardarTablaID(id) {
+    console.log(id)
+    localStorage.setItem('tableId', id);
+  }
   async function requestNewAccessToken(refreshToken: string) {
     try {
       const response = await fetch("http://localhost:4000/api/auth/refreshToken", {
@@ -118,10 +124,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(undefined);
     localStorage.removeItem("token");
   }
-
+  
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, getAccessToken, saveUser, getRefreshToken, getUser, signOut }}
+      value={{ isAuthenticated, getAccessToken, saveUser, getRefreshToken, getUser, signOut, guardarTablaID, }}
     >
       {isLoading ? null : children}
     </AuthContext.Provider>

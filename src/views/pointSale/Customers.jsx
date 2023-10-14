@@ -1,4 +1,4 @@
-import ItemsHeaderPointofSale from "../../components/header/itemsHeader/ItemsHeaderPointofSale";
+import ItemsHeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 import { ToastContainer } from "react-toastify";
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
