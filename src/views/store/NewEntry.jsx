@@ -16,7 +16,7 @@ import {
   import { RiDashboard2Fill} from "react-icons/ri";
   import { MdAllInbox, MdCamera, MdInbox, MdWarehouse } from "react-icons/md";
   import { useNavigate } from "react-router-dom";
-  import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
+  import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
   import { MdSave } from "react-icons/md";
   import http from "../../components/axios/Axios";
   import { useParams } from "react-router-dom";

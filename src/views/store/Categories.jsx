@@ -19,7 +19,7 @@ import {
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdArrowDropDown, MdBook, MdBookmarkAdded, MdCategory, MdList, MdMoneyOffCsred, MdSave, MdSearch, MdShoppingCart, MdStore, MdTag, MdWarehouse } from "react-icons/md";
 
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";

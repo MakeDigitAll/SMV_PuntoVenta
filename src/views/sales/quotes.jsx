@@ -25,7 +25,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
 const statusOptions = [
   { name: "Active", uid: "active" },
@@ -128,6 +128,7 @@ const Quotes = () => {
   };
   const handleOrigenChange = (event) => {
     setSelectedOrigen(event.target.value);
+
   };
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...data];
@@ -152,6 +153,7 @@ const Quotes = () => {
         (data) => data.idVendedor.toLowerCase() === selectedVendedorLower
       );
     }
+
 
     if (modalidad) {
       filteredUsers = filteredUsers.filter((data) =>
@@ -182,6 +184,7 @@ const Quotes = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
+
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -211,20 +214,17 @@ const Quotes = () => {
 
     const handleDisable = async (id) => {
       const datoDisable = {
-        id: id,
+        id: id
       };
       console.log(datoDisable);
       try {
-        const res = await fetch(
-          `http://localhost:4000/CotizacionesDisable/${id}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(datoDisable),
-          }
-        );
+        const res = await fetch(`http://localhost:4000/CotizacionesDisable/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datoDisable),
+        });
 
         if (res.ok) {
           toast.warning("Deshabilitando Cotización ", {
@@ -243,6 +243,7 @@ const Quotes = () => {
           position: "bottom-right",
           theme: "colored",
         });
+
       } finally {
         // Después de deshabilitar, vuelva a cargar los datos para reflejar los cambios
         setIsDataLoading(true);
@@ -366,27 +367,9 @@ const Quotes = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem
-                  onPress={() =>
-                    navigate(`/Sales/Quotes/${data.folio}/ViewQuote`)
-                  }
-                >
-                  Ver Cotización
-                </DropdownItem>
-                <DropdownItem
-                  onPress={() =>
-                    navigate(`/Sales/Quotes/${data.folio}/EditQuote`)
-                  }
-                >
-                  Editar Ccotización
-                </DropdownItem>
-                <DropdownItem
-                  color="danger"
-                  className="text-danger"
-                  onPress={() => handleDisable(data.folio)}
-                >
-                  Deshabilitar Cotización
-                </DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.folio}/ViewQuote`)}>Ver Cotización</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Sales/Quotes/${data.folio}/EditQuote`)}>Editar Ccotización</DropdownItem>
+                <DropdownItem color="danger" className="text-danger" onPress={() => handleDisable(data.folio)}>Deshabilitar Cotización</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -514,17 +497,20 @@ const Quotes = () => {
                 placeholder="Clientes"
                 size="sm"
                 onChange={handleClienteChange}
-              ></Select>
+              >
+
+              </Select>
             </div>
             <div className="w-[300px] sm:max-w-[44%]">
               <Select
-                labelPlacement={"outside"}
-                label=""
-                placeholder="Vendedor"
-                size="sm"
-                value={selectedVendedor}
-                onChange={handleVendedorChange}
-              ></Select>
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Vendedor"
+                  size="sm"
+                  value={selectedVendedor}
+                  onChange={handleVendedorChange}
+                >
+                </Select>
             </div>
             <div className="w-[300px] sm:max-w-[44%]">
               {/* <Select
@@ -582,16 +568,11 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(
-                  (column) => (
-                    console.log(column),
-                    (
-                      <DropdownItem key={column.uid} className="capitalize">
-                        {column.name}
-                      </DropdownItem>
-                    )
-                  )
-                )}
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -612,16 +593,11 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(
-                  (column) => (
-                    console.log(column),
-                    (
-                      <DropdownItem key={column.uid} className="capitalize">
-                        {column.name}
-                      </DropdownItem>
-                    )
-                  )
-                )}
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -710,16 +686,13 @@ const Quotes = () => {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            console.log(column),
-            (
-              <TableColumn
-                key={column.uid}
-                align={column.uid === "Actions" ? "center" : "start"}
-                allowsSorting={column.sortable}
-              >
-                {column.name}
-              </TableColumn>
-            )
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "Actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
           )}
         </TableHeader>
         <TableBody

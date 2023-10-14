@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from "@nextui-org/react";
 import {useParams, useNavigate} from 'react-router-dom';
 
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 

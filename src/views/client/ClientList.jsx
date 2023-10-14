@@ -1,6 +1,6 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Button, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Pagination } from "@nextui-org/react";
 import { MdArrowDropDown, MdCategory, MdDelete, MdEdit, MdRemoveRedEye, MdSearch } from "react-icons/md";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
