@@ -158,13 +158,12 @@ const Quote = () => {
     }
 
     const errors = {};
-    !dataQuote.pedido ? (errors.pedido = "Llena este campo") : "";
-    !dataQuote.cliente ? (errors.cliente = "Llena este campo") : "";
-    !dataQuote.vendedor ? (errors.vendedor = "Llena este campo") : "";
+    !dataQuote.idCliente ? (errors.idCliente = "Llena este campo") : "";
+    !dataQuote.idVendedor ? (errors.idVendedor = "Llena este campo") : "";
+    !dataQuote.recurrencia ? (errors.recurrencia = "Llena este campo") : "";
     !dataQuote.recurrenciaa ? (errors.recurrenciaa = "Llena este campo") : "";
-    !dataQuote.origen ? (errors.origen = "Llena este campo") : "";
-    !dataQuote.monto ? (errors.monto = "Llena este campo") : "";
-    !dataQuote.imagen ? (errors.imagen = "Llena este campo") : "";
+    !dataQuote.envio ? (errors.envio = "Llena este campo") : "";
+    !dataQuote.comentarios ? (errors.comentarios = "Llena este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -203,13 +202,6 @@ const Quote = () => {
     }
   }
 
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-  const validationState = useMemo(() => {
-    if (user.email === "") return undefined;
-
-    return validateEmail(user.email) ? "valid" : "invalid";
-  }, [user.email]);
   const navigate = useNavigate();
   const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
 
@@ -263,13 +255,17 @@ const Quote = () => {
   });
 
   const [datos, setData] = useState([]);
-  const loadTask = async () => {
+  const loadTask = async (folio) => {
+    console.log(folio);
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch(
+        `http://localhost:4000/Cotizaciones/${folio}`
+      );
       const data = await response.json();
-      if (response.ok) {
-        setData(data);
-      }
+      setDataQuote({
+        folio: data.folio,
+      });
+      console.log(data.folio);
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -303,10 +299,13 @@ const Quote = () => {
     }
   };
 
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   console.log(params);
+  //   if (params.folio) {
+  //     loadTask(params.folio);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [params.folio]);
 
   const [datos2, setData2] = useState([]);
   const loadTask2 = async () => {
@@ -516,6 +515,7 @@ const Quote = () => {
   useEffect(() => {
     //obtener la url
     const url = window.location.href;
+    console.log(url);
     //separrar la url por /
     const urlSeparada = url.split("/");
     //si al url en la posicion 6 es igual a EditQuote
@@ -880,16 +880,6 @@ const Quote = () => {
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                color={
-                                  validationState === "invalid"
-                                    ? "danger"
-                                    : "default"
-                                }
-                                errorMessage={
-                                  validationState === "invalid" &&
-                                  "Ingresa un correo valido"
-                                }
-                                validationState={validationState}
                               />
                             </div>
                             <div className="md:col-span-6">

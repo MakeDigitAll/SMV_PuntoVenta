@@ -62,6 +62,10 @@ import ClientReport from "./views/marketing/ClientReport.jsx";
 import NewClient from "./views/client/NewClientList.jsx";
 import ProviderList from "./views/providers/ProviderList.jsx";
 import Provider from "./views/providers/Provider.jsx";
+import PointofSale from "./views/pointSale/PointofSales.jsx";
+import Reports from "./views/pointSale/Reports.jsx";
+import Customers from "./views/pointSale/Customers.jsx";
+import NewSale from "./views/pointSale/NewSale.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -173,6 +177,22 @@ const App = () => {
         {
           path: "/Web",
           element: <ItemsSWeb />,
+        },
+        {
+          path: "/PointofSale",
+          element: <PointofSale />,
+        },
+        {
+          path: "/PointofSale/Reports",
+          element: <Reports />,
+        },
+        {
+          path: "/PointofSale/Customers",
+          element: <Customers />,
+        },
+        {
+          path: "/PointofSale/NewSale",
+          element: <NewSale />,
         },
         {
           path: "/Settings",

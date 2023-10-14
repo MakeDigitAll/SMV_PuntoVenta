@@ -33,28 +33,24 @@ const statusOptions = [
   { name: "Vacation", uid: "vacation" },
 ];
 const columns = [
-  { name: "ID", uid: "id", sortable: true },
   { name: "Folio", uid: "folio", sortable: true },
   { name: "Fecha", uid: "fecha", sortable: true },
   { name: "Pedido", uid: "pedido", sortable: true },
-  { name: "Cliente", uid: "cliente", sortable: true },
-  { name: "Vendedor", uid: "vendedor", sortable: true },
-  { name: "Recurrencia", uid: "recurrenciaa", sortable: true },
-  { name: "Origen", uid: "origen", sortable: true },
-  { name: "Monto", uid: "monto", sortable: true },
+  { name: "Cliente", uid: "idCliente", sortable: true },
+  { name: "Vendedor", uid: "idVendedor", sortable: true },
+  { name: "Recurrencia", uid: "recurrencia", sortable: true },
+  { name: "Total", uid: "total", sortable: true },
   { name: "Status", uid: "status", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
   "folio",
   "fecha",
   "pedido",
-  "cliente",
-  "vendedor",
+  "idCliente",
+  "idVendedor",
   "recurrencia",
-  "origen",
-  "monto",
+  "total",
   "status",
   "Actions",
 ];
@@ -88,9 +84,8 @@ const Quotes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clientesOptions = data.map((item) => item);
-  const vendedoresOptions = data.map((item) => item);
-  const origenOptions = data.map((item) => item);
+  //const clientesOptions = data.map((item) => item.idCliente.toLowerCase());
+  //const vendedoresOptions = data.map((item) => item.idVendedor.toLowerCase());
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
@@ -147,22 +142,14 @@ const Quotes = () => {
     if (selectedCliente) {
       const selectedClienteLower = selectedCliente.toLowerCase();
       filteredUsers = filteredUsers.filter(
-        (data) => data.cliente.toLowerCase() === selectedClienteLower
+        (data) => data.idCliente.toLowerCase() === selectedClienteLower
       );
     }
     // Filtra por vendedor seleccionado
     if (selectedVendedor) {
       const selectedVendedorLower = selectedVendedor.toLowerCase();
       filteredUsers = filteredUsers.filter(
-        (data) => data.vendedor.toLowerCase() === selectedVendedorLower
-      );
-    }
-
-    // Filtra por origen seleccionado
-    if (selectedOrigen) {
-      const selectedOrigenLower = selectedOrigen.toLowerCase();
-      filteredUsers = filteredUsers.filter(
-        (data) => data.origen.toLowerCase() === selectedOrigenLower
+        (data) => data.idVendedor.toLowerCase() === selectedVendedorLower
       );
     }
 
@@ -387,7 +374,9 @@ const Quotes = () => {
                   Ver Cotización
                 </DropdownItem>
                 <DropdownItem
-                  onPress={() => navigate(`/Sales/Quotes/${data.folio}/EditQuote`)}
+                  onPress={() =>
+                    navigate(`/Sales/Quotes/${data.folio}/EditQuote`)
+                  }
                 >
                   Editar Ccotización
                 </DropdownItem>
@@ -524,23 +513,8 @@ const Quotes = () => {
                 label=""
                 placeholder="Clientes"
                 size="sm"
-                value={selectedCliente}
                 onChange={handleClienteChange}
-              >
-                {clientesOptions.map(
-                  (clientesOption) => (
-                    console.log(clientesOption),
-                    (
-                      <SelectItem
-                        key={clientesOption.folio}
-                        value={clientesOption.folio}
-                      >
-                        {clientesOption.folio}
-                      </SelectItem>
-                    )
-                  )
-                )}
-              </Select>
+              ></Select>
             </div>
             <div className="w-[300px] sm:max-w-[44%]">
               <Select
@@ -550,45 +524,23 @@ const Quotes = () => {
                 size="sm"
                 value={selectedVendedor}
                 onChange={handleVendedorChange}
-              >
-                {vendedoresOptions.map(
-                  (vendedoresOption) => (
-                    console.log(vendedoresOption),
-                    (
-                      <SelectItem
-                        key={vendedoresOption.folio}
-                        value={vendedoresOption.folio}
-                      >
-                        {vendedoresOption.folio}
-                      </SelectItem>
-                    )
-                  )
-                )}
-              </Select>
+              ></Select>
             </div>
             <div className="w-[300px] sm:max-w-[44%]">
-              <Select
-                labelPlacement={"outside"}
-                label=""
-                placeholder="Origen"
-                size="sm"
-                value={selectedOrigen}
-                onChange={handleOrigenChange}
-              >
-                {origenOptions.map(
-                  (origenOption) => (
-                    console.log(origenOption),
-                    (
-                      <SelectItem
-                        key={origenOption.folio}
-                        value={origenOption.folio}
-                      >
-                        {origenOption.folio}
-                      </SelectItem>
-                    )
-                  )
-                )}
-              </Select>
+              {/* <Select
+                  labelPlacement={"outside"}
+                  label=""
+                  placeholder="Origen"
+                  size="sm"
+                  value={selectedOrigen}
+                  onChange={handleOrigenChange}
+                >
+                  {origenOptions.map((origenOption) => (
+                    <SelectItem key={origenOption} value={origenOption}>
+                      {origenOption}
+                    </SelectItem>
+                  ))}
+                </Select> */}
             </div>
           </div>
 
@@ -775,14 +727,11 @@ const Quotes = () => {
           items={sortedItems}
         >
           {(item) => (
-            console.log(item),
-            (
-              <TableRow key={item.folio}>
-                {(columnKey) => (
-                  <TableCell>{renderCell(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )
+            <TableRow key={item.folio}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
           )}
         </TableBody>
       </Table>
