@@ -28,7 +28,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import AddExcelProducts from "../Excel/addExcel/addExcelProducts";
 import ExcelProducts from "../Excel/exports/ExcelProducts";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const columns = [
   { name: "Imagen", uid: "Imagen", sortable: true },

@@ -1,5 +1,5 @@
 
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { Card, CardBody, Spacer } from "@nextui-org/react";
 import {
   BiAlignJustify,
