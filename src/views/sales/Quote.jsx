@@ -49,6 +49,7 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import { use } from "i18next";
+import { is } from "date-fns/locale";
 const Quote = () => {
   const [user, setUser] = useState({
     nombre: "",
@@ -514,6 +515,7 @@ const Quote = () => {
     if (urlSeparada[6] === "EditQuote") {
       setIsOnlyRead(false);
       setVariable("Editar Cotización");
+      setIsEditable(true);
       getCotizacion(urlSeparada[5]);
     } else if (urlSeparada[6] === "ViewQuote") {
       setIsOnlyRead(true);
@@ -523,6 +525,9 @@ const Quote = () => {
       setIsOnlyRead(false);
     }
   }, []);
+
+  //codigo para los botones
+  const [isEditable, setIsEditable] = useState(false);
 
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
@@ -729,6 +734,13 @@ const Quote = () => {
     console.log("Facturacion");
     console.log(facturacion);
   };
+
+
+  const handleMarcarComoPerdida = async () => {
+  }
+
+  const handleGanarCotizacion = async () => {
+  }
 
   return (
     <>
@@ -1496,7 +1508,33 @@ const Quote = () => {
                     </div>
                     <div className="md:col-span-12 text-right">
                       <div className="space-x-5 space-y-5">
+                      <div >
+
+                        {isOnlyRead && !isEditable ? (
+                          <div>
+
                         <Button
+                          className="min-w-[200px]  m-3"
+                          color="success"
+                        
+                          endContent={<MdSave />}
+                          onPress={() => {handleGanarCotizacion()}}
+                        >
+                          Ganar cotización
+                        </Button>
+
+                        <Button
+                          className="min-w-[200px]  m-3"
+                          color="danger"
+                       
+                          endContent={<MdSave />}
+                          onPress={() => {handleMarcarComoPerdida()}}
+                        >
+                          Marcar Como Perdida
+                        </Button>
+                        </div>
+                        ) : (
+                          <Button
                           className="min-w-[200px]"
                           color="primary"
                           type="submit"
@@ -1504,6 +1542,10 @@ const Quote = () => {
                         >
                           Guardar cotización
                         </Button>
+                        )}
+
+
+                        </div>
                       </div>
                       <Spacer y={3} />
                     </div>
