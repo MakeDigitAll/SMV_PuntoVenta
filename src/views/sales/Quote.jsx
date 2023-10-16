@@ -575,6 +575,7 @@ const Quote = () => {
   //Es recurrente
   const [isRecurrente, setIsRecurrente] = useState(false);
 
+
   //para almacenar los datos del cliente seleccionado
   const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
   const [clienteInfoDireccion, setClienteInfoDireccion] = useState([]);
@@ -973,8 +974,11 @@ const Quote = () => {
                             <div className="md:col-span-6">
                               <Checkbox
                                 isDisabled={isOnlyRead}
-                                onChange={setIsRecurrente}
-                                isSelected={cotizacionData.recurrencia}
+                                onChange={setIsRecurrente.bind(
+                                  null,
+                                  !isRecurrente
+                                )}
+                                isSelected={isRecurrente || cotizacionData.recurrencia }
                               >
                                 Es recurrente
                               </Checkbox>
