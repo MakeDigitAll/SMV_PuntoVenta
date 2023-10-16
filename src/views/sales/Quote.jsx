@@ -278,7 +278,7 @@ const Quote = () => {
       if (response.ok) {
         setCotizacionData({
           fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
-          recurrencia: Number(data.recurrencia),
+          recurrencia: Boolean(Number(data.recurrencia)),
           comentarios: data.comentarios,
           envio: data.envio,
         });
@@ -771,7 +771,6 @@ const Quote = () => {
   const handleGanarCotizacion = async () => {
     async function send() {
       try {
-        //post en la ruta  `https://localhost:4000/CotizacionesGanada/${idCotizacion}`,
         const response = await fetch(
           `https://localhost:4000/CotizacionesGanada/${idCotizacion}`,
           {
@@ -954,6 +953,7 @@ const Quote = () => {
                               <Checkbox
                                 isDisabled={isOnlyRead}
                                 onChange={setIsRecurrente}
+                                isSelected={cotizacionData.recurrencia}
                               >
                                 Es recurrente
                               </Checkbox>
