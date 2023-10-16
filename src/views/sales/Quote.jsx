@@ -257,65 +257,6 @@ const Quote = () => {
     }
   };
 
-  const getCotizacion = async (folioCotizacion) => {
-    var folio = Number(folioCotizacion);
-    try {
-      const response = await fetch(
-        "https://localhost:4000/Cotizaciones/" + folio
-      );
-      const data = await response.json();
-      if (response.ok) {
-        setCotizacionData({
-          fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
-          recurrencia: Boolean(Number(data.recurrencia)),
-          comentarios: data.comentarios,
-          envio: data.envio,
-        });
-        getDatosCliente(data.idCliente);
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-
-    try {
-      const response = await fetch(
-        "https://localhost:4000/ProductosCotizados/" + folio
-      );
-      const data = await response.json();
-      if (response.ok) {
-        const datos = await Promise.all(
-          data.map(async (producto) => {
-            const response = await fetch(
-              "https://localhost:4000/Productos/" + producto.idProducto
-            );
-            const data = await response.json();
-            if (response.ok) {
-              return {
-                codigoEmpresa: data.codigoEmpresa,
-                nombre: data.nombre,
-                marca: data.marca,
-                cantidad: producto.cantidad,
-                inventario: data.existencia,
-                precioUnitario: producto.precioUnitario,
-                descuento: producto.descuento,
-                total: producto.total,
-              };
-            }
-          })
-        );
-        setFilasAgregadas(datos);
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  };
-
   // useEffect(() => {
   //   console.log(params);
   //   if (params.folio) {
@@ -486,17 +427,17 @@ const Quote = () => {
     }
   };
 
-  // const [dataQuote, setDataQuote] = useState({
-  //   pedido: "",
-  //   cliente: "",
-  //   comentarios: "",
-  //   vendedor: "",
-  //   productosCotización: [],
-  //   recurrenciaa: "",
-  //   origen: "",
-  //   monto: "",
-  //   fecha: format(new Date(), "yyyy-MM-dd"),
-  // });
+  const [dataQuote, setDataQuote] = useState({
+    pedido: "",
+    cliente: "",
+    comentarios: "",
+    vendedor: "",
+    productosCotización: [],
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
+    fecha: format(new Date(), "yyyy-MM-dd"),
+  });
 
   // -- Codigo para cargar productos
   const [productos, setProductos] = useState([]);
@@ -523,6 +464,72 @@ const Quote = () => {
   //--------------------------------------------------------------------------------------//
   //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
   //--------------------------------------------------------------------------------------//
+
+  
+  const getCotizacion = async (folioCotizacion) => {
+    var folio = Number(folioCotizacion);
+    try {
+      const response = await fetch(
+        "https://localhost:4000/Cotizaciones/" + folio
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setCotizacionData({
+          fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
+          recurrencia: Boolean(Number(data.recurrencia)),
+          comentarios: data.comentarios,
+          envio: data.envio,
+        });
+        getDatosCliente(data.idCliente);
+
+        try {
+          const response = await fetch(
+            "https://localhost:4000/ProductosCotizados/" + folio
+          );
+          
+          const data = await response.json();
+          console.log(data); 
+          if (response.ok) {
+            console.log(data);
+            const datos = await Promise.all(
+              data.map(async (producto) => {
+                console.log(producto);
+                const response = await fetch(
+                  "https://localhost:4000/Productos/" + producto.id
+                );
+                const data = await response.json();
+                console.log(data);
+                if (response.ok) {
+                  return {
+                    codigoEmpresa: data.codigoEmpresa,
+                    nombre: data.nombre,
+                    marca: data.marca,
+                    cantidad: producto.cantidad,
+                    inventario: data.existencia,
+                    precioUnitario: producto.precioUnitario,
+                    descuento: producto.descuento,
+                    total: producto.total,
+                  };
+                }
+              })
+            );
+            setFilasAgregadas(datos);
+          }
+        } catch {
+          toast.error("Error al cargar los datos", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  };
+
 
   var [isOnlyRead, setIsOnlyRead] = useState(false);
   var [variable, setVariable] = useState("Nueva Cotización");
