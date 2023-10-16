@@ -48,8 +48,7 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
-import { use } from "i18next";
-import { is } from "date-fns/locale";
+
 const Quote = () => {
   const [user, setUser] = useState({
     nombre: "",
@@ -517,10 +516,12 @@ const Quote = () => {
       setVariable("Editar Cotización");
       setIsEditable(true);
       getCotizacion(urlSeparada[5]);
+      setIdCotizacion(Number(urlSeparada[5]));
     } else if (urlSeparada[6] === "ViewQuote") {
       setIsOnlyRead(true);
       setVariable("Ver Cotización");
       getCotizacion(urlSeparada[5]);
+      setIdCotizacion(Number(urlSeparada[5]));
     } else {
       setIsOnlyRead(false);
     }
@@ -544,6 +545,8 @@ const Quote = () => {
   const [filterCliente, setFilterCliente] = useState([]);
   //para almacenar los resultados de la busqueda
   const [idVendedor, setIdVendedor] = useState("");
+  //id de la cotizacioin
+  const [idCotizacion, setIdCotizacion] = useState("");
 
   //fechaCotizacion
   const [fechaCotizacion, setFechaCotizacion] = useState();
@@ -737,9 +740,62 @@ const Quote = () => {
 
 
   const handleMarcarComoPerdida = async () => {
+    async function send() {
+      try {
+        const response = await fetch(
+          `https://localhost:4000/CotizacionesPerdidas/${idCotizacion}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: idCotizacion,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          toast.success("Cotización Perdida", { theme: "colored" });
+        }
+      } catch (error) {
+        toast.error("Error al guardar Cotización", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    send();
   }
 
   const handleGanarCotizacion = async () => {
+    async function send() {
+      try {
+        //post en la ruta  `https://localhost:4000/CotizacionesGanada/${idCotizacion}`,
+        const response = await fetch(
+          `https://localhost:4000/CotizacionesGanada/${idCotizacion}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: idCotizacion,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          toast.success("Cotización Ganada", { theme: "colored" });
+        }
+      } catch (error) {
+        toast.error("Error al guardar Cotización", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    send();
   }
 
   return (
