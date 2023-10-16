@@ -55,7 +55,7 @@ import {
   MdEmail,
 } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import Datetime from "react-datetime";
@@ -145,7 +145,7 @@ const NewClient = () => {
   async function loadTask(id) {
     try {
       const response = await fetch(
-        `http://localhost:4000/ListadoClientes/${id}`
+        `https://localhost:4000/ListadoClientes/${id}`
       );
       const data = await response.json();
       setClientData({
@@ -221,7 +221,7 @@ const NewClient = () => {
     formData.append("image", selectedImage);
     try {
       const result = await http.post(
-        `http://localhost:4000/ListadoClientes`,
+        `https://localhost:4000/ListadoClientes`,
         formData,
         {
           headers: {
@@ -378,7 +378,7 @@ const NewClient = () => {
   async function loadDireccionesE(id) {
     try {
       const response = await fetch(
-        `http://localhost:4000/ClientesDireccionEnvio/${id}`
+        `https://localhost:4000/ClientesDireccionEnvio/${id}`
       );
       const data = await response.json();
       setTask2({
@@ -440,7 +440,7 @@ const NewClient = () => {
     formData.append("document", document);
     try {
       const result = await http.post(
-        `http://localhost:4000/ClientesDireccionEnvio`,
+        `https://localhost:4000/ClientesDireccionEnvio`,
         formData,
         {
           headers: {

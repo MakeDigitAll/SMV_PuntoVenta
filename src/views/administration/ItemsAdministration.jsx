@@ -1,5 +1,5 @@
 
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import { BiAlarm, BiArchiveOut, BiBarChartAlt, BiBarChartSquare, BiBookOpen, BiBookmarkPlus, BiBox, BiBullseye, BiCalendarAlt, BiCheckShield, BiClipboard, BiCreditCardFront, BiDollar, BiKey, BiMoneyWithdraw, BiSolidBarChartSquare, BiStar, BiTransfer } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";

@@ -28,7 +28,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import AddExcelProducts from "../Excel/addExcel/addExcelProducts";
 import ExcelProducts from "../Excel/exports/ExcelProducts";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const columns = [
   { name: "Imagen", uid: "Imagen", sortable: true },
@@ -78,7 +78,7 @@ const ProductList = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch("https://localhost:4000/Productos");
       const data = await response.json();
       if (response.ok) {
         setData(data);

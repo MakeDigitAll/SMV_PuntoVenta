@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from "@nextui-org/react";
 import {useParams, useNavigate} from 'react-router-dom';
 
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; 
@@ -33,7 +33,7 @@ const VerAlmacen = () => {
 
     const loadTask = async (id) => {
         try{
-        const response = await fetch(`http://localhost:4000/Almacenes/${id}`)
+        const response = await fetch(`https://localhost:4000/Almacenes/${id}`)
         const data = await  response.json()
         setTask({nombre: data.nombre, tipo: data.tipo})
        

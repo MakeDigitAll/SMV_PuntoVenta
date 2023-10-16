@@ -26,7 +26,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import AddExcelPurchaseOrders from "../Excel/addExcel/addExcelPurchaseOrders";
 
 const statusOptions = [
@@ -83,7 +83,7 @@ const PurchaseOrders = () => {
   
   const loadTask = async () => {
     try {
-      const response = await fetch('http://localhost:4000/OrdenCompra/ListadoEntradas');
+      const response = await fetch('https://localhost:4000/OrdenCompra/ListadoEntradas');
       if (!response.ok) {
         throw new Error('La respuesta de la red no fue satisfactoria');
       }
@@ -97,7 +97,7 @@ const PurchaseOrders = () => {
 
   // const loadPagos = async () => {
   //   try {
-  //     const response = await fetch('http://localhost:4000/Pagos');
+  //     const response = await fetch('https://localhost:4000/Pagos');
   //     if (!response.ok) {
   //       throw new Error('La respuesta de la red no fue satisfactoria');
   //     }

@@ -1,5 +1,5 @@
 
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import {  BiCast, BiImage, BiImageAdd, BiMoneyWithdraw, BiSolidStar, BiStar } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
