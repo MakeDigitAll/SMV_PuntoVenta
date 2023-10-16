@@ -276,14 +276,12 @@ const Quote = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
         setCotizacionData({
           fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
           recurrencia: Number(data.recurrencia),
           comentarios: data.comentarios,
           envio: data.envio,
         });
-        console.log(data);
         getDatosCliente(data.idCliente);
       }
     } catch {
@@ -584,11 +582,15 @@ const Quote = () => {
 
   const [direccionesCliente, setDireccionesCliente] = useState([]);
 
-  const getDireccionCliente = () => {
+  const getDireccionCliente = (id) => {
+    //si id es undefined usar idCliente
+    if (id === undefined) {
+      id = idCliente;
+    }
     async function getDireccionCliente() {
       try {
         const response = await fetch(
-          `https://localhost:4000/ClientesDireccionEnvio/${idCliente}`
+          `https://localhost:4000/ClientesDireccionEnvio/${id}`
         );
         const data = await response.json();
         if (response.ok) {
@@ -602,6 +604,7 @@ const Quote = () => {
       }
     }
     getDireccionCliente();
+    setShowInfoGeneral(true);
   };
 
   const getDatosCliente = (idCliente) => {
@@ -622,6 +625,7 @@ const Quote = () => {
       }
     }
     getDatosCliente();
+    getDireccionCliente(idCliente);
   };
 
   useEffect(() => {
