@@ -59,7 +59,7 @@ const Categories = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/Categoria");
+      const response = await fetch("https://localhost:4000/Categoria");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -216,7 +216,7 @@ const Categories = () => {
     try {
       if (modalMode === "create") {
         // Crear nuevo elemento
-        const response = await fetch("https://localhost:443/Categoria", {
+        const response = await fetch("https://localhost:4000/Categoria", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

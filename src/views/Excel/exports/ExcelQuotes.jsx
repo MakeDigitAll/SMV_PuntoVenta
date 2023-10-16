@@ -12,7 +12,7 @@ const ExcelQuotes = () => {
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = React.createRef();
   useEffect(() => {
-    fetch('https://localhost:443/Cotizaciones')
+    fetch('https://localhost:4000/Cotizaciones')
       .then((response) => response.json())
       .then((data) => {
         if (Array.isArray(data)) {

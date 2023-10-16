@@ -64,7 +64,7 @@ const BranchOffices = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/SucursalesAlmacen");
+      const response = await fetch("https://localhost:4000/SucursalesAlmacen");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -156,7 +156,7 @@ const BranchOffices = () => {
     try {
       // Hacer una solicitud a la API para deshabilitar el almacén
       const response = await fetch(
-        `https://localhost:443/SucursalesAlmacenDisable/${almacenId}`,
+        `https://localhost:4000/SucursalesAlmacenDisable/${almacenId}`,
         {
           method: "POST",
           headers: {

@@ -145,7 +145,7 @@ const NewClient = () => {
   async function loadTask(id) {
     try {
       const response = await fetch(
-        `https://localhost:443/ListadoClientes/${id}`
+        `https://localhost:4000/ListadoClientes/${id}`
       );
       const data = await response.json();
       setClientData({
@@ -221,7 +221,7 @@ const NewClient = () => {
     formData.append("image", selectedImage);
     try {
       const result = await http.post(
-        `https://localhost:443/ListadoClientes`,
+        `https://localhost:4000/ListadoClientes`,
         formData,
         {
           headers: {
@@ -378,7 +378,7 @@ const NewClient = () => {
   async function loadDireccionesE(id) {
     try {
       const response = await fetch(
-        `https://localhost:443/ClientesDireccionEnvio/${id}`
+        `https://localhost:4000/ClientesDireccionEnvio/${id}`
       );
       const data = await response.json();
       setTask2({
@@ -440,7 +440,7 @@ const NewClient = () => {
     formData.append("document", document);
     try {
       const result = await http.post(
-        `https://localhost:443/ClientesDireccionEnvio`,
+        `https://localhost:4000/ClientesDireccionEnvio`,
         formData,
         {
           headers: {

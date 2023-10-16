@@ -83,7 +83,7 @@ const PurchaseOrders = () => {
   
   const loadTask = async () => {
     try {
-      const response = await fetch('https://localhost:443/OrdenCompra/ListadoEntradas');
+      const response = await fetch('https://localhost:4000/OrdenCompra/ListadoEntradas');
       if (!response.ok) {
         throw new Error('La respuesta de la red no fue satisfactoria');
       }
@@ -97,7 +97,7 @@ const PurchaseOrders = () => {
 
   // const loadPagos = async () => {
   //   try {
-  //     const response = await fetch('https://localhost:443/Pagos');
+  //     const response = await fetch('https://localhost:4000/Pagos');
   //     if (!response.ok) {
   //       throw new Error('La respuesta de la red no fue satisfactoria');
   //     }

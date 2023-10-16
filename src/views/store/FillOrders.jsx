@@ -61,7 +61,7 @@ const FillOrders = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/PedidosPendientesSurtir");
+      const response = await fetch("https://localhost:4000/PedidosPendientesSurtir");
       const data = await response.json();
       if (response.ok) {
         setData(data);

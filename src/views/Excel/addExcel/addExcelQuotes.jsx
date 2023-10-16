@@ -98,7 +98,7 @@ const AddExcelQuotes = () => {
       // Realiza un mapeo individual para cada valor
       const responseArray = await Promise.all(
         datosAEnviar.map(async (valor) => {
-          const response = await fetch(`https://localhost:443/Cotizaciones`, {
+          const response = await fetch(`https://localhost:4000/Cotizaciones`, {
             method: "POST",
             body: JSON.stringify(valor),
             headers: {

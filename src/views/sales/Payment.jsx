@@ -79,7 +79,7 @@ const Payment = () => {
   const [foliofiltrado, setFolio] = useState(" ");
   const [data, setData] = useState([]);
   const loadPedidos = async () => {
-    const response = await fetch('https://localhost:443/Pedidos');
+    const response = await fetch('https://localhost:4000/Pedidos');
     const data = await response.json();
 
     const PedidosConStatus1 = data.filter(Pedidos => Pedidos.status === 1);
@@ -89,7 +89,7 @@ const Payment = () => {
   }
 
   const loadTask = async () => {
-    const response = await fetch('https://localhost:443/Pagos');
+    const response = await fetch('https://localhost:4000/Pagos');
     const data = await response.json();
     setData(data);
     setPagosData(data);

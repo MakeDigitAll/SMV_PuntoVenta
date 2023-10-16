@@ -55,7 +55,7 @@ const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/api/allusers");
+      const response = await fetch("https://localhost:4000/api/allusers");
       const data = await response.json();
       if (response.ok) {
         setData(data);

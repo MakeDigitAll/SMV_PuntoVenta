@@ -70,7 +70,7 @@ const PriceList = () => {
 
     
       try {
-        await fetch(`https://localhost:443/ListadoPrecios`, {
+        await fetch(`https://localhost:4000/ListadoPrecios`, {
           method: "POST",
           body: JSON.stringify(datosListado),
           headers: {
@@ -94,7 +94,7 @@ const PriceList = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch(`https://localhost:443/ListadoPrecios`);
+      const response = await fetch(`https://localhost:4000/ListadoPrecios`);
       const data = await response.json();
       setTask({nombre: data.nombre, variacion: data.variacion, clientes: data.clientes})
       //setEditing(true);

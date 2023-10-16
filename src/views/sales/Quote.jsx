@@ -81,7 +81,7 @@ const Quote = () => {
   const datosCliente = () => {
     async function loadDatosCliente() {
       try {
-        const response = await fetch(`https://localhost:443/Clientes`);
+        const response = await fetch(`https://localhost:4000/Clientes`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
@@ -212,7 +212,7 @@ const Quote = () => {
   const [marca, setmarca] = useState([]);
   const loadCategorias = async () => {
     try {
-      const response = await fetch("https://localhost:443/Categoria");
+      const response = await fetch("https://localhost:4000/Categoria");
       if (response.ok) {
         const categoriasData = await response.json();
         setCategorias(categoriasData);
@@ -226,7 +226,7 @@ const Quote = () => {
   }, []);
   const loadCMarcas = async () => {
     try {
-      const response = await fetch("https://localhost:443/MarcasProducto");
+      const response = await fetch("https://localhost:4000/MarcasProducto");
       if (response.ok) {
         const marcaData = await response.json();
         setmarca(marcaData);
@@ -302,7 +302,7 @@ const Quote = () => {
   const [datos2, setData2] = useState([]);
   const loadTask2 = async () => {
     try {
-      const response = await fetch("https://localhost:443/ProductosCotizados");
+      const response = await fetch("https://localhost:4000/ProductosCotizados");
       const data = await response.json();
       if (response.ok) {
         setData2(data);

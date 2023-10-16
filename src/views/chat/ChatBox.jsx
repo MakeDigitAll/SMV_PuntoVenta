@@ -24,7 +24,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
     const getUser = async (userInfor) => {
       try {
         const { data } = await axios.get(
-          `https://localhost:443/api/user/${userInfor}`
+          `https://localhost:4000/api/user/${userInfor}`
         );
         setUserData(data);
       } catch (err) {
@@ -45,7 +45,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
     const fetchMessages = async () => {
       try {
         const { data } = await axios.get(
-          `https://localhost:443/api/chat/getMessages/${chat.chat.id}`
+          `https://localhost:4000/api/chat/getMessages/${chat.chat.id}`
         );
         setMessages(data);
       } catch (err) {
@@ -70,7 +70,7 @@ const ChatBox = (chat, setSendMessage, receiveMessage) => {
     };
     try {
       const response = await fetch(
-        "https://localhost:443/api/chat/sendMessage",
+        "https://localhost:4000/api/chat/sendMessage",
         {
           method: "POST",
           headers: {

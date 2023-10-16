@@ -75,7 +75,7 @@ const NewBranch = () => {
   const [data2, setData2] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/Almacenes");
+      const response = await fetch("https://localhost:4000/Almacenes");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -264,7 +264,7 @@ const NewBranch = () => {
     
     const valorCheckbox = web ? 1 : 0;
     try {
-      const response = await fetch("https://localhost:443/SucursalesAlmacen", {
+      const response = await fetch("https://localhost:4000/SucursalesAlmacen", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -285,7 +285,7 @@ const NewBranch = () => {
       }
 
       // Segunda solicitud POST a la segunda tabla
-      const response2 = await fetch("https://localhost:443/SucursalesDatos", {
+      const response2 = await fetch("https://localhost:4000/SucursalesDatos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -403,7 +403,7 @@ const NewBranch = () => {
 
     try {
       if (modalMode === "create") {
-        const response = await fetch("https://localhost:443/Almacenes", {
+        const response = await fetch("https://localhost:4000/Almacenes", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -429,7 +429,7 @@ const NewBranch = () => {
       } else if (modalMode === "edit") {
         // Editar elemento existente
         const res = await fetch(
-          `https://localhost:443/Almacenes/${editingItem.id}`,
+          `https://localhost:4000/Almacenes/${editingItem.id}`,
           {
             method: "PUT",
             headers: {
@@ -463,7 +463,7 @@ const NewBranch = () => {
     try {
       // Hacer una solicitud a la API para deshabilitar el almacén
       const response = await fetch(
-        `https://localhost:443/AlmacenesDisable/${almacenId}`,
+        `https://localhost:4000/AlmacenesDisable/${almacenId}`,
         {
           method: "POST",
           headers: {

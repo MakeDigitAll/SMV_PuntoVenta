@@ -43,7 +43,7 @@ const DiscountToken = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/Comisiones");
+      const response = await fetch("https://localhost:4000/Comisiones");
       const data = await response.json();
       if (response.ok) {
         setData(data);

@@ -75,7 +75,7 @@ const WarehouseEntries = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/ListadoEntradas");
+      const response = await fetch("https://localhost:4000/ListadoEntradas");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -226,7 +226,7 @@ const WarehouseEntries = () => {
     try {
       if (modalMode === "create") {
         // Crear nuevo elemento
-        const response = await fetch("https://localhost:443/ListadoEntradas", {
+        const response = await fetch("https://localhost:4000/ListadoEntradas", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

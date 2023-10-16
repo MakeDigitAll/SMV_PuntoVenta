@@ -70,7 +70,7 @@ const SellersList = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/ListadoVendedores");
+      const response = await fetch("https://localhost:4000/ListadoVendedores");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -97,7 +97,7 @@ const SellersList = () => {
     };
     
     try {
-      const res = await fetch(`https://localhost:443/ListadoVendedoresDisable/${id}`, {
+      const res = await fetch(`https://localhost:4000/ListadoVendedoresDisable/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

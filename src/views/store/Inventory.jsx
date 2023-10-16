@@ -64,7 +64,7 @@ const   Inventory = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/inventarioGeneralReporteInventario");
+      const response = await fetch("https://localhost:4000/inventarioGeneralReporteInventario");
       const data = await response.json();
       if (response.ok) {
         setData(data);

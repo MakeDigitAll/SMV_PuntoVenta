@@ -38,7 +38,7 @@ const Chat = () => {
   useEffect(() => {
     const getChats = async () => {
       try {
-        const API = axios.create({ baseURL: "https://localhost:443/api" });
+        const API = axios.create({ baseURL: "https://localhost:4000/api" });
         const { data } = await API.get(`/chat/${auth.getUser()?.id}`);
         setChats(data);
       } catch (err) {

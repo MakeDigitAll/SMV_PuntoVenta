@@ -33,7 +33,7 @@ const VerAlmacen = () => {
 
     const loadTask = async (id) => {
         try{
-        const response = await fetch(`https://localhost:443/Almacenes/${id}`)
+        const response = await fetch(`https://localhost:4000/Almacenes/${id}`)
         const data = await  response.json()
         setTask({nombre: data.nombre, tipo: data.tipo})
        

@@ -66,7 +66,7 @@ const Quotes = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:443/Cotizaciones");
+      const response = await fetch("https://localhost:4000/Cotizaciones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
