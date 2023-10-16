@@ -886,8 +886,7 @@ const Quote = () => {
                               <Input
                                 id="cliente"
                                 value={
-                                  searchNombreCliente ||
-                                  clienteInfoGeneral.nombreComercial
+                                  isOnlyRead? clienteInfoGeneral.nombreComercial : searchNombreCliente
                                 }
                                 onValueChange={setSearchNombreCliente}
                                 size="sm"
