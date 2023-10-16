@@ -672,7 +672,7 @@ const Quote = () => {
   //buscar vendedor
   const buscarCliente = () => {
     let usuariosSearch = clientes.filter((cliente) =>
-      cliente.nombreComercial.toLowerCase().includes(searchNombreCliente)
+      cliente.nombreComercial.toLowerCase().includes(searchNombreCliente.toLowerCase())
     );
 
     if (
