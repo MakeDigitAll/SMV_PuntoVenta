@@ -1,5 +1,5 @@
 import React from 'react';
-import ItemsHeaderPointofSale from '../../components/header/itemsHeader/ItemsHeaderPointofSale';
+import ItemsHeaderPointofSale from '../../components/header/headerC/HederPointofSale';
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
     Link,
