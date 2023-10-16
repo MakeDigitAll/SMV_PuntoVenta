@@ -32,7 +32,7 @@ import { Breadcrumbs, Typography } from "@mui/material";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdAddHome, MdAllInbox, MdSettings } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import React, { useCallback, useEffect } from "react";

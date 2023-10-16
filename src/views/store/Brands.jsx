@@ -32,7 +32,7 @@ import {
   TbTicket,
 } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch } from "react-icons/md";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";

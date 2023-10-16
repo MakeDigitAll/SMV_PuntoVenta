@@ -40,7 +40,7 @@ import InventoryWarehouse from "./views/store/InventoryXWarehouse.jsx";
 import Brands from "./views/store/Brands.jsx";
 import FillOrders from "./views/store/FillOrders.jsx";
 import Logistics from "./views/store/Logistics.jsx";
-import WarehouseEntries from "./views/store/warehouseEntries.jsx";
+import WarehouseEntries from "./views/store/WarehouseEntries.jsx";
 import Categories from "./views/store/Categories.jsx";
 import NewTransfer from "./views/store/NewTransfer.jsx";
 import WarehouseOutputs from "./views/store/WarehouseOutputs.jsx";
@@ -62,6 +62,10 @@ import ClientReport from "./views/marketing/ClientReport.jsx";
 import NewClient from "./views/client/NewClientList.jsx";
 import ProviderList from "./views/providers/ProviderList.jsx";
 import Provider from "./views/providers/Provider.jsx";
+import PointofSale from "./views/pointSale/PointofSales.jsx";
+import Reports from "./views/pointSale/Reports.jsx";
+import Customers from "./views/pointSale/Customers.jsx";
+import NewSale from "./views/pointSale/NewSale.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -173,6 +177,22 @@ const App = () => {
         {
           path: "/Web",
           element: <ItemsSWeb />,
+        },
+        {
+          path: "/PointofSale",
+          element: <PointofSale />,
+        },
+        {
+          path: "/PointofSale/Reports",
+          element: <Reports />,
+        },
+        {
+          path: "/PointofSale/Customers",
+          element: <Customers />,
+        },
+        {
+          path: "/PointofSale/NewSale",
+          element: <NewSale />,
         },
         {
           path: "/Settings",
@@ -309,6 +329,14 @@ const App = () => {
         {
           path: "/Sales/Quotes/NewQuote",
           element: <Quote />,
+        },
+        {
+          path: "/Sales/Quotes/:id/ViewQuote",
+          element: <Quote />
+        },
+        {
+          path: "/Sales/Quotes/:id/EditQuote",
+          element: <Quote />
         },
         {
           path: "/Sales/fillOrder",

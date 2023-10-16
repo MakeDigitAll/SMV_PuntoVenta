@@ -21,6 +21,8 @@ import {
   ModalFooter,
   useDisclosure,
   SelectItem,
+  Card,
+  CardBody,
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -40,13 +42,12 @@ import {
   MdUpload,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
+import { use } from "i18next";
 const Quote = () => {
-  const [selectedImage, setSelectedImage] = useState("");
-  const imageDefault = selectedImage === "";
   const [user, setUser] = useState({
     nombre: "",
     apellido: "",
@@ -58,22 +59,24 @@ const Quote = () => {
     dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
-    nombre: "",
-    apellido: "",
-    email: "",
-    emailConfirm: "",
-    password: "",
-    confirmPassword: "",
-    direccion: "",
-    colonia: "",
-    ciudad: "",
-    estado: "",
-    codigoPostal: "",
-    telefonoContacto: "",
-    telefonoCelular: "",
-    perfilSeguridad: "",
-    vendedor: "",
+    pedido: "",
+    cliente: "",
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
   });
+
+  // const [dataQuote, setDataQuote] = useState({
+  //   pedido: "",
+  //   cliente: "",
+  //   comentarios: "",
+  //   descuento: "",
+  //   vendedor: "",
+  //   recurrenciaa: "",
+  //   origen: "",
+  //   monto: "",
+  //   fecha: format(new Date(), "yyyy-MM-dd"),
+  // });
 
   const datosCliente = () => {
     async function loadDatosCliente() {
@@ -81,11 +84,9 @@ const Quote = () => {
         const response = await fetch(`https://localhost:443/Clientes`);
         const data = await response.json();
         if (response.ok) {
-          setProductos(data)
-          
+          setProductos(data);
         }
       } catch (err) {
-        
         toast.error("Error al cargar los datos", {
           position: "bottom-right",
           theme: "colored",
@@ -95,33 +96,50 @@ const Quote = () => {
     loadDatosCliente();
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-    setValidationErrors({ ...validationErrors, [name]: "" });
+    switch (name) {
+      case "descuento":
+        var valor = parseFloat(value);
+        if (valor > 0 && valor <= 100) {
+          setDataQuote((prevState) => ({
+            ...Number(prevState),
+            [name]: value,
+          }));
+        } else {
+          toast.error("El descuento debe ser mayor a 0 y menor a 100", {
+            theme: "colored",
+          });
+        }
+        break;
+      default:
+        break;
+    }
+
+    setDataQuote((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
   const fileInputRef = useRef(null);
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
+  const [isChecked, setIsChecked] = useState(false);
+  function handleCheckboxChange() {
+    setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
+    console.log(isChecked);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage
-      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
-      : "";
     if (
-      !user.imagen ||
-      !user.nombre ||
-      !user.apellido ||
-      !user.password ||
-      !user.direccion ||
-      !user.colonia ||
-      !user.estado ||
-      !user.codigoPostal ||
-      !user.telefonoContacto ||
-      !user.telefonoCelular ||
-      !user.perfilSeguridad ||
+      !dataQuote.pedido ||
+      !dataQuote.cliente ||
+      !dataQuote.vendedor ||
+      !dataQuote.recurrenciaa ||
+      !dataQuote.origen ||
+      !dataQuote.monto ||
       passwordValidationState !== "valid" ||
       confirmPasswordValidationState !== "valid" ||
       emailConfirmValidationState !== "valid"
@@ -130,29 +148,14 @@ const Quote = () => {
         theme: "colored",
       });
     }
-    user.password !== user.confirmPassword || user.email !== user.emailConfirm
-      ? toast.error("Las contraseñas o correos no coinciden", {
-        theme: "colored",
-      })
-      : "";
+
     const errors = {};
-    !user.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
-    !user.apellido ? (errors.apellido = "Favor de llenar este campo") : "";
-    !user.perfilSeguridad ? (errors.perfilSeguridad = "Favor de llenar este campo") : "";
-    !user.vendedor ? (errors.vendedor = "Favor de llenar este campo") : "";
-    !user.direccion ? (errors.direccion = "Favor de llenar este campo") : "";
-    !user.colonia ? (errors.colonia = "Favor de llenar este campo") : "";
-    !user.status ? (errors.status = "Favor de llenar este campo") : "";
-    !user.ciudad ? (errors.ciudad = "Favor de llenar este campo") : "";
-    !user.estado ? (errors.estado = "Favor de llenar este campo") : "";
-    !user.codigoPostal ? (errors.codigoPostal = "Favor de llenar este campo") : "";
-    !user.telefonoCelular ? (errors.telefonoCelular = "Favor de llenar este campo") : "";
-    !user.telefonoContacto
-      ? (errors.telefonoContacto = "Favor de llenar este campo")
-      : "";
-    !user.email ? (errors.email = "Favor de llenar este campo") : "";
-    !user.password ? (errors.password = "Favor de llenar este campo") : "";
-    !user.imagen ? (errors.imagen = "Favor de llenar este campo") : "";
+    !dataQuote.idCliente ? (errors.idCliente = "Llena este campo") : "";
+    !dataQuote.idVendedor ? (errors.idVendedor = "Llena este campo") : "";
+    !dataQuote.recurrencia ? (errors.recurrencia = "Llena este campo") : "";
+    !dataQuote.recurrenciaa ? (errors.recurrenciaa = "Llena este campo") : "";
+    !dataQuote.envio ? (errors.envio = "Llena este campo") : "";
+    !dataQuote.comentarios ? (errors.comentarios = "Llena este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -161,19 +164,17 @@ const Quote = () => {
 
     const formData = new FormData();
     const document = JSON.stringify({
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      password: user.password,
-      perfilSeguridad: user.perfilSeguridad,
-      vendedor: user.vendedor,
+      pedido: dataQuote.pedido,
+      cliente: dataQuote.cliente,
+      vendedor: dataQuote.vendedor,
+      recurrenciaa: isChecked,
+      origen: dataQuote.origen,
+      monto: dataQuote.monto,
     });
-
-    formData.append("document", document);
-    formData.append("image", selectedImage);
+    console.log(document.recurrenciaa);
     try {
       const result = await http.post(
-        `https://localhost:443/api/createuser`,
+        `http://localhost:4000/Cotizaciones`,
         formData,
         {
           headers: {
@@ -181,61 +182,22 @@ const Quote = () => {
           },
         }
       );
-      if (result) {
-        const formData2 = new FormData();
-        const document2 = JSON.stringify({
-          idUsuario: result.data.id,
-          direccion: user.direccion,
-          colonia: user.colonia,
-          status: user.status,
-          ciudad: user.ciudad,
-          estado: user.estado,
-          codigoPostal: user.codigoPostal,
-          telefonoContacto: user.telefonoContacto,
-          telefonoCelular: user.telefonoCelular,
-        });
-        formData2.append("document2", document2);
-        const response = await http.post(
-          `https://localhost:443/api/createUserData`,
-          formData2,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (response.status == 200 ? true : false) {
-          toast.success("Usuario creado correctamente", { theme: "colored" });
-          navigate("/Settings/Users");
-        }
+      if (response.status == 200) {
+        toast.success("Cotización Creada Correctamente", { theme: "colored" });
       }
-    } catch (error) { }
+      navigate("/Sales/Quotes");
+    } catch (error) {
+      toast.error("Error al guardar Cotización", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
   }
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-  const validationState = useMemo(() => {
-    if (user.email === "") return undefined;
 
-    return validateEmail(user.email) ? "valid" : "invalid";
-  }, [user.email]);
   const navigate = useNavigate();
-  const [selected, setSelected] = useState("photos");
   const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
 
-  const passwordValidationState = useMemo(() => {
-    if (user.password === "") return undefined;
-    return user.password.length >= 8 ? "valid" : "invalid";
-  }, [user.password]);
-  const confirmPasswordValidationState = useMemo(() => {
-    if (user.confirmPassword === "") return undefined;
-    return user.password === user.confirmPassword ? "valid" : "invalid";
-  }, [user.confirmPassword]);
-  const emailConfirmValidationState = useMemo(() => {
-    if (user.emailConfirm === "") return undefined;
-    return user.emailConfirm === user.email ? "valid" : "invalid";
-  }, [user.emailConfirm, user.email]);
-
+  // -- Estados de los modales
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenDiscount,
@@ -243,33 +205,8 @@ const Quote = () => {
     onClose: onCloseDiscount,
   } = useDisclosure();
 
-
-  const [productos, setProductos] = useState([]);
-
-  const handleOpenAddProduct = () => {
-    onOpen();
-    async function loadProducts() {
-      try {
-        const response = await fetch(`https://localhost:443/Productos`);
-        const data = await response.json();
-        if (response.ok) {
-          setProductos(data)
-          
-        }
-      } catch (err) {
-        
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    loadProducts();
-  };
-
   const handleOpenAddDiscount = () => {
     onOpenDiscount();
-
   };
   const [categorias, setCategorias] = useState([]);
   const [marca, setmarca] = useState([]);
@@ -301,14 +238,50 @@ const Quote = () => {
   useEffect(() => {
     loadCMarcas();
   }, []);
-  
-  const [datos,setData]=useState([]);
-  const loadTask= async()=>{
+
+  const [cotizacionData, setCotizacionData] = useState({
+    fecha: format(new Date(), "yyyy-MM-dd"),
+    recurrencia: false,
+    comentarios: "",
+    envio: "",
+  });
+
+  const [datos, setData] = useState([]);
+  const loadTask = async (folio) => {
+    console.log(folio);
     try {
-      const response = await fetch("https://localhost:443/Productos");
+      const response = await fetch(
+        `http://localhost:4000/Cotizaciones/${folio}`
+      );
+      const data = await response.json();
+      setDataQuote({
+        folio: data.folio,
+      });
+      console.log(data.folio);
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  };
+
+  const getCotizacion = async (folioCotizacion) => {
+    var folio = Number(folioCotizacion);
+    try {
+      const response = await fetch(
+        "http://localhost:4000/Cotizaciones/" + folio
+      );
       const data = await response.json();
       if (response.ok) {
-        setData(data);
+        setCotizacionData({
+          fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
+          recurrencia: Number(data.recurrencia),
+          comentarios: data.comentarios,
+          envio: data.envio,
+        });
+        console.log(data);
+        getDatosCliente(data.idCliente);
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -316,14 +289,18 @@ const Quote = () => {
         theme: "colored",
       });
     }
-  }
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
-  const [datos2,setData2]=useState([]);
-  const loadTask2= async()=>{
+  // useEffect(() => {
+  //   console.log(params);
+  //   if (params.folio) {
+  //     loadTask(params.folio);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [params.folio]);
+
+  const [datos2, setData2] = useState([]);
+  const loadTask2 = async () => {
     try {
       const response = await fetch("https://localhost:443/ProductosCotizados");
       const data = await response.json();
@@ -336,15 +313,15 @@ const Quote = () => {
         theme: "colored",
       });
     }
-  }
+  };
   useEffect(() => {
     loadTask2();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [filasAgregadas, setFilasAgregadas] = useState([]);
-  const [cantidadesUsuario, setCantidadesUsuario] = useState([]);
-  function adaptarDatos(data,cantidad) {
+  const [cantidadProducto, setcantidadProducto] = useState([]);
+  function adaptarDatos(data, cantidad) {
     return {
       codigo: data.codigoEmpresa,
       nombre: data.nombre,
@@ -356,19 +333,29 @@ const Quote = () => {
       total: data.total,
     };
   }
-  const agregarFila = (data,index) => {
-    const cantidad = parseFloat(cantidadesUsuario[index]);
+  const agregarFila = (data, index) => {
+    const cantidad = parseFloat(cantidadProducto[index]);
 
+    const nuevoProducto = filasAgregadas.find(
+      (fila) => fila.codigo === data.codigoEmpresa
+    );
+
+    if (nuevoProducto) {
+      toast.warning("El producto ya ha sido agregado a la cotización.");
+      return;
+    }
     // Verifica si la cantidad es un número válido
-    if (!isNaN(cantidad)) {
+    if (!isNaN(cantidad) || cantidad > 0) {
       const datosAdaptados = adaptarDatos(data, cantidad);
-
-      // Agrega la fila adaptada a la lista de filas agregadas en el estado
       setFilasAgregadas([...filasAgregadas, datosAdaptados]);
     } else {
-      toast.warning('Por favor, ingrese una cantidad válida.');
+      toast.warning("Por favor, ingrese una cantidad válida.");
     }
   };
+
+  // ------------------------------------------------------------------------------------------------------------//
+  //                                      Código para calcular totales                                           //
+  //------------------------------------------------------------------------------------------------------------//
 
   function calcularTotalesTablaResumen(filas) {
     let netoTotal = 0;
@@ -376,21 +363,21 @@ const Quote = () => {
     let subtotalTotal = 0;
     let impuestosTotal = 0;
     let total = 0;
-  
+
     for (const fila of filas) {
       const neto = fila.cantidad * fila.precioUnitario;
       const descuentoValor = (neto * fila.descuento) / 100;
       const subtotal = neto - descuentoValor;
-      const impuestos = subtotal * 0.10; // Cambia el valor del impuesto según tu necesidad
-  
+      const impuestos = subtotal * 0.16; // Cambia el valor del impuesto según tu necesidad
+
       netoTotal += neto;
       descuentoTotal += descuentoValor;
       subtotalTotal += subtotal;
       impuestosTotal += impuestos;
     }
-  
+
     total = subtotalTotal + impuestosTotal;
-  
+
     return {
       netoTotal,
       descuentoTotal,
@@ -399,9 +386,9 @@ const Quote = () => {
       total,
     };
   }
-  
+
   const calcularTotales = () => {
-    const tablaResumen = document.getElementById('tablaCalculos');
+    const tablaResumen = document.getElementById("tablaCalculos");
     const totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
     // Actualiza los valores en la tabla de resumen
     tablaResumen.querySelector(
@@ -423,15 +410,40 @@ const Quote = () => {
   useEffect(() => {
     // Esta función se ejecutará cuando el componente esté montado
     calcularTotales();
-  }, [filasAgregadas]);
+  }, [filasAgregadas /*, dataQuote.descuento*/]);
 
   const handleCantidadChange = (event, index) => {
-    const nuevasCantidades = [...cantidadesUsuario];
+    const nuevasCantidades = [...cantidadProducto];
     nuevasCantidades[index] = event.target.value;
-    setCantidadesUsuario(nuevasCantidades);
+    setcantidadProducto(nuevasCantidades);
   };
 
-  const [filtro, setFiltro] = useState(''); // Estado para almacenar el valor del filtro
+  const handleProductosCotizados = (event, index) => {
+    const { name, value } = event.target;
+
+    if (value <= Number(filasAgregadas[index].inventario)) {
+      const nuevasFilas = [...filasAgregadas];
+
+      nuevasFilas[index] = {
+        ...nuevasFilas[index],
+        [name]: Number(value),
+        ["total"]:
+          Number(value) * Number(nuevasFilas[index].precioUnitario) -
+          (Number(value) *
+            Number(nuevasFilas[index].precioUnitario) *
+            Number(nuevasFilas[index].descuento)) /
+            100,
+      };
+
+      setFilasAgregadas(nuevasFilas);
+    } else {
+      toast.error("La cantidad debe ser mayor a cero y menor al inventario", {
+        theme: "colored",
+      });
+    }
+  };
+
+  const [filtro, setFiltro] = useState(""); // Estado para almacenar el valor del filtro
 
   // Función para filtrar los datos en función del valor del filtro
   const filtrarDatos = () => {
@@ -443,6 +455,270 @@ const Quote = () => {
   // Manejar el cambio en el campo de filtro
   const handleFiltroChange = (event) => {
     setFiltro(event.target.value);
+  };
+
+  //------------------------------------------------------------------------------------------------------------//
+  //                                      Código para agregar productos a la cotización                         //
+  //------------------------------------------------------------------------------------------------------------//
+
+  const [dataQuote, setDataQuote] = useState({
+    pedido: "",
+    cliente: "",
+    comentarios: "",
+    vendedor: "",
+    productosCotización: [],
+    recurrenciaa: "",
+    origen: "",
+    monto: "",
+    fecha: format(new Date(), "yyyy-MM-dd"),
+  });
+
+  // -- Codigo para cargar productos
+  const [productos, setProductos] = useState([]);
+
+  const handleOpenAddProduct = () => {
+    onOpen();
+    async function loadProducts() {
+      try {
+        const response = await fetch(`http://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
+  };
+  //--------------------------------------------------------------------------------------//
+  //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
+  //--------------------------------------------------------------------------------------//
+
+  var [isOnlyRead, setIsOnlyRead] = useState(false);
+  var [variable, setVariable] = useState("Nueva Cotización");
+  useEffect(() => {
+    //obtener la url
+    const url = window.location.href;
+    console.log(url);
+    //separrar la url por /
+    const urlSeparada = url.split("/");
+    //si al url en la posicion 6 es igual a EditQuote
+    if (urlSeparada[6] === "EditQuote") {
+      setIsOnlyRead(false);
+      setVariable("Editar Cotización");
+      getCotizacion(urlSeparada[5]);
+    } else if (urlSeparada[6] === "ViewQuote") {
+      setIsOnlyRead(true);
+      setVariable("Ver Cotización");
+      getCotizacion(urlSeparada[5]);
+    } else {
+      setIsOnlyRead(false);
+    }
+  }, []);
+
+  //--Codigo Para Buscar Cliente
+  const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
+  const [idCliente, setIdCliente] = useState();
+
+  //almacena todos los clientes de la base de datos
+  //para buscar vendedor por nombre
+  const [searchNombreCliente, setSearchNombreCliente] = useState("");
+  const [nombreSelectedCliente, setNombreSelectedCliente] = useState("");
+
+  //para mostrar los resultados de la busqueda
+  const [isResultSearchCliente, setIsResultSearchCliente] = useState(false);
+  //para almacenar los resultados de la busqueda
+  const [filterCliente, setFilterCliente] = useState([]);
+  //para almacenar los resultados de la busqueda
+  const [idVendedor, setIdVendedor] = useState("");
+
+  //fechaCotizacion
+  const [fechaCotizacion, setFechaCotizacion] = useState();
+
+  //Es recurrente
+  const [isRecurrente, setIsRecurrente] = useState(false);
+
+  //para almacenar los datos del cliente seleccionado
+  const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
+  const [clienteInfoDireccion, setClienteInfoDireccion] = useState([]);
+  const [clienteInfoFacturacion, setClienteInfoFacturacion] = useState([]);
+
+  //para el envio
+  const [envio, setEnvio] = useState("");
+
+  //true o false para saber que informacion se muestra
+  const [showInfoGeneral, setShowInfoGeneral] = useState(false);
+  const [showInfoDireccion, setShowInfoDireccion] = useState(false);
+  const [showInfoFacturacion, setShowInfoFacturacion] = useState(false);
+
+  // Query para traer todos los Vendedores
+  const getClientes = () => {
+    async function getClientes() {
+      try {
+        const response = await fetch(`http://localhost:4000/ListadoClientes`);
+        const data = await response.json();
+        if (response.ok) {
+          setClientes(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    getClientes();
+  };
+
+  //
+
+  const [direccionesCliente, setDireccionesCliente] = useState([]);
+
+  const getDireccionCliente = () => {
+    async function getDireccionCliente() {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/ClientesDireccionEnvio/${idCliente}`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          console.log(data);
+          setDireccionesCliente(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    getDireccionCliente();
+  };
+
+  const getDatosCliente = (idCliente) => {
+    async function getDatosCliente() {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/ListadoClientes/${idCliente}`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setClienteDataGeneral(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    getDatosCliente();
+  };
+
+  useEffect(() => {
+    getClientes();
+  }, []);
+
+  //cuando halla un idCliente buscar sus direcciones
+  useEffect(() => {
+    if (idCliente) {
+      getDireccionCliente();
+    }
+  }, [idCliente]);
+
+  //buscar vendedor
+  const buscarCliente = () => {
+    let usuariosSearch = clientes.filter((cliente) =>
+      cliente.nombreComercial.toLowerCase().includes(searchNombreCliente)
+    );
+
+    if (
+      usuariosSearch.length > 0 &&
+      usuariosSearch.length !== clientes.length
+    ) {
+      setIsResultSearchCliente(true);
+      setFilterCliente(usuariosSearch);
+    } else {
+      setIsResultSearchCliente(false);
+    }
+  };
+
+  useEffect(() => {
+    buscarCliente();
+
+    if (searchNombreCliente === nombreSelectedCliente) {
+      setIsResultSearchCliente(false);
+    }
+  }, [searchNombreCliente]);
+
+  const handleClienteClick = (cliente) => {
+    setIdCliente(cliente.id);
+    setNombreSelectedCliente(cliente.nombreComercial);
+    setSearchNombreCliente(cliente.nombreComercial);
+    setIdVendedor(cliente.vendedor);
+    setIsResultSearchCliente(false);
+    setFechaCotizacion(format(new Date(), "yyyy-MM-dd"));
+    setShowInfoGeneral(true);
+    setClienteDataGeneral(cliente);
+  };
+
+  const setClienteDataGeneral = (cliente) => {
+    let clienteDataGeneral = {
+      nombreComercial: cliente.nombreComercial,
+      DateCreation: cliente.DateCreation,
+      DateModification: cliente.DateModification,
+      activo: cliente.activo,
+      actualizacion: cliente.actualizacion,
+      condicionesPago: cliente.condicionesPago,
+      contacto: cliente.contacto,
+      creditoDisponible: cliente.creditoDisponible,
+      cuenta: cliente.cuenta,
+      diasCredito: cliente.diasCredito,
+      direccion: cliente.direccion,
+      email: cliente.email,
+      giro: cliente.giro,
+      id: cliente.id,
+      isDeleted: cliente.isDeleted,
+      isUpdated: cliente.isUpdated,
+      limiteCredito: cliente.limiteCredito,
+      listaPrecios: cliente.listaPrecios,
+      registro: cliente.registro,
+      saldoPentiente: cliente.saldoPentiente,
+      telefono: cliente.telefono,
+      vendedor: cliente.vendedor,
+      whatsApp: cliente.whatsApp,
+    };
+    setClienteInfoGeneral(clienteDataGeneral);
+  };
+
+  const handleClickDireccion = (direccion) => {
+    setClienteDireccion(direccion);
+  };
+
+  const setClienteDireccion = (direccion) => {
+    let clienteInfoDireccion = {
+      nombreDireccion: direccion.nombreDireccion,
+      calle: direccion.calle,
+      colonia: direccion.colonia,
+      ciudad: direccion.ciudad,
+      estado: direccion.estado,
+      codigoPostal: direccion.codigoPostal,
+      entreCalles: direccion.entreCalles[0] + " y " + direccion.entreCalles[1],
+      numeroInterior: direccion.numeroInterior,
+      numeroExterior: direccion.numeroExterior,
+      referencias: direccion.referencias,
+      apellidoRecibe: direccion.apellidoRecibe,
+    };
+    setClienteInfoDireccion(clienteInfoDireccion);
+  };
+
+  const handleClickFacturacion = (facturacion) => {
+    console.log("Facturacion");
+    console.log(facturacion);
   };
 
   return (
@@ -494,7 +770,7 @@ const Quote = () => {
                     className="text-foreground"
                   >
                     <MdPerson sx={{ mr: 0.5 }} fontSize="inherit" />
-                    Nueva cotización
+                    {variable}
                   </Typography>
                 </Breadcrumbs>
               </div>
@@ -510,73 +786,100 @@ const Quote = () => {
                             <div className="md:col-span-6"></div>
                             <div className="md:col-span-12">
                               <Input
-                                id="nombre"
-                                value={user.nombre}
-                                onValueChange={handleChange}
-                                onChange={handleFiltroChange}
+                                id="cliente"
+                                value={
+                                  searchNombreCliente ||
+                                  clienteInfoGeneral.nombreComercial
+                                }
+                                onValueChange={setSearchNombreCliente}
                                 size="sm"
                                 isRequired
+                                isDisabled={isOnlyRead}
                                 type="text"
-                                label="Nombre"
-                                name="nombre"
+                                label="Nombre del Cliente"
+                                name="cliente"
                                 labelPlacement="outside"
                                 placeholder=" "
+                                autoComplete="off"
                                 variant="faded"
-                                error={validationErrors.nombre !== ""}
-                                errorMessage={validationErrors.nombre}
+                                error={validationErrors.cliente !== ""}
+                                errorMessage={validationErrors.cliente}
                                 endContent={
                                   <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
                                 }
                               />
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  zIndex: "100",
+                                }}
+                              >
+                                {isResultSearchCliente ? (
+                                  <div>
+                                    {filterCliente
+                                      .slice(0, 5)
+                                      .map((vendedor, index) => (
+                                        <Card isHoverable={true}>
+                                          <CardBody
+                                            key={vendedor.id}
+                                            onClick={() =>
+                                              handleClienteClick(vendedor)
+                                            }
+                                            className="grid grid-cols-2 mt-1"
+                                          >
+                                            <p>{vendedor.nombreComercial}</p>
+                                          </CardBody>
+                                        </Card>
+                                      ))}
+                                  </div>
+                                ) : (
+                                  <p></p>
+                                )}
+                              </div>
                             </div>
                             <div className="md:col-span-8">
                               <Input
                                 size={"sm"}
                                 type="text"
-                                label="Vendedor"
-                                id="apellido"
+                                label="ID Vendedor"
                                 isRequired
                                 isDisabled
-                                name="apellido"
-                                value={user.apellido}
+                                name="vendedor"
+                                value={
+                                  idVendedor || clienteInfoGeneral.vendedor
+                                }
                                 onChange={handleChange}
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                error={validationErrors.apellido !== ""}
-                                errorMessage={validationErrors.apellido}
+                                error={validationErrors.vendedor !== ""}
+                                errorMessage={validationErrors.vendedor}
                                 endContent={<MdPerson />}
                               />
                             </div>
 
                             <div className="md:col-span-4">
                               <Input
-                                id="dateQuote"
+                                id="fecha"
                                 isRequired
-                                value={user.dateQuote}
-                                onChange={handleChange}
+                                value={cotizacionData.fecha}
                                 size={"sm"}
                                 isDisabled
                                 type="date"
                                 label="Fecha de la Cotización"
-                                name="dateQuote"
+                                name="fecha"
                                 labelPlacement="outside"
                                 placeholder=" "
                                 variant="faded"
-                                color={
-                                  validationState === "invalid"
-                                    ? "danger"
-                                    : "default"
-                                }
-                                errorMessage={
-                                  validationState === "invalid" &&
-                                  "Ingresa un correo valido"
-                                }
-                                validationState={validationState}
                               />
                             </div>
                             <div className="md:col-span-6">
-                              <Checkbox isRequired>Es recurrente</Checkbox>
+                              <Checkbox
+                                isDisabled={isOnlyRead}
+                                onChange={setIsRecurrente}
+                              >
+                                Es recurrente
+                              </Checkbox>
                             </div>
                           </div>
                         </div>
@@ -587,34 +890,357 @@ const Quote = () => {
                       <div className="grid gap-2 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                         <div className="md:col-span-12">
                           <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
-                            <Spacer y={2} />
-                            <div className="md:col-span-6"></div>
+                            <Spacer y={6} />
                             <div className="md:col-span-12">
                               <Select
-                                isRequired
                                 labelPlacement={"outside"}
                                 label="Información del Cliente"
-                                placeholder="Seleccione"
+                                placeholder="General"
                                 size="sm"
                               >
-                                {/* {animals.map((animal) => (
+                                {direccionesCliente.map((direcciones) => (
                                   <SelectItem
-                                    key={animal.value}
-                                    value={animal.value}
+                                    key={direcciones.id}
+                                    value={direcciones.nombreDireccion}
+                                    onClick={() => {
+                                      direcciones.nombreDireccion
+                                        ? (setShowInfoGeneral(false),
+                                          setShowInfoDireccion(true),
+                                          setShowInfoFacturacion(false),
+                                          handleClickDireccion(direcciones))
+                                        : direcciones.facturacion
+                                        ? (setShowInfoGeneral(false),
+                                          setShowInfoDireccion(false),
+                                          setShowInfoFacturacion(true),
+                                          handleClickFacturacion(direcciones))
+                                        : (setShowInfoGeneral(true),
+                                          setShowInfoDireccion(false),
+                                          setShowInfoFacturacion(false),
+                                          setClienteInfoGeneral(
+                                            clienteInfoGeneral
+                                          ));
+                                    }}
                                   >
-                                    {animal.label}
+                                    {direcciones.nombreDireccion}
                                   </SelectItem>
-                                ))} */}
+                                ))}
                               </Select>
-                            </div>
-                            <div className="md:col-span-12">
-                              <Textarea
-                                isDisabled
-                                label=" "
-                                labelPlacement="inside"
-                                placeholder=" "
-                                defaultValue=" "
-                              />
+                              {showInfoGeneral ? (
+                                <div>
+                                  <Card>
+                                    <CardBody>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Nombre Comercial: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoGeneral.nombreComercial}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Condiciones de Pago: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoGeneral.condicionesPago}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Contacto: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.contacto}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Credito Disponible: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoGeneral.creditoDisponible}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Cuenta: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.cuenta}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Dias Credito: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.diasCredito}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Direccion: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.direccion}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Correo Electronico: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.email}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Giro: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.giro}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Limite Credito: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoGeneral.limiteCredito}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Lista Precios: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.listaPrecios}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Saldo Pentiente: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoGeneral.saldoPentiente}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Telefono: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.telefono}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          WhatsApp: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoGeneral.whatsApp}</p>
+                                      </div>
+                                    </CardBody>
+                                  </Card>
+                                </div>
+                              ) : showInfoDireccion ? (
+                                <div>
+                                  <Card>
+                                    <CardBody>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Nombre de la Direccion: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.nombreDireccion}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Calle: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.calle}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Colonia: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.colonia}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Ciudad: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.ciudad}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Estado: &nbsp;
+                                        </p>
+                                        <p>{clienteInfoDireccion.estado}</p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Codigo Postal: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.codigoPostal}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Entre Calles: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.entreCalles}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Numero Interior: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.numeroInterior}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Numero Exterior: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.numeroExterior}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Referencias: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.referencias}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Referencias: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoDireccion.apellidoRecibe}
+                                        </p>
+                                      </div>
+                                    </CardBody>
+                                  </Card>
+                                </div>
+                              ) : showInfoFacturacion ? (
+                                <></>
+                              ) : (
+                                <></>
+                              )}
                             </div>
                             <div className="md:col-span-6">
                               <Select
@@ -622,7 +1248,15 @@ const Quote = () => {
                                 label="Envío"
                                 placeholder="Seleccione"
                                 size="sm"
+                                isDisabled={isOnlyRead}
                                 isRequired
+                                value={cotizacionData.envio}
+                                onChange={(e) => {
+                                  setCotizacionData({
+                                    ...cotizacionData,
+                                    envio: e.target.value,
+                                  });
+                                }}
                               >
                                 {envios.map((envios) => (
                                   <SelectItem key={envios} value={envios}>
@@ -669,15 +1303,37 @@ const Quote = () => {
                                           <TableCell>{fila.codigo}</TableCell>
                                           <TableCell>{fila.nombre}</TableCell>
                                           <TableCell>{fila.marca}</TableCell>
-                                          <TableCell>{fila.cantidad}</TableCell>
+                                          <TableCell>
+                                            <Input
+                                              size={"sm"}
+                                              className="w-20"
+                                              type="number"
+                                              name="cantidad"
+                                              placeholder=""
+                                              variant="faded"
+                                              error={
+                                                validationErrors.cantidad !== ""
+                                              }
+                                              errorMessage={
+                                                validationErrors.cantidad
+                                              }
+                                              value={fila.cantidad}
+                                              onChange={(event) =>
+                                                handleProductosCotizados(
+                                                  event,
+                                                  index
+                                                )
+                                              }
+                                            />
+                                          </TableCell>
                                           <TableCell>
                                             {fila.inventario}
                                           </TableCell>
                                           <TableCell>
-                                            {fila.precioUnitario}
+                                            ${fila.precioUnitario}
                                           </TableCell>
                                           <TableCell>
-                                            {fila.descuento}
+                                            {fila.descuento}%
                                           </TableCell>
                                           <TableCell>{fila.total}</TableCell>
                                         </TableRow>
@@ -694,12 +1350,14 @@ const Quote = () => {
                                 color="primary"
                                 onPress={() => handleOpenAddProduct()}
                                 className="capitalize"
+                                isDisabled={isOnlyRead}
                               >
                                 Agregar productos
                               </Button>
                               <Button
                                 variant="flat"
                                 color="success"
+                                isDisabled={isOnlyRead}
                                 onPress={() => handleOpenAddDiscount()}
                                 className="capitalize"
                                 startContent={<MdDiscount />}
@@ -723,7 +1381,15 @@ const Quote = () => {
                               <Textarea
                                 minRows={8}
                                 label="Comentarios de la Cotización"
+                                isDisabled={isOnlyRead}
                                 labelPlacement="outside"
+                                value={cotizacionData.comentarios}
+                                onChange={(e) =>
+                                  setCotizacionData({
+                                    ...cotizacionData,
+                                    comentarios: e.target.value,
+                                  })
+                                }
                                 placeholder=" "
                                 defaultValue=" "
                               />
@@ -754,19 +1420,27 @@ const Quote = () => {
                                   <TableBody>
                                     <TableRow key="1">
                                       <TableCell>Neto</TableCell>
-                                      <TableCell id="netoTotal">$0.00</TableCell>
+                                      <TableCell id="netoTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="2">
                                       <TableCell>Descuento</TableCell>
-                                      <TableCell id="descuentoTotal">$0.00</TableCell>
+                                      <TableCell id="descuentoTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="3">
                                       <TableCell>Sub Total</TableCell>
-                                      <TableCell id="subtotalTotal">$0.00</TableCell>
+                                      <TableCell id="subtotalTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="4">
                                       <TableCell>Impuestos</TableCell>
-                                      <TableCell id="impuestosTotal">$0.00</TableCell>
+                                      <TableCell id="impuestosTotal">
+                                        $0.00
+                                      </TableCell>
                                     </TableRow>
                                     <TableRow key="5">
                                       <TableCell>Total</TableCell>
@@ -888,7 +1562,7 @@ const Quote = () => {
                                 <TableColumn>Acciones</TableColumn>
                               </TableHeader>
                               <TableBody>
-                                {datos.map((data,index) => (
+                                {datos.map((data, index) => (
                                   <TableRow key={data.id}>
                                     <TableCell>{data.codigoEmpresa}</TableCell>
                                     <TableCell>{data.nombre}</TableCell>
@@ -897,7 +1571,7 @@ const Quote = () => {
                                       <Input
                                         size="sm"
                                         type="number"
-                                        value={cantidadesUsuario[index] || ""} // Usar la cantidad del estado correspondiente
+                                        value={cantidadProducto[index] || ""} // Usar la cantidad del estado correspondiente
                                         onChange={(e) =>
                                           handleCantidadChange(e, index)
                                         }
@@ -911,7 +1585,7 @@ const Quote = () => {
                                     <TableCell>
                                       <Button
                                         size="sm"
-                                        onClick={() => agregarFila(data,index)}
+                                        onClick={() => agregarFila(data, index)}
                                       >
                                         +
                                       </Button>
@@ -961,8 +1635,11 @@ const Quote = () => {
                           <div className="md:col-span-12">
                             <Input
                               type="number"
+                              name="descuento"
                               placeholder="00.00"
                               color="success"
+                              value={dataQuote.descuento}
+                              onChange={handleChange}
                               endContent={<MdPercent />}
                               label="Porcentaje"
                             />
