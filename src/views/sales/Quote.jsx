@@ -68,18 +68,6 @@ const Quote = () => {
     monto: "",
   });
 
-  // const [dataQuote, setDataQuote] = useState({
-  //   pedido: "",
-  //   cliente: "",
-  //   comentarios: "",
-  //   descuento: "",
-  //   vendedor: "",
-  //   recurrenciaa: "",
-  //   origen: "",
-  //   monto: "",
-  //   fecha: format(new Date(), "yyyy-MM-dd"),
-  // });
-
   const datosCliente = () => {
     async function loadDatosCliente() {
       try {
@@ -115,6 +103,7 @@ const Quote = () => {
         }
         break;
       default:
+        
         break;
     }
 
@@ -290,6 +279,41 @@ const Quote = () => {
         theme: "colored",
       });
     }
+
+    try {
+      const response = await fetch(
+        "https://localhost:4000/ProductosCotizados/" + folio
+      );
+      const data = await response.json();
+      if (response.ok) {
+        const datos = await Promise.all(
+          data.map(async (producto) => {
+            const response = await fetch(
+              "https://localhost:4000/Productos/" + producto.idProducto
+            );
+            const data = await response.json();
+            if (response.ok) {
+              return {
+                codigoEmpresa: data.codigoEmpresa,
+                nombre: data.nombre,
+                marca: data.marca,
+                cantidad: producto.cantidad,
+                inventario: data.existencia,
+                precioUnitario: producto.precioUnitario,
+                descuento: producto.descuento,
+                total: producto.total,
+              };
+            }
+          })
+        );
+        setFilasAgregadas(datos);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
   };
 
   // useEffect(() => {
@@ -334,29 +358,6 @@ const Quote = () => {
       total: data.total,
     };
   }
-  const agregarFila = (data, index) => {
-    const cantidad = parseFloat(cantidadProducto[index]);
-
-    const nuevoProducto = filasAgregadas.find(
-      (fila) => fila.codigo === data.codigoEmpresa
-    );
-
-    if (nuevoProducto) {
-      toast.warning("El producto ya ha sido agregado a la cotización.");
-      return;
-    }
-    // Verifica si la cantidad es un número válido
-    if (!isNaN(cantidad) || cantidad > 0) {
-      const datosAdaptados = {
-        id: data.id,
-        cantidad: cantidad,
-        precioUnitario: data.precioUnitario
-      };
-      setFilasAgregadas([...filasAgregadas, datosAdaptados]);
-    } else {
-      toast.warning("Por favor, ingrese una cantidad válida.");
-    }
-  };
 
   // ------------------------------------------------------------------------------------------------------------//
   //                                      Código para calcular totales                                           //
@@ -413,9 +414,8 @@ const Quote = () => {
     ).textContent = `$${totalesNuevaTabla.total.toFixed(2)}`;
   };
   useEffect(() => {
-    // Esta función se ejecutará cuando el componente esté montado
     calcularTotales();
-  }, [filasAgregadas /*, dataQuote.descuento*/]);
+  }, [filasAgregadas]);
 
   const handleCantidadChange = (event, index) => {
     const nuevasCantidades = [...cantidadProducto];
@@ -466,17 +466,37 @@ const Quote = () => {
   //                                      Código para agregar productos a la cotización                         //
   //------------------------------------------------------------------------------------------------------------//
 
-  const [dataQuote, setDataQuote] = useState({
-    pedido: "",
-    cliente: "",
-    comentarios: "",
-    vendedor: "",
-    productosCotización: [],
-    recurrenciaa: "",
-    origen: "",
-    monto: "",
-    fecha: format(new Date(), "yyyy-MM-dd"),
-  });
+  const agregarFila = (data, index) => {
+    const cantidad = parseFloat(cantidadProducto[index]);
+
+    const nuevoProducto = filasAgregadas.find(
+      (fila) => fila.codigo === data.codigoEmpresa
+    );
+
+    if (nuevoProducto) {
+      toast.warning("El producto ya ha sido agregado a la cotización.");
+      return;
+    }
+    // Verifica si la cantidad es un número válido
+    if (!isNaN(cantidad) || cantidad > 0) {
+      const datosAdaptados = adaptarDatos(data, cantidad);
+      setFilasAgregadas([...filasAgregadas, datosAdaptados]);
+    } else {
+      toast.warning("Por favor, ingrese una cantidad válida.");
+    }
+  };
+
+  // const [dataQuote, setDataQuote] = useState({
+  //   pedido: "",
+  //   cliente: "",
+  //   comentarios: "",
+  //   vendedor: "",
+  //   productosCotización: [],
+  //   recurrenciaa: "",
+  //   origen: "",
+  //   monto: "",
+  //   fecha: format(new Date(), "yyyy-MM-dd"),
+  // });
 
   // -- Codigo para cargar productos
   const [productos, setProductos] = useState([]);
@@ -488,6 +508,7 @@ const Quote = () => {
         const response = await fetch(`https://localhost:4000/Productos`);
         const data = await response.json();
         if (response.ok) {
+          console.log(data);
           setProductos(data);
         }
       } catch (err) {
