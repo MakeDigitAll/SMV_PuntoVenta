@@ -24,7 +24,7 @@ import {
 } from "react-icons/ri";
 import { MdBackupTable, MdCamera, MdKeyboardReturn, MdPeople, MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
@@ -99,7 +99,7 @@ const Seller = () => {
   async function loadTask(id) {
 
     try {
-      const response = await fetch(`http://localhost:4000/ListadoVendedores/${id}`);
+      const response = await fetch(`https://localhost:4000/ListadoVendedores/${id}`);
       const data = await response.json();
       setTask({
         nombre: data.nombre,
@@ -185,7 +185,7 @@ const Seller = () => {
       formData.append("image", selectedImage);
 
       const result = await http.post(
-        `http://localhost:4000/ListadoVendedores`,
+        `https://localhost:4000/ListadoVendedores`,
         formData,
         {
           headers: {
@@ -243,7 +243,7 @@ const Seller = () => {
       formData.append("image", selectedImage);
 
       const result = await http.put(
-        `http://localhost:4000/ListadoVendedoresEditing/${params.id}`,
+        `https://localhost:4000/ListadoVendedoresEditing/${params.id}`,
         formData,
         {
           headers: {

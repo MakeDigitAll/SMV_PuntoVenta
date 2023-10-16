@@ -19,7 +19,7 @@ import { format } from 'timeago.js';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdAlignHorizontalCenter, MdArrowDropDown, MdCreditCard, MdImportContacts, MdPriceChange, MdPriceCheck, MdSearch } from "react-icons/md";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -70,7 +70,7 @@ const PriceList = () => {
 
     
       try {
-        await fetch(`http://localhost:4000/ListadoPrecios`, {
+        await fetch(`https://localhost:4000/ListadoPrecios`, {
           method: "POST",
           body: JSON.stringify(datosListado),
           headers: {
@@ -94,7 +94,7 @@ const PriceList = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch(`http://localhost:4000/ListadoPrecios`);
+      const response = await fetch(`https://localhost:4000/ListadoPrecios`);
       const data = await response.json();
       setTask({nombre: data.nombre, variacion: data.variacion, clientes: data.clientes})
       //setEditing(true);

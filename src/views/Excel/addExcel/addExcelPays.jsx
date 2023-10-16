@@ -84,7 +84,7 @@ const AddExcelPays = () => {
   
       // Realiza un mapeo individual para cada valor
       const responseArray = await Promise.all(datosAEnviar.map(async (valor, index) => {
-        const response = await fetch(`http://localhost:4000/Pagos`, {
+        const response = await fetch(`https://localhost:4000/Pagos`, {
           method: 'POST',
           body: JSON.stringify(valor),
           headers: {

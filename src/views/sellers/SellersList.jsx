@@ -22,7 +22,7 @@ import {
   MdSearch,
 } from "react-icons/md";
 
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -70,7 +70,7 @@ const SellersList = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoVendedores");
+      const response = await fetch("https://localhost:4000/ListadoVendedores");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -97,7 +97,7 @@ const SellersList = () => {
     };
     
     try {
-      const res = await fetch(`http://localhost:4000/ListadoVendedoresDisable/${id}`, {
+      const res = await fetch(`https://localhost:4000/ListadoVendedoresDisable/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

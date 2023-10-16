@@ -110,7 +110,7 @@ const AddExcelClients = () => {
 
       const responseArray = await Promise.all(
         datosAEnviar.map(async (valor) => {
-          const response = await fetch(`http://localhost:4000/ListadoClientes`, {
+          const response = await fetch(`https://localhost:4000/ListadoClientes`, {
             method: "POST",
             body: JSON.stringify(valor),
             headers: {

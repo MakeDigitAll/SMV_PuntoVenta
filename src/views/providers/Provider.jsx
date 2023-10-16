@@ -10,7 +10,7 @@ import {
 } from "react-icons/ri";
 import { MdPeopleAlt, MdPerson, MdSettings } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
@@ -66,7 +66,7 @@ const Provider = () => {
       confirmPasswordValidationState !== "valid" ||
       emailConfirmValidationState !== "valid"
     ) {
-      toast.error("Llena todos los campos correctamente", {
+      toast.error("Favor de llenar todos los campos correctamente", {
         theme: "colored",
       });
     }
@@ -76,23 +76,23 @@ const Provider = () => {
         })
       : "";
     const errors = {};
-    !user.nombre ? (errors.nombre = "Llena este campo") : "";
-    !user.apellido ? (errors.apellido = "Llena este campo") : "";
-    !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
-    !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
-    !user.direccion ? (errors.direccion = "Llena este campo") : "";
-    !user.colonia ? (errors.colonia = "Llena este campo") : "";
-    !user.status ? (errors.status = "Llena este campo") : "";
-    !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
-    !user.estado ? (errors.estado = "Llena este campo") : "";
-    !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
-    !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
+    !user.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
+    !user.apellido ? (errors.apellido = "Favor de llenar este campo") : "";
+    !user.perfilSeguridad ? (errors.perfilSeguridad = "Favor de llenar este campo") : "";
+    !user.vendedor ? (errors.vendedor = "Favor de llenar este campo") : "";
+    !user.direccion ? (errors.direccion = "Favor de llenar este campo") : "";
+    !user.colonia ? (errors.colonia = "Favor de llenar este campo") : "";
+    !user.status ? (errors.status = "Favor de llenar este campo") : "";
+    !user.ciudad ? (errors.ciudad = "Favor de llenar este campo") : "";
+    !user.estado ? (errors.estado = "Favor de llenar este campo") : "";
+    !user.codigoPostal ? (errors.codigoPostal = "Favor de llenar este campo") : "";
+    !user.telefonoCelular ? (errors.telefonoCelular = "Favor de llenar este campo") : "";
     !user.telefonoContacto
-      ? (errors.telefonoContacto = "Llena este campo")
+      ? (errors.telefonoContacto = "Favor de llenar este campo")
       : "";
-    !user.email ? (errors.email = "Llena este campo") : "";
-    !user.password ? (errors.password = "Llena este campo") : "";
-    !user.imagen ? (errors.imagen = "Llena este campo") : "";
+    !user.email ? (errors.email = "Favor de llenar este campo") : "";
+    !user.password ? (errors.password = "Favor de llenar este campo") : "";
+    !user.imagen ? (errors.imagen = "Favor de llenar este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -112,7 +112,7 @@ const Provider = () => {
     formData.append("document", document);
     try {
       const result = await http.post(
-        `http://localhost:4000/api/createuser`,
+        `https://localhost:4000/api/createuser`,
         formData,
         {
           headers: {
@@ -136,7 +136,7 @@ const Provider = () => {
         });
         formData2.append("document2", document2);
         const response = await http.post(
-          `http://localhost:4000/api/createUserData`,
+          `https://localhost:4000/api/createUserData`,
           formData2,
           {
             headers: {

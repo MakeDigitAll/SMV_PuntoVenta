@@ -23,7 +23,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
 const statusOptions = [
     { name: "Active", uid: "active" },
@@ -62,7 +62,7 @@ const SalesCustomer = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ReporteVentasCliente");
+      const response = await fetch("https://localhost:4000/ReporteVentasCliente");
       const data = await response.json();
       if (response.ok) {
         setData(data);

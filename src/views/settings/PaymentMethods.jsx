@@ -19,7 +19,7 @@ import { format } from 'timeago.js';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Checkbox } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
 import { MdAlignHorizontalCenter, MdArrowDropDown, MdCreditCard, MdFilterList, MdImportContacts, MdMonetizationOn, MdPriceChange, MdPriceCheck, MdSearch } from "react-icons/md";
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -144,7 +144,7 @@ const PaymentMethodList = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch(`http://localhost:4000/FormasPago`);
+      const response = await fetch(`https://localhost:4000/FormasPago`);
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -180,7 +180,7 @@ const PaymentMethodList = () => {
     setIsInputDisabled(true);
     async function viewModal() {
       try {
-        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
+        const response = await fetch(`https://localhost:4000/FormasPago/${id}`);
         const data = await response.json();
         
         if (response.ok) {
@@ -225,7 +225,7 @@ const PaymentMethodList = () => {
         comision: task.comision,
         claveSAT: task.claveSAT,
       };
-      const res = await fetch(`http://localhost:4000/FormasPago`, {
+      const res = await fetch(`https://localhost:4000/FormasPago`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -257,7 +257,7 @@ const PaymentMethodList = () => {
     setIsInputDisabled(false);
     async function editModal() {
       try {
-        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
+        const response = await fetch(`https://localhost:4000/FormasPago/${id}`);
         const data = await response.json();
         if (response.ok) {
           setTask({
@@ -307,7 +307,7 @@ const PaymentMethodList = () => {
 
     async function edit() {
       try {
-        const res = await fetch(`http://localhost:4000/FormasPagoEdit/${datosListado.id}`, {
+        const res = await fetch(`https://localhost:4000/FormasPagoEdit/${datosListado.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -364,7 +364,7 @@ const PaymentMethodList = () => {
 
     async function disable() {
       try {
-        const res = await fetch(`http://localhost:4000/FormasPagoDisable/${datoDisable.id}`, {
+        const res = await fetch(`https://localhost:4000/FormasPagoDisable/${datoDisable.id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

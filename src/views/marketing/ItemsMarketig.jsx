@@ -1,5 +1,5 @@
 
-import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import { TbMailDollar, TbMoodDollar, TbRoad } from "react-icons/tb";
 import { BiArchiveOut, BiBarChartSquare, BiBookmarkPlus, BiCheckShield, BiMoneyWithdraw, BiStar, BiColumns, BiSolidChevronUp, BiArchive, BiDollar } from "react-icons/bi";
