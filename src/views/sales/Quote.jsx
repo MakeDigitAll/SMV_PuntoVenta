@@ -503,7 +503,6 @@ const Quote = () => {
   useEffect(() => {
     //obtener la url
     const url = window.location.href;
-    console.log(url);
     //separrar la url por /
     const urlSeparada = url.split("/");
     //si al url en la posicion 6 es igual a EditQuote
@@ -586,7 +585,6 @@ const Quote = () => {
         );
         const data = await response.json();
         if (response.ok) {
-          console.log(data);
           setDireccionesCliente(data);
         }
       } catch (err) {
@@ -1562,8 +1560,8 @@ const Quote = () => {
                                 <TableColumn>Acciones</TableColumn>
                               </TableHeader>
                               <TableBody>
-                                {datos.map((data, index) => (
-                                  <TableRow key={data.id}>
+                                {productos.map((data, index) => (
+                                  <TableRow key={data.idproducto}>
                                     <TableCell>{data.codigoEmpresa}</TableCell>
                                     <TableCell>{data.nombre}</TableCell>
                                     <TableCell>{data.marca}</TableCell>
