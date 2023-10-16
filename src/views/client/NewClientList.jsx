@@ -142,7 +142,7 @@ const NewClient = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/ListadoClientes/${id}`
+        `https://localhost:443/ListadoClientes/${id}`
       );
       const data = await response.json();
       
@@ -210,7 +210,7 @@ const NewClient = () => {
       confirmPasswordValidationState !== "valid" ||
       emailConfirmValidationState !== "valid"
     ) {
-      toast.error("Llena todos los campos correctamente", {
+      toast.error("Favor de llenar todos los campos correctamente", {
         theme: "colored",
       });
     }
@@ -221,19 +221,19 @@ const NewClient = () => {
         })
       : "";
     const errors = {};
-    !clientData.nombre ? (errors.nombre = "Llena este campo") : "";
-    !clientData.nombreComercial ? (errors.apellido = "Llena este campo") : "";
+    !clientData.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
+    !clientData.nombreComercial ? (errors.apellido = "Favor de llenar este campo") : "";
     !clientData.razonSocial
-      ? (errors.perfilSeguridad = "Llena este campo")
+      ? (errors.perfilSeguridad = "Favor de llenar este campo")
       : "";
-    !clientData.contacto ? (errors.vendedor = "Llena este campo") : "";
-    !clientData.rfc ? (errors.direccion = "Llena este campo") : "";
-    !clientData.telefono ? (errors.colonia = "Llena este campo") : "";
-    !clientData.giro ? (errors.status = "Llena este campo") : "";
-    !clientData.vendedor ? (errors.ciudad = "Llena este campo") : "";
-    !clientData.email ? (errors.estado = "Llena este campo") : "";
-    !clientData.direccion ? (errors.codigoPostal = "Llena este campo") : "";
-    !clientData.imagen ? (errors.imagen = "Llena este campo") : "";
+    !clientData.contacto ? (errors.vendedor = "Favor de llenar este campo") : "";
+    !clientData.rfc ? (errors.direccion = "Favor de llenar este campo") : "";
+    !clientData.telefono ? (errors.colonia = "Favor de llenar este campo") : "";
+    !clientData.giro ? (errors.status = "Favor de llenar este campo") : "";
+    !clientData.vendedor ? (errors.ciudad = "Favor de llenar este campo") : "";
+    !clientData.email ? (errors.estado = "Favor de llenar este campo") : "";
+    !clientData.direccion ? (errors.codigoPostal = "Favor de llenar este campo") : "";
+    !clientData.imagen ? (errors.imagen = "Favor de llenar este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -259,7 +259,7 @@ const NewClient = () => {
     formData.append("image", selectedImage);
     try {
       const result = await http.post(
-        `http://localhost:4000/ListadoClientes`,
+        `https://localhost:443/ListadoClientes`,
         formData,
         {
           headers: {
@@ -286,7 +286,7 @@ const NewClient = () => {
       //     });
       //     formData2.append("document2", document2);
       //     const response = await http.post(
-      //         `http://localhost:4000/ClientesFacturacion`,
+      //         `https://localhost:443/ClientesFacturacion`,
       //         formData2,
       //         {
       //             headers: {
@@ -313,7 +313,7 @@ const NewClient = () => {
       //         });
       //         formData3.append("document3", document3);
       //         const res = await http.post(
-      //             `http://localhost:4000/ClientesContactos`,
+      //             `https://localhost:443/ClientesContactos`,
       //             formData3,
       //             {
       //                 headers: {
@@ -338,7 +338,7 @@ const NewClient = () => {
       //             });
       //             formData4.append("document4", document4);
       //             const respuesta = await http.post(
-      //                 `http://localhost:4000/ClientesDireccionEnvio`,
+      //                 `https://localhost:443/ClientesDireccionEnvio`,
       //                 formData4,
       //                 {
       //                     headers: {
@@ -361,7 +361,7 @@ const NewClient = () => {
       //                 });
       //                 formData5.append("document5", document5);
       //                 const resultado = await http.post(
-      //                     `http://localhost:4000/ClientesAccesoWeb`,
+      //                     `https://localhost:443/ClientesAccesoWeb`,
       //                     formData5,
       //                     {
       //                         headers: {
@@ -387,7 +387,7 @@ const NewClient = () => {
       //                     });
       //                     formData5.append("document6", document6);
       //                     const resultado = await http.post(
-      //                         `http://localhost:4000/ClientesEstadoCuenta`,
+      //                         `https://localhost:443/ClientesEstadoCuenta`,
       //                         formData6,
       //                         {
       //                             headers: {
@@ -475,7 +475,7 @@ const NewClient = () => {
   async function loadDireccionesE(id) {
     try {
       const response = await fetch(
-        `http://localhost:4000/ClientesDireccionEnvio/${id}`
+        `https://localhost:443/ClientesDireccionEnvio/${id}`
       );
       const data = await response.json();
       setTask2({
@@ -536,7 +536,7 @@ const NewClient = () => {
     formData.append("document", document);
     try {
       const result = await http.post(
-        `http://localhost:4000/ClientesDireccionEnvio`,
+        `https://localhost:443/ClientesDireccionEnvio`,
         formData,
         {
           headers: {

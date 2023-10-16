@@ -59,7 +59,7 @@ const ClientList = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoClientes");
+      const response = await fetch("https://localhost:443/ListadoClientes");
       const data = await response.json();
       if (response.ok) {
         setData(data);

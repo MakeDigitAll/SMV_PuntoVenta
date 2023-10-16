@@ -26,16 +26,25 @@ import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
+import Crop from "../../components/crop/Crop.jsx";
 const User = () => {
-  const [status, useStatus] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
-  const imageDefault = selectedImage === "";
+  const [photoURL, setPhotoURL] = useState("");
+  const [openCrop, setOpenCrop] = useState(false);
+  const [file, setFile] = useState(null);
+  const [status] = useState(false);
+  const handleChangeImage = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file);
+      setPhotoURL(URL.createObjectURL(file));
+      setOpenCrop(true);
+    }
+  };
   const [user, setUser] = useState({
     nombre: "",
     apellido: "",
     email: "",
     password: "",
-    imagen: "",
     emailConfirm: "",
     passwordConfirm: "",
   });
@@ -68,11 +77,11 @@ const User = () => {
   };
   async function handleSubmit(e) {
     e.preventDefault();
-    !selectedImage
+    !file
       ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
       : "";
     if (
-      !user.imagen ||
+      !photoURL ||
       !user.nombre ||
       !user.apellido ||
       !user.password ||
@@ -87,7 +96,7 @@ const User = () => {
       confirmPasswordValidationState !== "valid" ||
       emailConfirmValidationState !== "valid"
     ) {
-      toast.error("Llena todos los campos correctamente", {
+      toast.error("Favor de llenar todos los campos correctamente", {
         theme: "colored",
       });
     }
@@ -97,23 +106,23 @@ const User = () => {
         })
       : "";
     const errors = {};
-    !user.nombre ? (errors.nombre = "Llena este campo") : "";
-    !user.apellido ? (errors.apellido = "Llena este campo") : "";
-    !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
-    !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
-    !user.direccion ? (errors.direccion = "Llena este campo") : "";
-    !user.colonia ? (errors.colonia = "Llena este campo") : "";
-    !user.status ? (errors.status = "Llena este campo") : "";
-    !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
-    !user.estado ? (errors.estado = "Llena este campo") : "";
-    !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
-    !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
+    !user.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
+    !user.apellido ? (errors.apellido = "Favor de llenar este campo") : "";
+    !user.perfilSeguridad ? (errors.perfilSeguridad = "Favor de llenar este campo") : "";
+    !user.vendedor ? (errors.vendedor = "Favor de llenar este campo") : "";
+    !user.direccion ? (errors.direccion = "Favor de llenar este campo") : "";
+    !user.colonia ? (errors.colonia = "Favor de llenar este campo") : "";
+    !user.status ? (errors.status = "Favor de llenar este campo") : "";
+    !user.ciudad ? (errors.ciudad = "Favor de llenar este campo") : "";
+    !user.estado ? (errors.estado = "Favor de llenar este campo") : "";
+    !user.codigoPostal ? (errors.codigoPostal = "Favor de llenar este campo") : "";
+    !user.telefonoCelular ? (errors.telefonoCelular = "Favor de llenar este campo") : "";
     !user.telefonoContacto
-      ? (errors.telefonoContacto = "Llena este campo")
+      ? (errors.telefonoContacto = "Favor de llenar este campo")
       : "";
-    !user.email ? (errors.email = "Llena este campo") : "";
-    !user.password ? (errors.password = "Llena este campo") : "";
-    !user.imagen ? (errors.imagen = "Llena este campo") : "";
+    !user.email ? (errors.email = "Favor de llenar este campo") : "";
+    !user.password ? (errors.password = "Favor de llenar este campo") : "";
+    !photoURL ? (errors.imagen = "Favor de llenar este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -131,10 +140,21 @@ const User = () => {
     });
 
     formData.append("document", document);
-    formData.append("image", selectedImage);
+    formData.append("image", file);
+    const document2 = JSON.stringify({
+      direccion: user.direccion,
+      colonia: user.colonia,
+      status: user.status,
+      ciudad: user.ciudad,
+      estado: user.estado,
+      codigoPostal: user.codigoPostal,
+      telefonoContacto: user.telefonoContacto,
+      telefonoCelular: user.telefonoCelular,
+    });
+    formData.append("document2", document2);
     try {
       const result = await http.post(
-        `http://localhost:4000/api/createuser`,
+        `https://localhost:443/api/createuser`,
         formData,
         {
           headers: {
@@ -142,45 +162,43 @@ const User = () => {
           },
         }
       );
-      
-      if (result) {
-        const formData2 = new FormData();
-        const document2 = JSON.stringify({
-          idUsuario: result.data.id,
-          direccion: user.direccion,
-          colonia: user.colonia,
-          status: user.status,
-          ciudad: user.ciudad,
-          estado: user.estado,
-          codigoPostal: user.codigoPostal,
-          telefonoContacto: user.telefonoContacto,
-          telefonoCelular: user.telefonoCelular,
-        });
-        formData2.append("document2", document2);
-        const response = await http.post(
-          `http://localhost:4000/api/createUserData`,
-          formData2,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (response.status == 200 ? true : false) {
-          toast.success("Usuario creado correctamente", { theme: "colored" });
-          navigate("/Settings/Users");
-        }
+      if (result.status == 200 ? true : false) {
+        toast.success("Usuario creado correctamente", { theme: "colored" });
+        navigate("/Settings/Users");
+      } else {
+        console.log(result);
       }
-    } catch (error) {
-      null;
+    } catch (e) {
+      e.response.status == 501
+        ? toast.error("Favor de verificar el tipo de dato", {
+            theme: "colored",
+          })
+        : toast.error(e.response.data.body.error, { theme: "colored" });
     }
   }
+  const [dataBranch, setData] = useState([]);
+  async function loadTask() {
+    try {
+      const response = await fetch("https://localhost:443/SucursalesAlmacen");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+  useEffect(() => {
+    loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
   const validationState = useMemo(() => {
     if (user.email === "") return undefined;
-
     return validateEmail(user.email) ? "valid" : "invalid";
   }, [user.email]);
   const navigate = useNavigate();
@@ -233,18 +251,12 @@ const User = () => {
     if (user.emailConfirm === "") return undefined;
     return user.emailConfirm === user.email ? "valid" : "invalid";
   }, [user.emailConfirm, user.email]);
-  useEffect(() => {
-    status != "View"
-      ? (document.getElementById("button-file").style.display = "flex")
-      : (document.getElementById("button-file").style.display = "none");
-  });
-  return (
+  return !openCrop ? (
     <>
       <ItemsHeader />
       <ToastContainer />
       <main>
         <div className="p-12">
-          {/* <div className="p-12 bg-gray-100"> */}
           <div className="">
             <div>
               <div>
@@ -293,7 +305,6 @@ const User = () => {
               </div>
               <form onChange={handleChange} onSubmit={handleSubmit}>
                 <Spacer y={6} />
-                {/* <div className="bg-white rounded shadow-2xl px-4 md:p-8 mb-6"></div> */}
                 <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
                   <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                     <div>
@@ -301,37 +312,33 @@ const User = () => {
                         <h2 className="font-large text-lg text-foreground">
                           Imagen de perfil
                         </h2>
-                        {imageDefault ? (
+                        {photoURL != "" ? (
                           <Image
-                            src="../../../public/Blank-Avatar.png"
+                            src={photoURL}
                             alt=""
                             width={300}
                             height={300}
                           />
                         ) : (
                           <Image
-                            src={URL.createObjectURL(
-                              new Blob([selectedImage], { type: "image" })
-                            )}
+                            width={200}
+                            height={200}
+                            src="../../../public/Blank-Avatar.png"
                             alt=""
-                            width={300}
-                            height={300}
                           />
                         )}
                         <Spacer y={6} />
                         <input
-                          size={"sm"}
+                          height={"lg"}
                           type="file"
                           id="imagen"
                           ref={fileInputRef}
                           style={{
                             display: "none",
-                            borderColor: selectedImage ? "" : "red",
+                            borderColor: photoURL ? "" : "red",
                           }}
-                          value={user.imagen}
-                          onChange={(event) => {
-                            setSelectedImage(event.target.files[0]);
-                          }}
+                          accept="image"
+                          onChange={handleChangeImage}
                           name="imagen"
                         />
                         <Button
@@ -347,18 +354,15 @@ const User = () => {
                       </div>
                       <div>
                         <div>
-                          <CheckboxGroup
-                            label="Sucursales"
-                            defaultValue={["buenos-aires", "london"]}
-                          >
-                            <Checkbox value="buenos-aires">
-                              Buenos Aires
-                            </Checkbox>
-                            <Checkbox value="sydney">Sydney</Checkbox>
-                            <Checkbox value="san-francisco">
-                              San Francisco
-                            </Checkbox>
-                          </CheckboxGroup>
+                          {dataBranch.map((item) => (
+                            <div key={item.id}>
+                              <CheckboxGroup label="Sucursales">
+                                <Checkbox value={item.id}>
+                                  {item.nombre}
+                                </Checkbox>
+                              </CheckboxGroup>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -499,7 +503,7 @@ const User = () => {
                                     size={"sm"}
                                     type="password"
                                     label="Confirmar Password"
-                                    name="confirmPassword" 
+                                    name="confirmPassword"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
@@ -514,9 +518,6 @@ const User = () => {
                                         "invalid" &&
                                       "La contraseña de confirmación debe coincidir con la contraseña"
                                     }
-                                    validationState={
-                                      confirmPasswordValidationState
-                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -526,7 +527,7 @@ const User = () => {
                                     value={user.perfilSeguridad}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="perfilSeguridad"
+                                    type="number"
                                     label="Perfil de seguridad"
                                     name="perfilSeguridad"
                                     labelPlacement="outside"
@@ -547,7 +548,7 @@ const User = () => {
                                     value={user.vendedor}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="vendedor"
+                                    type="number"
                                     label="Vendedor"
                                     name="vendedor"
                                     labelPlacement="outside"
@@ -768,6 +769,8 @@ const User = () => {
         </div>
       </main>
     </>
+  ) : (
+    <Crop {...{ photoURL, setOpenCrop, setPhotoURL, setFile, aspect: 1 }} />
   );
 };
 

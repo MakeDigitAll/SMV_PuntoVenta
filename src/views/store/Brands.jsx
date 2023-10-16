@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -95,7 +96,7 @@ const Brands = () => {
   const [isLoading, setIsLoading] = useState(true);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/MarcasProducto");
+      const response = await fetch("https://localhost:443/MarcasProducto");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -123,7 +124,7 @@ const Brands = () => {
     formData.append("image", file);
     try {
       const result = await http.post(
-        `http://localhost:4000/CreateMarcasProducto`,
+        `https://localhost:443/CreateMarcasProducto`,
         formData,
         {
           headers: {
@@ -152,7 +153,7 @@ const Brands = () => {
     async function loadBrand() {
       try {
         const response = await fetch(
-          `http://localhost:4000/MarcasProducto/${id}`
+          `https://localhost:443/MarcasProducto/${id}`
         );
         const data = await response.json();
         if (response.ok) {

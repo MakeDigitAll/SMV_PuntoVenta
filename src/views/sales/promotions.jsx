@@ -65,7 +65,7 @@ const Promotions = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoProductosDescuento");
+      const response = await fetch("https://localhost:443/ListadoProductosDescuento");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -160,7 +160,7 @@ const Promotions = () => {
         case "imagen":
         return (
           <div className="flex flex-col">
-            <Images idImage={data.imagen} designType="tabla" ruta={"http://localhost:4000/ListadoProductosDescuento"}/> 
+            <Images idImage={data.imagen} designType="tabla" ruta={"https://localhost:443/ListadoProductosDescuento"}/> 
           </div>
         );
       case "codigoEmpresa":

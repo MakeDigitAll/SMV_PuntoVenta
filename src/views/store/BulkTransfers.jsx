@@ -62,7 +62,7 @@ const BulkTransfers = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoTransferencias");
+      const response = await fetch("https://localhost:443/ListadoTransferencias");
       const data = await response.json();
       if (response.ok) {
         setData(data);

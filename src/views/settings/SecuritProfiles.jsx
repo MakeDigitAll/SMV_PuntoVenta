@@ -154,7 +154,7 @@ const SecuritProfiles = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch(`http://localhost:4000/PerfilesSeguridad`);
+      const response = await fetch(`https://localhost:443/PerfilesSeguridad`);
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -185,7 +185,7 @@ const SecuritProfiles = () => {
     async function viewModal() {
       try {
         const response = await fetch(
-          `http://localhost:4000/PerfilesSeguridad/${id}`
+          `https://localhost:443/PerfilesSeguridad/${id}`
         );
         const data = await response.json();
         if (response.ok) {
@@ -213,7 +213,7 @@ const SecuritProfiles = () => {
     async function editModal() {
       try {
         const response = await fetch(
-          `http://localhost:4000/PerfilesSeguridad/${id}`
+          `https://localhost:443/PerfilesSeguridad/${id}`
         );
         const data = await response.json();
         if (response.ok) {
@@ -258,7 +258,7 @@ const SecuritProfiles = () => {
       const datosListado = {
         nombre: task.nombrePerfil,
       };
-      const res = await fetch(`http://localhost:4000/PerfilesSeguridad`, {
+      const res = await fetch(`https://localhost:443/PerfilesSeguridad`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -310,7 +310,7 @@ const SecuritProfiles = () => {
     async function edit() {
       try {
         const res = await fetch(
-          `http://localhost:4000/PerfilesSeguridad/${datosListado.id}`,
+          `https://localhost:443/PerfilesSeguridad/${datosListado.id}`,
           {
             method: "PUT",
             headers: {
@@ -357,7 +357,7 @@ const SecuritProfiles = () => {
 
   async function handleDisable(id) {
     try {
-      const res = await fetch(`http://localhost:4000/PerfilesSeguridad/${id}`, {
+      const res = await fetch(`https://localhost:443/PerfilesSeguridad/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

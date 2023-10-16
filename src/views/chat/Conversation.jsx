@@ -13,7 +13,7 @@ const Conversation = (data) => {
     const getUser = async (userInfor) => {
       try {
         const { data } = await axios.get(
-          `http://localhost:4000/api/user/${userInfor}`
+          `https://localhost:443/api/user/${userInfor}`
         );
         setuserData(data);
       } catch (err) {

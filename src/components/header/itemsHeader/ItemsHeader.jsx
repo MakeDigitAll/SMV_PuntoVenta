@@ -1,20 +1,4 @@
-import {
-  Accordion,
-  AccordionItem,
-  Button,
-  Card,
-  CardBody,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Accordion, AccordionItem, Card, CardBody } from "@nextui-org/react";
 import {
   RiAdminFill,
   RiDashboard2Fill,
@@ -27,34 +11,9 @@ import {
 import { TbReport, TbReportAnalytics, TbWorld } from "react-icons/tb";
 import { MdSettings, MdShoppingCart, MdStorefront } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-
+import { useState } from "react";
 const ItemsHeader = () => {
   const navigate = useNavigate();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const [tasks, setTask] = useState([]);
-    const loadTask = async () => {
-        try {
-          const response = await fetch(`http://localhost:4000/Almacenes`);
-          const data = await response.json();
-          setTask(data);
-        } catch (error) {
-          toast.error("¡Error al Cargar lo Datos!", {
-            position: "bottom-right",
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            autoClose: 5000,
-            theme: "colored",
-          });
-        }
-      };
-      useEffect(() => {
-        loadTask();
-      }, []);
   const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
   const items = [
     {
@@ -129,7 +88,7 @@ const ItemsHeader = () => {
       id: 11,
       name: "Punto de venta",
       icon: RiStore3Line,
-      address: {onOpen},
+      // address: { onOpen },
       roleId: "0",
     },
     {
@@ -149,50 +108,6 @@ const ItemsHeader = () => {
   ];
   return (
     <div className="place-content-center">
-      <div>
-        <Modal
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          isDismissable={false}
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1 text-center">
-                  Punto de Venta
-                </ModalHeader>
-                <ModalBody>
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <DropdownMenu
-                        name="almacenes"
-                        variant="faded"
-                        aria-label="Static Actions"
-                      >
-                        {tasks.map((warehouse) => (
-                          <DropdownItem
-                            key={warehouse.id}
-                            onClick={() =>
-                              navigate(`/home/${warehouse.id}/VerAlmacen`)
-                            }
-                          >
-                            {warehouse.nombre}
-                          </DropdownItem>
-                        ))}
-                      </DropdownMenu>
-                    </DropdownTrigger>
-                  </Dropdown>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onClick={onClose}>
-                    Close
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </div>
       <Accordion
         isCompact
         selectedKeys={selectedKeys}

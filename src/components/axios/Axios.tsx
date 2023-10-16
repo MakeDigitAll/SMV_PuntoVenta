@@ -4,10 +4,10 @@ import axios, { AxiosInstance } from "axios";
 function getBaseUrl() {
   // Verifica si la aplicación se está ejecutando en localhost
    const isLocalhost = window.location.hostname === "localhost";
-//  return "http://localhost:4000"
+//  return "https://localhost:443"
    if (isLocalhost) {
     // URL para desarrollo local
-     return "http://localhost:4000/";
+     return "https://localhost:443/";
    } else {
   //   // URL para dispositivos externo
      return "http://192.168.100.9:8080/";

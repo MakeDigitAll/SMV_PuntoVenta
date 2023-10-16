@@ -16,7 +16,7 @@ const Home = () => {
   async function loadTask() {
     try {
       const response = await fetch(
-        "http://localhost:4000/api/auth/lastestusers"
+        "https://localhost:443/api/auth/lastestusers"
       );
       const data = await response.json();
       if (response.ok) {

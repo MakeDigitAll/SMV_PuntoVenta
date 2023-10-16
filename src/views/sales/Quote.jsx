@@ -78,7 +78,7 @@ const Quote = () => {
   const datosCliente = () => {
     async function loadDatosCliente() {
       try {
-        const response = await fetch(`http://localhost:4000/Clientes`);
+        const response = await fetch(`https://localhost:443/Clientes`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data)
@@ -126,7 +126,7 @@ const Quote = () => {
       confirmPasswordValidationState !== "valid" ||
       emailConfirmValidationState !== "valid"
     ) {
-      toast.error("Llena todos los campos correctamente", {
+      toast.error("Favor de llenar todos los campos correctamente", {
         theme: "colored",
       });
     }
@@ -136,23 +136,23 @@ const Quote = () => {
       })
       : "";
     const errors = {};
-    !user.nombre ? (errors.nombre = "Llena este campo") : "";
-    !user.apellido ? (errors.apellido = "Llena este campo") : "";
-    !user.perfilSeguridad ? (errors.perfilSeguridad = "Llena este campo") : "";
-    !user.vendedor ? (errors.vendedor = "Llena este campo") : "";
-    !user.direccion ? (errors.direccion = "Llena este campo") : "";
-    !user.colonia ? (errors.colonia = "Llena este campo") : "";
-    !user.status ? (errors.status = "Llena este campo") : "";
-    !user.ciudad ? (errors.ciudad = "Llena este campo") : "";
-    !user.estado ? (errors.estado = "Llena este campo") : "";
-    !user.codigoPostal ? (errors.codigoPostal = "Llena este campo") : "";
-    !user.telefonoCelular ? (errors.telefonoCelular = "Llena este campo") : "";
+    !user.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
+    !user.apellido ? (errors.apellido = "Favor de llenar este campo") : "";
+    !user.perfilSeguridad ? (errors.perfilSeguridad = "Favor de llenar este campo") : "";
+    !user.vendedor ? (errors.vendedor = "Favor de llenar este campo") : "";
+    !user.direccion ? (errors.direccion = "Favor de llenar este campo") : "";
+    !user.colonia ? (errors.colonia = "Favor de llenar este campo") : "";
+    !user.status ? (errors.status = "Favor de llenar este campo") : "";
+    !user.ciudad ? (errors.ciudad = "Favor de llenar este campo") : "";
+    !user.estado ? (errors.estado = "Favor de llenar este campo") : "";
+    !user.codigoPostal ? (errors.codigoPostal = "Favor de llenar este campo") : "";
+    !user.telefonoCelular ? (errors.telefonoCelular = "Favor de llenar este campo") : "";
     !user.telefonoContacto
-      ? (errors.telefonoContacto = "Llena este campo")
+      ? (errors.telefonoContacto = "Favor de llenar este campo")
       : "";
-    !user.email ? (errors.email = "Llena este campo") : "";
-    !user.password ? (errors.password = "Llena este campo") : "";
-    !user.imagen ? (errors.imagen = "Llena este campo") : "";
+    !user.email ? (errors.email = "Favor de llenar este campo") : "";
+    !user.password ? (errors.password = "Favor de llenar este campo") : "";
+    !user.imagen ? (errors.imagen = "Favor de llenar este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -173,7 +173,7 @@ const Quote = () => {
     formData.append("image", selectedImage);
     try {
       const result = await http.post(
-        `http://localhost:4000/api/createuser`,
+        `https://localhost:443/api/createuser`,
         formData,
         {
           headers: {
@@ -196,7 +196,7 @@ const Quote = () => {
         });
         formData2.append("document2", document2);
         const response = await http.post(
-          `http://localhost:4000/api/createUserData`,
+          `https://localhost:443/api/createUserData`,
           formData2,
           {
             headers: {
@@ -250,7 +250,7 @@ const Quote = () => {
     onOpen();
     async function loadProducts() {
       try {
-        const response = await fetch(`http://localhost:4000/Productos`);
+        const response = await fetch(`https://localhost:443/Productos`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data)
@@ -275,7 +275,7 @@ const Quote = () => {
   const [marca, setmarca] = useState([]);
   const loadCategorias = async () => {
     try {
-      const response = await fetch("http://localhost:4000/Categoria");
+      const response = await fetch("https://localhost:443/Categoria");
       if (response.ok) {
         const categoriasData = await response.json();
         setCategorias(categoriasData);
@@ -289,7 +289,7 @@ const Quote = () => {
   }, []);
   const loadCMarcas = async () => {
     try {
-      const response = await fetch("http://localhost:4000/MarcasProducto");
+      const response = await fetch("https://localhost:443/MarcasProducto");
       if (response.ok) {
         const marcaData = await response.json();
         setmarca(marcaData);
@@ -305,7 +305,7 @@ const Quote = () => {
   const [datos,setData]=useState([]);
   const loadTask= async()=>{
     try {
-      const response = await fetch("http://localhost:4000/Productos");
+      const response = await fetch("https://localhost:443/Productos");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -325,7 +325,7 @@ const Quote = () => {
   const [datos2,setData2]=useState([]);
   const loadTask2= async()=>{
     try {
-      const response = await fetch("http://localhost:4000/ProductosCotizados");
+      const response = await fetch("https://localhost:443/ProductosCotizados");
       const data = await response.json();
       if (response.ok) {
         setData2(data);

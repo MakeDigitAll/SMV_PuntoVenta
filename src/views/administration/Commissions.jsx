@@ -142,7 +142,7 @@ const Commissions = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch(`http://localhost:4000/Comisiones`);
+      const response = await fetch(`https://localhost:443/Comisiones`);
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -178,7 +178,7 @@ const Commissions = () => {
     setIsInputDisabled(true);
     async function viewModal() {
       try {
-        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
+        const response = await fetch(`https://localhost:443/FormasPago/${id}`);
         const data = await response.json();
         
         if (response.ok) {
@@ -223,7 +223,7 @@ const Commissions = () => {
         comision: task.comision,
         claveSAT: task.claveSAT,
       };
-      const res = await fetch(`http://localhost:4000/FormasPago`, {
+      const res = await fetch(`https://localhost:443/FormasPago`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -255,7 +255,7 @@ const Commissions = () => {
     setIsInputDisabled(false);
     async function editModal() {
       try {
-        const response = await fetch(`http://localhost:4000/FormasPago/${id}`);
+        const response = await fetch(`https://localhost:443/FormasPago/${id}`);
         const data = await response.json();
         if (response.ok) {
           setTask({
@@ -305,7 +305,7 @@ const Commissions = () => {
 
     async function edit() {
       try {
-        const res = await fetch(`http://localhost:4000/FormasPagoEdit/${datosListado.id}`, {
+        const res = await fetch(`https://localhost:443/FormasPagoEdit/${datosListado.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -362,7 +362,7 @@ const Commissions = () => {
 
     async function disable() {
       try {
-        const res = await fetch(`http://localhost:4000/FormasPagoDisable/${datoDisable.id}`, {
+        const res = await fetch(`https://localhost:443/FormasPagoDisable/${datoDisable.id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

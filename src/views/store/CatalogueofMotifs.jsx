@@ -67,7 +67,7 @@ const CatalogueofMotifs = () => {
 
   const loadData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/MotivosEntrada");
+      const response = await fetch("https://localhost:443/MotivosEntrada");
       const fetchedData = await response.json();
       setData(fetchedData);
     } catch (error) {
@@ -77,7 +77,7 @@ const CatalogueofMotifs = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/MotivosEntrada");
+      const response = await fetch("https://localhost:443/MotivosEntrada");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -242,7 +242,7 @@ const CatalogueofMotifs = () => {
     try {
       if (modalMode === "create") {
         // Crear nuevo elemento
-        const response = await fetch("http://localhost:4000/MotivosEntrada", {
+        const response = await fetch("https://localhost:443/MotivosEntrada", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -252,7 +252,7 @@ const CatalogueofMotifs = () => {
       } else if (modalMode === "edit") {
         // Editar elemento existente
         const response = await fetch(
-          `http://localhost:4000/MotivosEntrada/${editingItem.id}`,
+          `https://localhost:443/MotivosEntrada/${editingItem.id}`,
           {
             method: "PUT",
             headers: {

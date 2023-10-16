@@ -40,8 +40,6 @@ const Header = () => {
     [selectedKeys]
   );
   const auth = useAuth();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   async function getImage() {
     if (useUrlImagen == "") {
       const response = await db.getProfileImage(auth.getUser().id);
@@ -56,7 +54,7 @@ const Header = () => {
 
   async function handleLogout() {
     try {
-      const response = await fetch(`http://localhost:4000/api/auth/logout`, {
+      const response = await fetch(`https://localhost:443/api/auth/logout`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -67,14 +65,11 @@ const Header = () => {
         auth.signOut();
       }
     } catch (e) {
-      
+      console.log(e);
     }
   }
 
-  async function openNotifications() {
-    
-  }
-
+  async function openNotifications() {}
   return (
     <>
       <header>
