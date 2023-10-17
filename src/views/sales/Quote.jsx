@@ -174,7 +174,7 @@ const Quote = () => {
     console.log(document.recurrenciaa);
     try {
       const result = await http.post(
-        `http://localhost:4000/Cotizaciones`,
+        `https://localhost:4000:4000/Cotizaciones`,
         formData,
         {
           headers: {
@@ -251,7 +251,7 @@ const Quote = () => {
     console.log(folio);
     try {
       const response = await fetch(
-        `http://localhost:4000/Cotizaciones/${folio}`
+        `https://localhost:4000:4000/Cotizaciones/${folio}`
       );
       const data = await response.json();
       setDataQuote({
@@ -270,7 +270,7 @@ const Quote = () => {
     var folio = Number(folioCotizacion);
     try {
       const response = await fetch(
-        "http://localhost:4000/Cotizaciones/" + folio
+        "https://localhost:4000:4000/Cotizaciones/" + folio
       );
       const data = await response.json();
       if (response.ok) {
@@ -480,7 +480,7 @@ const Quote = () => {
     onOpen();
     async function loadProducts() {
       try {
-        const response = await fetch(`http://localhost:4000/Productos`);
+        const response = await fetch(`https://localhost:4000:4000/Productos`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
@@ -559,7 +559,7 @@ const Quote = () => {
   const getClientes = () => {
     async function getClientes() {
       try {
-        const response = await fetch(`http://localhost:4000/ListadoClientes`);
+        const response = await fetch(`https://localhost:4000:4000/ListadoClientes`);
         const data = await response.json();
         if (response.ok) {
           setClientes(data);
@@ -582,7 +582,7 @@ const Quote = () => {
     async function getDireccionCliente() {
       try {
         const response = await fetch(
-          `http://localhost:4000/ClientesDireccionEnvio/${idCliente}`
+          `https://localhost:4000:4000/ClientesDireccionEnvio/${idCliente}`
         );
         const data = await response.json();
         if (response.ok) {
@@ -603,7 +603,7 @@ const Quote = () => {
     async function getDatosCliente() {
       try {
         const response = await fetch(
-          `http://localhost:4000/ListadoClientes/${idCliente}`
+          `https://localhost:4000:4000/ListadoClientes/${idCliente}`
         );
         const data = await response.json();
         if (response.ok) {

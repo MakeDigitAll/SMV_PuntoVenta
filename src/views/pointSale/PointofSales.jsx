@@ -18,7 +18,7 @@ const PointofSale = () => {
 
   function handleLogout() {
     localStorage.removeItem("tableId");
-    navigate(`/PointOfSale/Acces`);
+    navigate(`/POS/Access`);
   }
 
   async function loadTask() {

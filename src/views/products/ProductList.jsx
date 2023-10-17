@@ -377,7 +377,7 @@ const ProductList = () => {
               <Button size="sm" color="warning" endContent={<TbReload />}>
                 Actualizar costos
               </Button>
-              <Button size="sm" color="primary" endContent={<TbPlus />}>
+              <Button size="sm" color="primary" endContent={<TbPlus />} onPress={() =>navigate(`/Products/NewProduct`)}>
                 Nuevo Producto
               </Button>
             </div>

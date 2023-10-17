@@ -40,12 +40,6 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 const ClientList = () => {
-  const clienteOptions = [];
-  function clientemarca() {
-    for (let i = 0; i < data.length; i++) {
-      clienteOptions.push({ name: data[i].nombre, uid: data[i].id });
-    }
-  }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -134,36 +128,13 @@ const ClientList = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
-
-  async function loadTask() {
-    try {
-      const response = await fetch("http://localhost:4000/ListadoClientes");
-      const data = await response.json();
-      if (response.ok) {
-        setData(data);
-        
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  }
-
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
   const handleDisable = async (id) => {
     const datoDisable = {
       id: id
     };
     console.log(datoDisable);
     try {
-      const res = await fetch(`http://localhost:4000/ListadoClientesDisabled/${id}`, {
+      const res = await fetch(`https://localhost:4000:4000/ListadoClientesDisabled/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

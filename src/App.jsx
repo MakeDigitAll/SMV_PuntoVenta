@@ -66,6 +66,8 @@ import PointofSale from "./views/pointSale/PointofSales.jsx";
 import Reports from "./views/pointSale/Reports.jsx";
 import Customers from "./views/pointSale/Customers.jsx";
 import NewSale from "./views/pointSale/NewSale.jsx";
+import Product from "./views/products/Product.jsx";
+import AccesPoint from "./views/pointSale/AccesPointOfSale.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -332,11 +334,11 @@ const App = () => {
         },
         {
           path: "/Sales/Quotes/:id/ViewQuote",
-          element: <Quote />
+          element: <Quote />,
         },
         {
           path: "/Sales/Quotes/:id/EditQuote",
-          element: <Quote />
+          element: <Quote />,
         },
         {
           path: "/Sales/fillOrder",
@@ -369,6 +371,14 @@ const App = () => {
         {
           path: "/Provider/NewProvider",
           element: <Provider />,
+        },
+        {
+          path: "/Products/NewProduct",
+          element: <Product />,
+        },
+        {
+          path: "/POS/Access",
+          element: <AccesPoint />,
         },
       ],
     },

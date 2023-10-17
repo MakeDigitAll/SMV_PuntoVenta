@@ -1,0 +1,1 @@
+export const httpRoute: string = "https://localhost:4000";
