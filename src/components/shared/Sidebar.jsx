@@ -1,13 +1,13 @@
 import React from "react";
 import {
   RiHome6Line,
-  RiSettings4Line,
   RiGroup2Fill,
   RiUser2Fill,
   RiLoginBoxLine,
 } from "react-icons/ri";
 import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 
 const Sidebar = (props) => {
   const { showMenu } = props;
@@ -59,7 +59,7 @@ const Sidebar = (props) => {
               href="#"
               className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
             >
-              <RiGroup2Fill className="text-2xl" />
+              <RiGroup2Fill className="text-2xl" onClick={()=>navigate("/PointofSale/Customers")}/>
             </a>
           </li>
           <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
@@ -82,18 +82,6 @@ const Sidebar = (props) => {
           </li>
         </ul>
       </div>
-      {/* <div>
-        <ul className="pl-4">
-          <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
-            <a
-              href="#"
-              className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
-            >
-              <RiLogoutCircleRLine className="text-2xl" />
-            </a>
-          </li>
-        </ul>
-      </div> */}
     </div>
   );
 };
