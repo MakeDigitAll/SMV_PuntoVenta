@@ -449,7 +449,6 @@ const Quote = () => {
         const response = await fetch(`https://localhost:4000/Productos`);
         const data = await response.json();
         if (response.ok) {
-          console.log(data);
           setProductos(data);
         }
       } catch (err) {
@@ -504,7 +503,7 @@ const Quote = () => {
                     inventario: data.existencia,
                     precioUnitario: producto.valorneto,
                     descuento: data.descuento,
-                    total: Number(producto.valorneto) * Number(producto.cantidad),
+                    total: Number(producto.valorneto) * Number(producto.cantidad) - (Number(producto.valorneto) * Number(producto.cantidad) * Number(data.descuento)) / 100,
                   };
                 }
               })
@@ -1476,7 +1475,7 @@ const Quote = () => {
                                           <TableCell>
                                             {fila.descuento}%
                                           </TableCell>
-                                          <TableCell>{fila.total}</TableCell>
+                                          <TableCell>${fila.total}</TableCell>
                                         </TableRow>
                                       ))}
                                     </TableBody>
