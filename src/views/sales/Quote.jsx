@@ -235,6 +235,11 @@ const Quote = () => {
     recurrencia: false,
     comentarios: "",
     envio: "",
+    neto: 0,
+    descuento: 0,
+    subtotal: 0,
+    impuestos: 0,
+    total: 0,
   });
 
   const [datos, setData] = useState([]);
@@ -353,6 +358,15 @@ const Quote = () => {
     tablaResumen.querySelector(
       "#total"
     ).textContent = `$${totalesNuevaTabla.total.toFixed(2)}`;
+
+    setCotizacionData({
+      ...cotizacionData,
+      neto: totalesNuevaTabla.netoTotal,
+      descuento: totalesNuevaTabla.descuentoTotal,
+      subtotal: totalesNuevaTabla.subtotalTotal,
+      impuestos: totalesNuevaTabla.impuestosTotal,
+      total: totalesNuevaTabla.total,
+    });
   };
   useEffect(() => {
     calcularTotales();
