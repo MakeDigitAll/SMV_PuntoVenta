@@ -4,15 +4,17 @@ import ItemsHeader from "../../components/header/ItemsHeader/ItemsHeader";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../components/auth/AuthProvider";
+
 const AccesPoint = () => {
   const auth = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedAlmacen, setSelectedAlmacen] = useState(null); //esto nos selecciona el almacen..;D; claro si es que jala
+  const [selectedAlmacen, setSelectedAlmacen] = useState(null);
   const [data, setData] = useState([]);
+
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/Almacenes");
+      const response = await fetch("https://localhost:4000/Almacenes");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -20,17 +22,28 @@ const AccesPoint = () => {
     } catch (error) {
       console.error("Error al cargar los datos:", error);
     }
-  } 
+  }
+
   useEffect(() => {
     loadTask();
   }, []);
+
   const handleAccess = () => {
     auth.guardarTablaID(selectedAlmacen.target.value);
     navigate(`/PointofSale`);
   };
+
   const filteredData = selectedAlmacen
     ? data.filter((almacen) => almacen.id === selectedAlmacen)
     : data;
+
+  useEffect(() => {
+    const tableId = localStorage.getItem('tableId');
+    if (tableId) {
+      navigate(`/PointofSale`);
+    }
+  }, [navigate]);
+
   return (
     <>
       <ItemsHeader />
@@ -82,7 +95,8 @@ const AccesPoint = () => {
                 <Button
                   size="sm"
                   color="primary"
-                  onClick={handleAccess}                >
+                  onClick={handleAccess}
+                >
                   Acceder
                 </Button>
               </CardBody>
