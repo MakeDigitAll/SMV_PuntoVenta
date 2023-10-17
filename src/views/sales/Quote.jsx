@@ -488,41 +488,39 @@ const Quote = () => {
           );
           
           const data = await response.json();
-          console.log(data); 
           if (response.ok) {
-            console.log(data);
             const datos = await Promise.all(
               data.map(async (producto) => {
-                console.log(producto);
                 const response = await fetch(
-                  "https://localhost:4000/Productos/" + producto.id
-                );
+                  "https://localhost:4000/Productos/" + producto.idProducto
+                ); 
                 const data = await response.json();
-                console.log(data);
                 if (response.ok) {
                   return {
-                    codigoEmpresa: data.codigoEmpresa,
+                    codigo: data.codigoEmpresa,
                     nombre: data.nombre,
                     marca: data.marca,
                     cantidad: producto.cantidad,
                     inventario: data.existencia,
-                    precioUnitario: producto.precioUnitario,
-                    descuento: producto.descuento,
-                    total: producto.total,
+                    precioUnitario: producto.valorneto,
+                    descuento: data.descuento,
+                    total: Number(producto.valorneto) * Number(producto.cantidad),
                   };
                 }
               })
             );
             setFilasAgregadas(datos);
           }
-        } catch {
+        } catch (err) {
+          console.log(err);
           toast.error("Error al cargar los datos", {
             position: "bottom-right",
             theme: "colored",
           });
         }
       }
-    } catch {
+    } catch (error) {
+      console.log(error);
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
         theme: "colored",
@@ -1450,6 +1448,8 @@ const Quote = () => {
                                               name="cantidad"
                                               placeholder=""
                                               variant="faded"
+                                              isDisabled={isOnlyRead}
+
                                               error={
                                                 validationErrors.cantidad !== ""
                                               }
@@ -1740,7 +1740,7 @@ const Quote = () => {
                                       <Input
                                         size="sm"
                                         type="number"
-                                        value={cantidadProducto[index] || ""} // Usar la cantidad del estado correspondiente
+                                        value={cantidadProducto[index] || ""}
                                         onChange={(e) =>
                                           handleCantidadChange(e, index)
                                         }
