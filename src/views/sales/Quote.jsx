@@ -784,6 +784,7 @@ const Quote = () => {
 
         if (response.ok) {
           toast.success("Cotización Perdida", { theme: "colored" });
+          navigate("/Sales/Quotes");
         }
       } catch (error) {
         toast.error("Error al guardar Cotización", {
@@ -813,6 +814,7 @@ const Quote = () => {
 
         if (response.ok) {
           toast.success("Cotización Ganada", { theme: "colored" });
+          navigate("/Sales/Quotes");
         }
       } catch (error) {
         toast.error("Error al guardar Cotización", {
