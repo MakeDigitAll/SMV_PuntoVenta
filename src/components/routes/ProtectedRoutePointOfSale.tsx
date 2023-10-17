@@ -1,0 +1,9 @@
+import { Outlet, Navigate } from "react-router-dom";
+import React from "react";
+import { useAuth } from "../auth/AuthProvider";
+
+export default function ProtectedRoute() {
+  const auth = useAuth();
+
+  return auth.guardarTablaID(id) ? <Outlet /> : <Navigate to="/" />;
+}

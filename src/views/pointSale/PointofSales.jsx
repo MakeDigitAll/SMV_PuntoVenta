@@ -74,7 +74,7 @@ const PointofSale = () => {
           price="123" />
         </div>
         </div>
-        <table className="table">
+          <table className="table">
           <thead>
             <tr>
               <th>ID</th>

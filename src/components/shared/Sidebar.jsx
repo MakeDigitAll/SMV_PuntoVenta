@@ -8,14 +8,18 @@ import {
 import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 
+
 const Sidebar = (props) => {
   const { showMenu } = props;
   const navigate = useNavigate();
+  function handleLogout() {
+    localStorage.removeItem('tableId');
+    navigate(`/PointOfSale/Acces`);
+  }
   return (
     <div
-      className={`bg-[#1F1D2B] fixed lg:left-0 top-0 w-28 h-full flex flex-col justify-between py-6 rounded-tr-xl rounded-br-xl z-50 transition-all ${
-        showMenu ? "left-0" : "-left-full"
-      }`}
+      className={`bg-[#1F1D2B] fixed lg:left-0 top-0 w-28 h-full flex flex-col justify-between py-6 rounded-tr-xl rounded-br-xl z-50 transition-all ${showMenu ? "left-0" : "-left-full"
+        }`}
     >
       <div>
         <ul className="pl-4">
@@ -28,6 +32,7 @@ const Sidebar = (props) => {
             <a
               href="#"
               className="bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-white"
+              title="Inicio"
             >
               <RiHome6Line className="text-2xl" />
             </a>
@@ -36,8 +41,9 @@ const Sidebar = (props) => {
             <a
               href="#"
               className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
+              
             >
-              <TbReportAnalytics className="text-2xl"/>
+              <TbReportAnalytics className="text-2xl" />
             </a>
           </li>
           <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
@@ -68,8 +74,10 @@ const Sidebar = (props) => {
             <a
               href="#"
               className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
+              title="Cerrar punto de venta"
             >
-              <RiLoginBoxLine className="text-2xl" />
+              <RiLoginBoxLine className="text-2xl" 
+              onClick={handleLogout}/>
             </a>
           </li>
         </ul>
