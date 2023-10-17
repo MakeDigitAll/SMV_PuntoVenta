@@ -1,4 +1,3 @@
-import ItemsHeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 import { ToastContainer } from "react-toastify";
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
@@ -14,12 +13,12 @@ import {
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdPeople, MdReport } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
+import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 
 const Customers = () => {
   const navigate = useNavigate(); 
   return (
     <>
-      <ItemsHeaderPointofSale />
       <ToastContainer />
       <div className="p-12">
         {/* <div className="p-12 bg-gray-100"> */}

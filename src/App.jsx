@@ -66,7 +66,6 @@ import PointofSale from "./views/pointSale/PointofSales.jsx";
 import Reports from "./views/pointSale/Reports.jsx";
 import Customers from "./views/pointSale/Customers.jsx";
 import NewSale from "./views/pointSale/NewSale.jsx";
-import AccesPoint from "./views/pointSale/AccesPointOfSale.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -371,19 +370,8 @@ const App = () => {
           path: "/Provider/NewProvider",
           element: <Provider />,
         },
-        {
-          path: "/PointOfSale/Acces",
-          element: <AccesPoint />,
-        },
       ],
     },
-    {
-      path: "/",
-      element: <ProtectedRoute />,
-      children: [
-
-      ]
-    }
   ]);
   return <RouterProvider router={router} />;
 };
