@@ -28,7 +28,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { format } from "date-fns";
-import {  Dropdown,  DropdownTrigger,  DropdownMenu,  DropdownSection,  DropdownItem} from "@nextui-org/react"; 
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
 
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
@@ -103,7 +103,7 @@ const Quote = () => {
         }
         break;
       default:
-        
+
         break;
     }
 
@@ -378,7 +378,7 @@ const Quote = () => {
           (Number(value) *
             Number(nuevasFilas[index].precioUnitario) *
             Number(nuevasFilas[index].descuento)) /
-            100,
+          100,
       };
 
       setFilasAgregadas(nuevasFilas);
@@ -464,7 +464,7 @@ const Quote = () => {
   //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
   //--------------------------------------------------------------------------------------//
 
-  
+
   const getCotizacion = async (folioCotizacion) => {
     var folio = Number(folioCotizacion);
     try {
@@ -485,14 +485,14 @@ const Quote = () => {
           const response = await fetch(
             "https://localhost:4000/ProductosCotizados/" + folio
           );
-          
+
           const data = await response.json();
           if (response.ok) {
             const datos = await Promise.all(
               data.map(async (producto) => {
                 const response = await fetch(
                   "https://localhost:4000/Productos/" + producto.idProducto
-                ); 
+                );
                 const data = await response.json();
                 if (response.ok) {
                   return {
@@ -614,32 +614,48 @@ const Quote = () => {
 
   //
 
-  const [direccionesCliente, setDireccionesCliente] = useState([]);
+  const [allDireccionesCliente, setAllDireccionesCliente] = useState([]);
 
-  const getDireccionCliente = (id) => {
-    //si id es undefined usar idCliente
+  const getDireccionCliente = async (id) => {
     if (id === undefined) {
       id = idCliente;
     }
-    async function getDireccionCliente() {
-      try {
-        const response = await fetch(
-          `https://localhost:4000/ClientesDireccionEnvio/${id}`
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setDireccionesCliente(data);
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
+
+    try {
+      const responseEnvio = await fetch(`https://localhost:4000/ClientesDireccionEnvio/${id}`);
+      const responseFacturacion = await fetch(`https://localhost:4000/DireccionFacturacionCliente/${id}`);
+
+      const dataEnvio = await responseEnvio.json();
+      const dataFacturacion = await responseFacturacion.json();
+
+      // Inicializa un contador para idIndex
+      let idIndex = 1;
+
+      // Asigna un id único numérico a cada objeto en dataEnvio
+      const dataEnvioConId = dataEnvio.map((obj) => ({
+        ...obj,
+        idIndex: idIndex++
+      }));
+
+      // Asigna un id único numérico a cada objeto en dataFacturacion
+      const dataFacturacionConId = dataFacturacion.map((obj) => ({
+        ...obj,
+        idIndex: idIndex++
+      }));
+
+      // Combina ambos arrays en uno solo con idIndex
+      const combinedData = dataEnvioConId.concat(dataFacturacionConId);
+
+      setAllDireccionesCliente(combinedData);
+    } catch (err) {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
     }
-    getDireccionCliente();
-    setShowInfoGeneral(true);
   };
+
+
 
   const getDatosCliente = (idCliente) => {
     async function getDatosCliente() {
@@ -660,6 +676,8 @@ const Quote = () => {
     }
     getDatosCliente();
     getDireccionCliente(idCliente);
+    getAllDireccionesCliente();
+
   };
 
   useEffect(() => {
@@ -759,9 +777,30 @@ const Quote = () => {
     setClienteInfoDireccion(clienteInfoDireccion);
   };
 
+
+
+  const setClienteFacturacion = (facturacion) => {
+    let clienteInfoFacturacion = {
+      DateCreation: facturacion.DateCreation,
+      DateModification: facturacion.DateModification,
+      capital: facturacion.capital,
+      formaPago: facturacion.formaPago,
+      id: facturacion.id,
+      idCliente: facturacion.idCliente,
+      idIndex: facturacion.idIndex,
+      metodoPago: facturacion.metodoPago,
+      predeterminado: facturacion.predeterminado,
+      razonSocial: facturacion.razonSocial,
+      regimenFiscal: facturacion.regimenFiscal,
+      rfc: facturacion.rfc,
+      usoCFDI: facturacion.usoCFDI,
+    }
+    setClienteInfoFacturacion(clienteInfoFacturacion);
+  }
+
   const handleClickFacturacion = (facturacion) => {
-    console.log("Facturacion");
-    console.log(facturacion);
+    setClienteFacturacion(facturacion);
+
   };
 
 
@@ -892,7 +931,7 @@ const Quote = () => {
                               <Input
                                 id="cliente"
                                 value={
-                                  isOnlyRead? clienteInfoGeneral.nombreComercial : searchNombreCliente
+                                  isOnlyRead ? clienteInfoGeneral.nombreComercial : searchNombreCliente
                                 }
                                 onValueChange={setSearchNombreCliente}
                                 size="sm"
@@ -983,7 +1022,7 @@ const Quote = () => {
                                   null,
                                   !isRecurrente
                                 )}
-                                isSelected={isRecurrente || cotizacionData.recurrencia }
+                                isSelected={isRecurrente || cotizacionData.recurrencia}
                               >
                                 Es recurrente
                               </Checkbox>
@@ -1005,33 +1044,34 @@ const Quote = () => {
                                 placeholder="General"
                                 size="sm"
                               >
-                                {direccionesCliente.map((direcciones) => (
+                                {allDireccionesCliente.map((direcciones) => (
                                   <SelectItem
-                                    key={direcciones.id}
-                                    value={direcciones.nombreDireccion}
+                                    key={direcciones.idIndex}
+                                    value={direcciones.nombreDireccion || direcciones.razonSocial || "Sin nombre de dirección"}
                                     onClick={() => {
-                                      direcciones.nombreDireccion
-                                        ? (setShowInfoGeneral(false),
-                                          setShowInfoDireccion(true),
-                                          setShowInfoFacturacion(false),
-                                          handleClickDireccion(direcciones))
-                                        : direcciones.facturacion
-                                        ? (setShowInfoGeneral(false),
-                                          setShowInfoDireccion(false),
-                                          setShowInfoFacturacion(true),
-                                          handleClickFacturacion(direcciones))
-                                        : (setShowInfoGeneral(true),
-                                          setShowInfoDireccion(false),
-                                          setShowInfoFacturacion(false),
-                                          setClienteInfoGeneral(
-                                            clienteInfoGeneral
-                                          ));
+                                      if (direcciones.nombreDireccion) {
+                                        setShowInfoGeneral(false);
+                                        setShowInfoDireccion(true);
+                                        setShowInfoFacturacion(false);
+                                        handleClickDireccion(direcciones);
+                                      } else if (direcciones.razonSocial) {
+                                        setShowInfoGeneral(false);
+                                        setShowInfoDireccion(false);
+                                        setShowInfoFacturacion(true);
+                                        handleClickFacturacion(direcciones);
+                                      } else {
+                                        setShowInfoGeneral(true);
+                                        setShowInfoDireccion(false);
+                                        setShowInfoFacturacion(false);
+                                        setClienteInfoGeneral(clienteInfoGeneral);
+                                      }
                                     }}
                                   >
-                                    {direcciones.nombreDireccion}
+                                    {direcciones.nombreDireccion || direcciones.razonSocial || "Otro"}
                                   </SelectItem>
                                 ))}
                               </Select>
+
                               {showInfoGeneral ? (
                                 <div>
                                   <Card>
@@ -1344,7 +1384,146 @@ const Quote = () => {
                                   </Card>
                                 </div>
                               ) : showInfoFacturacion ? (
-                                <></>
+                                <div>
+                                  <Card>
+                                    <CardBody>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Razon Social: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.razonSocial}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Regimen Fiscal: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.regimenFiscal}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Uso CFDI: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.usoCFDI}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          RFC: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.rfc}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Predeterminado: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.predeterminado}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          MetodoPago: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.metodoPago}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Forma de Pago: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.formaPago}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Capital: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.capital}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          ID del Cliente: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.idCliente}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Fecha de Modificacion: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.DateModification}
+                                        </p>
+                                      </div>
+
+                                    </CardBody>
+                                  </Card>
+                                </div>
                               ) : (
                                 <></>
                               )}
@@ -1400,7 +1579,7 @@ const Quote = () => {
                                   >
                                     Envío a domicilio
                                   </DropdownItem>
-                                </DropdownMenu>    
+                                </DropdownMenu>
                               </Dropdown>
                             </div>
                           </div>
@@ -1596,41 +1775,41 @@ const Quote = () => {
                     </div>
                     <div className="md:col-span-12 text-right">
                       <div className="space-x-5 space-y-5">
-                      <div >
+                        <div >
 
-                        {isOnlyRead && !isEditable ? (
-                          <div>
+                          {isOnlyRead && !isEditable ? (
+                            <div>
 
-                        <Button
-                          className="min-w-[200px]  m-3"
-                          color="success"
-                        
-                          endContent={<MdSave />}
-                          onPress={() => {handleGanarCotizacion()}}
-                        >
-                          Ganar cotización
-                        </Button>
+                              <Button
+                                className="min-w-[200px]  m-3"
+                                color="success"
 
-                        <Button
-                          className="min-w-[200px]  m-3"
-                          color="danger"
-                       
-                          endContent={<MdSave />}
-                          onPress={() => {handleMarcarComoPerdida()}}
-                        >
-                          Marcar Como Perdida
-                        </Button>
-                        </div>
-                        ) : (
-                          <Button
-                          className="min-w-[200px]"
-                          color="primary"
-                          type="submit"
-                          endContent={<MdSave />}
-                        >
-                          Guardar cotización
-                        </Button>
-                        )}
+                                endContent={<MdSave />}
+                                onPress={() => { handleGanarCotizacion() }}
+                              >
+                                Ganar cotización
+                              </Button>
+
+                              <Button
+                                className="min-w-[200px]  m-3"
+                                color="danger"
+
+                                endContent={<MdSave />}
+                                onPress={() => { handleMarcarComoPerdida() }}
+                              >
+                                Marcar Como Perdida
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              className="min-w-[200px]"
+                              color="primary"
+                              type="submit"
+                              endContent={<MdSave />}
+                            >
+                              Guardar cotización
+                            </Button>
+                          )}
 
 
                         </div>
