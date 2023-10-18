@@ -372,7 +372,8 @@ const Promotions = () => {
   //--------------------------------------SSSSSSS--------------------------------------------
   //obtener todos los productos de la base de datos
   const [productos, setProductos] = useState([]);
-
+  const [productosSearched, setProductosSearched] = useState([]);
+  const [nameProducto, setNameProducto] = useState("");
 
   const getProductos = () => {
     async function loadProducts() {
@@ -393,18 +394,35 @@ const Promotions = () => {
   };
 
 
+  const handleSearchProducto = (e) => {
+    const value = e.target.value.toLowerCase();
+    setNameProducto(value);
+    const result = [];
+    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value))); // Usar spread (...) para agregar elementos al array
+
+    if (value === "") {
+      setProductosSearched(productos);
+    } else {
+      setProductosSearched(result);
+    }
+  };
+
+
   //paginacion del modal
   const [pageProductos, setPageProductos] = useState(1);
   const rowsPerPageProductos = 8;
 
-  const pagesProductos = Math.ceil(productos.length / rowsPerPageProductos);
+  const pagesProductos = Math.ceil(productosSearched.length / rowsPerPageProductos);
 
   //paginacion de la tabla de usuarios ordenados
   const itemsProductos = useMemo(() => {
     const start = (pageProductos - 1) * rowsPerPageProductos;
     const end = start + rowsPerPageProductos;
-    return productos.slice(start, end);
-  }, [pagesProductos, rowsPerPageProductos, productos, pageProductos]);
+    if (productosSearched.length === 0 && !nameProducto) {
+      return productos.slice(start, end);
+    }
+    return productosSearched.slice(start, end);
+  }, [pagesProductos, rowsPerPageProductos, productos, pageProductos, productosSearched]);
 
   //Ejecutar useEffect
 
@@ -709,16 +727,20 @@ const Promotions = () => {
                               id="nombre"
                               size="sm"
                               type="text"
-                              label="Cliente"
+                              label="Nombre del producto"
                               name="nombre"
+                              autoComplete="off"
                               labelPlacement="outside"
                               placeholder=" "
                               endContent={
                                 <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
                               }
+                              onChange={(e) => {
+                                handleSearchProducto(e);
+                              }}
                             />
                           </div>
-                          <div className="md:col-span-3">
+                          {/* <div className="md:col-span-3">
                             <Select
                               labelPlacement={"outside"}
                               label="Marca"
@@ -748,7 +770,7 @@ const Promotions = () => {
                                 </SelectItem>
                               ))}
                             </Select>
-                          </div>
+                          </div> */}
                           <div className="md:col-span-12">
                             <Table
                               id="tablaEnModal"
