@@ -54,8 +54,8 @@ const columnsProductos = [
   { name: "Inv.", uid: "inv", sortable: false },
   { name: "Precio Uni.", uid: "precioUnitario", sortable: false },
   { name: "Descuento", uid: "descuento", sortable: false },
-  { name: "Total", uid: "total", sortable: false },
   { name: "Cantidad", uid: "cantidad", sortable: false },
+  { name: "Total", uid: "total", sortable: false },
   { name: "Agregar", uid: "agregar", sortable: false },
 ];
 
@@ -295,24 +295,26 @@ const Promotions = () => {
             <p className="text-bold text-small capitalize">{data.descuento}</p>
           </div>
         );
-      case "total":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.total}</p>
-          </div>
-        );
 
       case "cantidad":
         return (
           <Input
             size="sm"
             type="number"
+            className="w-[80px]"
             //value={cantidadProducto[index] || ""}
             onChange={(e) =>
               handleCantidadChange(e, index)
             }
             placeholder=""
           />
+        );
+
+      case "total":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.total}</p>
+          </div>
         );
 
       case "agregar":
