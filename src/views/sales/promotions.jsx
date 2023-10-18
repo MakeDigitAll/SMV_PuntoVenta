@@ -14,11 +14,10 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+import { TbDotsVertical, TbReload } from "react-icons/tb"
+import { AiOutlinePlus } from "react-icons/ai"
+import { MdArrowDropDown, MdBookmarkAdded, MdSearch } from "react-icons/md";
 
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
@@ -27,6 +26,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+//Columnas de la tabla
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "Imagen", uid: "imagen", sortable: true },
@@ -37,10 +37,9 @@ const columns = [
   { name: "Precio base", uid: "precioBase", sortable: true },
   { name: "Descuento", uid: "descuento", sortable: true },
   { name: "Precio", uid: "precio", sortable: true },
-  { name:"Activo", uid: "activo",sortable:true},
+  { name: "Activo", uid: "activo", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
-
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
   "imagen",
@@ -55,13 +54,15 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 
+
+//Obtener el listado de productos con descuentos de la base de datos
 const Promotions = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-      }
+  const marcaOptions = [];
+  function contarmarca() {
+    for (let i = 0; i < data.length; i++) {
+      marcaOptions.push({ name: data[i].marca, uid: data[i].id });
     }
+  }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -147,6 +148,7 @@ const Promotions = () => {
     });
   }, [sortDescriptor, items]);
 
+  //renderizar los datos de las columnas
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
@@ -157,10 +159,10 @@ const Promotions = () => {
             <p className="text-bold text-small capitalize">{data.id}</p>
           </div>
         );
-        case "imagen":
+      case "imagen":
         return (
           <div className="flex flex-col">
-            <Images idImage={data.imagen} designType="tabla" ruta={"https://localhost:4000/ListadoProductosDescuento"}/> 
+            <Images idImage={data.imagen} designType="tabla" ruta={"https://localhost:4000/ListadoProductosDescuento"} />
           </div>
         );
       case "codigoEmpresa":
@@ -169,7 +171,7 @@ const Promotions = () => {
             <p className="text-bold text-small capitalize">{data.codigoEmpresa}</p>
           </div>
         );
-        case "nombre":
+      case "nombre":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.nombre}</p>
@@ -182,7 +184,7 @@ const Promotions = () => {
               {data.desde}
             </p>
           </div>
-        ); 
+        );
       case "hasta":
         return (
           <div className="flex flex-col">
@@ -195,7 +197,7 @@ const Promotions = () => {
             <p className="text-bold text-small capitalize">{data.precioBase}</p>
           </div>
         );
-        case "descuento":
+      case "descuento":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.descuento}</p>
@@ -269,7 +271,7 @@ const Promotions = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        
+
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -314,27 +316,27 @@ const Promotions = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Cliente"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Folio"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
- 
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Cliente"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Folio"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+
 
             <Dropdown>
               <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
@@ -361,9 +363,12 @@ const Promotions = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            
+
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
+            <Button size="sm" color="primary" endContent={<AiOutlinePlus />}>
+              Agregar Promocion a Producto
+            </Button>
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Promociones
             </Button>
@@ -488,6 +493,15 @@ const Promotions = () => {
       </div>
     );
   }, [data.length, selectedKeys, page, pages, onPreviousPage, onNextPage]);
+
+
+  //--------------------------------------SSS--------------------------------------------
+
+
+
+
+
+
 
   return (
     <div style={{ marginLeft: "40px", marginRight: "40px" }}>
