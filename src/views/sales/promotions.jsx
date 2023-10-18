@@ -1,5 +1,5 @@
 //Promotions
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -47,6 +47,19 @@ const columns = [
   { name: "Activo", uid: "activo", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
+const columnsProductos = [
+  { name: "Código", uid: "codigo", sortable: false },
+  { name: "Nombre", uid: "nombre", sortable: false },
+  { name: "Marca", uid: "marca", sortable: false },
+  { name: "Inv.", uid: "inv", sortable: false },
+  { name: "Precio Uni.", uid: "precioUnitario", sortable: false },
+  { name: "Descuento", uid: "descuento", sortable: false },
+  { name: "Total", uid: "total", sortable: false },
+  { name: "Cantidad", uid: "cantidad", sortable: false },
+  { name: "Agregar", uid: "agregar", sortable: false },
+];
+
+
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
   "imagen",
@@ -156,7 +169,7 @@ const Promotions = () => {
   }, [sortDescriptor, items]);
 
   //renderizar los datos de las columnas
-  const renderCell = React.useCallback((data, columnKey) => {
+  const renderCell = useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
@@ -244,6 +257,80 @@ const Promotions = () => {
     }
   }, []);
 
+  const renderCellProducto = useCallback((data, columnKey) => {
+    switch (columnKey) {
+      case "codigo":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.idproducto}</p>
+          </div>
+        );
+      case "nombre":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
+          </div>
+        );
+      case "marca":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.marca}</p>
+          </div>
+        );
+      case "inv":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.existencia}</p>
+          </div>
+        );
+      case "precioUnitario":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.precio}</p>
+          </div>
+        );
+      case "descuento":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.descuento}</p>
+          </div>
+        );
+      case "total":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.total}</p>
+          </div>
+        );
+
+      case "cantidad":
+        return (
+          <Input
+            size="sm"
+            type="number"
+            //value={cantidadProducto[index] || ""}
+            onChange={(e) =>
+              handleCantidadChange(e, index)
+            }
+            placeholder=""
+          />
+        );
+
+      case "agregar":
+        return (
+          <div className="relative flex justify-center items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => agregarFila(data, index)}
+            >
+              +
+            </Button>
+          </div>
+        );
+    }
+  }, []);
+
+
+
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
@@ -282,10 +369,54 @@ const Promotions = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
 
+  //--------------------------------------SSSSSSS--------------------------------------------
+  //obtener todos los productos de la base de datos
+  const [productos, setProductos] = useState([]);
+
+
+  const getProductos = () => {
+    async function loadProducts() {
+      try {
+        const response = await fetch(`https://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
+  };
+
+
+  //paginacion del modal
+  const [pageProductos, setPageProductos] = useState(1);
+  const rowsPerPageProductos = 8;
+
+  const pagesProductos = Math.ceil(productos.length / rowsPerPageProductos);
+
+  //paginacion de la tabla de usuarios ordenados
+  const itemsProductos = useMemo(() => {
+    const start = (pageProductos - 1) * rowsPerPageProductos;
+    const end = start + rowsPerPageProductos;
+    return productos.slice(start, end);
+  }, [pagesProductos, rowsPerPageProductos, productos, pageProductos]);
+
+  //Ejecutar useEffect
+
+  useEffect(() => {
+    getProductos();
+  }, []);
+
+  //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
+
   const topContent = React.useMemo(() => {
     return (
       <>
-
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -509,40 +640,6 @@ const Promotions = () => {
   }, [data.length, selectedKeys, page, pages, onPreviousPage, onNextPage]);
 
 
-  //--------------------------------------SSS--------------------------------------------
-
-  //Ejecutar useEffect al entrar a la pagina
-
-  useEffect(() => {
-    getProductos();
-
-  }, []);
-
-  //obtener todos los productos de la base de datos
-  const [productos, setProductos] = useState([]);
-
-
-
-  const getProductos = () => {
-    async function loadProducts() {
-      try {
-        const response = await fetch(`https://localhost:4000/Productos`);
-        const data = await response.json();
-        if (response.ok) {
-          setProductos(data);
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    loadProducts();
-  };
-
-
-
 
 
 
@@ -657,49 +754,44 @@ const Promotions = () => {
                               id="tablaEnModal"
                               removeWrapper
                               aria-label="Example static collection table"
+                              bottomContent={
+                                pagesProductos > 0 ? (
+                                  <div className="flex w-full justify-center">
+                                    <Pagination
+                                      isCompact
+                                      showControls
+                                      showShadow
+                                      color="primary"
+                                      page={pageProductos}
+                                      total={pagesProductos}
+                                      onChange={(pageProductos) => setPageProductos(pageProductos)}
+                                    />
+                                  </div>
+                                ) : null
+                              }
                             >
-                              <TableHeader>
-                                <TableColumn>Código</TableColumn>
-                                <TableColumn>Nombre</TableColumn>
-                                <TableColumn>Marca</TableColumn>
-                                <TableColumn>Cantidad</TableColumn>
-                                <TableColumn>Inv.</TableColumn>
-                                <TableColumn>Precio Uni.</TableColumn>
-                                <TableColumn>Descuento</TableColumn>
-                                <TableColumn>Total</TableColumn>
-                                <TableColumn>Acciones</TableColumn>
+                              <TableHeader columns={columnsProductos}>
+                                {(column) => (
+                                  <TableColumn
+                                    key={column.uid}
+                                    align={column.uid === "actions" ? "center" : "start"}
+                                    allowsSorting={false}
+                                  >
+                                    {column.name}
+                                  </TableColumn>
+                                )}
+
                               </TableHeader>
-                              <TableBody>
-                                {productos.map((data, index) => (
-                                  <TableRow key={data.idproducto}>
-                                    <TableCell>{data.codigoEmpresa}</TableCell>
-                                    <TableCell>{data.nombre}</TableCell>
-                                    <TableCell>{data.marca}</TableCell>
-                                    <TableCell>
-                                      <Input
-                                        size="sm"
-                                        type="number"
-                                        value={cantidadProducto[index] || ""}
-                                        onChange={(e) =>
-                                          handleCantidadChange(e, index)
-                                        }
-                                        placeholder=""
-                                      />
-                                    </TableCell>
-                                    <TableCell>{data.existencia}</TableCell>
-                                    <TableCell>{data.precio}</TableCell>
-                                    <TableCell>{data.descuento}</TableCell>
-                                    <TableCell>{data.total}</TableCell>
-                                    <TableCell>
-                                      <Button
-                                        size="sm"
-                                        onClick={() => agregarFila(data, index)}
-                                      >
-                                        +
-                                      </Button>
-                                    </TableCell>
+                              <TableBody
+                                items={itemsProductos}
+                              >
+                                {(item) => (
+                                  <TableRow key={item.idproducto}>
+                                    {(columnKey) => (
+                                      <TableCell>{renderCellProducto(item, columnKey)}</TableCell>
+                                    )}
                                   </TableRow>
-                                ))}
+                                )}
                               </TableBody>
                             </Table>
                           </div>
