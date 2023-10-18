@@ -435,7 +435,6 @@ const Quote = () => {
     // Verifica si la cantidad es un número válido
     if (!isNaN(cantidad) || cantidad > 0) {
       const datosAdaptados = adaptarDatos(data, cantidad);
-      console.log(datosAdaptados);
       datosAdaptados.total =  datosAdaptados.precioUnitario * datosAdaptados.cantidad - (datosAdaptados.precioUnitario * datosAdaptados.cantidad * datosAdaptados.descuento) / 100;
       setFilasAgregadas([...filasAgregadas, datosAdaptados]);
     } else {
