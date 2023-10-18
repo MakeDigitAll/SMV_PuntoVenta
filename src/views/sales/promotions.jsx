@@ -14,6 +14,13 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Select
 } from "@nextui-org/react";
 import { TbDotsVertical, TbReload } from "react-icons/tb"
 import { AiOutlinePlus } from "react-icons/ai"
@@ -268,6 +275,13 @@ const Promotions = () => {
     setPage(1);
   }, []);
 
+  //para el modal de productos
+  const [marca, setmarca] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [cantidadProducto, setcantidadProducto] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+
   const topContent = React.useMemo(() => {
     return (
       <>
@@ -366,7 +380,7 @@ const Promotions = () => {
 
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="primary" endContent={<AiOutlinePlus />}>
+            <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
               Agregar Promocion a Producto
             </Button>
             <Button size="sm" color="warning" endContent={<TbReload />}>
@@ -497,6 +511,35 @@ const Promotions = () => {
 
   //--------------------------------------SSS--------------------------------------------
 
+  //Ejecutar useEffect al entrar a la pagina
+
+  useEffect(() => {
+    getProductos();
+
+  }, []);
+
+  //obtener todos los productos de la base de datos
+  const [productos, setProductos] = useState([]);
+
+
+
+  const getProductos = () => {
+    async function loadProducts() {
+      try {
+        const response = await fetch(`https://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
+  };
 
 
 
@@ -542,6 +585,139 @@ const Promotions = () => {
           )}
         </TableBody>
       </Table>
+
+      <Modal
+        backdrop="blur"
+        isOpen={isOpen}
+        onClose={onClose}
+        size="5xl"
+        isDismissable={false}
+      >
+        <ModalContent>
+          {(onClose) => (
+
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Agregar producto a la cotización
+              </ModalHeader>
+              <ModalBody>
+                <div className="grid gap-4 gap-y-2 text-xs grid-cols-1 lg:grid-cols-3">
+                  <div className="lg:col-span-4">
+                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                      <div className="md:col-span-12">
+                        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                          <div className="md:col-span-12"></div>
+                          <div className="md:col-span-6">
+                            <Input
+                              id="nombre"
+                              size="sm"
+                              type="text"
+                              label="Cliente"
+                              name="nombre"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              endContent={
+                                <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+                              }
+                            />
+                          </div>
+                          <div className="md:col-span-3">
+                            <Select
+                              labelPlacement={"outside"}
+                              label="Marca"
+                              placeholder="Seleccione"
+                              size="sm"
+                            >
+                              {marca.map((marca) => (
+                                <SelectItem key={marca.id} value={marca.id}>
+                                  {marca.marca}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="md:col-span-3">
+                            <Select
+                              labelPlacement={"outside"}
+                              label="Categoría"
+                              placeholder="Seleccione"
+                              size="sm"
+                            >
+                              {categorias.map((categoria) => (
+                                <SelectItem
+                                  key={categoria.id}
+                                  value={categoria.id}
+                                >
+                                  {categoria.nombre}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="md:col-span-12">
+                            <Table
+                              id="tablaEnModal"
+                              removeWrapper
+                              aria-label="Example static collection table"
+                            >
+                              <TableHeader>
+                                <TableColumn>Código</TableColumn>
+                                <TableColumn>Nombre</TableColumn>
+                                <TableColumn>Marca</TableColumn>
+                                <TableColumn>Cantidad</TableColumn>
+                                <TableColumn>Inv.</TableColumn>
+                                <TableColumn>Precio Uni.</TableColumn>
+                                <TableColumn>Descuento</TableColumn>
+                                <TableColumn>Total</TableColumn>
+                                <TableColumn>Acciones</TableColumn>
+                              </TableHeader>
+                              <TableBody>
+                                {productos.map((data, index) => (
+                                  <TableRow key={data.idproducto}>
+                                    <TableCell>{data.codigoEmpresa}</TableCell>
+                                    <TableCell>{data.nombre}</TableCell>
+                                    <TableCell>{data.marca}</TableCell>
+                                    <TableCell>
+                                      <Input
+                                        size="sm"
+                                        type="number"
+                                        value={cantidadProducto[index] || ""}
+                                        onChange={(e) =>
+                                          handleCantidadChange(e, index)
+                                        }
+                                        placeholder=""
+                                      />
+                                    </TableCell>
+                                    <TableCell>{data.existencia}</TableCell>
+                                    <TableCell>{data.precio}</TableCell>
+                                    <TableCell>{data.descuento}</TableCell>
+                                    <TableCell>{data.total}</TableCell>
+                                    <TableCell>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => agregarFila(data, index)}
+                                      >
+                                        +
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
