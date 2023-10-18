@@ -7,6 +7,7 @@ import {
   Tabs,
   Checkbox,
   Select,
+  Pagination,
   Textarea,
   TableHeader,
   TableColumn,
@@ -28,7 +29,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { format } from "date-fns";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
@@ -435,7 +436,7 @@ const Quote = () => {
     // Verifica si la cantidad es un número válido
     if (!isNaN(cantidad) || cantidad > 0) {
       const datosAdaptados = adaptarDatos(data, cantidad);
-      datosAdaptados.total =  datosAdaptados.precioUnitario * datosAdaptados.cantidad - (datosAdaptados.precioUnitario * datosAdaptados.cantidad * datosAdaptados.descuento) / 100;
+      datosAdaptados.total = datosAdaptados.precioUnitario * datosAdaptados.cantidad - (datosAdaptados.precioUnitario * datosAdaptados.cantidad * datosAdaptados.descuento) / 100;
       setFilasAgregadas([...filasAgregadas, datosAdaptados]);
     } else {
       toast.warning("Por favor, ingrese una cantidad válida.");
@@ -878,6 +879,42 @@ const Quote = () => {
     }
     send();
   }
+
+
+  //obtener todos los productos de la base de datos
+  const [productosSearched, setProductosSearched] = useState([]);
+  const [nameProducto, setNameProducto] = useState("");
+
+  const handleSearchProducto = (e) => {
+    const value = e.target.value.toLowerCase();
+    setNameProducto(value);
+    const result = [];
+    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value))); // Usar spread (...) para agregar elementos al array
+    if (value === "") {
+      setProductosSearched(productos);
+    } else {
+      setProductosSearched(result);
+    }
+  };
+
+
+  //paginacion del modal
+  const [pageProductos, setPageProductos] = useState(1);
+  const rowsPerPageProductos = 8;
+
+  const pagesProductos = Math.ceil(productosSearched.length / rowsPerPageProductos);
+
+  //paginacion de la tabla de usuarios ordenados
+  const itemsProductos = useMemo(() => {
+    const start = (pageProductos - 1) * rowsPerPageProductos;
+    const end = start + rowsPerPageProductos;
+    if (productosSearched.length === 0 && !nameProducto) {
+      setProductosSearched(productos);
+      return productos.slice(start, end);
+    }
+    return productosSearched.slice(start, end);
+  }, [pagesProductos, rowsPerPageProductos, productos, pageProductos, productosSearched]);
+
 
   return (
     <>
@@ -1861,11 +1898,14 @@ const Quote = () => {
                           <div className="md:col-span-6">
                             <Input
                               id="nombre"
-                              value={user.nombre}
-                              onValueChange={handleChange}
+                              //value={user.nombre}
+                              //onValueChange={handleChange}
+                              onChange={(e) => {
+                                handleSearchProducto(e);
+                              }}
                               size="sm"
                               type="text"
-                              label="Cliente"
+                              label="Nombre del producto"
                               name="nombre"
                               labelPlacement="outside"
                               placeholder=" "
@@ -1909,31 +1949,51 @@ const Quote = () => {
                             </Select>
                           </div>
                           <div className="md:col-span-12">
+                            {console.log(pagesProductos)}
                             <Table
                               id="tablaEnModal"
                               removeWrapper
                               aria-label="Example static collection table"
+                              bottomContent={
+                                pagesProductos > 0 ? (
+                                  <div className="flex w-full justify-center">
+                                    <Pagination
+                                      isCompact
+                                      showControls
+                                      showShadow
+                                      color="primary"
+                                      page={pageProductos}
+                                      total={pagesProductos}
+                                      onChange={(pageProductos) => setPageProductos(pageProductos)}
+                                    />
+                                  </div>
+                                ) : null
+                              }
                             >
                               <TableHeader>
                                 <TableColumn>Código</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
                                 <TableColumn>Marca</TableColumn>
-                                <TableColumn>Cantidad</TableColumn>
                                 <TableColumn>Inv.</TableColumn>
                                 <TableColumn>Precio Uni.</TableColumn>
                                 <TableColumn>Descuento</TableColumn>
+                                <TableColumn>Cantidad</TableColumn>
                                 <TableColumn>Total</TableColumn>
                                 <TableColumn>Acciones</TableColumn>
                               </TableHeader>
                               <TableBody>
-                                {productos.map((data, index) => (
+                                {itemsProductos.map((data, index) => (
                                   <TableRow key={data.idproducto}>
                                     <TableCell>{data.codigoEmpresa}</TableCell>
                                     <TableCell>{data.nombre}</TableCell>
                                     <TableCell>{data.marca}</TableCell>
+                                    <TableCell>{data.existencia}</TableCell>
+                                    <TableCell>{data.precio}</TableCell>
+                                    <TableCell>{data.descuento}</TableCell>
                                     <TableCell>
                                       <Input
                                         size="sm"
+                                        className="w-[80px]"
                                         type="number"
                                         value={cantidadProducto[index] || ""}
                                         onChange={(e) =>
@@ -1942,9 +2002,6 @@ const Quote = () => {
                                         placeholder=""
                                       />
                                     </TableCell>
-                                    <TableCell>{data.existencia}</TableCell>
-                                    <TableCell>{data.precio}</TableCell>
-                                    <TableCell>{data.descuento}</TableCell>
                                     <TableCell>{data.total}</TableCell>
                                     <TableCell>
                                       <Button
