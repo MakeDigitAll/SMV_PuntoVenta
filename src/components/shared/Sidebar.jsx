@@ -1,4 +1,3 @@
-import { Image } from "@nextui-org/react";
 import {
   RiHome6Line,
   RiGroup2Fill,
@@ -97,6 +96,7 @@ const Sidebar = (props) => {
           </ul>
         </div>
       </div>
+      </>
   );
 };
 
