@@ -1,15 +1,12 @@
-import ItemsHeaderPointofSale from "../../components/header/headerC/HederPointofSale";
-import React, { useEffect, useState } from "react";
-import { RiBox1Fill, RiDashboard2Fill } from "react-icons/ri";
-import { BiColumns, BiGroup } from "react-icons/bi";
-import Typography from "@mui/material/Typography";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
-import { useNavigate } from "react-router-dom";
-import { Button, Spacer } from "@nextui-org/react";
+import { useNavigate } from 'react-router-dom';
+import { Spacer } from "@nextui-org/react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
+import Cards from "../../components/shared/Cards";
+import Card from "../../components/shared/Card";
+import React from "react";
+import  { useEffect, useState } from "react";
 
 const PointofSale = () => {
   const [data, setData] = useState([]);
@@ -20,7 +17,7 @@ const PointofSale = () => {
 
   function handleLogout() {
     localStorage.removeItem("tableId");
-    navigate(`/PointOfSale/Acces`);
+    navigate(`/POS/Access`);
   }
 
   async function loadTask() {
@@ -58,18 +55,24 @@ const PointofSale = () => {
   
   console.log(data);
   console.log(tableId);
-
   return (
-    <div className="place-content-center">
+    <div className="bg-[#262837] w-full min-h-screen">
       <Sidebar />
       <SidebarMovil />
       <Spacer y={8} />
-      <main className="lg:pl-28">
-        <Breadcrumbs aria-label="breadcrumb" color="foreground">
-          {/* ... (código anterior) ... */}
-        </Breadcrumbs>
+      <main className="lg:pl-32 ">
+       <div className="md:p-8 p-4">
         <HeaderPointofSale />
-        <table className="table">
+        <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-16">
+          <Card 
+          sales="Ventas en el Turno"
+          price="12,356" />
+          <Card 
+          sales="Operaciones en el Turno" 
+          price="123" />
+        </div>
+        </div>
+          <table className="table">
           <thead>
             <tr>
               <th>ID</th>
