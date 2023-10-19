@@ -40,12 +40,6 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 const ClientList = () => {
-  const clienteOptions = [];
-  function clientemarca() {
-    for (let i = 0; i < data.length; i++) {
-      clienteOptions.push({ name: data[i].nombre, uid: data[i].id });
-    }
-  }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -137,7 +131,7 @@ const ClientList = () => {
 
   async function loadTask() {
     try {
-      const response = await fetch("http://localhost:4000/ListadoClientes");
+      const response = await fetch("https://localhost:4000/ListadoClientes");
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -163,7 +157,7 @@ const ClientList = () => {
     };
     console.log(datoDisable);
     try {
-      const res = await fetch(`http://localhost:4000/ListadoClientesDisabled/${id}`, {
+      const res = await fetch(`https://localhost:4000:4000/ListadoClientesDisabled/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

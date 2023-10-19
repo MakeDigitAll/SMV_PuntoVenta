@@ -17,7 +17,7 @@ const Customers = () => {
         { id: 3, imagen:'Hola1', nombre: 'Ejemplo 3', nombreComercial: 'Ejemplo 3',contactoPrincipal:"Pr3",telefono:"4502012", correo: 'Descripción3@gmail.com',vendedor:"Zulema",activo:"1",registro:"2023-02-14",actualizado:"2023-10-18" },]
   return (
     <>
-      <div className="bg-[#262837] w-full min-h-screen">
+    <div className="bg-[#262837] w-full min-h-screen">
         <Sidebar />
         <SidebarMovil />
         <Spacer y={8} />

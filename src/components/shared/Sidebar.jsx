@@ -1,7 +1,6 @@
-import React from "react";
+import { Image } from "@nextui-org/react";
 import {
   RiHome6Line,
-  RiSettings4Line,
   RiGroup2Fill,
   RiUser2Fill,
   RiLoginBoxLine,
@@ -10,15 +9,18 @@ import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { Image } from "@nextui-org/react";
 const Sidebar = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { showMenu } = props;
   const navigate = useNavigate();
   function handleLogout() {
-    localStorage.removeItem('tableId');
-    navigate(`/PointOfSale/Acces`);
+    localStorage.removeItem("tableId");
+    navigate(`/POS/Access`);
   }
   return (
-    <div
-      className={`bg-[#1F1D2B] fixed lg:left-0 top-0 w-28 h-full flex flex-col justify-between py-6 rounded-tr-xl rounded-br-xl z-50 transition-all ${showMenu ? "left-0" : "-left-full"
+    <>
+      <div
+        className={`bg-[#1F1D2B] fixed lg:left-0 top-0 w-28 h-full flex flex-col justify-between py-6 rounded-tr-xl rounded-br-xl z-50 transition-all ${
+          showMenu ? "left-0" : "-left-full"
         }`}
       >
         <div>

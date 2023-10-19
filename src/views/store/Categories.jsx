@@ -17,7 +17,20 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBook, MdBookmarkAdded, MdCategory, MdList, MdMoneyOffCsred, MdSave, MdSearch, MdShoppingCart, MdStore, MdTag, MdWarehouse } from "react-icons/md";
+import {
+  MdArrowDropDown,
+  MdBook,
+  MdBookmarkAdded,
+  MdCategory,
+  MdList,
+  MdMoneyOffCsred,
+  MdSave,
+  MdSearch,
+  MdShoppingCart,
+  MdStore,
+  MdTag,
+  MdWarehouse,
+} from "react-icons/md";
 
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
@@ -42,24 +55,21 @@ const columns = [
   { name: "Acciones", uid: "Actions" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "nombre",
-  "sku",
-  "Actions",
-];
+const INITIAL_VISIBLE_COLUMNS = ["id", "nombre", "sku", "Actions"];
 
 const Categories = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].nombre, uid: data[i].id });
-      }
+  const marcaOptions = [];
+  function contarmarca() {
+    for (let i = 0; i < data.length; i++) {
+      marcaOptions.push({ name: data[i].nombre, uid: data[i].id });
     }
+  }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:4000/Categoria");
+      const response = await fetch(
+        "https://localhost:4000/Categoria"
+      );
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -80,7 +90,7 @@ const Categories = () => {
   }
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
-  const [filterValue2, setFilterValue2]= React.useState("");
+  const [filterValue2, setFilterValue2] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -136,7 +146,15 @@ const Categories = () => {
     }
 
     return filteredUsers;
-  }, [data, hasSearchFilter, hasSearchFilter2, statusFilter, statusFilter2, filterValue, filterValue2]);
+  }, [
+    data,
+    hasSearchFilter,
+    hasSearchFilter2,
+    statusFilter,
+    statusFilter2,
+    filterValue,
+    filterValue2,
+  ]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -160,7 +178,7 @@ const Categories = () => {
   //Modal
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalMode, setModalMode] = useState("create");
-  const [selectedData, setSelectedData] = useState(null);
+  const [setSelectedData] = useState(null);
   const [datosCrear, setDatosCrear] = useState({
     nombre: "",
     sku: "",
@@ -168,18 +186,10 @@ const Categories = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const integerValue = parseInt(value, 10);
-    if (!isNaN(integerValue)) {
-      setDatosCrear((prevDatosCrear) => ({
-        ...prevDatosCrear,
-        [name]: integerValue,
-      }));
-      
-    } else {
-      // Puedes manejar el caso en el que el usuario ingrese un valor no válido aquí.
-    }
+    setDatosCrear({ ...datosCrear, [name]: value });
   };
-  
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleCreateClick = () => {
     setModalMode("create");
     onOpen();
@@ -196,18 +206,21 @@ const Categories = () => {
     onOpen(); // Abrir el modal
   };
 
-  const handleEditar = (item) => {
+  const handleEditar = () => {
     setModalMode("edit");
     onOpen(); // Abrir el modal
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!datosCrear.sku || isNaN(datosCrear.sku)) {
-      toast.warning("El campo SKU debe ser un número válido", { theme: "colored" });
+    console.log(datosCrear);
+    if (!datosCrear.nombre || isNaN(datosCrear.sku)) {
+      toast.warning("El campo SKU debe ser un número válido", {
+        theme: "colored",
+      });
       return;
     }
-    
+
     const updatedData = {
       //Crear
       nombre: datosCrear.nombre,
@@ -216,18 +229,20 @@ const Categories = () => {
     try {
       if (modalMode === "create") {
         // Crear nuevo elemento
-        const response = await fetch("https://localhost:4000/Categoria", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        });
+        const response = await fetch(
+          "https://localhost:4000/Categoria",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedData),
+          }
+        );
 
         if (response.ok) {
           // La solicitud fue exitosa, puedes mostrar un mensaje o realizar otras acciones
           toast.success("Elemento creado exitosamente", { theme: "colored" });
-          onClose(true);
           loadTask();
         } else {
           // Si la solicitud no es exitosa, maneja el error
@@ -251,7 +266,7 @@ const Categories = () => {
             <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
-        case "Sku":
+      case "Sku":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.sku}</p>
@@ -267,7 +282,9 @@ const Categories = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={() => handleVer(data.id)}>View</DropdownItem>
+                <DropdownItem onPress={() => handleVer(data.id)}>
+                  View
+                </DropdownItem>
                 <DropdownItem onPress={handleEditar}>Edit</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
@@ -318,17 +335,15 @@ const Categories = () => {
       setFilterValue2("");
     }
   }, []);
-  
+
   const onClear2 = useCallback(() => {
     setFilterValue2("");
     setPage(1);
   }, []);
-  
 
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -385,22 +400,26 @@ const Categories = () => {
             />
           </div>
           <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="SKU"
-              startContent={<MdSearch />}
-              value={filterValue2}
-              onClear={() => onClear2()}
-              onValueChange={(newValue) => onSearchChange2(newValue)} 
-            />
+            isClearable
+            size="sm"
+            className="w-[450px] sm:max-w-[44%]"
+            placeholder="SKU"
+            startContent={<MdSearch />}
+            value={filterValue2}
+            onClear={() => onClear2()}
+            onValueChange={(newValue) => onSearchChange2(newValue)}
+          />
           <div className="flex flex-wrap place-content-end space-x-2">
-            <AddExcelCategories/>
+            <AddExcelCategories />
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Categorías
             </Button>
-            <Button size="sm" color="primary" endContent={<TbPlus />}
-            onClick={handleCreateClick}>
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+              onClick={handleCreateClick}
+            >
               Nueva Categoría
             </Button>
           </div>
@@ -475,11 +494,14 @@ const Categories = () => {
   }, [
     filterValue,
     onSearchChange,
-    statusFilter,
+    filterValue2,
+    handleCreateClick,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
     onClear,
+    onClear2,
+    onSearchChange2,
   ]);
   const bottomContent = React.useMemo(() => {
     return (
@@ -594,8 +616,9 @@ const Categories = () => {
                           type="text"
                           placeholder=" "
                           variant="bordered"
+                          name="nombre"
                           onChange={handleChange}
-                          disabled={modalMode === 'view'} // Deshabilitar input en modo "ver"
+                          disabled={modalMode === "view"} // Deshabilitar input en modo "ver"
                         />
                       </div>
                       <div className="md:col-span-12">
@@ -608,8 +631,9 @@ const Categories = () => {
                           placeholder=" "
                           type="number"
                           variant="bordered"
+                          name="sku"
                           onChange={handleChange}
-                          disabled={modalMode === 'view'} // Deshabilitar input en modo "ver"
+                          disabled={modalMode === "view"} // Deshabilitar input en modo "ver"
                         />
                       </div>
                     </div>

@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Card, Spacer, Button, CardBody, Select, SelectItem } from "@nextui-org/react";
+import { useState, useEffect } from "react";
+import {
+  Card,
+  Spacer,
+  Button,
+  CardBody,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
+import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "../../components/auth/AuthProvider";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 const AccesPoint = () => {
   const auth = useAuth();
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedAlmacen, setSelectedAlmacen] = useState(null);
   const [data, setData] = useState([]);
 
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:4000/Almacenes");
+      const response = await fetch(
+        "https://localhost:4000/Almacenes"
+      );
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -31,13 +41,8 @@ const AccesPoint = () => {
     auth.guardarTablaID(selectedAlmacen.target.value);
     navigate(`/PointofSale`);
   };
-
-  const filteredData = selectedAlmacen
-    ? data.filter((almacen) => almacen.id === selectedAlmacen)
-    : data;
-
   useEffect(() => {
-    const tableId = localStorage.getItem('tableId');
+    const tableId = localStorage.getItem("tableId");
     if (tableId) {
       navigate(`/PointofSale`);
     }
@@ -79,7 +84,9 @@ const AccesPoint = () => {
                       label="Almacen"
                       placeholder="Selecciona el almacen"
                       size="sm"
-                      onChange={(selectedValue) => setSelectedAlmacen(selectedValue)}
+                      onChange={(selectedValue) =>
+                        setSelectedAlmacen(selectedValue)
+                      }
                     >
                       {data.map((almacen) => (
                         <SelectItem key={almacen.id} value={almacen.id}>
@@ -91,11 +98,7 @@ const AccesPoint = () => {
                 </div>
                 <Spacer y={6} />
                 <br />
-                <Button
-                  size="sm"
-                  color="primary"
-                  onClick={handleAccess}
-                >
+                <Button size="sm" color="primary" onClick={handleAccess}>
                   Acceder
                 </Button>
               </CardBody>

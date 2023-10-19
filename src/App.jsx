@@ -66,6 +66,7 @@ import PointofSale from "./views/pointSale/PointofSales.jsx";
 import Reports from "./views/pointSale/Reports.jsx";
 import Customers from "./views/pointSale/Customers.jsx";
 import NewSale from "./views/pointSale/NewSale.jsx";
+import Product from "./views/products/Product.jsx";
 import AccesPoint from "./views/pointSale/AccesPointOfSale.jsx";
 import PointsaleSales from "./views/pointSale/PointsaleSales.jsx";
 import AccesPointProductosView from "./views/pointSale/AccesPoint.Products.jsx";
@@ -339,11 +340,11 @@ const App = () => {
         },
         {
           path: "/Sales/Quotes/:id/ViewQuote",
-          element: <Quote />
+          element: <Quote />,
         },
         {
           path: "/Sales/Quotes/:id/EditQuote",
-          element: <Quote />
+          element: <Quote />,
         },
         {
           path: "/Sales/fillOrder",
@@ -378,7 +379,11 @@ const App = () => {
           element: <Provider />,
         },
         {
-          path: "/PointOfSale/Acces",
+          path: "/Products/NewProduct",
+          element: <Product />,
+        },
+        {
+          path: "/POS/Access",
           element: <AccesPoint />,
         },
         {
@@ -387,13 +392,6 @@ const App = () => {
         },
       ],
     },
-    {
-      path: "/",
-      element: <ProtectedRoute />,
-      children: [
-
-      ]
-    }
   ]);
   return <RouterProvider router={router} />;
 };

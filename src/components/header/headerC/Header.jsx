@@ -69,7 +69,7 @@ const Header = () => {
     }
   }
 
-  async function openNotifications() {}
+  // async function openNotifications() {}
   return (
     <>
       <header>
@@ -100,7 +100,7 @@ const Header = () => {
           </div>
           {auth.isAuthenticated ? (
             <div className="flex flex-wrap place-content-end space-1">
-              <Badge
+              {/* <Badge
                 content="10"
                 shape="circle"
                 color="danger"
@@ -139,7 +139,6 @@ const Header = () => {
                         </Tabs>
                       }
                     ></DropdownItem>
-                    {/* Aqui va el map */}
                     <DropdownItem key="profile" className="h-14 gap-2">
                       <div className="text-right">
                         <h6 className="text-default-500 text-xs">
@@ -184,7 +183,7 @@ const Header = () => {
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
-              </Badge>
+              </Badge> */}
               <Dropdown
                 showArrow
                 radius="sm"

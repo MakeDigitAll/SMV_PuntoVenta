@@ -267,7 +267,7 @@ const NewClient = () => {
     formData.append("image", selectedImage);
     try {
       const result = await http.put(
-        `http://localhost:4000/ListadoClientesEditing/${params.id}`,
+        `https://localhost:4000:4000/ListadoClientesEditing/${params.id}`,
         formData,
         {
           headers: {
