@@ -20,7 +20,9 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Select
+  Select, 
+  Checkbox,
+  Image
 } from "@nextui-org/react";
 import { TbDotsVertical, TbReload } from "react-icons/tb"
 import { AiOutlinePlus } from "react-icons/ai"
@@ -33,6 +35,7 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { format } from "date-fns";
 //Columnas de la tabla
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -82,25 +85,42 @@ const Promotions = () => {
   function contarmarca() {
     for (let i = 0; i < data.length; i++) {
       marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-    }
+    } 
   }
   const [data, setData] = useState([]);
-  async function loadTask() {
+  async function getPromotions() {
     try {
-      const response = await fetch("https://localhost:4000/ListadoProductosDescuento");
+      const response = await fetch("https://localhost:4000/ListadoPromociones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        const dataPromotions = await Promise.all(
+          data.map(async (item) => {
+            const response = await fetch(`https://localhost:4000/Productos/${item.idProducto}`);
+            const data = await response.json();
+            if (response.ok) {
+              return {
+                ...item,
+                nombre: data.nombre,
+                codigoEmpresa: data.codigoEmpresa,
+                imagen: data.imagen,
+              };
+            }
+            return item;
+          })
+        );
+        setData(dataPromotions);
       }
-    } catch {
+    } catch (err) {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
         theme: "colored",
       });
     }
   }
+
   useEffect(() => {
-    loadTask();
+    getPromotions(); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function handleClickBreadCrumbs(event) {
@@ -177,13 +197,13 @@ const Promotions = () => {
       case "id":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{data.idProducto}</p>
           </div>
         );
       case "imagen":
         return (
           <div className="flex flex-col">
-            <Images idImage={data.imagen} designType="tabla" ruta={"https://localhost:4000/ListadoProductosDescuento"} />
+            <Image value={data.imagen} width={50} height={50} />
           </div>
         );
       case "codigoEmpresa":
@@ -201,15 +221,27 @@ const Promotions = () => {
       case "desde":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.desde}
-            </p>
+            <Input
+              size="sm"
+              type="date"
+              className="w-[120px]"
+              value={format(new Date(data.desde), "yyyy-MM-dd")}
+              onChange={() => {}}
+              placeholder=""
+            />
           </div>
         );
       case "hasta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.hasta}</p>
+            <Input
+              size="sm"
+              type="date"
+              className="w-[120px]"
+              value={format(new Date(data.hasta), "yyyy-MM-dd")}
+              onChange={() => {}}
+              placeholder=""
+            />
           </div>
         );
       case "precioBase":
@@ -221,19 +253,30 @@ const Promotions = () => {
       case "descuento":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.descuento}</p>
+            <Input
+              size="sm"
+              type="number"
+              className="w-[80px]"
+              value={data.descuento}
+              onChange={() => {}}
+              placeholder=""
+            />
           </div>
         );
       case "precio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.precio}</p>
+            <p className="text-bold text-small capitalize">{data.precioDescuento}</p>
           </div>
         );
       case "activo":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.activo}</p>
+          <div className="flex flex-col"> 
+            <Checkbox
+              color="success"
+              isSelected={data.isActive}
+              onChange={() => {}}
+            />
           </div>
         );
       case "Actions":
@@ -713,11 +756,11 @@ const Promotions = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran Pedidos por surtir"}
+          emptyContent={"No se encuentran promociones registradas"}
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.idPromocion}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
