@@ -49,6 +49,21 @@ import http from "../../components/axios/Axios";
 import { use } from "i18next";
 const Quote = () => {
   const [user, setUser] = useState({
+    nombreCliente: "",
+    idVendedor: "",
+    fecha: format(new Date(), "yyyy-MM-dd"),
+    recurrencia: "",
+    envio: "",
+    comentarios: "",
+    neto: "50",
+    descuento: "5",
+    subtotal: "45",
+    impuestos: "7",
+    total: "52",
+
+
+
+
     nombre: "",
     apellido: "",
     email: "",
@@ -59,6 +74,22 @@ const Quote = () => {
     dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
+    nombreCliente: "",
+    idVendedor: "",
+    fechaCotizacion: "",
+    recurrencia: "",
+    envio: "",
+    comentarios: "",
+    neto: "",
+    descuento: "",
+    subtotal: "",
+    impuestos: "",
+    total: "",
+
+    idCotizacion: "",
+    idProducto: "",
+    active: "",
+
     pedido: "",
     cliente: "",
     recurrenciaa: "",
@@ -66,17 +97,6 @@ const Quote = () => {
     monto: "",
   });
 
-  // const [dataQuote, setDataQuote] = useState({
-  //   pedido: "",
-  //   cliente: "",
-  //   comentarios: "",
-  //   descuento: "",
-  //   vendedor: "",
-  //   recurrenciaa: "",
-  //   origen: "",
-  //   monto: "",
-  //   fecha: format(new Date(), "yyyy-MM-dd"),
-  // });
 
   const datosCliente = () => {
     async function loadDatosCliente() {
@@ -125,53 +145,34 @@ const Quote = () => {
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
-  const [isChecked, setIsChecked] = useState(false);
-  function handleCheckboxChange() {
-    setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
-    console.log(isChecked);
-  }
+
+  const handleChangeComentario = (e) => {
+    setUser({
+      ...user, comentarios: e.target.value,
+    });
+  };
+
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (
-      !dataQuote.pedido ||
-      !dataQuote.cliente ||
-      !dataQuote.vendedor ||
-      !dataQuote.recurrenciaa ||
-      !dataQuote.origen ||
-      !dataQuote.monto ||
-      passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" ||
-      emailConfirmValidationState !== "valid"
-    ) {
-      toast.error("Favor de llenar todos los campos correctamente", {
-        theme: "colored",
-      });
-    }
-
-    const errors = {};
-    !dataQuote.idCliente ? (errors.idCliente = "Llena este campo") : "";
-    !dataQuote.idVendedor ? (errors.idVendedor = "Llena este campo") : "";
-    !dataQuote.recurrencia ? (errors.recurrencia = "Llena este campo") : "";
-    !dataQuote.recurrenciaa ? (errors.recurrenciaa = "Llena este campo") : "";
-    !dataQuote.envio ? (errors.envio = "Llena este campo") : "";
-    !dataQuote.comentarios ? (errors.comentarios = "Llena este campo") : "";
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      return;
-    }
-    setValidationErrors({});
 
     const formData = new FormData();
-    const document = JSON.stringify({
-      pedido: dataQuote.pedido,
-      cliente: dataQuote.cliente,
-      vendedor: dataQuote.vendedor,
-      recurrenciaa: isChecked,
-      origen: dataQuote.origen,
-      monto: dataQuote.monto,
-    });
-    console.log(document.recurrenciaa);
+    const document = {
+      idCliente: idCliente,
+      idVendedor: idVendedor,
+      fecha: fechaCotizacion,
+      recurrencia: recurrenciaToSave,
+      envio: envio.envio,
+      comentarios: user.comentarios,
+      neto: cotizacionData.neto,
+      descuento: cotizacionData.descuento,
+      subTotal: cotizacionData.subtotal,
+      impuestos: cotizacionData.impuestos,
+      total: cotizacionData.total,
+    };
+    formData.append("document", JSON.stringify(document));
+    console.log(document);
+
     try {
       const result = await http.post(
         `https://localhost:4000:4000/Cotizaciones`,
@@ -182,17 +183,72 @@ const Quote = () => {
           },
         }
       );
-      if (response.status == 200) {
-        toast.success("Cotización Creada Correctamente", { theme: "colored" });
+
+      if (result.status === 200) {
+        console.log(result);
+        const newCotizacionId = result.data  //aqui se genera el id de la nueva cotiacion
+
+        console.log(filasAgregadas);
+        filasAgregadas.map((producto) => {
+          const formData2 = new FormData();
+          const document2 = {
+            idCotizacion: newCotizacionId,
+            idproducto: producto.codigo,        //aqui se guardaran los id
+            cantidadProducto: producto.cantidad,  //aqui se guardaran las cantidades 
+          };
+          formData2.append("document2", JSON.stringify(document2));
+          console.log(document2);
+          async function insertProductCotizacion () {
+            try {
+               
+                //realizamos la segunda solicitud para guardar los datos
+                const response2 = await http.post(
+                  `https://localhost:4000/ProductosCotizados`,
+                  formData2,
+                  {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    },
+                  }
+                );
+  
+                if (response2.status === 200) {
+                  toast.success("Cliente creado correctamente", { theme: "colored" });
+                  navigate("/Sales/Quotes");
+                } else {
+                  toast.error("Error al crear una cotizacion", {
+                    position: "bottom-right",
+                    theme: "colored",
+                  });
+                }
+              
+            } catch (error) {
+              toast.error("Error al crear una cotizacion", {
+                position: "bottom-right",
+                theme: "colored",
+              });
+            }
+
+          }
+          insertProductCotizacion();          
+        })
+
+      } else {
+        console.log(result);
       }
-      navigate("/Sales/Quotes");
-    } catch (error) {
-      toast.error("Error al guardar Cotización", {
-        position: "bottom-right",
-        theme: "colored",
-      });
+    } catch (e) {
+      if (e.response && e.response.status === 501) {
+        toast.error("Error al crear una cotizacion", {
+          theme: "colored",
+        });
+      } else if (e.response && e.response.data && e.response.data.body.error) {
+        toast.error(e.response.data.body.error, {
+          theme: "colored",
+        });
+      }
     }
   }
+
 
   const navigate = useNavigate();
   const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
@@ -246,6 +302,8 @@ const Quote = () => {
     envio: "",
   });
 
+
+
   const [datos, setData] = useState([]);
   const loadTask = async (folio) => {
     console.log(folio);
@@ -266,30 +324,30 @@ const Quote = () => {
     }
   };
 
-  const getCotizacion = async (folioCotizacion) => {
-    var folio = Number(folioCotizacion);
-    try {
-      const response = await fetch(
-        "https://localhost:4000:4000/Cotizaciones/" + folio
-      );
-      const data = await response.json();
-      if (response.ok) {
-        setCotizacionData({
-          fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
-          recurrencia: Number(data.recurrencia),
-          comentarios: data.comentarios,
-          envio: data.envio,
-        });
-        console.log(data);
-        getDatosCliente(data.idCliente);
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  };
+  // const getCotizacion = async (folioCotizacion) => {
+  //   var folio = Number(folioCotizacion);
+  //   try {
+  //     const response = await fetch(
+  //       "https://localhost:4000:4000/Cotizaciones/" + folio
+  //     );
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       setCotizacionData({
+  //         fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
+  //         recurrencia: Number(data.recurrencia),
+  //         comentarios: data.comentarios,
+  //         envio: data.envio,
+  //       });
+  //       console.log(data);
+  //       getDatosCliente(data.idCliente);
+  //     }
+  //   } catch {
+  //     toast.error("Error al cargar los datos", {
+  //       position: "bottom-right",
+  //       theme: "colored",
+  //     });
+  //   }
+  // };
 
   // useEffect(() => {
   //   console.log(params);
@@ -365,7 +423,7 @@ const Quote = () => {
     let total = 0;
 
     for (const fila of filas) {
-      const neto = fila.cantidad * fila.precioUnitario;
+      let neto = fila.cantidad * fila.precioUnitario;
       const descuentoValor = (neto * fila.descuento) / 100;
       const subtotal = neto - descuentoValor;
       const impuestos = subtotal * 0.16; // Cambia el valor del impuesto según tu necesidad
@@ -387,9 +445,10 @@ const Quote = () => {
     };
   }
 
+  let totalesNuevaTabla;
   const calcularTotales = () => {
     const tablaResumen = document.getElementById("tablaCalculos");
-    const totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
+    let totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
     // Actualiza los valores en la tabla de resumen
     tablaResumen.querySelector(
       "#netoTotal"
@@ -411,6 +470,8 @@ const Quote = () => {
     // Esta función se ejecutará cuando el componente esté montado
     calcularTotales();
   }, [filasAgregadas /*, dataQuote.descuento*/]);
+
+
 
   const handleCantidadChange = (event, index) => {
     const nuevasCantidades = [...cantidadProducto];
@@ -476,6 +537,7 @@ const Quote = () => {
   // -- Codigo para cargar productos
   const [productos, setProductos] = useState([]);
 
+
   const handleOpenAddProduct = () => {
     onOpen();
     async function loadProducts() {
@@ -484,6 +546,7 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
+          // console.log(data[0].idproducto);
         }
       } catch (err) {
         toast.error("Error al cargar los datos", {
@@ -497,6 +560,71 @@ const Quote = () => {
   //--------------------------------------------------------------------------------------//
   //para idenfificar si se va a hacer una edicion, creacion o modificacion de cotizacion //
   //--------------------------------------------------------------------------------------//
+
+
+  const getCotizacion = async (folioCotizacion) => {
+    var folio = Number(folioCotizacion);
+    try {
+      const response = await fetch(
+        "https://localhost:4000/Cotizaciones/" + folio
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setCotizacionData({
+          fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
+          recurrencia: Boolean(Number(data.recurrencia)),
+          comentarios: data.comentarios,
+          envio: data.envio,
+        });
+        getDatosCliente(data.idCliente);
+
+        try {
+          const response = await fetch(
+            "https://localhost:4000/ProductosCotizados/" + folio
+          );
+
+          const data = await response.json();
+          console.log(data);
+          if (response.ok) {
+            const datos = await Promise.all(
+              data.map(async (producto) => {
+                const response = await fetch(
+                  "https://localhost:4000/Productos/" + producto.idProducto
+                );
+                const data = await response.json();
+                if (response.ok) {
+                  return {
+                    codigo: data.codigoEmpresa,
+                    nombre: data.nombre,
+                    marca: data.marca,
+                    cantidad: producto.cantidad,
+                    inventario: data.existencia,
+                    precioUnitario: producto.valorneto,
+                    descuento: data.descuento,
+                    total: Number(producto.valorneto) * Number(producto.cantidad) - (Number(producto.valorneto) * Number(producto.cantidad) * Number(data.descuento)) / 100,
+                  };
+                }
+              })
+            );
+            setFilasAgregadas(datos);
+          }
+        } catch (err) {
+          console.log(err);
+          toast.error("Error al cargar los datos", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  };
+
 
   var [isOnlyRead, setIsOnlyRead] = useState(false);
   var [variable, setVariable] = useState("Nueva Cotización");
@@ -534,6 +662,7 @@ const Quote = () => {
   //para almacenar los resultados de la busqueda
   const [filterCliente, setFilterCliente] = useState([]);
   //para almacenar los resultados de la busqueda
+  const [nombreVendedor, setNombreVendedor] = useState("");
   const [idVendedor, setIdVendedor] = useState("");
 
   //fechaCotizacion
@@ -541,13 +670,20 @@ const Quote = () => {
 
   //Es recurrente
   const [isRecurrente, setIsRecurrente] = useState(false);
+  const recurrenciaToSave = isRecurrente ? 1 : 0;
+
 
   //para almacenar los datos del cliente seleccionado
   const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
+  //console.log(clienteInfoGeneral);
   const [clienteInfoDireccion, setClienteInfoDireccion] = useState([]);
   const [clienteInfoFacturacion, setClienteInfoFacturacion] = useState([]);
 
   //para el envio
+  const handleChangeEnvio = selectedEnvio => {
+    setEnvio({ ...envio, envio: selectedEnvio });
+  };
+
   const [envio, setEnvio] = useState("");
 
   //true o false para saber que informacion se muestra
@@ -636,13 +772,15 @@ const Quote = () => {
       cliente.nombreComercial.toLowerCase().includes(searchNombreCliente)
     );
 
+
     if (
-      usuariosSearch.length > 0 &&
+      usuariosSearch.length > 0 ||
       usuariosSearch.length !== clientes.length
     ) {
       setIsResultSearchCliente(true);
       setFilterCliente(usuariosSearch);
-    } else {
+    }
+    else {
       setIsResultSearchCliente(false);
     }
   };
@@ -659,11 +797,13 @@ const Quote = () => {
     setIdCliente(cliente.id);
     setNombreSelectedCliente(cliente.nombreComercial);
     setSearchNombreCliente(cliente.nombreComercial);
-    setIdVendedor(cliente.vendedor);
+    setNombreVendedor(cliente.vendedor)
+    setIdVendedor(cliente.idVendedor);
     setIsResultSearchCliente(false);
     setFechaCotizacion(format(new Date(), "yyyy-MM-dd"));
     setShowInfoGeneral(true);
     setClienteDataGeneral(cliente);
+
   };
 
   const setClienteDataGeneral = (cliente) => {
@@ -845,7 +985,7 @@ const Quote = () => {
                                 isRequired
                                 isDisabled
                                 name="vendedor"
-                                value={
+                                value={user.idVendedor ||
                                   idVendedor || clienteInfoGeneral.vendedor
                                 }
                                 onChange={handleChange}
@@ -862,7 +1002,7 @@ const Quote = () => {
                               <Input
                                 id="fecha"
                                 isRequired
-                                value={cotizacionData.fecha}
+                                value={user.fecha || cotizacionData.fecha}
                                 size={"sm"}
                                 isDisabled
                                 type="date"
@@ -909,16 +1049,16 @@ const Quote = () => {
                                           setShowInfoFacturacion(false),
                                           handleClickDireccion(direcciones))
                                         : direcciones.facturacion
-                                        ? (setShowInfoGeneral(false),
-                                          setShowInfoDireccion(false),
-                                          setShowInfoFacturacion(true),
-                                          handleClickFacturacion(direcciones))
-                                        : (setShowInfoGeneral(true),
-                                          setShowInfoDireccion(false),
-                                          setShowInfoFacturacion(false),
-                                          setClienteInfoGeneral(
-                                            clienteInfoGeneral
-                                          ));
+                                          ? (setShowInfoGeneral(false),
+                                            setShowInfoDireccion(false),
+                                            setShowInfoFacturacion(true),
+                                            handleClickFacturacion(direcciones))
+                                          : (setShowInfoGeneral(true),
+                                            setShowInfoDireccion(false),
+                                            setShowInfoFacturacion(false),
+                                            setClienteInfoGeneral(
+                                              clienteInfoGeneral
+                                            ));
                                     }}
                                   >
                                     {direcciones.nombreDireccion}
@@ -1243,27 +1383,58 @@ const Quote = () => {
                               )}
                             </div>
                             <div className="md:col-span-6">
-                              <Select
-                                labelPlacement={"outside"}
-                                label="Envío"
-                                placeholder="Seleccione"
-                                size="sm"
-                                isDisabled={isOnlyRead}
-                                isRequired
-                                value={cotizacionData.envio}
-                                onChange={(e) => {
-                                  setCotizacionData({
-                                    ...cotizacionData,
-                                    envio: e.target.value,
-                                  });
-                                }}
-                              >
-                                {envios.map((envios) => (
-                                  <SelectItem key={envios} value={envios}>
-                                    {envios}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                              <Dropdown>
+                                <DropdownTrigger>
+                                  <Input
+                                    size={"sm"}
+                                    type="text"
+                                    label="Envío"
+                                    isRequired
+                                    isDisabled={isOnlyRead}
+                                    name="envio"
+                                    value={user.envio || cotizacionData.envio || "Seleccione"}
+                                    onChange={handleChange}
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.envio !== ""}
+                                    errorMessage={validationErrors.envio}
+                                    endContent={<MdKeyboardArrowDown />}
+                                  />
+                                </DropdownTrigger>
+                                <DropdownMenu>
+                                  <DropdownItem
+                                    onClick={() => handleChangeEnvio("No Aplica") ||
+                                      setCotizacionData({
+                                        ...cotizacionData,
+                                        envio: "No Aplica",
+                                      })
+                                    }
+                                  >
+                                    No Aplica
+                                  </DropdownItem>
+                                  <DropdownItem
+                                    onClick={() => handleChangeEnvio("Recoger en Oficina") ||
+                                      setCotizacionData({
+                                        ...cotizacionData,
+                                        envio: "Recoger en Oficina",
+                                      })
+                                    }
+                                  >
+                                    Recoger en Oficina
+                                  </DropdownItem>
+                                  <DropdownItem
+                                    onClick={() => handleChangeEnvio("Envío a domicilio") ||
+                                      setCotizacionData({
+                                        ...cotizacionData,
+                                        envio: "Envío a domicilio",
+                                      })
+                                    }
+                                  >
+                                    Envío a domicilio
+                                  </DropdownItem>
+                                </DropdownMenu>
+                              </Dropdown>
                             </div>
                           </div>
                         </div>
@@ -1383,8 +1554,8 @@ const Quote = () => {
                                 label="Comentarios de la Cotización"
                                 isDisabled={isOnlyRead}
                                 labelPlacement="outside"
-                                value={cotizacionData.comentarios}
-                                onChange={(e) =>
+                                value={user.comentarios || cotizacionData.comentarios}
+                                onChange={(e) => handleChangeComentario(e) ||
                                   setCotizacionData({
                                     ...cotizacionData,
                                     comentarios: e.target.value,
