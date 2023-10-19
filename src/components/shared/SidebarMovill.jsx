@@ -7,7 +7,7 @@ import {
   RiCloseLine,
 } from "react-icons/ri";
 import Sidebar from "./Sidebar";
-import Car from "./Car"
+import { Image } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 const SidebarMovil = () => {
     const navigate = useNavigate();

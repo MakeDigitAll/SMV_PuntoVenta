@@ -8,7 +8,7 @@ import {
 } from "react-icons/ri";
 import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-
+import { Image } from "@nextui-org/react";
 const Sidebar = (props) => {
   const { showMenu } = props;
   const navigate = useNavigate();

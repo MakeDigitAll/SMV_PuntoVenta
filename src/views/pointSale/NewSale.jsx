@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdMoney } from "react-icons/md";
+import AccesPointProductosView from './AccesPoint.Products';
 
 const NewSale = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -25,7 +26,9 @@ const NewSale = () => {
     setShowMenu(false);
   };
   return (
+    
     <>
+     
       <div className="bg-[#262837] w-full min-h-screen">
         <Sidebar showMenu={showMenu}/>
         <SidebarMovil 
@@ -69,6 +72,9 @@ const NewSale = () => {
                   <MdMoney sx={{ mr: 0.5 }} fontSize="inherit" />
                   Nueva Venta
                 </Typography>
+                <div>
+        <AccesPointProductosView/>
+      </div>
               </Breadcrumbs>
             </div>
           </div>
@@ -76,6 +82,7 @@ const NewSale = () => {
       </div>
         </main>
       </div>
+     
     </>
   );
 };
