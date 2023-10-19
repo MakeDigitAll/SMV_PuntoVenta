@@ -52,10 +52,11 @@ const columnsProductos = [
   { name: "Nombre", uid: "nombre", sortable: false },
   { name: "Marca", uid: "marca", sortable: false },
   { name: "Inv.", uid: "inv", sortable: false },
-  { name: "Precio Uni.", uid: "precioUnitario", sortable: false },
-  { name: "Descuento", uid: "descuento", sortable: false },
-  { name: "Cantidad", uid: "cantidad", sortable: false },
   { name: "Total", uid: "total", sortable: false },
+  { name: "Precio Uni.", uid: "precioUnitario", sortable: false },
+  { name: "Fecha desde", uid: "fechaDesde", sortable: false },
+  { name: "Fecha hasta", uid: "fechaHasta", sortable: false },
+  { name: "Descuento", uid: "descuento", sortable: false },
   { name: "Agregar", uid: "agregar", sortable: false },
 ];
 
@@ -291,17 +292,38 @@ const Promotions = () => {
         );
       case "descuento":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.descuento}</p>
-          </div>
-        );
-
-      case "cantidad":
-        return (
           <Input
             size="sm"
             type="number"
             className="w-[80px]"
+            //value={cantidadProducto[index] || ""}
+            onChange={(e) =>
+              handleCantidadChange(e, index)
+            }
+            placeholder=""
+          />
+        );
+
+      case "fechaDesde":
+        return (
+          <Input
+            size="sm"
+            type="date"
+            className="w-[120px]"
+            //value={cantidadProducto[index] || ""}
+            onChange={(e) =>
+              handleCantidadChange(e, index)
+            }
+            placeholder=""
+          />
+        );
+
+      case "fechaHasta":
+        return (
+          <Input
+            size="sm"
+            type="date"
+            className="w-[120px]"
             //value={cantidadProducto[index] || ""}
             onChange={(e) =>
               handleCantidadChange(e, index)
