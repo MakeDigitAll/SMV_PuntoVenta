@@ -128,6 +128,29 @@ const ClientList = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+
+  async function loadTask() {
+    try {
+      const response = await fetch("https://localhost:4000/ListadoClientes");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+        
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  useEffect(() => {
+    loadTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const handleDisable = async (id) => {
     const datoDisable = {
       id: id
