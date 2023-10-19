@@ -4,7 +4,7 @@ import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 import Cards from "../../components/shared/Cards";
-import Card from "../../components/shared/Card";
+import Card from "../../components/shared/Card.jsx";
 import React from "react";
 import  { useEffect, useState } from "react";
 
