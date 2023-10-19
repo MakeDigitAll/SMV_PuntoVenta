@@ -19,7 +19,7 @@ const Car = (props) => {
         {/* Pills */}
         <div className="flex items-center gap-4 flex-wrap mb-8">
           <button className="bg-[#ec7c6a] text-white py-2 px-4 rounded-xl">
-            Nueva Venta
+            Clientes +
           </button>
           <button className="text-[#ec7c6a] py-2 px-4 rounded-xl border border-gray-500">
             To Go

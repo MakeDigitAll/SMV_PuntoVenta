@@ -13,8 +13,8 @@ const Customers = () => {
   const navigate = useNavigate(); 
   const datos=[
         { id: 1, imagen:'Hola1', nombre: 'Ejemplo 1',nombreComercial: 'Ejemplo 1',contactoPrincipal:"Pr1",telefono:"4502012", correo: 'Descripción1@gmail.com',vendedor:"Zulema",activo:"1",registro:"2023-02-14",actualizado:"2023-10-18" },
-        { id: 2, imagen:'Hola1', nombre: 'Ejemplo 2', correo: 'Descripción 2',nombreComercial: 'Ejemplo 2',contactoPrincipal:"Pr2",telefono:"4502012", correo: 'Descripción2@gmail.com',vendedor:"Zulema",activo:"1",registro:"2023-02-14",actualizado:"2023-10-18"},
-        { id: 3, imagen:'Hola1', nombre: 'Ejemplo 3', correo: 'Descripción 3', nombreComercial: 'Ejemplo 3',contactoPrincipal:"Pr3",telefono:"4502012", correo: 'Descripción3@gmail.com',vendedor:"Zulema",activo:"1",registro:"2023-02-14",actualizado:"2023-10-18" },]
+        { id: 2, imagen:'Hola1', nombre: 'Ejemplo 2', nombreComercial: 'Ejemplo 2',contactoPrincipal:"Pr2",telefono:"4502012", correo: 'Descripción2@gmail.com',vendedor:"Zulema",activo:"1",registro:"2023-02-14",actualizado:"2023-10-18"},
+        { id: 3, imagen:'Hola1', nombre: 'Ejemplo 3', nombreComercial: 'Ejemplo 3',contactoPrincipal:"Pr3",telefono:"4502012", correo: 'Descripción3@gmail.com',vendedor:"Zulema",activo:"1",registro:"2023-02-14",actualizado:"2023-10-18" },]
   return (
     <>
       <div className="bg-[#262837] w-full min-h-screen">
