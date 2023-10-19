@@ -7,8 +7,11 @@ import {
   RiCloseLine,
 } from "react-icons/ri";
 import Sidebar from "./Sidebar";
+import { Image } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 import Car from "./Car"
 const SidebarMovil = () => {
+    const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const [showOrder, setShowOrder] = useState(false);
     const toggleMenu = () => {
@@ -25,7 +28,8 @@ const SidebarMovil = () => {
         <Sidebar showMenu={showMenu}/>
         <Car showOrder={showOrder} setShowOrder={setShowOrder} />
         <nav className="bg-[#1F1D2B] lg:hidden fixed w-full bottom-0 left-0 text-3xl text-gray-400 py-2 px-8 flex items-center justify-between rounded-tl-xl rounded-tr-xl">
-        <button className="p-2">
+        <button className="p-2"
+        onClick={()=>navigate("/PointofSale/Customers")}>
           <RiUser3Line />
         </button>
         <button className="p-2">

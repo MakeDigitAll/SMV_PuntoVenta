@@ -4,8 +4,7 @@ import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 import Cards from "../../components/shared/Cards";
-import Card from "../../components/shared/Card";
-import Car from "../../components/shared/Car";
+import Card from "../../components/shared/Card.jsx";
 import React from "react";
 import  { useEffect, useState } from "react";
 
@@ -60,9 +59,8 @@ const PointofSale = () => {
     <div className="bg-[#262837] w-full min-h-screen">
       <Sidebar />
       <SidebarMovil />
-      <Car/>
       <Spacer y={8} />
-      <main className="lg:pl-32 lg:pr-96 pb-20">
+      <main className="lg:pl-32 ">
        <div className="md:p-8 p-4">
         <HeaderPointofSale />
         <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-16">

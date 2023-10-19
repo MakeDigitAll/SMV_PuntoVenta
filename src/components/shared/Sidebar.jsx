@@ -7,7 +7,7 @@ import {
 } from "react-icons/ri";
 import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-
+import { Image } from "@nextui-org/react";
 const Sidebar = (props) => {
   // eslint-disable-next-line react/prop-types
   const { showMenu } = props;
@@ -39,33 +39,35 @@ const Sidebar = (props) => {
             </li>
             <li className="bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl">
               <a
-                href="#"
                 className="bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-white"
                 title="Inicio"
               >
-                <RiHome6Line className="text-2xl" />
+                <RiHome6Line className="text-2xl" 
+                 onClick={()=>navigate("/PointofSale")}/>
               </a>
             </li>
             <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
               <a
                 href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
+                title="Reportes"
               >
                 <TbReportAnalytics className="text-2xl" />
               </a>
             </li>
-            <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
+            <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors}">
               <a
-                href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
+                title="Ventas"
               >
-                <TbMoneybag className="text-2xl" />
+                <TbMoneybag className="text-2xl"
+                 onClick={()=>navigate("/PointofSale/Sales")} />
               </a>
             </li>
             <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
               <a
-                href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
+                title="Clientes"
               >
                 <RiGroup2Fill
                   className="text-2xl"
@@ -77,8 +79,10 @@ const Sidebar = (props) => {
               <a
                 href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
+                title="Nueva Venta"
               >
-                <RiUser2Fill className="text-2xl" />
+                <RiUser2Fill className="text-2xl" 
+                onClick={()=>navigate("/PointofSale/NewSale")}/>
               </a>
             </li>
             <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
@@ -93,7 +97,6 @@ const Sidebar = (props) => {
           </ul>
         </div>
       </div>
-    </>
   );
 };
 
