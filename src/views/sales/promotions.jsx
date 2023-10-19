@@ -421,6 +421,7 @@ const Promotions = () => {
     const start = (pageProductos - 1) * rowsPerPageProductos;
     const end = start + rowsPerPageProductos;
     if (productosSearched.length === 0 && !nameProducto) {
+      setProductosSearched(productos);
       return productos.slice(start, end);
     }
     return productosSearched.slice(start, end);
