@@ -10,15 +10,15 @@ const AccesPointProductosView = () => {
   const [precio, setPrecio] = useState(""); // Cambio de precioUnitario a precio
   const [descuento, setDescuento] = useState("");
   const [productos, setProductos] = useState([]);
-  const [productosDB, setProductosDB] = useState([]); // Almacena la lista de productos desde la DB
   const [searchTerm, setSearchTerm] = useState("");
   const [productosEnOrden, setProductosEnOrden] = useState([]); // Almacena los productos en la orden
   const [totalProductosEnOrden, setTotalProductosEnOrden] = useState(0); // Estado para el total de productos en la orden
   const [cantidadProductosAgregados, setCantidadProductosAgregados] = useState({});
   const [cantidadTotalEnOrden, setCantidadTotalEnOrden] = useState(0);
   const [precioTotalEnOrden, setPrecioTotalEnOrden] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1); // Página actual de la tabla 1
-  const productsPerPage = 3; // Cantidad de productos por página
+  const [currentPage, setCurrentPage] = useState(1);
+  const [buscador, setBuscador] = useState("");
+  const productsPerPage = 3;
 
   async function loadProductosFromDB() {
     try {
@@ -42,7 +42,15 @@ const AccesPointProductosView = () => {
       return total + subtotal;
     }, 0);
   };
-
+  const filtrarProductos = productos.filter(
+    (producto) =>
+      producto.nombre.toLowerCase().includes(buscador.toLowerCase()) ||
+      producto.idproducto.toLowerCase().includes(buscador.toLowerCase())
+  );
+  const openModal = () => {
+    setShowModal(true);
+  };
+  
   const actualizarTotalProductosEnOrden = () => {
     const total = calcularTotal(productosEnOrden);
     setTotalProductosEnOrden(total);
@@ -57,13 +65,13 @@ const AccesPointProductosView = () => {
 
   // Calcular el índice de inicio y final para la paginación
   const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = productosOrdenados.slice(indexOfFirstProduct, indexOfLastProduct);
+const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+const currentProducts = productosOrdenados.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Cambiar la página
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+// Cambiar la página
+const paginate = (pageNumber) => {
+  setCurrentPage(pageNumber);
+};
 
   const handleAgregarProducto = () => {
     const nuevoProducto = {
@@ -104,7 +112,7 @@ const AccesPointProductosView = () => {
         // Si el producto ya está en la orden, solo incrementa la cantidad
         productInOrder.cantidad += 1;
         productInOrder.total = productInOrder.cantidad * productInOrder.precio * (1 - productInOrder.descuento / 100);
-
+     
         // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
         const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
         updatedCantidadTotalEnOrden[selectedProduct.idproducto] = (updatedCantidadTotalEnOrden[selectedProduct.idproducto] || 0) + 1;
@@ -113,6 +121,7 @@ const AccesPointProductosView = () => {
         const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
         updatedPrecioTotalEnOrden[selectedProduct.idproducto] = (updatedPrecioTotalEnOrden[selectedProduct.idproducto] || 0) + selectedProduct.precio * (1 - selectedProduct.descuento / 100);
         setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
+        
       } else {
         // Si el producto no está en la orden, agrégalo
         setProductosEnOrden([...productosEnOrden, {
@@ -263,17 +272,48 @@ const AccesPointProductosView = () => {
           </tbody>
         </table>
 
-        <div>
-          <ul className="pagination">
-            {Array.from({ length: Math.ceil(productosOrdenados.length / productsPerPage) }).map((_, index) => (
-              <li key={index} className="page-item">
-                <button className="page-link" onClick={() => paginate(index + 1)}>
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+       <div className="pagination" style={{ textAlign: 'left' }}>
+  <button
+    className="page-link"
+    onClick={() => {
+      if (currentPage > 1) {
+        paginate(currentPage - 1);
+      }
+    }}
+  >
+    &lt;
+  </button>
+  {Array.from({ length: Math.ceil(productosOrdenados.length / productsPerPage) }).map((_, index) => (
+    <button
+      key={index}
+      className={`page-link ${currentPage === index + 1 ? "active" : ""}`}
+      onClick={() => paginate(index + 1)}
+      style={{
+        margin: '0.2rem',
+        border: '1px solid #ccc',
+        padding: '0.3rem 0.5rem',
+        borderRadius: '4px',
+        background: currentPage === index + 1 ? '#007bff' : 'transparent',
+        color: '#fff', // Hace que el color del texto sea blanco
+      }}
+    >
+      {index + 1}
+    </button>
+  ))}
+  <button
+    className="page-link"
+    onClick={() => {
+      if (currentPage < Math.ceil(productosOrdenados.length / productsPerPage)) {
+        paginate(currentPage + 1);
+      }
+    }}
+  >
+    &gt;
+  </button>
+</div>
+
+
+
 
        
 
