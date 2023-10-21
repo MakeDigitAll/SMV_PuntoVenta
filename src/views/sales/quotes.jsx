@@ -215,7 +215,7 @@ const Quotes = () => {
       };
       try {
         const res = await fetch(
-          `http://localhost:4000/CotizacionesDisable/${id}`,
+          `https://localhost:4000:4000/CotizacionesDisable/${id}`,
           {
             method: "POST",
             headers: {

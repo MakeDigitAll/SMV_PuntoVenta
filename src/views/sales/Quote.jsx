@@ -52,6 +52,21 @@ import http from "../../components/axios/Axios";
 
 const Quote = () => {
   const [user, setUser] = useState({
+    nombreCliente: "",
+    idVendedor: "",
+    fecha: format(new Date(), "yyyy-MM-dd"),
+    recurrencia: "",
+    envio: "",
+    comentarios: "",
+    neto: "50",
+    descuento: "5",
+    subtotal: "45",
+    impuestos: "7",
+    total: "52",
+
+
+
+
     nombre: "",
     apellido: "",
     email: "",
@@ -62,6 +77,22 @@ const Quote = () => {
     dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
+    nombreCliente: "",
+    idVendedor: "",
+    fechaCotizacion: "",
+    recurrencia: "",
+    envio: "",
+    comentarios: "",
+    neto: "",
+    descuento: "",
+    subtotal: "",
+    impuestos: "",
+    total: "",
+
+    idCotizacion: "",
+    idProducto: "",
+    active: "",
+
     pedido: "",
     cliente: "",
     recurrenciaa: "",
@@ -117,53 +148,34 @@ const Quote = () => {
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
-  const [isChecked, setIsChecked] = useState(false);
-  function handleCheckboxChange() {
-    setIsChecked(!isChecked); // Cambiar el estado al hacer clic del checkbox
-    console.log(isChecked);
-  }
+
+  const handleChangeComentario = (e) => {
+    setUser({
+      ...user, comentarios: e.target.value,
+    });
+  };
+
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (
-      !dataQuote.pedido ||
-      !dataQuote.cliente ||
-      !dataQuote.vendedor ||
-      !dataQuote.recurrenciaa ||
-      !dataQuote.origen ||
-      !dataQuote.monto ||
-      passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" ||
-      emailConfirmValidationState !== "valid"
-    ) {
-      toast.error("Favor de llenar todos los campos correctamente", {
-        theme: "colored",
-      });
-    }
-
-    const errors = {};
-    !dataQuote.idCliente ? (errors.idCliente = "Llena este campo") : "";
-    !dataQuote.idVendedor ? (errors.idVendedor = "Llena este campo") : "";
-    !dataQuote.recurrencia ? (errors.recurrencia = "Llena este campo") : "";
-    !dataQuote.recurrenciaa ? (errors.recurrenciaa = "Llena este campo") : "";
-    !dataQuote.envio ? (errors.envio = "Llena este campo") : "";
-    !dataQuote.comentarios ? (errors.comentarios = "Llena este campo") : "";
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      return;
-    }
-    setValidationErrors({});
 
     const formData = new FormData();
-    const document = JSON.stringify({
-      pedido: dataQuote.pedido,
-      cliente: dataQuote.cliente,
-      vendedor: dataQuote.vendedor,
-      recurrenciaa: isChecked,
-      origen: dataQuote.origen,
-      monto: dataQuote.monto,
-    });
-    console.log(document.recurrenciaa);
+    const document = {
+      idCliente: idCliente,
+      idVendedor: idVendedor,
+      fecha: fechaCotizacion,
+      recurrencia: recurrenciaToSave,
+      envio: envio.envio,
+      comentarios: user.comentarios,
+      neto: cotizacionData.neto,
+      descuento: cotizacionData.descuento,
+      subTotal: cotizacionData.subtotal,
+      impuestos: cotizacionData.impuestos,
+      total: cotizacionData.total,
+    };
+    formData.append("document", JSON.stringify(document));
+    console.log(document);
+
     try {
       const result = await http.post(
         `https://localhost:4000/Cotizaciones`,
@@ -174,17 +186,72 @@ const Quote = () => {
           },
         }
       );
-      if (response.status == 200) {
-        toast.success("Cotización Creada Correctamente", { theme: "colored" });
+
+      if (result.status === 200) {
+        console.log(result);
+        const newCotizacionId = result.data  //aqui se genera el id de la nueva cotiacion
+
+        console.log(filasAgregadas);
+        filasAgregadas.map((producto) => {
+          const formData2 = new FormData();
+          const document2 = {
+            idCotizacion: newCotizacionId,
+            idproducto: producto.codigo,        //aqui se guardaran los id
+            cantidadProducto: producto.cantidad,  //aqui se guardaran las cantidades 
+          };
+          formData2.append("document2", JSON.stringify(document2));
+          console.log(document2);
+          async function insertProductCotizacion () {
+            try {
+               
+                //realizamos la segunda solicitud para guardar los datos
+                const response2 = await http.post(
+                  `https://localhost:4000/ProductosCotizados`,
+                  formData2,
+                  {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    },
+                  }
+                );
+  
+                if (response2.status === 200) {
+                  toast.success("Cliente creado correctamente", { theme: "colored" });
+                  navigate("/Sales/Quotes");
+                } else {
+                  toast.error("Error al crear una cotizacion", {
+                    position: "bottom-right",
+                    theme: "colored",
+                  });
+                }
+              
+            } catch (error) {
+              toast.error("Error al crear una cotizacion", {
+                position: "bottom-right",
+                theme: "colored",
+              });
+            }
+
+          }
+          insertProductCotizacion();          
+        })
+
+      } else {
+        console.log(result);
       }
-      navigate("/Sales/Quotes");
-    } catch (error) {
-      toast.error("Error al guardar Cotización", {
-        position: "bottom-right",
-        theme: "colored",
-      });
+    } catch (e) {
+      if (e.response && e.response.status === 501) {
+        toast.error("Error al crear una cotizacion", {
+          theme: "colored",
+        });
+      } else if (e.response && e.response.data && e.response.data.body.error) {
+        toast.error(e.response.data.body.error, {
+          theme: "colored",
+        });
+      }
     }
   }
+
 
   const navigate = useNavigate();
   const envios = ["No Aplica", "Recoger en Oficina", "Envío a domicilio"];
@@ -242,6 +309,8 @@ const Quote = () => {
     impuestos: 0,
     total: 0,
   });
+
+
 
   const [datos, setData] = useState([]);
   const loadTask = async (folio) => {
@@ -318,7 +387,7 @@ const Quote = () => {
     let total = 0;
 
     for (const fila of filas) {
-      const neto = fila.cantidad * fila.precioUnitario;
+      let neto = fila.cantidad * fila.precioUnitario;
       const descuentoValor = (neto * fila.descuento) / 100;
       const subtotal = neto - descuentoValor;
       const impuestos = subtotal * 0.16; // Cambia el valor del impuesto según tu necesidad
@@ -340,9 +409,10 @@ const Quote = () => {
     };
   }
 
+  let totalesNuevaTabla;
   const calcularTotales = () => {
     const tablaResumen = document.getElementById("tablaCalculos");
-    const totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
+    let totalesNuevaTabla = calcularTotalesTablaResumen(filasAgregadas);
     // Actualiza los valores en la tabla de resumen
     tablaResumen.querySelector(
       "#netoTotal"
@@ -372,6 +442,8 @@ const Quote = () => {
   useEffect(() => {
     calcularTotales();
   }, [filasAgregadas]);
+
+
 
   const handleCantidadChange = (event, index) => {
     const nuevasCantidades = [...cantidadProducto];
@@ -458,6 +530,7 @@ const Quote = () => {
   // -- Codigo para cargar productos
   const [productos, setProductos] = useState([]);
 
+
   const handleOpenAddProduct = () => {
     onOpen();
     async function loadProducts() {
@@ -466,6 +539,7 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
+          // console.log(data[0].idproducto);
         }
       } catch (err) {
         toast.error("Error al cargar los datos", {
@@ -585,6 +659,7 @@ const Quote = () => {
   //para almacenar los resultados de la busqueda
   const [filterCliente, setFilterCliente] = useState([]);
   //para almacenar los resultados de la busqueda
+  const [nombreVendedor, setNombreVendedor] = useState("");
   const [idVendedor, setIdVendedor] = useState("");
   //id de la cotizacioin
   const [idCotizacion, setIdCotizacion] = useState("");
@@ -594,14 +669,21 @@ const Quote = () => {
 
   //Es recurrente
   const [isRecurrente, setIsRecurrente] = useState(false);
+  const recurrenciaToSave = isRecurrente ? 1 : 0;
+
 
 
   //para almacenar los datos del cliente seleccionado
   const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
+  //console.log(clienteInfoGeneral);
   const [clienteInfoDireccion, setClienteInfoDireccion] = useState([]);
   const [clienteInfoFacturacion, setClienteInfoFacturacion] = useState([]);
 
   //para el envio
+  const handleChangeEnvio = selectedEnvio => {
+    setEnvio({ ...envio, envio: selectedEnvio });
+  };
+
   const [envio, setEnvio] = useState("");
 
   //true o false para saber que informacion se muestra
@@ -678,6 +760,7 @@ const Quote = () => {
       try {
         const response = await fetch(
           `https://localhost:4000/ListadoClientes/${idCliente}`
+
         );
         const data = await response.json();
         if (response.ok) {
@@ -713,13 +796,15 @@ const Quote = () => {
       cliente.nombreComercial.toLowerCase().includes(searchNombreCliente.toLowerCase())
     );
 
+
     if (
-      usuariosSearch.length > 0 &&
+      usuariosSearch.length > 0 ||
       usuariosSearch.length !== clientes.length
     ) {
       setIsResultSearchCliente(true);
       setFilterCliente(usuariosSearch);
-    } else {
+    }
+    else {
       setIsResultSearchCliente(false);
     }
   };
@@ -736,11 +821,13 @@ const Quote = () => {
     setIdCliente(cliente.id);
     setNombreSelectedCliente(cliente.nombreComercial);
     setSearchNombreCliente(cliente.nombreComercial);
-    setIdVendedor(cliente.vendedor);
+    setNombreVendedor(cliente.vendedor)
+    setIdVendedor(cliente.idVendedor);
     setIsResultSearchCliente(false);
     setFechaCotizacion(format(new Date(), "yyyy-MM-dd"));
     setShowInfoGeneral(true);
     setClienteDataGeneral(cliente);
+
   };
 
   const setClienteDataGeneral = (cliente) => {
@@ -1039,7 +1126,7 @@ const Quote = () => {
                                 isRequired
                                 isDisabled
                                 name="vendedor"
-                                value={
+                                value={user.idVendedor ||
                                   idVendedor || clienteInfoGeneral.vendedor
                                 }
                                 onChange={handleChange}
@@ -1056,7 +1143,7 @@ const Quote = () => {
                               <Input
                                 id="fecha"
                                 isRequired
-                                value={cotizacionData.fecha}
+                                value={user.fecha || cotizacionData.fecha}
                                 size={"sm"}
                                 isDisabled
                                 type="date"
@@ -1754,8 +1841,8 @@ const Quote = () => {
                                 label="Comentarios de la Cotización"
                                 isDisabled={isOnlyRead}
                                 labelPlacement="outside"
-                                value={cotizacionData.comentarios}
-                                onChange={(e) =>
+                                value={user.comentarios || cotizacionData.comentarios}
+                                onChange={(e) => handleChangeComentario(e) ||
                                   setCotizacionData({
                                     ...cotizacionData,
                                     comentarios: e.target.value,

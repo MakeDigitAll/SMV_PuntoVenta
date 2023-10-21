@@ -572,7 +572,7 @@ const Brands = () => {
         </>
       </>
     ) : (
-      <Crop {...{ photoURL, setOpenCrop, setPhotoURL, setFile, aspect: 1 }} />
+      <Crop {...{ photoURL, setOpenCrop, setPhotoURL, setFile, aspect: 3/2 }} />
     );
   }, [
     openCrop,
