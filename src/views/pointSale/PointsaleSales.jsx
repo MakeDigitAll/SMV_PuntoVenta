@@ -1,16 +1,58 @@
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
-  Link, Spacer
+  AccordionItem, Accordion, Card, CardBody, useDisclosure,
+  Link, Spacer, Input, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem, Textarea, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter
 } from "@nextui-org/react";
-import { RiDashboard2Fill, RiMoneyCnyBoxLine, RiUser2Fill } from "react-icons/ri";
-import { MdDashboard, MdMonetizationOn, MdPeople, MdReport } from "react-icons/md";
+import { RiDashboard2Fill, RiMoneyCnyBoxLine } from "react-icons/ri";
+import { MdDashboard, MdInbox, MdMonetizationOn, MdMoneyOff, MdNumbers, MdPriceCheck, MdSave, MdSearch} from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
-
+import { TbDotsVertical } from "react-icons/tb";
+  
 const PointsaleSales = () => {
-  const navigate = useNavigate(); 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [modalMode, setModalMode] = useState("entry"); 
+  const handleEntryClick = () => {
+    setModalMode("entry");
+    onOpen();
+  };
+  const handleOutClick = () => {
+    setModalMode("out");
+    onOpen();
+  };
+  const itemsSales = [
+    {
+        id: 1,
+        name: "Nueva Venta",
+        icon: RiMoneyCnyBoxLine,
+        roleId: "0",
+    },
+    {
+        id: 2,
+        name: "Entrada Efectivo",
+        icon: MdMonetizationOn,
+        roleId: "0",
+    },
+    {
+      id: 3,
+      name: "Salida Efectivo",
+      icon: MdMoneyOff,
+      roleId: "0",
+
+  },
+  {
+    id: 4,
+    name: "Checar Precios",
+    icon: MdPriceCheck,
+    address: "PricesCheck",
+    roleId: "0",
+  },
+  ]
+  const navigate = useNavigate();
+  
+  const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
   const datos=[
         { id: 1, ticket: 'Ejemplo 1',fecha: 'Ejemplo 1',hora:"Pr1",cliente:"4502012", estatus: 'Descripción1@gmail.com',factura:"Zulema",monto:"1"},
         { id: 2, ticket: 'Ejemplo 2', fecha: 'Descripción 2',hora: 'Ejemplo 2',cliente:"Pr2",estatus:"4502012", factura: 'Descripción2@gmail.com',monto:"2"},
@@ -20,7 +62,7 @@ const PointsaleSales = () => {
       <div className="bg-[#262837] w-full min-h-screen">
         <Sidebar />
         <SidebarMovil />
-        <Spacer y={8} />
+        <Spacer y={2} />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-10" style={{ overflow: "auto" }}>
             <div className="">
@@ -58,70 +100,63 @@ const PointsaleSales = () => {
                     </Typography>
                   </Breadcrumbs>
                   <Spacer y={8} />
-                  <div className="flex space-x-4">
-                    <button className="flex items-center space-x-2 bg-[#262837] hover:bg-red-400 text-white font-semibold py-2 px-4 rounded-full focus:ring-2 focus:ring-red-300 focus:outline-none">
-                      <span className="material-icons text-xl">
-                        Nueva Venta
-                      </span>
-                      <RiUser2Fill className="text-2xl" />
-                    </button>
-                    <button className="flex items-center space-x-2 bg-[#262837] hover:bg-red-400 text-white font-semibold py-2 px-4 rounded-full focus:ring-2 focus:ring-red-300 focus:outline-none">
-                      <span className="material-icons text-xl">
-                        Entrada Efectivo
-                      </span>
-                      <RiMoneyCnyBoxLine className="text-2xl" />
-                    </button>
-                    <button className="flex items-center space-x-2 bg-[#262837] hover:bg-red-400 text-white font-semibold py-2 px-4 rounded-full focus:ring-2 focus:ring-red-300 focus:outline-none">
-                      <span className="material-icons text-xl">
-                        Salida Efectivo
-                      </span>
-                      <RiMoneyCnyBoxLine className="text-2xl" />
-                    </button>
-                    <button className="flex items-center space-x-2 bg-[#262837] hover:bg-red-400 text-white font-semibold py-2 px-4 rounded-full focus:ring-2 focus:ring-red-300 focus:outline-none">
-                      <span className="material-icons text-xl">
-                        Checar Precios
-                      </span>
-                      <RiMoneyCnyBoxLine className="text-2xl" />
-                    </button>
-                  </div>
-                  <div class="my-6 flex sm:flex-row flex-col">
-                    <div class="flex flex-row mb-1 sm:mb-0">
-                      <div class="relative">
-                        <select class="h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-[#262837] border-gray-600 text-gray-500 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-red-400 focus:border-red-300">
-                          <option>All</option>
-                          <option>Nuevo</option>
-                          <option>Activo</option>
-                          <option>Inactivo</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                          <svg
-                            class="fill-current h-4 w-4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
+                  <Accordion
+                    selectedKeys={selectedKeys}
+                    onSelectionChange={setSelectedKeys}
+                    variant="light"
+                  >
+                    <AccordionItem key="1" aria-label="Menu">
+                      <div className="gap-2 sm:grid-cols-13 flex flex-wrap justify-center">
+                        {itemsSales.map((item, index) => (
+                          <Card
+                            className="w-[115px] h-[65px] col-span-15 sm:col-span-7 hover:bg-red-400"
+                            shadow="md"
+                            key={index}
+                            isPressable
+                            onPress={() => {
+                              if (item.name === "Nueva Venta") {
+                                navigate(`/PointofSale/NewSale`);
+                              } else if (item.name === "Entrada Efectivo") {
+                                handleEntryClick();
+                              }else if (item.name === "Salida Efectivo") {
+                                handleOutClick();
+                              }
+                            }}
                           >
-                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                          </svg>
-                        </div>
+                            <CardBody className="overflow-visible py-2">
+                              <div className="flex justify-center items-center">
+                                <item.icon className="h-5 w-5" />
+                              </div>
+                              <div
+                                className="text-center"
+                                style={{ marginTop: "3px" }}
+                              >
+                                <h6 style={{ fontSize: "11px" }}>
+                                  {item.name}
+                                </h6>
+                              </div>
+                            </CardBody>
+                          </Card>
+                        ))}
                       </div>
-                    </div>
-                    <div class="block relative">
-                      <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
-                        <svg
-                          viewBox="0 0 24 24"
-                          class="h-4 w-4 fill-current text-gray-500"
-                        >
-                          <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"></path>
-                        </svg>
-                      </span>
-                      <input
-                        placeholder="Search"
-                        class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-[#262837] text-sm placeholder-gray-400 text-gray-700 focus:bg-red-400 focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
-                      />
-                    </div>
+                    </AccordionItem>
+                  </Accordion>
+                  <Spacer y={5} />
+                  <div className="flex flex-wrap space space-x-4">
+                    <Input
+                      isClearable
+                      type="text"
+                      size="md"
+                      className="w-[450px] sm:max-w-[44%]"
+                      placeholder="Buscar Ticket"
+                      startContent={<MdSearch />}
+                      // onChange={handleChangeNombre}
+                      // // value={nombre}
+                    />
                   </div>
                 </div>
-                <div class="shadow-md rounded my-12 min-h-screen">
-                  <table className="bg-[#262837] w-full table-auto divide-gray-200">
+                <div class="shadow-md rounded my-6 overflow-x-auto">
+                  <table className="bg-[#262837] min-w-600px w-full table-auto divide-gray-200">
                     <thead>
                       <tr class="bg-red-400 text-black uppercase text-sm leading-normal">
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
@@ -175,44 +210,19 @@ const PointsaleSales = () => {
                             {item.monto}
                           </td>
                           <td>
-                            <button
-                              class="focus:ring-2 rounded-md focus:outline-none"
-                              onclick="dropdownFunction(this)"
-                              role="button"
-                              aria-label="option"
-                            >
-                              <svg
-                                class="dropbtn"
-                                onclick="dropdownFunction(this)"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                              >
-                                <path
-                                  d="M4.16667 10.8332C4.62691 10.8332 5 10.4601 5 9.99984C5 9.5396 4.62691 9.1665 4.16667 9.1665C3.70643 9.1665 3.33334 9.5396 3.33334 9.99984C3.33334 10.4601 3.70643 10.8332 4.16667 10.8332Z"
-                                  stroke="#9CA3AF"
-                                  stroke-width="1.25"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                ></path>
-                                <path
-                                  d="M10 10.8332C10.4602 10.8332 10.8333 10.4601 10.8333 9.99984C10.8333 9.5396 10.4602 9.1665 10 9.1665C9.53976 9.1665 9.16666 9.5396 9.16666 9.99984C9.16666 10.4601 9.53976 10.8332 10 10.8332Z"
-                                  stroke="#9CA3AF"
-                                  stroke-width="1.25"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                ></path>
-                                <path
-                                  d="M15.8333 10.8332C16.2936 10.8332 16.6667 10.4601 16.6667 9.99984C16.6667 9.5396 16.2936 9.1665 15.8333 9.1665C15.3731 9.1665 15 9.5396 15 9.99984C15 10.4601 15.3731 10.8332 15.8333 10.8332Z"
-                                  stroke="#9CA3AF"
-                                  stroke-width="1.25"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                ></path>
-                              </svg>
-                            </button>
+                            <div className="relative flex justify-center items-center gap-2 ">
+                              <Dropdown>
+                                <DropdownTrigger>
+                                  <Button isIconOnly size="sm" variant="light">
+                                    <TbDotsVertical className="text-default-300" />
+                                  </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu>
+                                  <DropdownItem>Ver Ticket</DropdownItem>
+                                  <DropdownItem>Cancelar Ticket</DropdownItem>
+                                </DropdownMenu>
+                              </Dropdown>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -230,6 +240,79 @@ const PointsaleSales = () => {
                         Next
                       </button>
                     </div>
+                    <Modal
+                      isOpen={isOpen}
+                      onOpenChange={onOpenChange}
+                      placement="top-center"
+                      size="3xl"
+                    >
+                      <ModalContent>
+                        {(onClose) => (
+                          <>
+                            <ModalHeader>
+                              {modalMode === "entry" && "Entrada de Efectivo"}
+                              {modalMode === "out" && "Salida de Efectivo"}
+                            </ModalHeader>
+                            <ModalBody>
+                              <div className="rounded px-4 md:p-8 mb-6">
+                                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-1">
+                                  <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                                    <div className="md:col-span-6"></div>
+                                    <div className="md:col-span-12">
+                                      <Input
+                                        autoFocus
+                                        endContent={
+                                          <MdNumbers className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                        }
+                                        label="Cantidad"
+                                        isRequired
+                                        type="number"
+                                        placeholder=" "
+                                        variant="bordered"
+                                        name="cantidad"
+                                      />
+                                    </div>
+                                    <div className="md:col-span-12">
+                                      <Textarea
+                                        endContent={
+                                          <MdNumbers className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                        }
+                                        label="Comentario"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="lg:col-span-8">
+                              <button className="bg-red-300 hover:bg-red-400 text-gray-700 font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-start">
+                                <span className="w-5 h-5 mr-2">
+                                  <MdInbox />
+                                </span>
+                                {modalMode === 'entry' ? 'Ver Entradas Anteriores' : 'Ver Salidas Anteriores'}
+                              </button>
+                              </div>
+                              <div className="lg:col-span-8"></div>
+                            </ModalBody>
+                            <ModalFooter>
+                            <button
+                                onClick={onClose}
+                                className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                              >
+                                Cerrar
+                              </button>
+
+                              <button className="bg-red-400 hover:bg-red-300 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+                                <span className="w-5 h-5 mr-2">
+                                  <MdSave />{" "}
+                                  {/* Asegúrate de importar el ícono correctamente */}
+                                </span>
+                                Guardar
+                              </button>
+                            </ModalFooter>
+                          </>
+                        )}
+                      </ModalContent>
+                    </Modal>
                   </div>
                 </div>
               </div>
