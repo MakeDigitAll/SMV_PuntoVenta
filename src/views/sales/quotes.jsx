@@ -213,7 +213,6 @@ const Quotes = () => {
       const datoDisable = {
         id: id,
       };
-      console.log(datoDisable);
       try {
         const res = await fetch(
           `https://localhost:4000:4000/CotizacionesDisable/${id}`,
@@ -584,7 +583,6 @@ const Quotes = () => {
               >
                 {columns.map(
                   (column) => (
-                    console.log(column),
                     (
                       <DropdownItem key={column.uid} className="capitalize">
                         {column.name}
@@ -614,7 +612,6 @@ const Quotes = () => {
               >
                 {columns.map(
                   (column) => (
-                    console.log(column),
                     (
                       <DropdownItem key={column.uid} className="capitalize">
                         {column.name}
@@ -710,7 +707,6 @@ const Quotes = () => {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            console.log(column),
             (
               <TableColumn
                 key={column.uid}

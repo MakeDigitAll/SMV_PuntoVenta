@@ -1,5 +1,5 @@
 //Promotions
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -14,11 +14,19 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Select, 
   Checkbox,
+  Image
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+import { TbDotsVertical, TbReload } from "react-icons/tb"
+import { AiOutlinePlus } from "react-icons/ai"
+import { MdArrowDropDown, MdBookmarkAdded, MdSearch } from "react-icons/md";
 
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
@@ -27,6 +35,8 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { format } from "date-fns";
+//Columnas de la tabla
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "Imagen", uid: "imagen", sortable: true },
@@ -37,9 +47,22 @@ const columns = [
   { name: "Precio base", uid: "precioBase", sortable: true },
   { name: "Descuento", uid: "descuento", sortable: true },
   { name: "Precio", uid: "precio", sortable: true },
-  { name:"Activo", uid: "activo",sortable:true},
+  { name: "Activo", uid: "activo", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
+const columnsProductos = [
+  { name: "Código", uid: "codigo", sortable: false },
+  { name: "Nombre", uid: "nombre", sortable: false },
+  { name: "Marca", uid: "marca", sortable: false },
+  { name: "Inv.", uid: "inv", sortable: false },
+  { name: "Total", uid: "total", sortable: false },
+  { name: "Precio Uni.", uid: "precioUnitario", sortable: false },
+  { name: "Fecha desde", uid: "fechaDesde", sortable: false },
+  { name: "Fecha hasta", uid: "fechaHasta", sortable: false },
+  { name: "Descuento", uid: "descuento", sortable: false },
+  { name: "Agregar", uid: "agregar", sortable: false },
+];
+
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
@@ -55,30 +78,49 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 
+
+//Obtener el listado de productos con descuentos de la base de datos
 const Promotions = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-      }
-    }
+  const marcaOptions = [];
+  function contarmarca() {
+    for (let i = 0; i < data.length; i++) {
+      marcaOptions.push({ name: data[i].marca, uid: data[i].id });
+    } 
+  }
   const [data, setData] = useState([]);
-  async function loadTask() {
+  async function getPromotions() {
     try {
-      const response = await fetch("https://localhost:4000/ListadoProductosDescuento");
+      const response = await fetch("https://localhost:4000/ListadoPromociones");
       const data = await response.json();
       if (response.ok) {
         setData(data);
+        const dataPromotions = await Promise.all(
+          data.map(async (item) => {
+            const response = await fetch(`https://localhost:4000/Productos/${item.idProducto}`);
+            const data = await response.json();
+            if (response.ok) {
+              return {
+                ...item,
+                nombre: data.nombre,
+                codigoEmpresa: data.codigoEmpresa,
+                imagen: data.imagen,
+              };
+            }
+            return item;
+          })
+        );
+        setData(dataPromotions);
       }
-    } catch {
+    } catch (err) {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
         theme: "colored",
       });
     }
   }
+
   useEffect(() => {
-    loadTask();
+    getPromotions(); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function handleClickBreadCrumbs(event) {
@@ -147,20 +189,21 @@ const Promotions = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((data, columnKey) => {
+  //renderizar los datos de las columnas
+  const renderCell = useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
       case "id":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.id}</p>
+            <p className="text-bold text-small capitalize">{data.idProducto}</p>
           </div>
         );
-        case "imagen":
+      case "imagen":
         return (
           <div className="flex flex-col">
-            <Images idImage={data.imagen} designType="tabla" ruta={"https://localhost:4000/ListadoProductosDescuento"}/> 
+            <Image value={data.imagen} width={50} height={50} />
           </div>
         );
       case "codigoEmpresa":
@@ -169,7 +212,7 @@ const Promotions = () => {
             <p className="text-bold text-small capitalize">{data.codigoEmpresa}</p>
           </div>
         );
-        case "nombre":
+      case "nombre":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.nombre}</p>
@@ -178,15 +221,27 @@ const Promotions = () => {
       case "desde":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.desde}
-            </p>
+            <Input
+              size="sm"
+              type="date"
+              className="w-[120px]"
+              value={format(new Date(data.desde), "yyyy-MM-dd")}
+              onChange={() => {}}
+              placeholder=""
+            />
           </div>
-        ); 
+        );
       case "hasta":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.hasta}</p>
+            <Input
+              size="sm"
+              type="date"
+              className="w-[120px]"
+              value={format(new Date(data.hasta), "yyyy-MM-dd")}
+              onChange={() => {}}
+              placeholder=""
+            />
           </div>
         );
       case "precioBase":
@@ -195,22 +250,33 @@ const Promotions = () => {
             <p className="text-bold text-small capitalize">{data.precioBase}</p>
           </div>
         );
-        case "descuento":
+      case "descuento":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.descuento}</p>
+            <Input
+              size="sm"
+              type="number"
+              className="w-[80px]"
+              value={data.descuento}
+              onChange={() => {}}
+              placeholder=""
+            />
           </div>
         );
       case "precio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.precio}</p>
+            <p className="text-bold text-small capitalize">{data.precioDescuento}</p>
           </div>
         );
       case "activo":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.activo}</p>
+          <div className="flex flex-col"> 
+            <Checkbox
+              color="success"
+              isSelected={data.isActive}
+              onChange={() => {}}
+            />
           </div>
         );
       case "Actions":
@@ -234,6 +300,103 @@ const Promotions = () => {
         return cellValue;
     }
   }, []);
+
+  const renderCellProducto = useCallback((data, columnKey) => {
+    switch (columnKey) {
+      case "codigo":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.idproducto}</p>
+          </div>
+        );
+      case "nombre":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
+          </div>
+        );
+      case "marca":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.marca}</p>
+          </div>
+        );
+      case "inv":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.existencia}</p>
+          </div>
+        );
+      case "precioUnitario":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.precio}</p>
+          </div>
+        );
+      case "descuento":
+        return (
+          <Input
+            size="sm"
+            type="number"
+            className="w-[80px]"
+            //value={cantidadProducto[index] || ""}
+            onChange={(e) =>
+              handleCantidadChange(e, index)
+            }
+            placeholder=""
+          />
+        );
+
+      case "fechaDesde":
+        return (
+          <Input
+            size="sm"
+            type="date"
+            className="w-[120px]"
+            //value={cantidadProducto[index] || ""}
+            onChange={(e) =>
+              handleCantidadChange(e, index)
+            }
+            placeholder=""
+          />
+        );
+
+      case "fechaHasta":
+        return (
+          <Input
+            size="sm"
+            type="date"
+            className="w-[120px]"
+            //value={cantidadProducto[index] || ""}
+            onChange={(e) =>
+              handleCantidadChange(e, index)
+            }
+            placeholder=""
+          />
+        );
+
+      case "total":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.total}</p>
+          </div>
+        );
+
+      case "agregar":
+        return (
+          <div className="relative flex justify-center items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => agregarFila(data, index)}
+            >
+              +
+            </Button>
+          </div>
+        );
+    }
+  }, []);
+
+
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -266,10 +429,80 @@ const Promotions = () => {
     setPage(1);
   }, []);
 
+  //para el modal de productos
+  const [marca, setmarca] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [cantidadProducto, setcantidadProducto] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+
+  //--------------------------------------SSSSSSS--------------------------------------------
+  //obtener todos los productos de la base de datos
+  const [productos, setProductos] = useState([]);
+  const [productosSearched, setProductosSearched] = useState([]);
+  const [nameProducto, setNameProducto] = useState("");
+
+  const getProductos = () => {
+    async function loadProducts() {
+      try {
+        const response = await fetch(`https://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setProductos(data);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
+  };
+
+
+  const handleSearchProducto = (e) => {
+    const value = e.target.value.toLowerCase();
+    setNameProducto(value);
+    const result = [];
+    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value))); // Usar spread (...) para agregar elementos al array
+
+    if (value === "") {
+      setProductosSearched(productos);
+    } else {
+      setProductosSearched(result);
+    }
+  };
+
+
+  //paginacion del modal
+  const [pageProductos, setPageProductos] = useState(1);
+  const rowsPerPageProductos = 8;
+
+  const pagesProductos = Math.ceil(productosSearched.length / rowsPerPageProductos);
+
+  //paginacion de la tabla de usuarios ordenados
+  const itemsProductos = useMemo(() => {
+    const start = (pageProductos - 1) * rowsPerPageProductos;
+    const end = start + rowsPerPageProductos;
+    if (productosSearched.length === 0 && !nameProducto) {
+      setProductosSearched(productos);
+      return productos.slice(start, end);
+    }
+    return productosSearched.slice(start, end);
+  }, [pagesProductos, rowsPerPageProductos, productos, pageProductos, productosSearched]);
+
+  //Ejecutar useEffect
+
+  useEffect(() => {
+    getProductos();
+  }, []);
+
+  //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
+
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -314,27 +547,27 @@ const Promotions = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Cliente"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Folio"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
- 
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Cliente"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Folio"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+
 
             <Dropdown>
               <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
@@ -361,9 +594,12 @@ const Promotions = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            
+
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
+            <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
+              Agregar Promocion a Producto
+            </Button>
             <Button size="sm" color="warning" endContent={<TbReload />}>
               Actualizar Promociones
             </Button>
@@ -489,6 +725,10 @@ const Promotions = () => {
     );
   }, [data.length, selectedKeys, page, pages, onPreviousPage, onNextPage]);
 
+
+
+
+
   return (
     <div style={{ marginLeft: "40px", marginRight: "40px" }}>
       <Table
@@ -516,11 +756,11 @@ const Promotions = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No se encuentran Pedidos por surtir"}
+          emptyContent={"No se encuentran promociones registradas"}
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.idPromocion}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
@@ -528,6 +768,138 @@ const Promotions = () => {
           )}
         </TableBody>
       </Table>
+
+      <Modal
+        backdrop="blur"
+        isOpen={isOpen}
+        onClose={onClose}
+        size="5xl"
+        isDismissable={false}
+      >
+        <ModalContent>
+          {(onClose) => (
+
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Agregar producto a la cotización
+              </ModalHeader>
+              <ModalBody>
+                <div className="grid gap-4 gap-y-2 text-xs grid-cols-1 lg:grid-cols-3">
+                  <div className="lg:col-span-4">
+                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                      <div className="md:col-span-12">
+                        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                          <div className="md:col-span-12"></div>
+                          <div className="md:col-span-6">
+                            <Input
+                              id="nombre"
+                              size="sm"
+                              type="text"
+                              label="Nombre del producto"
+                              name="nombre"
+                              autoComplete="off"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              endContent={
+                                <MdSearch className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+                              }
+                              onChange={(e) => {
+                                handleSearchProducto(e);
+                              }}
+                            />
+                          </div>
+                          {/* <div className="md:col-span-3">
+                            <Select
+                              labelPlacement={"outside"}
+                              label="Marca"
+                              placeholder="Seleccione"
+                              size="sm"
+                            >
+                              {marca.map((marca) => (
+                                <SelectItem key={marca.id} value={marca.id}>
+                                  {marca.marca}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="md:col-span-3">
+                            <Select
+                              labelPlacement={"outside"}
+                              label="Categoría"
+                              placeholder="Seleccione"
+                              size="sm"
+                            >
+                              {categorias.map((categoria) => (
+                                <SelectItem
+                                  key={categoria.id}
+                                  value={categoria.id}
+                                >
+                                  {categoria.nombre}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                          </div> */}
+                          <div className="md:col-span-12">
+                            <Table
+                              id="tablaEnModal"
+                              removeWrapper
+                              aria-label="Example static collection table"
+                              bottomContent={
+                                pagesProductos > 0 ? (
+                                  <div className="flex w-full justify-center">
+                                    <Pagination
+                                      isCompact
+                                      showControls
+                                      showShadow
+                                      color="primary"
+                                      page={pageProductos}
+                                      total={pagesProductos}
+                                      onChange={(pageProductos) => setPageProductos(pageProductos)}
+                                    />
+                                  </div>
+                                ) : null
+                              }
+                            >
+                              <TableHeader columns={columnsProductos}>
+                                {(column) => (
+                                  <TableColumn
+                                    key={column.uid}
+                                    align={column.uid === "actions" ? "center" : "start"}
+                                    allowsSorting={false}
+                                  >
+                                    {column.name}
+                                  </TableColumn>
+                                )}
+
+                              </TableHeader>
+                              <TableBody
+                                items={itemsProductos}
+                              >
+                                {(item) => (
+                                  <TableRow key={item.idproducto}>
+                                    {(columnKey) => (
+                                      <TableCell>{renderCellProducto(item, columnKey)}</TableCell>
+                                    )}
+                                  </TableRow>
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
