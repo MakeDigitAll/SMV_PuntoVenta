@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Input, Spacer, Table } from "@nextui-org/react";
-import { RiDeleteBin5Line } from "react-icons/ri"; // Icono de bote de basura
+import { RiDeleteBin5Line } from "react-icons/ri"; 
+import { MdSearch } from "react-icons/md";
 
 const AccesPointProductosView = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [idproducto, setidproducto] = useState("");
-  const [nombre, setNombre] = useState("");
-  const [cantidad, setCantidad] = useState("");
-  const [precio, setPrecio] = useState(""); // Cambio de precioUnitario a precio
-  const [descuento, setDescuento] = useState("");
+  const [modalIsOpenCobrar, setModalIsOpenCobrar] = useState(false);
+const [modalIsOpenCatalogo, setModalIsOpenCatalogo] = useState(false);
   const [productos, setProductos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [productosEnOrden, setProductosEnOrden] = useState([]); // Almacena los productos en la orden
@@ -18,6 +15,9 @@ const AccesPointProductosView = () => {
   const [precioTotalEnOrden, setPrecioTotalEnOrden] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [buscador, setBuscador] = useState("");
+  const [originalProductos, setOriginalProductos] = useState([]);
+  const [idProductoBuscado, setIdProductoBuscado] = useState("");
+  
   const productsPerPage = 3;
 
   async function loadProductosFromDB() {
@@ -26,12 +26,12 @@ const AccesPointProductosView = () => {
       const data = await response.json();
       if (response.ok) {
         setProductos(data);
+        setOriginalProductos(data); // Guardar una copia de los productos originales
       }
     } catch (error) {
       console.error("Error al cargar los datos:", error);
     }
   }
-
   useEffect(() => {
     loadProductosFromDB();
   }, []);
@@ -42,14 +42,23 @@ const AccesPointProductosView = () => {
       return total + subtotal;
     }, 0);
   };
-  const filtrarProductos = productos.filter(
-    (producto) =>
-      producto.nombre.toLowerCase().includes(buscador.toLowerCase()) ||
-      producto.idproducto.toLowerCase().includes(buscador.toLowerCase())
-  );
-  const openModal = () => {
-    setShowModal(true);
+ 
+  const openModalCobrar = () => {
+    setModalIsOpenCobrar(true);
   };
+  
+  const closeModalCobrar = () => {
+    setModalIsOpenCobrar(false);
+  };
+  
+  const openModalCatalogo = () => {
+    setModalIsOpenCatalogo(true);
+  };
+  
+  const closeModalCatalogo = () => {
+    setModalIsOpenCatalogo(false);
+  };
+  
   
   const actualizarTotalProductosEnOrden = () => {
     const total = calcularTotal(productosEnOrden);
@@ -57,7 +66,8 @@ const AccesPointProductosView = () => {
   };
 
   useEffect(() => {
-    actualizarTotalProductosEnOrden();
+    const totalOrden = calcularTotal(productosEnOrden);
+    setTotalProductosEnOrden(totalOrden);
   }, [productosEnOrden]);
 
   // Ordenar los productos por nombre
@@ -73,75 +83,57 @@ const paginate = (pageNumber) => {
   setCurrentPage(pageNumber);
 };
 
-  const handleAgregarProducto = () => {
-    const nuevoProducto = {
-      idproducto,
-      nombre,
-      cantidad: parseInt(cantidad),
-      precio: parseFloat(precio),
-      descuento: parseFloat(descuento),
-      total: parseFloat(precio) * parseInt(cantidad) * (1 - parseFloat(descuento) / 100),
-    };
-    setProductos([...productos, nuevoProducto]);
-    setShowModal(false);
-  };
+ 
 
-  const handleEliminarProducto = (index) => {
-    const nuevosProductos = [...productos];
-    nuevosProductos.splice(index, 1);
-    setProductos(nuevosProductos);
-  };
+  
 
-  const handleProductSelect = (selectedProduct) => {
-    setidproducto(selectedProduct.idproducto);
-    setNombre(selectedProduct.nombre);
-    setShowModal(true);
-  };
+const handleAgregarProductoAOrden = (selectedProduct) => {
+  const cantidadDisponible = selectedProduct.cantidad;
 
-  const handleAgregarProductoAOrden = (selectedProduct) => {
-    const cantidadDisponible = selectedProduct.cantidad;
+  if (cantidadDisponible > 0) {
+    // Restar 1 a la cantidad disponible
+    selectedProduct.cantidad = cantidadDisponible - 1;
 
-    if (cantidadDisponible > 0) {
-      // Restar 1 a la cantidad disponible
-      selectedProduct.cantidad = cantidadDisponible - 1;
+    // Buscar si el producto ya está en la orden
+    const productInOrder = productosEnOrden.find((item) => item.idproducto === selectedProduct.idproducto);
 
-      // Buscar si el producto ya está en la orden
-      const productInOrder = productosEnOrden.find((item) => item.idproducto === selectedProduct.idproducto);
+    if (productInOrder) {
+      // Si el producto ya está en la orden, solo incrementa la cantidad
+      productInOrder.cantidad += 1;
+      productInOrder.total = productInOrder.cantidad * productInOrder.precio * (1 - productInOrder.descuento / 100);
 
-      if (productInOrder) {
-        // Si el producto ya está en la orden, solo incrementa la cantidad
-        productInOrder.cantidad += 1;
-        productInOrder.total = productInOrder.cantidad * productInOrder.precio * (1 - productInOrder.descuento / 100);
-     
-        // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
-        const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
-        updatedCantidadTotalEnOrden[selectedProduct.idproducto] = (updatedCantidadTotalEnOrden[selectedProduct.idproducto] || 0) + 1;
-        setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
+      // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
+      const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
+      updatedCantidadTotalEnOrden[selectedProduct.idproducto] = (updatedCantidadTotalEnOrden[selectedProduct.idproducto] || 0) + 1;
+      setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
 
-        const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
-        updatedPrecioTotalEnOrden[selectedProduct.idproducto] = (updatedPrecioTotalEnOrden[selectedProduct.idproducto] || 0) + selectedProduct.precio * (1 - selectedProduct.descuento / 100);
-        setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
-        
-      } else {
-        // Si el producto no está en la orden, agrégalo
-        setProductosEnOrden([...productosEnOrden, {
-          ...selectedProduct,
-          cantidad: 1,
-          total: selectedProduct.precio * (1 - selectedProduct.descuento / 100),
-        }]);
+      const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
+      updatedPrecioTotalEnOrden[selectedProduct.idproducto] = (updatedPrecioTotalEnOrden[selectedProduct.idproducto] || 0) + selectedProduct.precio * (1 - selectedProduct.descuento / 100);
+      setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
 
-        // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
-        const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
-        updatedCantidadTotalEnOrden[selectedProduct.idproducto] = 1;
-        setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
+    } else {
+      // Si el producto no está en la orden, agrégalo
+      setProductosEnOrden([...productosEnOrden, {
+        ...selectedProduct,
+        cantidad: 1,
+        total: selectedProduct.precio * (1 - selectedProduct.descuento / 100),
+      }]);
 
-        const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
-        updatedPrecioTotalEnOrden[selectedProduct.idproducto] = selectedProduct.precio * (1 - selectedProduct.descuento / 100);
-        setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
-      }
+      // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
+      const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
+      updatedCantidadTotalEnOrden[selectedProduct.idproducto] = 1;
+      setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
+
+      const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
+      updatedPrecioTotalEnOrden[selectedProduct.idproducto] = selectedProduct.precio * (1 - selectedProduct.descuento / 100);
+      setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
     }
-  };
 
+    // Actualiza el total de la orden
+    const totalOrden = calcularTotal(productosEnOrden);
+    setTotalProductosEnOrden(totalOrden);
+  }
+};
   const handleEliminarProductoEnOrden = (index) => {
     const productoRemovido = productosEnOrden[index];
 
@@ -189,7 +181,42 @@ const paginate = (pageNumber) => {
   };
 
   const productosTotal = calcularTotal(productos);
-  const productosEnOrdenTotal = calcularTotal(productosEnOrden);
+ const productosEnOrdenTotal = calcularTotal(productosEnOrden);
+ const filtrarProductosPorNombre = (productos, nombreABuscar) => {
+  return productos.filter((producto) =>
+    producto.nombre.toLowerCase().includes(nombreABuscar.toLowerCase())
+  );
+};
+const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
+  return productos.filter((producto) =>
+    producto.idproducto.toLowerCase().includes(idProductoABuscar.toLowerCase())
+  );
+};
+  
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value;
+    setBuscador(searchTerm);
+    if (searchTerm.trim() === "") {
+      // Restablecer la lista original cuando el término de búsqueda está vacío
+      setProductos(originalProductos);
+    } else {
+      // Filtrar productos por nombre
+      const productosFiltrados = filtrarProductosPorNombre(originalProductos, searchTerm);
+      setProductos(productosFiltrados);
+    }
+  };
+  const handleSearchIdProducto = (event) => {
+    const searchTerm = event.target.value;
+    setIdProductoBuscado(searchTerm);
+
+    if (searchTerm.trim() === "") {
+      // Restablecer la lista original cuando el término de búsqueda está vacío
+      setProductos(originalProductos);
+    } else {
+      const productosFiltrados = filtrarProductosPorIdProducto(originalProductos, searchTerm);
+      setProductos(productosFiltrados);
+    }
+  };
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -216,22 +243,40 @@ const paginate = (pageNumber) => {
           tr th:nth-child(1) {
             border-radius: .625rem 0 0 .625rem;
           }
+          .custom-button {
+            background-color: #ec7c6a;
+           font-size: 14px;
+            color: white;
+          }
         `}
       </style>
       <div>
-        <div className="flex justify-between">
-          <Input
-            type="text"
-            placeholder="Buscar por idproducto o nombre"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-       
-
+      <div className="flex flex-wrap gap-2">
+  <div className="flex flex-col w-[450px] sm:max-w-[44%]">
+    <Input
+      type="text"
+      size="sm"
+      placeholder="Buscar por nombre"
+      startContent={<MdSearch />}
+      value={buscador}
+      onChange={handleSearch}
+    />
+  </div>
+  <div className="flex flex-col w-[450px] sm:max-w-[44%]">
+    <Input
+      type="text"
+      size="sm"
+      placeholder="SKU"
+      startContent={<MdSearch />}
+      value={idProductoBuscado}
+      onChange={handleSearchIdProducto}
+    />
+  </div>
+  <Button className="custom-button" size="sm" onClick={openModalCatalogo}>
+  Catalogo
+</Button>
+</div>
         <Spacer y={2} />
-
         <h2 style={{ textAlign: 'left' }}>Productos</h2>
         <table
           className="table text-black-400 border-separate space-y-6 text-sm"
@@ -239,26 +284,26 @@ const paginate = (pageNumber) => {
         >
           <thead className="bg-gray-800 text-black-500">
             <tr>
-              <th className="p-3">No. Producto</th>
-              <th className="p-3">Código</th> {/* Cambiar a idproducto */}
+              <th className="p-3">Código</th> 
               <th className="p-3">Nombre</th>
+              <th className="p-3">Marca</th>
+              <th className="p-3">Categoria</th>
               <th className="p-3">Cantidad</th>
               <th className="p-3">Precio Unitario</th>
               <th className="p-3">Descuento</th>
-              <th className="p-3">Total</th>
               <th className="p-3">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {currentProducts.map((producto, index) => (
               <tr key={index} className="bg-gray-800">
-                <td className="p-3">{index + 1}</td>
                 <td className="p-3">{producto.idproducto}</td> {/* Cambiar a idproducto */}
                 <td className="p-3">{producto.nombre}</td>
+                <td className="p-3">{producto.marca}</td>
+                <td className="p-3">{producto.categoria}</td>
                 <td className="p-3">{producto.cantidad}</td>
                 <td className="p-3">{producto.precio.toFixed(2)}</td>
                 <td className="p-3">{producto.descuento}%</td>
-                <td className="p-3">{producto.total.toFixed(2)}</td>
                 <td className="p-3">
                   <Button
                     variant="primary"
@@ -364,13 +409,67 @@ const paginate = (pageNumber) => {
           </tbody>
         </table>
         <p>Total en la orden: {totalProductosEnOrden.toFixed(2)}</p>
-        <h2>Cantidad Disponible</h2>
-
         <div className="flex justify-end">
-          <Button variant="success">Cobrar</Button>
-        </div>
+        <Button variant="danger" className="custom-button" onClick={openModalCobrar}>
+  Cobrar
+</Button>
+</div>
       </div>
+      <Modal
+  isOpen={modalIsOpenCobrar}
+  onRequestClose={closeModalCobrar}
+  style={{
+    overlay: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      zIndex: "1000",
+    },
+    content: {
+      width: "100%",
+      maxWidth: "800px",
+      maxHeight: "80vh",
+      margin: "0 auto",
+      border: "none",
+      background: "white",
+      overflow: "auto",
+    },
+  }}
+>
+
+  <h2>Cobrar</h2>
+  
+</Modal>
+
+    <Modal
+      isOpen={modalIsOpenCatalogo}
+      onRequestClose={closeModalCatalogo}
+      style={{
+        overlay: {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: "1000",
+        },
+        content: {
+          width: "100%",
+          maxWidth: "800px",
+          maxHeight: "80vh",
+          margin: "0 auto",
+          border: "none",
+          background: "white",
+          overflow: "auto",
+        },
+      }}
+    >
+   
+      <h2>Catálogo</h2>
+     
+    </Modal>
     </div>
+    
   );
 };
 
