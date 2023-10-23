@@ -88,7 +88,6 @@ const Promotions = () => {
     }
   }
   const [data, setData] = useState([]);
-  const [EditData, setEditData] = useState(false);
   async function getPromotions() {
     try {
       const response = await fetch("https://localhost:4000/ListadoPromociones");
@@ -111,7 +110,6 @@ const Promotions = () => {
           })
         );
         setData(dataPromotions);
-        console.log(dataPromotions);
       }
     } catch (err) {
       toast.error("Error al cargar los datos", {
@@ -128,52 +126,6 @@ const Promotions = () => {
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
-
-  //funcion para cambiar el estado de los productos
-  const handlePromotionChange = async (e, idPromocion, inputType) => {
-    const value = e.target.value;
-    setEditData(true);
-    switch (inputType) {
-      case "fechaDesde":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, desde: value }
-              : item
-          )
-        );
-        break;
-      case "fechaHasta":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, hasta: value }
-              : item
-          )
-        );
-        break;
-      case "descuento":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, descuento: value }
-              : item
-          )
-        );
-        break;
-      case "isActive":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, isActive: !item.isActive }
-              : item
-          )
-        );
-        break;
-      default:
-        break;
-    }
-  };
 
 
   const navigate = useNavigate();
@@ -277,7 +229,14 @@ const Promotions = () => {
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "fechaDesde")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, desde: e.target.value }
+                      : item
+                  );
+                }
+                )
               }
               placeholder=""
             />
@@ -292,7 +251,14 @@ const Promotions = () => {
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "fechaHasta")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, hasta: e.target.value }
+                      : item
+                  );
+                }
+                )
               }
               placeholder=""
             />
@@ -313,7 +279,14 @@ const Promotions = () => {
               className="w-[80px]"
               value={data.descuento}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "descuento")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, descuento: Number(e.target.value) }
+                      : item
+                  );
+                }
+                )
               }
               placeholder=""
             />
@@ -332,7 +305,14 @@ const Promotions = () => {
               color="success"
               isSelected={data.isActive}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "isActive")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, isActive: !item.isActive }
+                      : item
+                  );
+                }
+                )
               }
             />
           </div>
@@ -938,16 +918,16 @@ const Promotions = () => {
                                 )}
 
                               </TableHeader>
-                              <TableBody
-                                items={itemsProductos}
-                              >
-                                {(item) => (
-                                  <TableRow key={item.idproducto}>
+                              <TableBody>
+                                {data.map((promotion) => (
+                                  <TableRow key={promotion.id}>
                                     {(columnKey) => (
-                                      <TableCell>{renderCellProducto(item, columnKey)}</TableCell>
+                                      <TableCell>
+                                        {renderCellProducto(promotion, columnKey)}
+                                      </TableCell>
                                     )}
                                   </TableRow>
-                                )}
+                                ))}
                               </TableBody>
                             </Table>
                           </div>
