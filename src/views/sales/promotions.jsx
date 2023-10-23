@@ -628,6 +628,48 @@ const Promotions = () => {
 
 
 
+  //para verificar fechas y descuento
+  const handleVerificar = () => {
+    //para todos los allProducts verificar que el descuento sea de 0 a 100 si no mostrar mensaje de error 
+    for (let i = 0; i < allProducts.length; i++) {
+      if (allProducts[i].descuento < 0 || allProducts[i].descuento > 100) {
+        toast.error("Error al agregar la promoción, el descuento debe ser de 0 a 100", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //para todos los allProducts verificar que la fecha desde sea menor a la fechaHasta y que no sea anterior a la fecha actual
+    for (let i = 0; i < allProducts.length; i++) {
+      if (allProducts[i].fechaDesde > allProducts[i].fechaHasta) {
+        toast.error("Error al agregar la promoción, la fecha desde debe ser menor a la fecha hasta", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //comprobar que la fecha desde no sea anterior a la fecha actual
+    for (let i = 0; i < allProducts.length; i++) {
+      const fechaActual = format(new Date(), "yyyy-MM-dd");
+      if (allProducts[i].fechaDesde < fechaActual) {
+        toast.error("Error al agregar la promoción, la fecha desde no puede ser anterior a la fecha actual", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+
+    //si no hay errores retornar llamar a la funcion handleSubmite
+    handleSubmite();
+
+  }
+
   const handleSubmite = () => {
     let showMessage = true; // Variable para controlar si se muestra el mensaje
 
@@ -1030,7 +1072,7 @@ const Promotions = () => {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="primary" onPress={handleSubmite} >
+                <Button color="primary" onPress={handleVerificar} >
                   Aceptar
                 </Button>
                 <Button color="danger" onPress={onClose}>
