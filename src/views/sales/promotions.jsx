@@ -277,7 +277,14 @@ const Promotions = () => {
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "fechaDesde")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, desde: e.target.value }
+                      : item
+                  );
+                }
+                )
               }
               placeholder=""
             />
@@ -292,7 +299,14 @@ const Promotions = () => {
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "fechaHasta")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, hasta: e.target.value }
+                      : item
+                  );
+                }
+                )
               }
               placeholder=""
             />
@@ -313,7 +327,14 @@ const Promotions = () => {
               className="w-[80px]"
               value={data.descuento}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "descuento")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, descuento: Number(e.target.value) }
+                      : item
+                  );
+                }
+                )
               }
               placeholder=""
             />
@@ -332,7 +353,14 @@ const Promotions = () => {
               color="success"
               isSelected={data.isActive}
               onChange={(e) =>
-                handlePromotionChange(e, data.idPromocion, "isActive")
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, isActive: !item.isActive }
+                      : item
+                  );
+                }
+                )
               }
             />
           </div>
