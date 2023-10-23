@@ -35,7 +35,8 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
+
 //Columnas de la tabla
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -87,6 +88,7 @@ const Promotions = () => {
     }
   }
   const [data, setData] = useState([]);
+  const [EditData, setEditData] = useState(false);
   async function getPromotions() {
     try {
       const response = await fetch("https://localhost:4000/ListadoPromociones");
@@ -109,6 +111,7 @@ const Promotions = () => {
           })
         );
         setData(dataPromotions);
+        console.log(dataPromotions);
       }
     } catch (err) {
       toast.error("Error al cargar los datos", {
@@ -125,6 +128,54 @@ const Promotions = () => {
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
+
+  //funcion para cambiar el estado de los productos
+  const handlePromotionChange = async (e, idPromocion, inputType) => {
+    const value = e.target.value;
+    setEditData(true);
+    switch (inputType) {
+      case "fechaDesde":
+        setData(
+          data.map((item) =>
+            item.idPromocion === idPromocion
+              ? { ...item, desde: value }
+              : item
+          )
+        );
+        break;
+      case "fechaHasta":
+        setData(
+          data.map((item) =>
+            item.idPromocion === idPromocion
+              ? { ...item, hasta: value }
+              : item
+          )
+        );
+        break;
+      case "descuento":
+        setData(
+          data.map((item) =>
+            item.idPromocion === idPromocion
+              ? { ...item, descuento: value }
+              : item
+          )
+        );
+        break;
+      case "isActive":
+        setData(
+          data.map((item) =>
+            item.idPromocion === idPromocion
+              ? { ...item, isActive: !item.isActive }
+              : item
+          )
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -225,7 +276,9 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
-              onChange={() => { }}
+              onChange={(e) =>
+                handlePromotionChange(e, data.idPromocion, "fechaDesde")
+              }
               placeholder=""
             />
           </div>
@@ -238,7 +291,9 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
-              onChange={() => { }}
+              onChange={(e) =>
+                handlePromotionChange(e, data.idPromocion, "fechaHasta")
+              }
               placeholder=""
             />
           </div>
@@ -257,7 +312,9 @@ const Promotions = () => {
               type="number"
               className="w-[80px]"
               value={data.descuento}
-              onChange={() => { }}
+              onChange={(e) =>
+                handlePromotionChange(e, data.idPromocion, "descuento")
+              }
               placeholder=""
             />
           </div>
@@ -274,7 +331,9 @@ const Promotions = () => {
             <Checkbox
               color="success"
               isSelected={data.isActive}
-              onChange={() => { }}
+              onChange={(e) =>
+                handlePromotionChange(e, data.idPromocion, "isActive")
+              }
             />
           </div>
         );
@@ -752,8 +811,6 @@ const Promotions = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
