@@ -109,7 +109,6 @@ const Promotions = () => {
             return item;
           })
         );
-        console.log(dataPromotions);
         setData(dataPromotions);
       }
     } catch (err) {
