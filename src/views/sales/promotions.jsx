@@ -392,12 +392,12 @@ const Promotions = () => {
 
   // Inicializa un arreglo vacío para almacenar los productos
   const products = [];
-  //useStates para los productos
+  // useState para los productos
   const [allProducts, setAllProducts] = useState([]);
 
   const handleInputChange = (e, idProducto, inputType) => {
-    // Buscar el producto correspondiente en el arreglo o crear uno nuevo
     let producto = products.find(item => item.idProducto === idProducto);
+
     if (!producto) {
       producto = {
         idProducto: idProducto,
@@ -417,14 +417,23 @@ const Promotions = () => {
       producto.cantidad = e.target.value;
     }
 
-    // Verificar si todos los campos son distintos de null
-    if (producto.fechaDesde !== null && producto.fechaHasta !== null && producto.cantidad !== null) {
-      console.log(producto);
-      setAllProducts(products);
+    // Verificar si todos los campos de producto están llenos
+    const allFieldsFilled = producto.fechaDesde !== null && producto.fechaHasta !== null && producto.cantidad !== null;
+
+    // Si todos los campos están llenos, actualiza el producto en allProducts
+    if (allFieldsFilled) {
+      setAllProducts(prevAllProducts => {
+        // Actualizar el producto si ya existe en allProducts
+        if (prevAllProducts.some(item => item.idProducto === idProducto)) {
+          return prevAllProducts.map(item =>
+            item.idProducto === idProducto ? producto : item
+          );
+        } else {
+          return [...prevAllProducts, producto];
+        }
+      });
     }
-
   }
-
 
 
 
@@ -432,7 +441,7 @@ const Promotions = () => {
   useEffect(() => {
     console.log(allProducts);
 
-  }, [allProducts]);
+  }, [allProducts, products]);
 
 
 
