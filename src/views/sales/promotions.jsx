@@ -601,9 +601,50 @@ const Promotions = () => {
 
 
   const handleSubmite = () => {
-    console.log(allProducts);
+    let showMessage = true; // Variable para controlar si se muestra el mensaje
 
+    for (let i = 0; i < allProducts.length; i++) {
+      const producto = productos.find(item => item.idproducto === allProducts[i].idProducto);
+      allProducts[i].precio = producto.precio;
+    }
 
+    for (let i = 0; i < allProducts.length; i++) {
+      allProducts[i].precioDescuento = Number(allProducts[i].precio) - (Number(allProducts[i].precio) * (Number(allProducts[i].descuento) / 100));
+    }
+
+    for (let i = 0; i < allProducts.length; i++) {
+      const data = {
+        idProducto: allProducts[i].idProducto,
+        desde: allProducts[i].fechaDesde,
+        hasta: allProducts[i].fechaHasta,
+        precioBase: allProducts[i].precio,
+        descuento: allProducts[i].descuento,
+        precioDescuento: allProducts[i].precioDescuento,
+        isActive: true
+      };
+
+      fetch(`https://localhost:4000/ListadoPromociones`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then((res) => {
+        if (res.status === 200 && showMessage) {
+          toast.success("Promoción agregada correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          showMessage = false; // Cambiar la variable a false para evitar más mensajes
+        } else if (showMessage) {
+          toast.error("Error al agregar la promoción", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          showMessage = false; // Cambiar la variable a false para evitar más mensajes
+        }
+      });
+    }
   }
 
   //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
