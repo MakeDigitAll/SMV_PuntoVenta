@@ -24,6 +24,12 @@ import {
   SelectItem,
   Card,
   CardBody,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem
+
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -37,6 +43,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import {
   MdDiscount,
+  MdKeyboardArrowDown,
   MdPeopleAlt,
   MdPercent,
   MdPerson,
@@ -58,11 +65,11 @@ const Quote = () => {
     recurrencia: "",
     envio: "",
     comentarios: "",
-    neto: "50",
-    descuento: "5",
-    subtotal: "45",
-    impuestos: "7",
-    total: "52",
+    neto: "",
+    descuento: "",
+    subtotal: "",
+    impuestos: "",
+    total: "",
 
 
 
@@ -74,7 +81,6 @@ const Quote = () => {
     imagen: "",
     emailConfirm: "",
     passwordConfirm: "",
-    dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
     nombreCliente: "",

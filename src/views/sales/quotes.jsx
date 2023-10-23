@@ -583,6 +583,7 @@ const Quotes = () => {
               >
                 {columns.map(
                   (column) => (
+                    //console.log(column),
                     (
                       <DropdownItem key={column.uid} className="capitalize">
                         {column.name}

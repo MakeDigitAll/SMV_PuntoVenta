@@ -11,6 +11,7 @@ import {
   Select,
   MenuItem,
   Textarea,
+  checkbox,
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -104,8 +105,8 @@ const Product = () => {
     }
     user.password !== user.confirmPassword || user.email !== user.emailConfirm
       ? toast.error("Las contraseñas o correos no coinciden", {
-          theme: "colored",
-        })
+        theme: "colored",
+      })
       : "";
     const errors = {};
     !user.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
@@ -179,8 +180,8 @@ const Product = () => {
     } catch (e) {
       e.response.status == 501
         ? toast.error("Favor de verificar el tipo de dato", {
-            theme: "colored",
-          })
+          theme: "colored",
+        })
         : toast.error(e.response.data.body.error, { theme: "colored" });
     }
   }
@@ -351,6 +352,88 @@ const Product = () => {
                           Agregar foto de perfil
                         </Button>
                       </div>
+                      <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                        <br />
+                        <div className="md:col-span-12 flex space-x-4">
+                          <Image
+                            width={150}
+                            height={200}
+                            src="../../../public/Blank-Avatar.png"
+                            alt=""
+                          />
+                          <Image
+                            width={150}
+                            height={200}
+                            src="../../../public/Blank-Avatar.png"
+                            alt=""
+                          />
+                          <Image
+                            width={150}
+                            height={200}
+                            src="../../../public/Blank-Avatar.png"
+                            alt=""
+                          />
+                        </div>
+                        <div className="md:col-span-12 flex flex-col items-center space-y-4">
+                          <h2 className="font-large text-lg text-foreground text-center">
+                            Banderas Web
+                          </h2>
+                        </div>
+                        <div className="md:col-span-12 grid md:grid-cols-2 gap-4">
+                          <div>
+                            <Input
+                              id="esqSupIzq"
+                              isDisabled={status ? true : false}
+                              onChange={handleChange}
+                              size={"sm"}
+                              label="Esquina Superior Izquierda"
+                              name="esqSupIzq"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              variant="faded"
+                            />
+                          </div>
+                          <div>
+                            <Input
+                              id="esqSupDer"
+                              isDisabled={status ? true : false}
+                              onChange={handleChange}
+                              size={"sm"}
+                              label="Esquina Superior Derecha"
+                              name="esqSupDer"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              variant="faded"
+                            />
+                          </div>
+                          <div>
+                            <Input
+                              id="esqinfIzq"
+                              isDisabled={status ? true : false}
+                              onChange={handleChange}
+                              size={"sm"}
+                              label="Esquina Inferior Izquierda"
+                              name="esqinfIzq"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              variant="faded"
+                            />
+                          </div>
+                          <div>
+                            <Input
+                              id="esqinfIzq"
+                              isDisabled={status ? true : false}
+                              onChange={handleChange}
+                              size={"sm"}
+                              label="Esquina Inferior Izquierda"
+                              name="esqinfIzq"
+                              labelPlacement="outside"
+                              placeholder=" "
+                              variant="faded"
+                            />
+                          </div>
+                        </div>
+                      </div>
                       <div>
                         <div>
                           {dataBranch.map((item) => (
@@ -401,155 +484,94 @@ const Product = () => {
                                     size={"sm"}
                                     type="text"
                                     label="Código de Fabricante"
-                                    id="apellido"
+                                    id="codigoFab"
                                     isDisabled={status ? true : false}
-                                    name="apellido"
-                                    value={user.apellido}
+                                    name="codigoFab"
                                     onChange={handleChange}
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.apellido !== ""}
-                                    errorMessage={validationErrors.apellido}
+                                    error={validationErrors.codigoFab !== ""}
+                                    errorMessage={validationErrors.codigoFab}
                                   />
                                 </div>
 
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="email"
-                                    value={user.email}
+                                    id="codigoEmp"
                                     isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="email"
                                     label="Código de Empresa"
-                                    name="email"
+                                    name="codigoEmp"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      validationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      validationState === "invalid" &&
-                                      "Ingresa un correo valido"
-                                    }
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="emailConfirm"
-                                    isDisabled={status ? true : false}
-                                    value={user.emailConfirm}
+                                    id="marcaProd"
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="email"
-                                    label="Confirmar email"
-                                    name="emailConfirm" // Asegúrate de que el nombre coincida con el campo de Email
+                                    type="marcaProd"
+                                    label="Marca del Producto"
+                                    name="emailConfirm"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      emailConfirmValidationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      emailConfirmValidationState ===
-                                        "invalid" &&
-                                      "El correo de confirmación debe coincidir con el correo"
-                                    }
-                                    validationState={
-                                      emailConfirmValidationState
-                                    }
                                   />
                                 </div>
 
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="password"
+                                    id="categoriaProd"
                                     isDisabled={status ? true : false}
                                     value={user.password}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="password"
-                                    label="Password"
-                                    name="password"
+                                    label="Categoria del Producto"
+                                    name="categoriaProd"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      passwordValidationState === "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      passwordValidationState === "invalid" &&
-                                      "La contraseña debe tener al menos 8 caracteres"
-                                    }
-                                    validationState={passwordValidationState}
                                   />
                                 </div>
 
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
-                                    id="confirmPassword"
+                                    id="codigoSatProd"
                                     isDisabled={status ? true : false}
-                                    value={user.confirmPassword}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="password"
-                                    label="Confirmar Password"
-                                    name="confirmPassword"
+                                    label="Cofigo de SAT Producto"
+                                    name="codigoSatProd"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    color={
-                                      confirmPasswordValidationState ===
-                                      "invalid"
-                                        ? "danger"
-                                        : "default"
-                                    }
-                                    errorMessage={
-                                      confirmPasswordValidationState ===
-                                        "invalid" &&
-                                      "La contraseña de confirmación debe coincidir con la contraseña"
-                                    }
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
-                                    id="perfilSeguridad"
+                                    id="codigoSatUnid"
                                     isDisabled={status ? true : false}
-                                    value={user.perfilSeguridad}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="number"
-                                    label="Perfil de seguridad"
-                                    name="perfilSeguridad"
+                                    label="Codigo SAT Unidad"
+                                    name="codigoSatUnid"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={
-                                      validationErrors.perfilSeguridad !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.perfilSeguridad
-                                    }
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
-                                    id="vendedor"
+                                    id="unidadMed"
                                     isDisabled={status ? true : false}
-                                    value={user.vendedor}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="number"
-                                    label="Vendedor"
-                                    name="vendedor"
+                                    label="Unidad de Medida (Etiqueta)"
+                                    name="unidadMed"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
@@ -557,171 +579,1322 @@ const Product = () => {
                                     errorMessage={validationErrors.vendedor}
                                   />
                                 </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="comportamiento"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Comportamiento"
+                                    name="comportamiento"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.vendedor !== ""}
+                                    errorMessage={validationErrors.vendedor}
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Checkbox defaultSelected>Activo</Checkbox>
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Checkbox defaultSelected>En Web</Checkbox>
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Checkbox defaultSelected>POS</Checkbox>
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Checkbox defaultSelected>Venta</Checkbox>
+                                </div>
                               </div>
                             </Tab>
                             <Tab key="music" title="Costo y Precio">
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
-                                <div className="md:col-span-6"></div>
-                                <div className="md:col-span-12">
-                                  <Input
-                                    id="direccion"
-                                    isDisabled={status ? true : false}
-                                    value={user.direccion}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    type="direccion"
-                                    label="Dirección"
-                                    name="direccion"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.direccion !== ""}
-                                    errorMessage={validationErrors.direccion}
-                                  />
-                                </div>
-                                <div className="md:col-span-6">
-                                  <Input
-                                    size={"sm"}
-                                    type="colonia"
-                                    label="Colonia"
-                                    id="colonia"
-                                    isDisabled={status ? true : false}
-                                    name="colonia"
-                                    value={user.colonia}
-                                    onChange={handleChange}
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.colonia !== ""}
-                                    errorMessage={validationErrors.colonia}
-                                  />
-                                </div>
-
-                                <div className="md:col-span-6">
-                                  <label htmlFor="status">Status</label>
-                                  <Select
-                                    id="status"
-                                    isDisabled={status ? true : false}
-                                    value={user.status}
-                                    onChange={handleChange}
-                                    size="small"
-                                    label=" "
-                                    name="status"
-                                    variant="outlined"
-                                    fullWidth
-                                    error={validationErrors.status !== ""}
-                                    errorMessage={validationErrors.status}
-                                  >
-                                    <MenuItem value="activo">Activo</MenuItem>
-                                    <MenuItem value="inactivo">
-                                      Inactivo
-                                    </MenuItem>
-                                  </Select>
-                                </div>
-
-                                <div className="md:col-span-5">
-                                  <Input
-                                    id="ciudad"
-                                    isDisabled={status ? true : false}
-                                    value={user.ciudad}
-                                    onChange={handleChange}
-                                    size="small"
-                                    type="ciudad"
-                                    label="Ciudad"
-                                    name="ciudad"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.ciudad !== ""}
-                                    errorMessage={validationErrors.ciudad}
-                                  />
-                                </div>
-
+                                <div className="md:col-span-12"></div>
                                 <div className="md:col-span-4">
-                                  <label htmlFor="estado">Estado</label>
-                                  <Select
-                                    id="estado"
+                                  <Input
+                                    id="moneda"
                                     isDisabled={status ? true : false}
-                                    value={user.estado}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Moneda"
+                                    name="moneda"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="impuesto"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Impuesto"
+                                    name="impuesto"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="impuestoRet"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Impuesto Retenido"
+                                    name="impuestoRet"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    size={"sm"}
+                                    label="Costo"
+                                    id="costo"
+                                    isDisabled={status ? true : false}
+                                    name="costo"
+                                    onChange={handleChange}
+                                    labelPlacement="outside"
+                                    placeholder="$ 0.00"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    size={"sm"}
+                                    label="% Margen de Ganancia"
+                                    id="margenGanancia"
+                                    isDisabled={status ? true : false}
+                                    name="margenGanancia"
+                                    onChange={handleChange}
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="precioBase"
+                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size="small"
-                                    label=" "
-                                    name="estado"
-                                    variant="outlined"
-                                    error={validationErrors.estado !== ""}
-                                    errorMessage={validationErrors.estado}
-                                  >
-                                    {estadosDeMexico.map((estado) => (
-                                      <MenuItem key={estado} value={estado}>
-                                        {estado}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
+                                    label="Precio Base"
+                                    name="precioBase"
+                                    labelPlacement="outside"
+                                    placeholder="$ 0.00"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="precioAnterior"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size="small"
+                                    label="Precio Anterior"
+                                    name="precioAnterior"
+                                    labelPlacement="outside"
+                                    placeholder="$ 0.00"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col  space-y-4">
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Descuento al Mayoreo
+                                  </h2>
+                                </div>
+                                <div className="md:col-span-12 flex space-x-12">
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Mayoreo #1
+                                  </h2>
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Mayoreo #2
+                                  </h2>
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Mayoreo #3
+                                  </h2>
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Mayoreo #4
+                                  </h2>
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Mayoreo #5
+                                  </h2>
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Mayoreo #6
+                                  </h2>
                                 </div>
 
+                                <div className="md:col-span-2">
+                                  <Input
+                                    id="unidadesM1"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="A Partir de (x) Unidades"
+                                    name="unidadesM1"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="decuentoM1"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="% de Descuento"
+                                    name="decuentoM1"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="precioConDescuentoM1"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Precio con Descuento"
+                                    name="precioConDescuentoM1"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Input
+                                    id="unidadesM2"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="A Partir de (x) Unidades"
+                                    name="unidadesM2"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="decuentoM2"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="% de Descuento"
+                                    name="decuentoM2"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="precioConDescuentoM2"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Precio con Descuento"
+                                    name="precioConDescuentoM2"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Input
+                                    id="unidadesM3"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="A Partir de (x) Unidades"
+                                    name="unidadesM3"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="decuentoM3"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="% de Descuento"
+                                    name="decuentoM3"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="precioConDescuentoM3"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Precio con Descuento"
+                                    name="precioConDescuentoM3"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Input
+                                    id="unidadesM4"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="A Partir de (x) Unidades"
+                                    name="unidadesM4"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="decuentoM4"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="% de Descuento"
+                                    name="decuentoM4"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="precioConDescuentoM4"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Precio con Descuento"
+                                    name="precioConDescuentoM4"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Input
+                                    id="unidadesM5"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="A Partir de (x) Unidades"
+                                    name="unidadesM5"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="decuentoM5"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="% de Descuento"
+                                    name="decuentoM5"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="precioConDescuentoM5"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Precio con Descuento"
+                                    name="precioConDescuentoM5"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Input
+                                    id="unidadesM6"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="A Partir de (x) Unidades"
+                                    name="unidadesM6"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="decuentoM6"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="% de Descuento"
+                                    name="decuentoM6"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                  <br />
+                                  <Input
+                                    id="precioConDescuentoM6"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Precio con Descuento"
+                                    name="precioConDescuentoM6"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+
+                              </div>
+                            </Tab>
+                            <Tab key="intentary" title="Inventario">
+                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                                <Spacer y={6} />
+                                <div className="md:col-span-12"></div>
                                 <div className="md:col-span-3">
                                   <Input
-                                    id="codigoPostal"
+                                    id="invMinimo"
                                     isDisabled={status ? true : false}
-                                    value={user.codigoPostal}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="codigoPostal"
-                                    label="Código Postal"
-                                    name="codigoPostal"
+                                    label="Inventario Minimo"
+                                    name="invMinimo"
                                     labelPlacement="outside"
-                                    placeholder=" "
+                                    placeholder="0"
                                     variant="faded"
-                                    error={validationErrors.codigoPostal !== ""}
-                                    errorMessage={validationErrors.codigoPostal}
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-3">
                                   <Input
-                                    id="telefonoContacto"
+                                    id="invMaximo"
                                     isDisabled={status ? true : false}
-                                    value={user.telefonoContacto}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    label="Teléfono de contacto"
-                                    name="telefonoContacto"
+                                    label="Inventario Maximo"
+                                    name="invMaximo"
                                     labelPlacement="outside"
-                                    placeholder=" "
+                                    placeholder="0"
                                     variant="faded"
-                                    error={
-                                      validationErrors.telefonoContacto !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.telefonoContacto
-                                    }
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-3">
                                   <Input
-                                    id="telefonoCelular"
+                                    id="puntoReorden"
                                     isDisabled={status ? true : false}
-                                    value={user.telefonoCelular}
                                     onChange={handleChange}
                                     size={"sm"}
-                                    type="text"
-                                    label="Teléfono Celular"
-                                    name="telefonoCelular"
+                                    label="Punto de Reorden"
+                                    name="puntoReorden"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-3">
+                                  <Input
+                                    size={"sm"}
+                                    label="Cantidad a Surtir en Reorden"
+                                    id="cantidadSurtReorden"
+                                    isDisabled={status ? true : false}
+                                    name="cantidadSurtReorden"
+                                    onChange={handleChange}
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+
+
+                                <div className="md:col-span-12 flex flex-col  space-y-4">
+                                  <h2 className="font-large text-lg text-foreground text-left">
+                                    Ubicacion Fisica
+                                  </h2>
+                                </div>
+                                <div className="md:col-span-12 flex">
+                                  <h2 className="flex-grow font-large text-lg text-foreground text-left">
+                                    Almacén
+                                  </h2>
+                                  <h2 className="flex-grow font-large text-lg text-foreground text-left">
+                                    Zona
+                                  </h2>
+                                  <h2 className="flex-grow font-large text-lg text-foreground text-left">
+                                    Pasillo
+                                  </h2>
+                                  <h2 className="flex-grow font-large text-lg text-foreground text-left">
+                                    Estante
+                                  </h2>
+                                  <h2 className="flex-grow font-large text-lg text-foreground text-left">
+                                    Nivel
+                                  </h2>
+                                  <h2 className="flex-grow font-large text-lg text-foreground text-left">
+                                    Compartimiento
+                                  </h2>
+                                </div>
+
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Elloos <br />
+                                    <span className="text-lg font-semibold">Bodega</span>
+                                  </p>
+                                  <Input
+                                    id="zonaBodega"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaBodega"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloBodega"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloBodega"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteBodega"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteBodega"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelBodega"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelBodega"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoBodega"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoBodega"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Página <br />
+                                    <span className="text-lg font-semibold">Web</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Aparadores</span>
+                                  </p>
+                                  <Input
+                                    id="zonaAparadores"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Bodega 1</span>
+                                  </p>
+                                  <Input
+                                    id="zonaBodega1"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Bodega 2</span>
+                                  </p>
+                                  <Input
+                                    id="zonaBodega2"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Bodega 3 Basculas</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Bodega 4 Equipos</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Bodega 5 L</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Bodega 6 Cuarto Frío</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Excedente</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Recepción</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Temporal Para Igualar</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12 flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+                                  <p className="text-sm font-medium text-foreground mb-2 md:w-1/4">
+                                    Principal <br />
+                                    <span className="text-lg font-semibold">Tienda</span>
+                                  </p>
+                                  <Input
+                                    id="zonaWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="zonaWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="pasilloWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="pasilloWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="estanteWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="estanteWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="nivelWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="nivelWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                  <Input
+                                    id="compartimientoWeb"
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    name="compartimientoWeb"
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    variant="faded"
+                                  />
+                                </div>
+                              </div>
+
+                            </Tab>
+                            <Tab key="aditionalinf" title="Información adicional">
+                              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
+                                <Spacer y={6} />
+                                <div className="md:col-span-12"></div>
+                                <div className="md:col-span-12">
+                                  <Textarea
+                                    id="desComercProd"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Descripcion Comercial del Producto"
+                                    name="desComercProd"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={
-                                      validationErrors.telefonoCelular !== ""
-                                    }
-                                    errorMessage={
-                                      validationErrors.telefonoCelular
-                                    }
+                                  />
+                                </div>
+                                <div className="md:col-span-12">
+                                  <Textarea
+                                    id="espTecProd"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Especificaciones Técnicas del Prducto"
+                                    name="espTecProd"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="anchoCM"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Ancho en cm"
+                                    name="anchoCM"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="altoCM"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Alto en cm"
+                                    name="altoCM"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="profundidadCM"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Profundidad en cm"
+                                    name="profundidadCM"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="pesoKg"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Peso en Kg"
+                                    name="pesoKg"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="color"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Color"
+                                    name="color"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="energia"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size={"sm"}
+                                    label="Energía"
+                                    name="energia"
+                                    labelPlacement="outside"
+                                    placeholder="0"
+                                    variant="faded"
+                                  />
+                                </div>
+                                <div className="md:col-span-12">
+                                  <Input
+                                    id="fichaTec"
+                                    isDisabled={status ? true : false}
+                                    onChange={handleChange}
+                                    size="small"
+                                    label="Ficha Técnica (enlace)"
+                                    name="fichaTec"
+                                    labelPlacement="outside"
+                                    placeholder="$ 0.00"
+                                    variant="faded"
                                   />
                                 </div>
                               </div>
                             </Tab>
-                            <Tab key="intentary" title="Inventario"></Tab>
-                            <Tab key="aditionalinf" title="Información adicional"></Tab>
                           </Tabs>
                         </div>
                         <Spacer y={10} />
