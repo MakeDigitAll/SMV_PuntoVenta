@@ -338,9 +338,9 @@ const Promotions = () => {
             size="sm"
             type="number"
             className="w-[80px]"
-            //value={cantidadProducto[index] || ""}
+            //value={descuento[index] || ""}
             //seleccionar el id del item 
-            onChange={(e) => handleInputChange(e, data.idproducto, "cantidad")}
+            onChange={(e) => handleInputChange(e, data.idproducto, "descuento")}
 
             placeholder=""
           />
@@ -401,24 +401,24 @@ const Promotions = () => {
     if (!producto) {
       producto = {
         idProducto: idProducto,
-        cantidad: null,
+        descuento: null,
         fechaDesde: null,
         fechaHasta: null
       };
       products.push(producto);
     }
 
-    // Condicional para asignar fechaDesde, fechaHasta o cantidad
+    // Condicional para asignar fechaDesde, fechaHasta o descuento
     if (inputType === 'fechaDesde') {
       producto.fechaDesde = e.target.value;
     } else if (inputType === 'fechaHasta') {
       producto.fechaHasta = e.target.value;
-    } else if (inputType === 'cantidad') {
-      producto.cantidad = e.target.value;
+    } else if (inputType === 'descuento') {
+      producto.descuento = e.target.value;
     }
 
     // Verificar si todos los campos de producto están llenos
-    const allFieldsFilled = producto.fechaDesde !== null && producto.fechaHasta !== null && producto.cantidad !== null;
+    const allFieldsFilled = producto.fechaDesde !== null && producto.fechaHasta !== null && producto.descuento !== null;
 
     // Si todos los campos están llenos, actualiza el producto en allProducts
     if (allFieldsFilled) {
@@ -435,13 +435,6 @@ const Promotions = () => {
     }
   }
 
-
-
-
-  useEffect(() => {
-    console.log(allProducts);
-
-  }, [allProducts, products]);
 
 
 
@@ -549,7 +542,7 @@ const Promotions = () => {
 
 
   const handleSubmite = () => {
-    console.log("hola");
+    console.log(allProducts);
 
 
   }
