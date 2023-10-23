@@ -88,6 +88,7 @@ const Promotions = () => {
     }
   }
   const [data, setData] = useState([]);
+  const [EditData, setEditData] = useState(false);
   async function getPromotions() {
     try {
       const response = await fetch("https://localhost:4000/ListadoPromociones");
@@ -918,16 +919,19 @@ const Promotions = () => {
                                 )}
 
                               </TableHeader>
-                              <TableBody>
-                                {data.map((promotion) => (
-                                  <TableRow key={promotion.id}>
+                              <TableBody
+                                emptyContent={"No se encontraron productos"}
+                                items={itemsProductos}
+                              >
+                                {(item) => (
+                                  <TableRow key={item.idproducto}>
                                     {(columnKey) => (
                                       <TableCell>
-                                        {renderCellProducto(promotion, columnKey)}
+                                        {renderCellProducto(item, columnKey)}
                                       </TableCell>
                                     )}
                                   </TableRow>
-                                ))}
+                                )}
                               </TableBody>
                             </Table>
                           </div>
