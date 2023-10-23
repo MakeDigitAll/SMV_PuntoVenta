@@ -20,7 +20,7 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Select, 
+  Select,
   Checkbox,
   Image
 } from "@nextui-org/react";
@@ -60,7 +60,6 @@ const columnsProductos = [
   { name: "Fecha desde", uid: "fechaDesde", sortable: false },
   { name: "Fecha hasta", uid: "fechaHasta", sortable: false },
   { name: "Descuento", uid: "descuento", sortable: false },
-  { name: "Agregar", uid: "agregar", sortable: false },
 ];
 
 
@@ -85,7 +84,7 @@ const Promotions = () => {
   function contarmarca() {
     for (let i = 0; i < data.length; i++) {
       marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-    } 
+    }
   }
   const [data, setData] = useState([]);
   async function getPromotions() {
@@ -120,7 +119,7 @@ const Promotions = () => {
   }
 
   useEffect(() => {
-    getPromotions(); 
+    getPromotions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function handleClickBreadCrumbs(event) {
@@ -226,7 +225,7 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
-              onChange={() => {}}
+              onChange={() => { }}
               placeholder=""
             />
           </div>
@@ -239,7 +238,7 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
-              onChange={() => {}}
+              onChange={() => { }}
               placeholder=""
             />
           </div>
@@ -258,7 +257,7 @@ const Promotions = () => {
               type="number"
               className="w-[80px]"
               value={data.descuento}
-              onChange={() => {}}
+              onChange={() => { }}
               placeholder=""
             />
           </div>
@@ -271,11 +270,11 @@ const Promotions = () => {
         );
       case "activo":
         return (
-          <div className="flex flex-col"> 
+          <div className="flex flex-col">
             <Checkbox
               color="success"
               isSelected={data.isActive}
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </div>
         );
@@ -340,9 +339,9 @@ const Promotions = () => {
             type="number"
             className="w-[80px]"
             //value={cantidadProducto[index] || ""}
-            onChange={(e) =>
-              handleCantidadChange(e, index)
-            }
+            //seleccionar el id del item 
+            onChange={(e) => handleInputChange(e, data.idproducto, "cantidad")}
+
             placeholder=""
           />
         );
@@ -353,10 +352,7 @@ const Promotions = () => {
             size="sm"
             type="date"
             className="w-[120px]"
-            //value={cantidadProducto[index] || ""}
-            onChange={(e) =>
-              handleCantidadChange(e, index)
-            }
+            onChange={(e) => handleInputChange(e, data.idproducto, "fechaDesde")}
             placeholder=""
           />
         );
@@ -367,10 +363,7 @@ const Promotions = () => {
             size="sm"
             type="date"
             className="w-[120px]"
-            //value={cantidadProducto[index] || ""}
-            onChange={(e) =>
-              handleCantidadChange(e, index)
-            }
+            onChange={(e) => handleInputChange(e, data.idproducto, "fechaHasta")}
             placeholder=""
           />
         );
@@ -395,6 +388,51 @@ const Promotions = () => {
         );
     }
   }, []);
+
+
+  // Inicializa un arreglo vacío para almacenar los productos
+  const products = [];
+  //useStates para los productos
+  const [allProducts, setAllProducts] = useState([]);
+
+  const handleInputChange = (e, idProducto, inputType) => {
+    // Buscar el producto correspondiente en el arreglo o crear uno nuevo
+    let producto = products.find(item => item.idProducto === idProducto);
+    if (!producto) {
+      producto = {
+        idProducto: idProducto,
+        cantidad: null,
+        fechaDesde: null,
+        fechaHasta: null
+      };
+      products.push(producto);
+    }
+
+    // Condicional para asignar fechaDesde, fechaHasta o cantidad
+    if (inputType === 'fechaDesde') {
+      producto.fechaDesde = e.target.value;
+    } else if (inputType === 'fechaHasta') {
+      producto.fechaHasta = e.target.value;
+    } else if (inputType === 'cantidad') {
+      producto.cantidad = e.target.value;
+    }
+
+    // Verificar si todos los campos son distintos de null
+    if (producto.fechaDesde !== null && producto.fechaHasta !== null && producto.cantidad !== null) {
+      console.log(producto);
+      setAllProducts(products);
+    }
+
+  }
+
+
+
+
+
+  useEffect(() => {
+    console.log(allProducts);
+
+  }, [allProducts]);
 
 
 
@@ -465,7 +503,7 @@ const Promotions = () => {
     const value = e.target.value.toLowerCase();
     setNameProducto(value);
     const result = [];
-    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value))); // Usar spread (...) para agregar elementos al array
+    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value)));
 
     if (value === "") {
       setProductosSearched(productos);
@@ -497,6 +535,15 @@ const Promotions = () => {
   useEffect(() => {
     getProductos();
   }, []);
+
+
+
+
+  const handleSubmite = () => {
+    console.log("hola");
+
+
+  }
 
   //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
 
@@ -558,12 +605,12 @@ const Promotions = () => {
               onValueChange={onSearchChange}
             />
 
-          </div>
-          <div className="flex flex-wrap place-content-end space-x-2">
             <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
               Agregar Promocion a Producto
             </Button>
+
           </div>
+
         </div>
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap text-small space-x-3">
@@ -852,6 +899,9 @@ const Promotions = () => {
                 </div>
               </ModalBody>
               <ModalFooter>
+                <Button color="primary" onPress={handleSubmite} >
+                  Aceptar
+                </Button>
                 <Button color="danger" onPress={onClose}>
                   Cerrar
                 </Button>
