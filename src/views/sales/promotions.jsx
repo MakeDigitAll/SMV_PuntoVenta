@@ -632,8 +632,8 @@ const Promotions = () => {
   const handleVerificar = () => {
     //para todos los allProducts verificar que el descuento sea de 0 a 100 si no mostrar mensaje de error 
     for (let i = 0; i < allProducts.length; i++) {
-      if (allProducts[i].descuento < 0 || allProducts[i].descuento > 100) {
-        toast.error("Error al agregar la promoción, el descuento debe ser de 0 a 100", {
+      if (allProducts[i].descuento <= 0 || allProducts[i].descuento > 100) {
+        toast.error("Error al agregar la promoción, el descuento debe ser de 1 a 100", {
           position: "bottom-right",
           theme: "colored",
         });
