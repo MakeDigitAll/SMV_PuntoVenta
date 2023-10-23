@@ -109,6 +109,7 @@ const Promotions = () => {
             return item;
           })
         );
+        console.log(dataPromotions);
         setData(dataPromotions);
       }
     } catch (err) {
@@ -151,23 +152,23 @@ const Promotions = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...data];
+    let filteredPromotions = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((data) =>
-        data.cliente.toLowerCase().includes(filterValue.toLowerCase())
+      filteredPromotions = filteredPromotions.filter((data) =>
+        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.cliente)
+      filteredPromotions = filteredPromotions.filter((data) =>
+        Array.from(statusFilter).includes(data.nombre)
       );
     }
 
-    return filteredUsers;
+    return filteredPromotions;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -551,57 +552,17 @@ const Promotions = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Cliente"
+              placeholder="Producto"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Folio"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
-
-
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Modalidad
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
 
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
               Agregar Promocion a Producto
-            </Button>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Promociones
             </Button>
           </div>
         </div>
