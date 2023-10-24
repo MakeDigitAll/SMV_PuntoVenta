@@ -22,12 +22,14 @@ import {
   useDisclosure,
   Select,
   Checkbox,
-  Image
+  Image,
+  Tooltip
 } from "@nextui-org/react";
 import { TbDotsVertical, TbReload } from "react-icons/tb"
 import { AiOutlinePlus } from "react-icons/ai"
+import { BsFillEyeFill } from "react-icons/bs"
 import { MdArrowDropDown, MdBookmarkAdded, MdSearch } from "react-icons/md";
-
+import { BsTrash3 } from "react-icons/bs";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -239,6 +241,17 @@ const Promotions = () => {
     });
   }, [sortDescriptor, items]);
 
+
+  const handleDeletePromocion = (idPromocion) => {
+    console.log(idPromocion);
+
+  }
+
+  const handleSeePromocion = (idPromocion) => {
+    console.log(idPromocion);
+
+  }
+
   //renderizar los datos de las columnas
   const renderCell = useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
@@ -367,19 +380,29 @@ const Promotions = () => {
         );
       case "Actions":
         return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <TbDotsVertical className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+          <div className="relative flex justify-center gap-5">
+
+
+            <Tooltip content={("Ver")}>
+              <span
+                onClick={() => handleSeePromocion(data.idPromocion)}
+                style={{ marginLeft: "-8px" }}
+                className="cursor-pointer active:opacity-50"
+              >
+                <BsFillEyeFill size={20} />
+              </span>
+            </Tooltip>
+
+
+            <Tooltip content={("Eliminar")}>
+              <span
+                onClick={() => handleDeletePromocion(data.idPromocion)}
+                style={{ marginLeft: "-8px" }}
+                className="cursor-pointer active:opacity-50"
+              >
+                <BsTrash3 size={20} />
+              </span>
+            </Tooltip>
           </div>
         );
       default:
