@@ -58,11 +58,11 @@ const Quote = () => {
     recurrencia: "",
     envio: "",
     comentarios: "",
-    neto: "50",
-    descuento: "5",
-    subtotal: "45",
-    impuestos: "7",
-    total: "52",
+    neto: "",
+    descuento: "",
+    subtotal: "",
+    impuestos: "",
+    total: "",
 
 
 
@@ -174,7 +174,7 @@ const Quote = () => {
       total: cotizacionData.total,
     };
     formData.append("document", JSON.stringify(document));
-    console.log(document);
+    
 
     try {
       const result = await http.post(
@@ -188,10 +188,10 @@ const Quote = () => {
       );
 
       if (result.status === 200) {
-        console.log(result);
+        
         const newCotizacionId = result.data  //aqui se genera el id de la nueva cotiacion
 
-        console.log(filasAgregadas);
+        
         filasAgregadas.map((producto) => {
           const formData2 = new FormData();
           const document2 = {
@@ -200,7 +200,7 @@ const Quote = () => {
             cantidadProducto: producto.cantidad,  //aqui se guardaran las cantidades 
           };
           formData2.append("document2", JSON.stringify(document2));
-          console.log(document2);
+          
           async function insertProductCotizacion () {
             try {
                
@@ -237,7 +237,7 @@ const Quote = () => {
         })
 
       } else {
-        console.log(result);
+        
       }
     } catch (e) {
       if (e.response && e.response.status === 501) {
@@ -314,7 +314,7 @@ const Quote = () => {
 
   const [datos, setData] = useState([]);
   const loadTask = async (folio) => {
-    console.log(folio);
+    
     try {
       const response = await fetch(
         `https://localhost:4000/Cotizaciones/${folio}`
@@ -323,7 +323,7 @@ const Quote = () => {
       setDataQuote({
         folio: data.folio,
       });
-      console.log(data.folio);
+      
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -333,7 +333,7 @@ const Quote = () => {
   };
 
   // useEffect(() => {
-  //   console.log(params);
+  //   
   //   if (params.folio) {
   //     loadTask(params.folio);
   //   }
@@ -445,6 +445,10 @@ const Quote = () => {
 
 
 
+
+
+
+
   const handleCantidadChange = (event, index) => {
     const nuevasCantidades = [...cantidadProducto];
     nuevasCantidades[index] = event.target.value;
@@ -539,7 +543,7 @@ const Quote = () => {
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
-          // console.log(data[0].idproducto);
+          // 
         }
       } catch (err) {
         toast.error("Error al cargar los datos", {
@@ -601,7 +605,7 @@ const Quote = () => {
             setFilasAgregadas(datos);
           }
         } catch (err) {
-          console.log(err);
+          
           toast.error("Error al cargar los datos", {
             position: "bottom-right",
             theme: "colored",
@@ -609,7 +613,7 @@ const Quote = () => {
         }
       }
     } catch (error) {
-      console.log(error);
+      
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
         theme: "colored",
@@ -648,6 +652,7 @@ const Quote = () => {
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
   const [idCliente, setIdCliente] = useState();
+  
 
   //almacena todos los clientes de la base de datos
   //para buscar vendedor por nombre
@@ -661,21 +666,24 @@ const Quote = () => {
   //para almacenar los resultados de la busqueda
   const [nombreVendedor, setNombreVendedor] = useState("");
   const [idVendedor, setIdVendedor] = useState("");
+  
   //id de la cotizacioin
   const [idCotizacion, setIdCotizacion] = useState("");
 
   //fechaCotizacion
   const [fechaCotizacion, setFechaCotizacion] = useState();
+  
 
   //Es recurrente
   const [isRecurrente, setIsRecurrente] = useState(false);
   const recurrenciaToSave = isRecurrente ? 1 : 0;
+  
 
 
 
   //para almacenar los datos del cliente seleccionado
   const [clienteInfoGeneral, setClienteInfoGeneral] = useState([]);
-  //console.log(clienteInfoGeneral);
+  //
   const [clienteInfoDireccion, setClienteInfoDireccion] = useState([]);
   const [clienteInfoFacturacion, setClienteInfoFacturacion] = useState([]);
 
@@ -685,6 +693,7 @@ const Quote = () => {
   };
 
   const [envio, setEnvio] = useState("");
+  
 
   //true o false para saber que informacion se muestra
   const [showInfoGeneral, setShowInfoGeneral] = useState(false);
@@ -1689,8 +1698,8 @@ const Quote = () => {
                                 </DropdownTrigger>
                                 <DropdownMenu>
                                   <DropdownItem
-                                    onClick={() =>
-                                      setCotizacionData({
+                                    onClick={() => handleChangeEnvio("No Aplica") ||
+                                      setCotizacionData({ 
                                         ...cotizacionData,
                                         envio: "No Aplica",
                                       })
@@ -1699,7 +1708,7 @@ const Quote = () => {
                                     No Aplica
                                   </DropdownItem>
                                   <DropdownItem
-                                    onClick={() =>
+                                    onClick={() => handleChangeEnvio("Recoger en Oficina") ||
                                       setCotizacionData({
                                         ...cotizacionData,
                                         envio: "Recoger en Oficina",
@@ -1709,7 +1718,7 @@ const Quote = () => {
                                     Recoger en Oficina
                                   </DropdownItem>
                                   <DropdownItem
-                                    onClick={() =>
+                                    onClick={() => handleChangeEnvio("Envío a domicilio") ||
                                       setCotizacionData({
                                         ...cotizacionData,
                                         envio: "Envío a domicilio",
@@ -2036,7 +2045,7 @@ const Quote = () => {
                             </Select>
                           </div>
                           <div className="md:col-span-12">
-                            {console.log(pagesProductos)}
+                            
                             <Table
                               id="tablaEnModal"
                               removeWrapper
