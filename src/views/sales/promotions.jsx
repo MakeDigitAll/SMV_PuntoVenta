@@ -201,8 +201,26 @@ const Promotions = () => {
 
 
   const handleDeletePromocion = (idPromocion) => {
-    console.log(idPromocion);
-    setHasChanges(true);
+    //eliminar la promocion de la base de datos por su id
+    fetch(`https://localhost:4000/ListadoPromocionesDelete/${idPromocion}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.status === 200) {
+        toast.success("Promoción eliminada correctamente", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      } else {
+        toast.error("Error al eliminar la promoción", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    });
+
   }
 
   const handleSeePromocion = (idPromocion) => {
@@ -724,13 +742,6 @@ const Promotions = () => {
 
   }
 
-  useEffect(() => {
-    //renderizar de nuevo el topContent
-    console.log(hasChanges);
-
-
-
-  }, [hasChanges]);
 
   //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
 
