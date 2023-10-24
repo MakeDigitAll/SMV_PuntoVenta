@@ -38,7 +38,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { format, set } from "date-fns";
-
+import { IoIosSave } from "react-icons/io"
 //Columnas de la tabla
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -202,7 +202,7 @@ const Promotions = () => {
 
   const handleDeletePromocion = (idPromocion) => {
     console.log(idPromocion);
-
+    setHasChanges(true);
   }
 
   const handleSeePromocion = (idPromocion) => {
@@ -252,16 +252,17 @@ const Promotions = () => {
                 const fechaHasta = new Date(data.hasta);
 
                 if (fechaSeleccionada <= fechaHasta) {
-                  
-                setData((prevData) => {
-                  return prevData.map((item) =>
-                    item.idPromocion === data.idPromocion
-                      ? { ...item, desde: e.target.value }
-                      : item
-                  );
+
+                  setData((prevData) => {
+                    return prevData.map((item) =>
+                      item.idPromocion === data.idPromocion
+                        ? { ...item, desde: e.target.value }
+                        : item
+                    );
+                  }
+                  )
                 }
-                )
-              }}}
+              }}
               placeholder=""
             />
           </div>
@@ -280,15 +281,16 @@ const Promotions = () => {
                 const fechaDesde = new Date(data.desde);
 
                 if (fechaSeleccionada >= fechaDesde) {
-                setData((prevData) => {
-                  return prevData.map((item) =>
-                    item.idPromocion === data.idPromocion
-                      ? { ...item, hasta: e.target.value }
-                      : item
-                  );
+                  setData((prevData) => {
+                    return prevData.map((item) =>
+                      item.idPromocion === data.idPromocion
+                        ? { ...item, hasta: e.target.value }
+                        : item
+                    );
+                  }
+                  )
                 }
-                )
-              }}
+              }
               }
               placeholder=""
             />
@@ -311,15 +313,16 @@ const Promotions = () => {
               onChange={(e) => {
 
                 if (e.target.value >= 0 && e.target.value <= 100) {
-                setData((prevData) => {
-                  return prevData.map((item) =>
-                    item.idPromocion === data.idPromocion
-                      ? { ...item, descuento: Number(e.target.value) }
-                      : item
-                  );
+                  setData((prevData) => {
+                    return prevData.map((item) =>
+                      item.idPromocion === data.idPromocion
+                        ? { ...item, descuento: Number(e.target.value) }
+                        : item
+                    );
+                  }
+                  )
                 }
-                )
-              }}
+              }
               }
               placeholder=""
             />
@@ -714,10 +717,26 @@ const Promotions = () => {
     }
   }
 
+
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const handleSaveChanges = () => {
+
+  }
+
+  useEffect(() => {
+    //renderizar de nuevo el topContent
+    console.log(hasChanges);
+
+
+
+  }, [hasChanges]);
+
   //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
 
   const topContent = React.useMemo(() => {
     return (
+
       <>
         <ItemsHeader />
         <ToastContainer
@@ -773,6 +792,7 @@ const Promotions = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
+
 
             <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
               Agregar Promocion a Producto
@@ -857,6 +877,158 @@ const Promotions = () => {
     navigate,
     onClear,
   ]);
+
+
+
+  const topContentEdit = React.useMemo(() => {
+    return (
+
+      <>
+        <ItemsHeader />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div
+          role="presentation"
+          onClick={handleClickBreadCrumbs}
+          className="text-foreground"
+        >
+          <Breadcrumbs aria-label="breadcrumb" color="foreground">
+            <Link
+              className="text-foreground"
+              underline="hover"
+              sx={{ display: "flex", alignItems: "center" }}
+              color="foreground"
+              href="#"
+              onClick={() => navigate(`/Home`)}
+            >
+              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+              Inicio
+            </Link>
+            <Typography
+              sx={{ display: "flex", alignItems: "center" }}
+              className="text-foreground"
+            >
+              <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
+              Promotions
+            </Typography>
+          </Breadcrumbs>
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={{ marginLeft: "10px", marginRight: "10px" }}
+        >
+          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Producto"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+
+
+            <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
+              Agregar Promocion a Producto
+            </Button>
+
+            <Button onPress={handleSaveChanges} size="sm" color="warning" endContent={<IoIosSave />}>
+              Guardar Cambios
+            </Button>
+
+          </div>
+
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap text-small space-x-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Columnas
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                  size="sm"
+                >
+                  Acciones
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+          <label className="flex items-center text-default-400 text-small">
+            Pedidos por Surtir por página:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
+      </>
+    );
+  }, [
+    filterValue,
+    onSearchChange,
+    statusFilter,
+    visibleColumns,
+    onRowsPerPageChange,
+    navigate,
+    onClear,
+  ]);
+
+
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
@@ -913,7 +1085,7 @@ const Promotions = () => {
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         sortDescriptor={sortDescriptor}
-        topContent={topContent}
+        topContent={hasChanges ? topContentEdit : topContent}
         topContentPlacement="outside"
         onSelectionChange={setSelectedKeys}
         onSortChange={setSortDescriptor}
