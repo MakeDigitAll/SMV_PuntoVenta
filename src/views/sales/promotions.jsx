@@ -20,14 +20,16 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Select, 
+  Select,
   Checkbox,
-  Image
+  Image,
+  Tooltip
 } from "@nextui-org/react";
 import { TbDotsVertical, TbReload } from "react-icons/tb"
 import { AiOutlinePlus } from "react-icons/ai"
+import { BsFillEyeFill } from "react-icons/bs"
 import { MdArrowDropDown, MdBookmarkAdded, MdSearch } from "react-icons/md";
-
+import { BsTrash3 } from "react-icons/bs";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -35,7 +37,8 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
+import { IoIosSave } from "react-icons/io"
 //Columnas de la tabla
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -60,7 +63,6 @@ const columnsProductos = [
   { name: "Fecha desde", uid: "fechaDesde", sortable: false },
   { name: "Fecha hasta", uid: "fechaHasta", sortable: false },
   { name: "Descuento", uid: "descuento", sortable: false },
-  { name: "Agregar", uid: "agregar", sortable: false },
 ];
 
 
@@ -85,7 +87,7 @@ const Promotions = () => {
   function contarmarca() {
     for (let i = 0; i < data.length; i++) {
       marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-    } 
+    }
   }
   const [data, setData] = useState([]);
   async function getPromotions() {
@@ -120,12 +122,14 @@ const Promotions = () => {
   }
 
   useEffect(() => {
-    getPromotions(); 
+    getPromotions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
+
+
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -151,23 +155,23 @@ const Promotions = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...data];
+    let filteredPromotions = [...data];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((data) =>
-        data.cliente.toLowerCase().includes(filterValue.toLowerCase())
+      filteredPromotions = filteredPromotions.filter((data) =>
+        data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((data) =>
-        Array.from(statusFilter).includes(data.cliente)
+      filteredPromotions = filteredPromotions.filter((data) =>
+        Array.from(statusFilter).includes(data.nombre)
       );
     }
 
-    return filteredUsers;
+    return filteredPromotions;
   }, [data, hasSearchFilter, statusFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -188,6 +192,35 @@ const Promotions = () => {
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
+
+
+  const handleDeletePromocion = (idPromocion) => {
+    //eliminar la promocion de la base de datos por su id
+    fetch(`https://localhost:4000/ListadoPromocionesDelete/${idPromocion}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.status === 200) {
+        toast.success("Promoción eliminada correctamente", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      } else {
+        toast.error("Error al eliminar la promoción", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    });
+
+  }
+
+  const handleSeePromocion = (idProducto) => {
+    navigate(`/Products/${idProducto}/ViewProduct`);
+
+  }
 
   //renderizar los datos de las columnas
   const renderCell = useCallback((data, columnKey) => {
@@ -226,7 +259,23 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
-              onChange={() => {}}
+              onChange={(e) => {
+                const fechaSeleccionada = e.target.value;
+                const fechaHasta = data.hasta;
+
+                if (fechaSeleccionada <= fechaHasta) {
+                  console.log(e.target.value);
+                  setData((prevData) => {
+                    return prevData.map((item) =>
+                      item.idPromocion === data.idPromocion
+                        ? { ...item, desde: e.target.value }
+                        : item
+                    );
+                  }
+                  )
+                  setHasChanges(true);
+                }
+              }}
               placeholder=""
             />
           </div>
@@ -239,7 +288,24 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
-              onChange={() => {}}
+              onChange={(e) => {
+
+                const fechaSeleccionada = e.target.value;
+                const fechaDesde = data.desde;
+
+                if (fechaSeleccionada >= fechaDesde) {
+                  setData((prevData) => {
+                    return prevData.map((item) =>
+                      item.idPromocion === data.idPromocion
+                        ? { ...item, hasta: e.target.value }
+                        : item
+                    );
+                  }
+                  )
+                  setHasChanges(true);
+                }
+              }
+              }
               placeholder=""
             />
           </div>
@@ -258,7 +324,22 @@ const Promotions = () => {
               type="number"
               className="w-[80px]"
               value={data.descuento}
-              onChange={() => {}}
+              onChange={(e) => {
+
+                if (e.target.value >= 0 && e.target.value <= 100) {
+                  console.log(e.target.value);
+                  setData((prevData) => {
+                    return prevData.map((item) =>
+                      item.idPromocion === data.idPromocion
+                        ? { ...item, descuento: Number(e.target.value) }
+                        : item
+                    );
+                  }
+                  )
+                  setHasChanges(true);
+                }
+              }
+              }
               placeholder=""
             />
           </div>
@@ -271,29 +352,49 @@ const Promotions = () => {
         );
       case "activo":
         return (
-          <div className="flex flex-col"> 
+          <div className="flex flex-col">
             <Checkbox
               color="success"
               isSelected={data.isActive}
-              onChange={() => {}}
+              onChange={(e) => {
+                setData((prevData) => {
+                  return prevData.map((item) =>
+                    item.idPromocion === data.idPromocion
+                      ? { ...item, isActive: !item.isActive }
+                      : item
+                  );
+                })
+                setHasChanges(true);
+              }
+              }
             />
           </div>
         );
       case "Actions":
         return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <TbDotsVertical className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+          <div className="relative flex justify-center gap-5">
+
+
+            <Tooltip content={("Ver")}>
+              <span
+                onClick={() => handleSeePromocion(data.idProducto)}
+                style={{ marginLeft: "-8px" }}
+                className="cursor-pointer active:opacity-50"
+              >
+                <BsFillEyeFill size={20} />
+              </span>
+            </Tooltip>
+
+
+            <Tooltip content={("Eliminar")}>
+              <span
+                onClick={() => handleDeletePromocion(data.idPromocion)}
+                style={{ marginLeft: "-8px" }}
+                className="cursor-pointer active:opacity-50"
+              >
+                <BsTrash3 size={20} />
+              </span>
+            </Tooltip>
           </div>
         );
       default:
@@ -339,10 +440,10 @@ const Promotions = () => {
             size="sm"
             type="number"
             className="w-[80px]"
-            //value={cantidadProducto[index] || ""}
-            onChange={(e) =>
-              handleCantidadChange(e, index)
-            }
+            //value={descuento[index] || ""}
+            //seleccionar el id del item 
+            onChange={(e) => handleInputChange(e, data.idproducto, "descuento")}
+
             placeholder=""
           />
         );
@@ -353,10 +454,7 @@ const Promotions = () => {
             size="sm"
             type="date"
             className="w-[120px]"
-            //value={cantidadProducto[index] || ""}
-            onChange={(e) =>
-              handleCantidadChange(e, index)
-            }
+            onChange={(e) => handleInputChange(e, data.idproducto, "fechaDesde")}
             placeholder=""
           />
         );
@@ -367,10 +465,7 @@ const Promotions = () => {
             size="sm"
             type="date"
             className="w-[120px]"
-            //value={cantidadProducto[index] || ""}
-            onChange={(e) =>
-              handleCantidadChange(e, index)
-            }
+            onChange={(e) => handleInputChange(e, data.idproducto, "fechaHasta")}
             placeholder=""
           />
         );
@@ -395,6 +490,53 @@ const Promotions = () => {
         );
     }
   }, []);
+
+
+  // Inicializa un arreglo vacío para almacenar los productos
+  const products = [];
+  // useState para los productos
+  const [allProducts, setAllProducts] = useState([]);
+
+  const handleInputChange = (e, idProducto, inputType) => {
+    let producto = products.find(item => item.idProducto === idProducto);
+
+    if (!producto) {
+      producto = {
+        idProducto: idProducto,
+        descuento: null,
+        fechaDesde: null,
+        fechaHasta: null
+      };
+      products.push(producto);
+    }
+
+    // Condicional para asignar fechaDesde, fechaHasta o descuento
+    if (inputType === 'fechaDesde') {
+      producto.fechaDesde = e.target.value;
+    } else if (inputType === 'fechaHasta') {
+      producto.fechaHasta = e.target.value;
+    } else if (inputType === 'descuento') {
+      producto.descuento = e.target.value;
+    }
+
+    // Verificar si todos los campos de producto están llenos
+    const allFieldsFilled = producto.fechaDesde !== null && producto.fechaHasta !== null && producto.descuento !== null;
+
+    // Si todos los campos están llenos, actualiza el producto en allProducts
+    if (allFieldsFilled) {
+      setAllProducts(prevAllProducts => {
+        // Actualizar el producto si ya existe en allProducts
+        if (prevAllProducts.some(item => item.idProducto === idProducto)) {
+          return prevAllProducts.map(item =>
+            item.idProducto === idProducto ? producto : item
+          );
+        } else {
+          return [...prevAllProducts, producto];
+        }
+      });
+    }
+  }
+
 
 
 
@@ -445,7 +587,7 @@ const Promotions = () => {
   const getProductos = () => {
     async function loadProducts() {
       try {
-        const response = await fetch(`https://localhost:4000/Productos`);
+        const response = await fetch(`https://localhost:4000/ProductosSinDescuento`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
@@ -465,7 +607,7 @@ const Promotions = () => {
     const value = e.target.value.toLowerCase();
     setNameProducto(value);
     const result = [];
-    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value))); // Usar spread (...) para agregar elementos al array
+    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value)));
 
     if (value === "") {
       setProductosSearched(productos);
@@ -498,7 +640,149 @@ const Promotions = () => {
     getProductos();
   }, []);
 
+
+
+
+  //para verificar fechas y descuento
+  const handleVerificar = () => {
+    //para todos los allProducts verificar que el descuento sea de 0 a 100 si no mostrar mensaje de error 
+    for (let i = 0; i < allProducts.length; i++) {
+      if (allProducts[i].descuento <= 0 || allProducts[i].descuento > 100) {
+        toast.error("Error al agregar la promoción, el descuento debe ser de 1 a 100", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //para todos los allProducts verificar que la fecha desde sea menor a la fechaHasta y que no sea anterior a la fecha actual
+    for (let i = 0; i < allProducts.length; i++) {
+      if (allProducts[i].fechaDesde > allProducts[i].fechaHasta) {
+        toast.error("Error al agregar la promoción, la fecha desde debe ser menor a la fecha hasta", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //comprobar que la fecha desde no sea anterior a la fecha actual
+    for (let i = 0; i < allProducts.length; i++) {
+      const fechaActual = format(new Date(), "yyyy-MM-dd");
+      if (allProducts[i].fechaDesde < fechaActual) {
+        toast.error("Error al agregar la promoción, la fecha desde no puede ser anterior a la fecha actual", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+
+    //si no hay errores retornar llamar a la funcion handleSubmite
+    handleSubmite();
+
+  }
+
+  const handleSubmite = () => {
+    let showMessage = true; // Variable para controlar si se muestra el mensaje
+
+    for (let i = 0; i < allProducts.length; i++) {
+      const producto = productos.find(item => item.idproducto === allProducts[i].idProducto);
+      allProducts[i].precio = producto.precio;
+    }
+
+    for (let i = 0; i < allProducts.length; i++) {
+      allProducts[i].precioDescuento = Number(allProducts[i].precio) - (Number(allProducts[i].precio) * (Number(allProducts[i].descuento) / 100));
+    }
+
+    for (let i = 0; i < allProducts.length; i++) {
+      const data = {
+        idProducto: allProducts[i].idProducto,
+        desde: allProducts[i].fechaDesde,
+        hasta: allProducts[i].fechaHasta,
+        precioBase: allProducts[i].precio,
+        descuento: allProducts[i].descuento,
+        precioDescuento: allProducts[i].precioDescuento,
+        isActive: true
+      };
+
+      fetch(`https://localhost:4000/ListadoPromociones`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then((res) => {
+        if (res.status === 200 && showMessage) {
+          toast.success("Promoción agregada correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          //cerrar el modal
+          onClose();
+          showMessage = false;
+        } else if (showMessage) {
+          toast.error("Error al agregar la promoción", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          showMessage = false;
+        }
+      });
+    }
+  }
+
+
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const handleSaveChanges = (e) => {
+
+    const dataModificada = data.map((item) => {
+      return {
+        idPromocion: item.idPromocion,
+        idProducto: item.idProducto,
+        desde: item.desde,
+        hasta: item.hasta,
+        precioBase: item.precioBase,
+        descuento: item.descuento,
+        precioDescuento: item.precioDescuento,
+        isActive: item.isActive
+      };
+    });
+
+    console.log(dataModificada[0]);
+
+    for (let i = 0; i < dataModificada.length; i++) {
+
+      fetch(`https://localhost:4000/ListadoPromociones`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataModificada[i]),
+      }).then((res) => {
+        if (res.status === 200) {
+          toast.success("Promociones actualizadas correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setHasChanges(false);
+        } else {
+          toast.error("Error al actualizar las promociones", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setHasChanges(false);
+        }
+      });
+    }
+  }
+
+
   //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
+
 
   const topContent = React.useMemo(() => {
     return (
@@ -551,17 +835,7 @@ const Promotions = () => {
               isClearable
               size="sm"
               className="w-[450px] sm:max-w-[44%]"
-              placeholder="Cliente"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Folio"
+              placeholder="Producto"
               startContent={<MdSearch />}
               value={filterValue}
               onClear={() => onClear()}
@@ -569,41 +843,18 @@ const Promotions = () => {
             />
 
 
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Modalidad
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-
-          </div>
-          <div className="flex flex-wrap place-content-end space-x-2">
             <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
               Agregar Promocion a Producto
             </Button>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Promociones
-            </Button>
+
+            {hasChanges ? (
+              <Button onPress={handleSaveChanges} size="sm" color="warning" endContent={<IoIosSave />}>
+                Guardar Cambios
+              </Button>
+            ) : null}
+
           </div>
+
         </div>
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap text-small space-x-3">
@@ -680,7 +931,10 @@ const Promotions = () => {
     onRowsPerPageChange,
     navigate,
     onClear,
+    hasChanges,
   ]);
+
+
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
@@ -736,8 +990,6 @@ const Promotions = () => {
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -873,12 +1125,15 @@ const Promotions = () => {
 
                               </TableHeader>
                               <TableBody
+                                emptyContent={"No se encontraron productos"}
                                 items={itemsProductos}
                               >
                                 {(item) => (
                                   <TableRow key={item.idproducto}>
                                     {(columnKey) => (
-                                      <TableCell>{renderCellProducto(item, columnKey)}</TableCell>
+                                      <TableCell>
+                                        {renderCellProducto(item, columnKey)}
+                                      </TableCell>
                                     )}
                                   </TableRow>
                                 )}
@@ -892,6 +1147,9 @@ const Promotions = () => {
                 </div>
               </ModalBody>
               <ModalFooter>
+                <Button color="primary" onPress={handleVerificar} >
+                  Aceptar
+                </Button>
                 <Button color="danger" onPress={onClose}>
                   Cerrar
                 </Button>
