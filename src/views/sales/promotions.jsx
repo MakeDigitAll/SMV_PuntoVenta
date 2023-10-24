@@ -572,7 +572,7 @@ const Promotions = () => {
   const getProductos = () => {
     async function loadProducts() {
       try {
-        const response = await fetch(`https://localhost:4000/Productos`);
+        const response = await fetch(`https://localhost:4000/ProductosSinDescuento`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
@@ -705,13 +705,15 @@ const Promotions = () => {
             position: "bottom-right",
             theme: "colored",
           });
-          showMessage = false; // Cambiar la variable a false para evitar más mensajes
+          //cerrar el modal
+          onClose();
+          showMessage = false;
         } else if (showMessage) {
           toast.error("Error al agregar la promoción", {
             position: "bottom-right",
             theme: "colored",
           });
-          showMessage = false; // Cambiar la variable a false para evitar más mensajes
+          showMessage = false;
         }
       });
     }
