@@ -90,7 +90,6 @@ const Promotions = () => {
     }
   }
   const [data, setData] = useState([]);
-  const [EditData, setEditData] = useState(false);
   async function getPromotions() {
     try {
       const response = await fetch("https://localhost:4000/ListadoPromociones");
@@ -129,11 +128,6 @@ const Promotions = () => {
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
-
-  useEffect(() => {
-    setEditData(true);
-    console.log("editao");
-  }, [data]);
 
 
   const navigate = useNavigate();
@@ -223,9 +217,9 @@ const Promotions = () => {
 
   }
 
-  const handleSeePromocion = (idPromocion) => {
-    console.log(idPromocion);
-    setHasChanges(true);
+  const handleSeePromocion = (idProducto) => {
+    navigate(`/Products/${idProducto}/ViewProduct`);
+
   }
 
   //renderizar los datos de las columnas
@@ -266,11 +260,11 @@ const Promotions = () => {
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
               onChange={(e) => {
-                const fechaSeleccionada = new Date(e.target.value);
-                const fechaHasta = new Date(data.hasta);
+                const fechaSeleccionada = e.target.value;
+                const fechaHasta = data.hasta;
 
                 if (fechaSeleccionada <= fechaHasta) {
-
+                  console.log(e.target.value);
                   setData((prevData) => {
                     return prevData.map((item) =>
                       item.idPromocion === data.idPromocion
@@ -279,6 +273,7 @@ const Promotions = () => {
                     );
                   }
                   )
+                  setHasChanges(true);
                 }
               }}
               placeholder=""
@@ -295,8 +290,8 @@ const Promotions = () => {
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
               onChange={(e) => {
 
-                const fechaSeleccionada = new Date(e.target.value);
-                const fechaDesde = new Date(data.desde);
+                const fechaSeleccionada = e.target.value;
+                const fechaDesde = data.desde;
 
                 if (fechaSeleccionada >= fechaDesde) {
                   setData((prevData) => {
@@ -307,6 +302,7 @@ const Promotions = () => {
                     );
                   }
                   )
+                  setHasChanges(true);
                 }
               }
               }
@@ -331,6 +327,7 @@ const Promotions = () => {
               onChange={(e) => {
 
                 if (e.target.value >= 0 && e.target.value <= 100) {
+                  console.log(e.target.value);
                   setData((prevData) => {
                     return prevData.map((item) =>
                       item.idPromocion === data.idPromocion
@@ -339,6 +336,7 @@ const Promotions = () => {
                     );
                   }
                   )
+                  setHasChanges(true);
                 }
               }
               }
@@ -358,15 +356,16 @@ const Promotions = () => {
             <Checkbox
               color="success"
               isSelected={data.isActive}
-              onChange={(e) =>
+              onChange={(e) => {
                 setData((prevData) => {
                   return prevData.map((item) =>
                     item.idPromocion === data.idPromocion
                       ? { ...item, isActive: !item.isActive }
                       : item
                   );
-                }
-                )
+                })
+                setHasChanges(true);
+              }
               }
             />
           </div>
@@ -378,7 +377,7 @@ const Promotions = () => {
 
             <Tooltip content={("Ver")}>
               <span
-                onClick={() => handleSeePromocion(data.idPromocion)}
+                onClick={() => handleSeePromocion(data.idProducto)}
                 style={{ marginLeft: "-8px" }}
                 className="cursor-pointer active:opacity-50"
               >
@@ -738,8 +737,47 @@ const Promotions = () => {
 
   const [hasChanges, setHasChanges] = useState(false);
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = (e) => {
 
+    const dataModificada = data.map((item) => {
+      return {
+        idPromocion: item.idPromocion,
+        idProducto: item.idProducto,
+        desde: item.desde,
+        hasta: item.hasta,
+        precioBase: item.precioBase,
+        descuento: item.descuento,
+        precioDescuento: item.precioDescuento,
+        isActive: item.isActive
+      };
+    });
+
+    console.log(dataModificada[0]);
+
+    for (let i = 0; i < dataModificada.length; i++) {
+
+      fetch(`https://localhost:4000/ListadoPromociones`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataModificada[i]),
+      }).then((res) => {
+        if (res.status === 200) {
+          toast.success("Promociones actualizadas correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setHasChanges(false);
+        } else {
+          toast.error("Error al actualizar las promociones", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          setHasChanges(false);
+        }
+      });
+    }
   }
 
 
