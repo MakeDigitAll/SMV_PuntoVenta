@@ -1793,14 +1793,14 @@ const Quote = () => {
                                           <TableCell>
                                             {fila.descuento > 0 ? (
                                               <div
-                                                className="text-green-500 flex items-center justify-center"
+                                                className="text-green-500"
                                               >
                                                 {fila.descuento}%
                                               </div>
 
                                             ) : (
                                               <div
-                                                className="flex items-center justify-center"
+                                                className=""
                                               >
                                                 {fila.descuento}%
                                               </div>
@@ -2094,14 +2094,14 @@ const Quote = () => {
 
                                       {data.descuento > 0 ? (
                                         <div
-                                          className="text-green-500 flex items-center justify-center"
+                                          className="text-green-500"
                                         >
                                           {data.descuento}%
                                         </div>
 
                                       ) : (
                                         <div
-                                          className="flex items-center justify-center"
+                                          className=""
                                         >
                                           {data.descuento}%
                                         </div>
