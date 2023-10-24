@@ -113,7 +113,6 @@ const Promotions = () => {
           })
         );
         setData(dataPromotions);
-        console.log(dataPromotions);
       }
     } catch (err) {
       toast.error("Error al cargar los datos", {
@@ -131,51 +130,10 @@ const Promotions = () => {
     event.preventDefault();
   }
 
-  //funcion para cambiar el estado de los productos
-  const handlePromotionChange = async (e, idPromocion, inputType) => {
-    const value = e.target.value;
+  useEffect(() => {
     setEditData(true);
-    switch (inputType) {
-      case "fechaDesde":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, desde: value }
-              : item
-          )
-        );
-        break;
-      case "fechaHasta":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, hasta: value }
-              : item
-          )
-        );
-        break;
-      case "descuento":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, descuento: value }
-              : item
-          )
-        );
-        break;
-      case "isActive":
-        setData(
-          data.map((item) =>
-            item.idPromocion === idPromocion
-              ? { ...item, isActive: !item.isActive }
-              : item
-          )
-        );
-        break;
-      default:
-        break;
-    }
-  };
+    console.log("editao");
+  }, [data]);
 
 
   const navigate = useNavigate();
@@ -289,7 +247,12 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
-              onChange={(e) =>
+              onChange={(e) => {
+                const fechaSeleccionada = new Date(e.target.value);
+                const fechaHasta = new Date(data.hasta);
+
+                if (fechaSeleccionada <= fechaHasta) {
+                  
                 setData((prevData) => {
                   return prevData.map((item) =>
                     item.idPromocion === data.idPromocion
@@ -298,7 +261,7 @@ const Promotions = () => {
                   );
                 }
                 )
-              }
+              }}}
               placeholder=""
             />
           </div>
@@ -311,7 +274,12 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
-              onChange={(e) =>
+              onChange={(e) => {
+
+                const fechaSeleccionada = new Date(e.target.value);
+                const fechaDesde = new Date(data.desde);
+
+                if (fechaSeleccionada >= fechaDesde) {
                 setData((prevData) => {
                   return prevData.map((item) =>
                     item.idPromocion === data.idPromocion
@@ -320,6 +288,7 @@ const Promotions = () => {
                   );
                 }
                 )
+              }}
               }
               placeholder=""
             />
@@ -339,7 +308,9 @@ const Promotions = () => {
               type="number"
               className="w-[80px]"
               value={data.descuento}
-              onChange={(e) =>
+              onChange={(e) => {
+
+                if (e.target.value >= 0 && e.target.value <= 100) {
                 setData((prevData) => {
                   return prevData.map((item) =>
                     item.idPromocion === data.idPromocion
@@ -348,6 +319,7 @@ const Promotions = () => {
                   );
                 }
                 )
+              }}
               }
               placeholder=""
             />
