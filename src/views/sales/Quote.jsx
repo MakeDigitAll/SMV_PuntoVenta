@@ -201,30 +201,30 @@ const Quote = () => {
           };
           formData2.append("document2", JSON.stringify(document2));
           console.log(document2);
-          async function insertProductCotizacion () {
+          async function insertProductCotizacion() {
             try {
-               
-                //realizamos la segunda solicitud para guardar los datos
-                const response2 = await http.post(
-                  `https://localhost:4000/ProductosCotizados`,
-                  formData2,
-                  {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    },
-                  }
-                );
-  
-                if (response2.status === 200) {
-                  toast.success("Cliente creado correctamente", { theme: "colored" });
-                  navigate("/Sales/Quotes");
-                } else {
-                  toast.error("Error al crear una cotizacion", {
-                    position: "bottom-right",
-                    theme: "colored",
-                  });
+
+              //realizamos la segunda solicitud para guardar los datos
+              const response2 = await http.post(
+                `https://localhost:4000/ProductosCotizados`,
+                formData2,
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
                 }
-              
+              );
+
+              if (response2.status === 200) {
+                toast.success("Cliente creado correctamente", { theme: "colored" });
+                navigate("/Sales/Quotes");
+              } else {
+                toast.error("Error al crear una cotizacion", {
+                  position: "bottom-right",
+                  theme: "colored",
+                });
+              }
+
             } catch (error) {
               toast.error("Error al crear una cotizacion", {
                 position: "bottom-right",
@@ -233,7 +233,7 @@ const Quote = () => {
             }
 
           }
-          insertProductCotizacion();          
+          insertProductCotizacion();
         })
 
       } else {
@@ -1791,7 +1791,22 @@ const Quote = () => {
                                             ${fila.precioUnitario}
                                           </TableCell>
                                           <TableCell>
-                                            {fila.descuento}%
+                                            {fila.descuento > 0 ? (
+                                              <div
+                                                className="text-green-500 flex items-center justify-center"
+                                              >
+                                                {fila.descuento}%
+                                              </div>
+
+                                            ) : (
+                                              <div
+                                                className="flex items-center justify-center"
+                                              >
+                                                {fila.descuento}%
+                                              </div>
+                                            )}
+
+
                                           </TableCell>
                                           <TableCell>${fila.total}</TableCell>
                                         </TableRow>
@@ -2036,7 +2051,6 @@ const Quote = () => {
                             </Select>
                           </div>
                           <div className="md:col-span-12">
-                            {console.log(pagesProductos)}
                             <Table
                               id="tablaEnModal"
                               removeWrapper
@@ -2076,7 +2090,26 @@ const Quote = () => {
                                     <TableCell>{data.marca}</TableCell>
                                     <TableCell>{data.existencia}</TableCell>
                                     <TableCell>{data.precio}</TableCell>
-                                    <TableCell>{data.descuento}</TableCell>
+                                    <TableCell>
+
+                                      {data.descuento > 0 ? (
+                                        <div
+                                          className="text-green-500 flex items-center justify-center"
+                                        >
+                                          {data.descuento}%
+                                        </div>
+
+                                      ) : (
+                                        <div
+                                          className="flex items-center justify-center"
+                                        >
+                                          {data.descuento}%
+                                        </div>
+                                      )}
+
+
+
+                                    </TableCell>
                                     <TableCell>
                                       <Input
                                         size="sm"
