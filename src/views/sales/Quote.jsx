@@ -24,11 +24,6 @@ import {
   SelectItem,
   Card,
   CardBody,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownSection,
-  DropdownItem
 
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -40,7 +35,6 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-o
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
 import { RiDashboard2Fill } from "react-icons/ri";
-import { MdKeyboardArrowDown } from "react-icons/md";
 import {
   MdDiscount,
   MdKeyboardArrowDown,

@@ -26,7 +26,7 @@ import {
 import { MdCamera, MdProductionQuantityLimits } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
-
+import { format } from "date-fns";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import Crop from "../../components/crop/Crop.jsx";
@@ -44,29 +44,44 @@ const Product = () => {
     }
   };
   const [user, setUser] = useState({
-    nombre: "",
-    apellido: "",
-    email: "",
-    password: "",
-    emailConfirm: "",
-    passwordConfirm: "",
+    imagen: "",
+    nombreProducto: "",
+    codigoFab: "",
+    codigoEmp: "",
+    marcaProd: "",
+    categoriaProd: "",
+    codigoSAT: "",
+    actualizado: format(new Date(), "yyyy-MM-dd"),
+    activo: "",
+    web: "",
+    pos: "",
+    venta: "",
+    precio: "",
+    existencia: "",
+    cantidad: "",
+    backOrder: "",
+    descuento: "",
+    total: "",    
   });
   const [validationErrors, setValidationErrors] = useState({
-    nombre: "",
-    apellido: "",
-    email: "",
-    emailConfirm: "",
-    password: "",
-    confirmPassword: "",
-    direccion: "",
-    colonia: "",
-    ciudad: "",
-    estado: "",
-    codigoPostal: "",
-    telefonoContacto: "",
-    telefonoCelular: "",
-    perfilSeguridad: "",
-    vendedor: "",
+    imagenProduc: "",
+    nombreProducto: "",
+    codigoFab: "",
+    codigoEmp: "",
+    marcaProd: "",
+    categoriaProd: "",
+    codigoSAT: "",
+    actualizado: "",
+    activo: "",
+    web: "",
+    pos: "",
+    venta: "",
+    precio: "",
+    existencia: "",
+    cantidad: "",
+    backOrder: "",
+    descuento: "",
+    total: "",    
   });
 
   const handleChange = (e) => {
@@ -85,52 +100,38 @@ const Product = () => {
       : "";
     if (
       !photoURL ||
-      !user.nombre ||
-      !user.apellido ||
-      !user.password ||
-      !user.direccion ||
-      !user.colonia ||
-      !user.estado ||
-      !user.codigoPostal ||
-      !user.telefonoContacto ||
-      !user.telefonoCelular ||
-      !user.perfilSeguridad ||
-      passwordValidationState !== "valid" ||
-      confirmPasswordValidationState !== "valid" ||
-      emailConfirmValidationState !== "valid"
+      !user.imagen ||
+      !user.nombreProducto ||
+      !user.codigoFab ||
+      !user.codigoEmp ||
+      !user.marcaProd ||
+      !user.categoriaProd ||
+      !user.codigoSAT ||
+      !user.actualizado ||
+      !user.precio ||
+      !user.existencia ||
+      !user.cantidad ||
+      !user.descuento ||
+      !user.total !== "valid"
     ) {
       toast.error("Favor de llenar todos los campos correctamente", {
         theme: "colored",
       });
     }
-    user.password !== user.confirmPassword || user.email !== user.emailConfirm
-      ? toast.error("Las contraseñas o correos no coinciden", {
-        theme: "colored",
-      })
-      : "";
+
     const errors = {};
-    !user.nombre ? (errors.nombre = "Favor de llenar este campo") : "";
-    !user.apellido ? (errors.apellido = "Favor de llenar este campo") : "";
-    !user.perfilSeguridad
-      ? (errors.perfilSeguridad = "Favor de llenar este campo")
-      : "";
-    !user.vendedor ? (errors.vendedor = "Favor de llenar este campo") : "";
-    !user.direccion ? (errors.direccion = "Favor de llenar este campo") : "";
-    !user.colonia ? (errors.colonia = "Favor de llenar este campo") : "";
-    !user.status ? (errors.status = "Favor de llenar este campo") : "";
-    !user.ciudad ? (errors.ciudad = "Favor de llenar este campo") : "";
-    !user.estado ? (errors.estado = "Favor de llenar este campo") : "";
-    !user.codigoPostal
-      ? (errors.codigoPostal = "Favor de llenar este campo")
-      : "";
-    !user.telefonoCelular
-      ? (errors.telefonoCelular = "Favor de llenar este campo")
-      : "";
-    !user.telefonoContacto
-      ? (errors.telefonoContacto = "Favor de llenar este campo")
-      : "";
-    !user.email ? (errors.email = "Favor de llenar este campo") : "";
-    !user.password ? (errors.password = "Favor de llenar este campo") : "";
+    !user.nombreProducto ? (errors.nombreProducto = "Favor de llenar este campo") : "";
+    !user.codigoFab ? (errors.codigoFab = "Favor de llenar este campo") : "";
+    !user.codigoEmp ? (errors.codigoEmp = "Favor de llenar este campo") : "";
+    !user.marcaProd ? (errors.marcaProd = "Favor de llenar este campo") : "";
+    !user.categoriaProd ? (errors.categoriaProd = "Favor de llenar este campo") : "";
+    !user.codigoSAT ? (errors.codigoSAT = "Favor de llenar este campo") : "";
+    !user.precio ? (errors.precio = "Favor de llenar este campo") : "";
+    !user.existencia ? (errors.existencia = "Favor de llenar este campo") : "";
+    !user.cantidad ? (errors.cantidad = "Favor de llenar este campo") : "";
+    !user.descuento ? (errors.descuento = "Favor de llenar este campo") : "";
+    !user.total ? (errors.total = "Favor de llenar este campo") : "";
+
     !photoURL ? (errors.imagen = "Favor de llenar este campo") : "";
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
@@ -140,30 +141,30 @@ const Product = () => {
 
     const formData = new FormData();
     const document = JSON.stringify({
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      password: user.password,
-      perfilSeguridad: user.perfilSeguridad,
-      vendedor: user.vendedor,
+      nombreProducto: user.nombreProducto,
+      codigoFab: user.codigoFab,
+      codigoEmp: user.codigoEmp,
+      marcaProd: user.marcaProd,
+      categoriaProd: user.categoriaProd,
+      codigoSAT: user.codigoSAT,
+      actualizado: user.actualizado,
+      precio: user.precio,
+      existencia: user.existencia,
+      cantidad: user.cantidad,
+      descuento: user.descuento,
+      total: user.total,
+      activo: activoToSave,
+      web: webToSave,
+      pos: posToSave,
+      venta: ventaToSave,
+      backOrder: backOrderToSave,
     });
 
     formData.append("document", document);
     formData.append("image", file);
-    const document2 = JSON.stringify({
-      direccion: user.direccion,
-      colonia: user.colonia,
-      status: user.status,
-      ciudad: user.ciudad,
-      estado: user.estado,
-      codigoPostal: user.codigoPostal,
-      telefonoContacto: user.telefonoContacto,
-      telefonoCelular: user.telefonoCelular,
-    });
-    formData.append("document2", document2);
     try {
       const result = await http.post(
-        `https://localhost:4000/api/createuser`,
+        `https://localhost:4000/Productos`,
         formData,
         {
           headers: {
@@ -172,8 +173,8 @@ const Product = () => {
         }
       );
       if (result.status == 200 ? true : false) {
-        toast.success("Usuario creado correctamente", { theme: "colored" });
-        navigate("/Settings/Users");
+        toast.success("Producto creado correctamente", { theme: "colored" });
+        navigate("/Products/ProductList");
       } else {
         console.log(result);
       }
@@ -185,11 +186,12 @@ const Product = () => {
         : toast.error(e.response.data.body.error, { theme: "colored" });
     }
   }
-  const [dataBranch, setData] = useState([]);
+
+
   async function loadTask() {
     try {
       const response = await fetch(
-        "https://localhost:4000/SucursalesAlmacen"
+        "https://localhost:4000/Productos"
       );
       const data = await response.json();
       if (response.ok) {
@@ -206,62 +208,33 @@ const Product = () => {
     loadTask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-  const validationState = useMemo(() => {
-    if (user.email === "") return undefined;
-    return validateEmail(user.email) ? "valid" : "invalid";
-  }, [user.email]);
+
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
-  const estadosDeMexico = [
-    "Aguascalientes",
-    "Baja California",
-    "Baja California Sur",
-    "Campeche",
-    "Chiapas",
-    "Chihuahua",
-    "Coahuila",
-    "Colima",
-    "Ciudad de México",
-    "Durango",
-    "Guanajuato",
-    "Guerrero",
-    "Hidalgo",
-    "Jalisco",
-    "México",
-    "Michoacán",
-    "Morelos",
-    "Nayarit",
-    "Nuevo León",
-    "Oaxaca",
-    "Puebla",
-    "Querétaro",
-    "Quintana Roo",
-    "San Luis Potosí",
-    "Sinaloa",
-    "Sonora",
-    "Tabasco",
-    "Tamaulipas",
-    "Tlaxcala",
-    "Veracruz",
-    "Yucatán",
-    "Zacatecas",
-  ];
 
-  const passwordValidationState = useMemo(() => {
-    if (user.password === "") return undefined;
-    return user.password.length >= 8 ? "valid" : "invalid";
-  }, [user.password]);
-  const confirmPasswordValidationState = useMemo(() => {
-    if (user.confirmPassword === "") return undefined;
-    if (user.confirmPassword != undefined)
-      return user.password === user.confirmPassword ? "valid" : "invalid";
-  }, [user.confirmPassword, user.password]);
-  const emailConfirmValidationState = useMemo(() => {
-    if (user.emailConfirm === "") return undefined;
-    return user.emailConfirm === user.email ? "valid" : "invalid";
-  }, [user.emailConfirm, user.email]);
+  const [isActivo, setIsActivo] = useState(false);
+  const activoToSave = isActivo ? 1 : 0;
+  console.log("Activo: ",activoToSave);
+
+  const [isWeb, setIsWeb] = useState(false);
+  const webToSave = isWeb ? 1 : 0;
+  console.log("Web: ", webToSave);
+
+  const [isPos, setIsPos] = useState(false);
+  const posToSave = isPos ? 1 : 0;
+  console.log("POS: ", posToSave);
+
+  const [isVenta, setIsVenta] = useState(false);
+  const ventaToSave = isVenta ? 1 : 0;
+  console.log("venta: ",ventaToSave);
+
+  const [isBackOrder, setIsBackOrder] = useState(false);
+  const backOrderToSave = isBackOrder ? 1 : 0;
+  console.log("BackOrder: ", backOrderToSave);
+ 
+
+
+
   return !openCrop ? (
     <>
       <ItemsHeader />
@@ -435,17 +408,7 @@ const Product = () => {
                         </div>
                       </div>
                       <div>
-                        <div>
-                          {dataBranch.map((item) => (
-                            <div key={item.id}>
-                              <CheckboxGroup label="Sucursales">
-                                <Checkbox value={item.id}>
-                                  {item.nombre}
-                                </Checkbox>
-                              </CheckboxGroup>
-                            </div>
-                          ))}
-                        </div>
+                        
                       </div>
                     </div>
                     <div className="lg:col-span-2">
@@ -462,30 +425,46 @@ const Product = () => {
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
                                 <div className="md:col-span-6"></div>
-                                <div className="md:col-span-12">
-                                  <Textarea
-                                    id="nombre"
-                                    isDisabled={status ? true : false}
-                                    value={user.nombre}
+                                <div className="md:col-span-8">
+                                  <Input
+                                    id="nombreProducto"
+                                    value={user.nombreProducto}
                                     onValueChange={handleChange}
                                     size={"sm"}
                                     type="text"
                                     label="Nombre del producto"
-                                    name="nombre"
+                                    name="nombreProducto"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.nombre !== ""}
-                                    errorMessage={validationErrors.nombre}
+                                    error={validationErrors.nombreProducto !== ""}
+                                    errorMessage={validationErrors.nombreProducto}
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
+                                  <Input
+                                    size={"sm"}
+                                    type="text"
+                                    label="Fecha"
+                                    id="actualizado"
+                                    disabled={true}
+                                    value={user.actualizado}
+                                    name="actualizado"
+                                    onChange={handleChange}
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.actualizado !== ""}
+                                    errorMessage={validationErrors.actualizado}
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
                                   <Input
                                     size={"sm"}
                                     type="text"
                                     label="Código de Fabricante"
                                     id="codigoFab"
-                                    isDisabled={status ? true : false}
+                                    value={user.codigoFab}
                                     name="codigoFab"
                                     onChange={handleChange}
                                     labelPlacement="outside"
@@ -495,39 +474,41 @@ const Product = () => {
                                     errorMessage={validationErrors.codigoFab}
                                   />
                                 </div>
-
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
                                     id="codigoEmp"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
+                                    value={user.codigoEmp}
                                     size={"sm"}
                                     label="Código de Empresa"
                                     name="codigoEmp"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.codigoEmp !== ""}
+                                    errorMessage={validationErrors.codigoEmp}
                                   />
                                 </div>
-                                <div className="md:col-span-6">
-                                  <Input
+                                <div className="md:col-span-4">
+                                <Input
                                     id="marcaProd"
                                     onChange={handleChange}
+                                    value={user.marcaProd}
                                     size={"sm"}
-                                    type="marcaProd"
-                                    label="Marca del Producto"
-                                    name="emailConfirm"
+                                    label="Marca del producto"
+                                    name="marcaProd"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.marcaProd !== ""}
+                                    errorMessage={validationErrors.marcaProd}
                                   />
                                 </div>
 
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
                                     id="categoriaProd"
-                                    isDisabled={status ? true : false}
-                                    value={user.password}
+                                    value={user.categoriaProd}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="Categoria del Producto"
@@ -535,79 +516,144 @@ const Product = () => {
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.categoriaProd !== ""}
+                                    errorMessage={validationErrors.categoriaProd}
                                   />
                                 </div>
 
                                 <div className="md:col-span-4">
                                   <Input
-                                    id="codigoSatProd"
-                                    isDisabled={status ? true : false}
+                                    id="codigoSAT"
                                     onChange={handleChange}
+                                    value={user.codigoSAT}
                                     size={"sm"}
                                     label="Cofigo de SAT Producto"
-                                    name="codigoSatProd"
+                                    name="codigoSAT"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.codigoSAT !== ""}
+                                    errorMessage={validationErrors.codigoSAT}
                                   />
                                 </div>
                                 <div className="md:col-span-4">
                                   <Input
-                                    id="codigoSatUnid"
-                                    isDisabled={status ? true : false}
+                                    id="precio"
                                     onChange={handleChange}
+                                    value={user.precio}
                                     size={"sm"}
-                                    label="Codigo SAT Unidad"
-                                    name="codigoSatUnid"
+                                    label="Precio del Producto"
+                                    name="precio"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.precio !== ""}
+                                    errorMessage={validationErrors.precio}
                                   />
                                 </div>
                                 <div className="md:col-span-4">
                                   <Input
-                                    id="unidadMed"
-                                    isDisabled={status ? true : false}
+                                    id="existencia"
                                     onChange={handleChange}
+                                    value={user.existencia}
                                     size={"sm"}
-                                    label="Unidad de Medida (Etiqueta)"
-                                    name="unidadMed"
+                                    label="Existencia"
+                                    name="existencia"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.vendedor !== ""}
-                                    errorMessage={validationErrors.vendedor}
+                                    error={validationErrors.existencia !== ""}
+                                    errorMessage={validationErrors.existencia}
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4">
                                   <Input
-                                    id="comportamiento"
-                                    isDisabled={status ? true : false}
+                                    id="cantidad"
                                     onChange={handleChange}
+                                    value={user.cantidad}
                                     size={"sm"}
-                                    label="Comportamiento"
-                                    name="comportamiento"
+                                    label="Cantidad"
+                                    name="cantidad"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.vendedor !== ""}
-                                    errorMessage={validationErrors.vendedor}
+                                    error={validationErrors.cantidad !== ""}
+                                    errorMessage={validationErrors.cantidad}
                                   />
                                 </div>
-                                <div className="md:col-span-6">
+                                <div className="md:col-span-4"></div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="descuento"
+                                    onChange={handleChange}
+                                    value={user.descuento}
+                                    size={"sm"}
+                                    label="Descuento"
+                                    name="descuento"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.descuento !== ""}
+                                    errorMessage={validationErrors.descuento}
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="total"
+                                    onChange={handleChange}
+                                    value={user.total}
+                                    size={"sm"}
+                                    label="Total"
+                                    name="total"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.total !== ""}
+                                    errorMessage={validationErrors.total}
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
 
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox defaultSelected>Activo</Checkbox>
+                                  <Checkbox 
+                                  onChange={setIsActivo.bind(
+                                    null,
+                                    !isActivo
+                                  )}
+                                  isSelected={isActivo}>Activo</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox defaultSelected>En Web</Checkbox>
+                                  <Checkbox 
+                                  onChange={setIsWeb.bind(
+                                    null,
+                                    !isWeb
+                                  )}
+                                  isSelected={isWeb}>En Web</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox defaultSelected>POS</Checkbox>
+                                  <Checkbox 
+                                  onChange={setIsPos.bind(
+                                    null,
+                                    !isPos
+                                  )}
+                                  isSelected={isPos}>POS</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox defaultSelected>Venta</Checkbox>
+                                  <Checkbox 
+                                  onChange={setIsVenta.bind(
+                                    null,
+                                    !isVenta
+                                  )}
+                                  selected={isVenta}>Venta</Checkbox>
+                                </div>
+                                <div className="md:col-span-2">
+                                  <Checkbox 
+                                  onChange={setIsBackOrder.bind(
+                                    null,
+                                    !isBackOrder
+                                  )}
+                                  isSelected={isBackOrder}>Back Order</Checkbox>
                                 </div>
                               </div>
                             </Tab>

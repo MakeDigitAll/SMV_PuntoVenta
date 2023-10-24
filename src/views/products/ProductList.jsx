@@ -32,7 +32,6 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const columns = [
   { name: "Imagen", uid: "Imagen", sortable: true },
-  { name: "ID", uid: "ID", sortable: true },
   { name: "Cod.Fab.", uid: "CodFab", sortable: true },
   { name: "Cod.Emp.", uid: "CodEmp", sortable: true },
   { name: "Nombre/Descripción", uid: "Nombre", sortable: true },
@@ -50,7 +49,6 @@ const columns = [
 
 const INITIAL_VISIBLE_COLUMNS = [
   "Imagen",
-  "ID",
   "CodFab",
   "CodEmp",
   "Nombre",
@@ -71,7 +69,7 @@ const ProductList = () => {
   const marcaOptions = [];
   function contarmarca() {
     for (let i = 0; i < data.length; i++) {
-      marcaOptions.push({ name: data[i].marca, uid: data[i].idproducto });
+      marcaOptions.push({ name: data[i].marca, uid: data[i].id });
     }
   }
 
@@ -536,7 +534,7 @@ const ProductList = () => {
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.idproducto}>
+            <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
