@@ -1,27 +1,20 @@
 import { Breadcrumbs, Typography } from "@mui/material";
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Input,
   Link, Spacer
 } from "@nextui-org/react";
 import { RiDashboard2Fill } from "react-icons/ri";
-import { MdDashboard, MdPeople,MdSearch } from "react-icons/md";
+import { MdDashboard, MdEmojiPeople, MdPeople,MdSearch } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
-import { TbDotsVertical, TbPlus } from "react-icons/tb";
 
-const Customers = () => {
+const CustomerDebts = () => {
   const navigate = useNavigate(); 
   const datos=[
-        { id: 1, imagen:'Hola1', nombre: 'Ejemplo 1',razonSocial: 'Ejemplo 1',rfc:"Pr1",telefono:"4502012", correo: 'Descripción1@gmail.com' },
-        { id: 2, imagen:'Hola1', nombre: 'Ejemplo 2', razonSocial: 'Ejemplo 2',rfc:"Pr2",telefono:"4502012", correo: 'Descripción2@gmail.com'},
-        { id: 3, imagen:'Hola1', nombre: 'Ejemplo 3', razonSocial: 'Ejemplo 3',rfc:"Pr3",telefono:"4502012", correo: 'Descripción3@gmail.com'},]
+        { id: 1, fechaCobro:'Hola1', fecha: 'Ejemplo 1',detalle: 'Ejemplo 1',importe:"Pr1",saldo:"4502012", metodoPago: 'Descripción1@gmail.com' },
+        { id: 2, fechaCobro:'Hola1', fecha: 'Ejemplo 2', detalle: 'Ejemplo 2',importe:"Pr2",saldo:"4502012", metodoPago: 'Descripción2@gmail.com'},
+        { id: 3, fechaCobro:'Hola1', fecha: 'Ejemplo 3', detalle: 'Ejemplo 3',importe:"Pr3",saldo:"4502012", metodoPago: 'Descripción3@gmail.com'},]
   return (
     <>
       <div className="bg-[#262837] w-full min-h-screen">
@@ -56,61 +49,30 @@ const Customers = () => {
                       <MdDashboard sx={{ mr: 0.5 }} fontSize="inherit" />
                       Dashboard
                     </Link>
+                    <Link
+                      className="text-foreground"
+                      underline="hover"
+                      sx={{ display: "flex", alignItems: "center" }}
+                      color="foreground"
+                      href="#"
+                      onClick={() => navigate(`/PointofSale`)}
+                    >
+                      <MdPeople sx={{ mr: 0.5 }} fontSize="inherit" />
+                      Clientes
+                    </Link>
                     <Typography
                       sx={{ display: "flex", alignItems: "center" }}
                       className="text-foreground"
                     >
-                      <MdPeople sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Clientes
+                      <MdEmojiPeople sx={{ mr: 0.5 }} fontSize="inherit" />
+                      Adeudo del Cliente
                     </Typography>
                   </Breadcrumbs>
                   <Spacer y={8} />
                   <div
                     className="flex flex-col gap-4"
                     style={{ marginLeft: "10px", marginRight: "10px" }}
-                  >
-                    <div class="flex flex-col gap-4 p-4 md:flex-row md:justify-between md:items-center">
-                      <div className="my-2 flex flex-row mb-0">
-                        <div class="relative">
-                          <select class="h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-[#262837] border-gray-600 text-gray-500 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-red-400 focus:border-red-300">
-                            <option>All</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
-                          </select>
-                          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg
-                              class="fill-current h-4 w-4"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap space space-x-4">
-                        <Input
-                          isClearable
-                          type="text"
-                          size="md"
-                          className="w-[450px] sm:max-w-[44%]"
-                          placeholder="Nombre"
-                          startContent={<MdSearch />}
-                          // onChange={handleChangeNombre}
-                          // // value={nombre}
-                        />
-                      </div>
-                      <div className="flex flex-wrap place-content-end space-x-2 ml-auto">
-                        <button
-                          className="bg-red-400 hover:bg-red-300 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                          endContent={<TbPlus />}
-                          onClick={() =>
-                            navigate("/PointofSale/Customers/Customer")
-                          }
-                        >
-                          Nuevo Cliente
-                        </button>
-                      </div>
+                  > 
                     </div>
                   </div>
                 </div>
@@ -119,25 +81,22 @@ const Customers = () => {
                     <thead>
                       <tr class="bg-red-400 text-black uppercase text-sm leading-normal">
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Imagen
+                          Fecha Cobro
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Nombre
+                          Fecha
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Razón Social
+                          Detalle
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          RFC
+                          Importe
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Telefono
+                          Saldo
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Correo
-                        </th>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Acciones
+                          Método de Pago
                         </th>
                       </tr>
                     </thead>
@@ -145,42 +104,22 @@ const Customers = () => {
                       {datos.map((item) => (
                         <tr key={item.id} class="border-b border-gray-200">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.imagen}
+                            {item.fechaCobro}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.nombre}
+                            {item.fecha}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.razonSocial}
+                            {item.detalle}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.rfc}
+                            {item.importe}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.telefono}
+                            {item.saldo}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.correo}
-                          </td>
-                          <td>
-                            <div className="relative flex justify-center items-center gap-2 ">
-                              <Dropdown>
-                                <DropdownTrigger>
-                                  <Button isIconOnly size="sm" variant="light">
-                                    <TbDotsVertical className="text-default-300" />
-                                  </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu>
-                                  <DropdownItem>
-                                    Ver Cliente
-                                  </DropdownItem>
-                                  <DropdownItem onClick={()=>navigate('/PointofSale/Customers/CustomerDebts')}>
-                                    Adeudo del Cliente
-                                  </DropdownItem>
-                                  <DropdownItem>Deshabilitar Cliente</DropdownItem>
-                                </DropdownMenu>
-                              </Dropdown>
-                            </div>
+                            {item.metodoPago}
                           </td>
                         </tr>
                       ))}
@@ -202,11 +141,10 @@ const Customers = () => {
                 </div>
               </div>
             </div>
-          </div>
         </main>
       </div>
     </>
   );
 };
 
-export default Customers;
+export default CustomerDebts;

@@ -7,7 +7,7 @@ import {
   Link, Spacer, Tab, Tabs
 } from "@nextui-org/react";
 import { RiDashboard2Fill } from "react-icons/ri";
-import { MdCamera, MdDashboard, MdKeyboardReturn, MdPeople,MdPeopleAlt,MdSave,MdSearch } from "react-icons/md";
+import { MdCamera, MdDashboard,MdPeopleAlt,MdSave } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";

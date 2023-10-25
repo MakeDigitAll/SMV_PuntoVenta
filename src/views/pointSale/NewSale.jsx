@@ -12,29 +12,20 @@ import {
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdMoney } from "react-icons/md";
 import AccesPointProductosView from './AccesPoint.Products';
+// import { toggleOrders, showMenu,toggleMenu} from '../../components/shared/SidebarMovill'
 
 const NewSale = () => {
-  const [showMenu, setShowMenu] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-    setShowOrder(false);
-  };
+  const [showMenu, setShowMenu] = useState(false);
+  const [showCar, setShowCar] = useState(false);
 
-  const toggleOrders = () => {
-    setShowOrder(!showOrder);
-    setShowMenu(false);
-  };
   return (
-    
     <>
      
       <div className="bg-[#262837] w-full min-h-screen">
         <Sidebar showMenu={showMenu}/>
-        <SidebarMovil 
-        onClick={toggleOrders} className="p-2"
-        />
-        <Car showOrder={showOrder} setShowOrder={setShowOrder} />
+        <SidebarMovil/>
+        <Car showOrder={showOrder} setShowOrder={setShowOrder} setShowCar={showCar}/>
         <Spacer y={8} />
         <main className="lg:pl-32 lg:pr-96 pb-20">
           <div className="p-12">

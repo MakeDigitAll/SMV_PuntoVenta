@@ -7,14 +7,27 @@ import {
 import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { Image } from "@nextui-org/react";
+import { useState } from 'react';
 const Sidebar = (props) => {
   // eslint-disable-next-line react/prop-types
   const { showMenu } = props;
+  const [activeMenuItem, setActiveMenuItem] = useState(null);
+
+  const handleMenuItemClick = (item) => {
+    if (activeMenuItem === item) {
+      // Si el elemento ya está activo, desactívalo
+      setActiveMenuItem(null);
+    } else {
+      // De lo contrario, establece el nuevo elemento como activo
+      setActiveMenuItem(item);
+    }
+  };
   const navigate = useNavigate();
   function handleLogout() {
     localStorage.removeItem("tableId");
     navigate(`/POS/Access`);
   }
+  
   return (
     <>
       <div
@@ -36,52 +49,66 @@ const Sidebar = (props) => {
               />
               </h1>
             </li>
-            <li className="bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl">
+            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'inicio' ? 'bg-[#262837] text-white' : ''}`}>
               <a
-                className="bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-white"
+                className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
                 title="Inicio"
+                onClick={() => {
+                  handleMenuItemClick('inicio');
+                  navigate('/PointofSale');
+                }}
               >
-                <RiHome6Line className="text-2xl" 
-                 onClick={()=>navigate("/PointofSale")}/>
+                <RiHome6Line className="text-2xl"/>
               </a>
             </li>
-            <li className="hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors">
+            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'reportes' ? 'bg-[#262837] text-white' : ''}`}>
               <a
-                href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
                 title="Reportes"
+                onClick={() => {
+                  handleMenuItemClick('reportes');
+                  navigate('/PointofSale/Reports')
+                }}
               >
                 <TbReportAnalytics className="text-2xl" />
               </a>
             </li>
-            <li className="hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors}">
+            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'ventas' ? 'bg-[#262837] text-white' : ''}`}>
               <a
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
                 title="Ventas"
+                onClick={() => {
+                  handleMenuItemClick('ventas');
+                  navigate('/PointofSale/Sales')
+                }}
               >
-                <TbMoneybag className="text-2xl"
-                 onClick={()=>navigate("/PointofSale/Sales")} />
+                <TbMoneybag className="text-2xl"/>
               </a>
             </li>
-            <li className="hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors">
+            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'clientes' ? 'bg-[#262837] text-white' : ''}`}>
               <a
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
                 title="Clientes"
+                onClick={() => {
+                  handleMenuItemClick('clientes');
+                  navigate("/PointofSale/Customers")
+                }}
               >
                 <RiGroup2Fill
                   className="text-2xl"
-                  onClick={() => navigate("/PointofSale/Customers")}
                 />
               </a>
             </li>
-            <li className="hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors">
+            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'nuevaVenta' ? 'bg-[#262837] text-white' : ''}`}>
               <a
                 href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
                 title="Nueva Venta"
+                onClick={()=>{
+                  handleMenuItemClick('nuevaVenta');
+                  navigate("/PointofSale/NewSale")}}
               >
-                <RiUser2Fill className="text-2xl" 
-                onClick={()=>navigate("/PointofSale/NewSale")}/>
+                <RiUser2Fill className="text-2xl"/>
               </a>
             </li>
             <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">
