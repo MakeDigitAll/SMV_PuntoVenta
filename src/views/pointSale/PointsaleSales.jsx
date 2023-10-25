@@ -10,10 +10,12 @@ import { useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { TbDotsVertical } from "react-icons/tb";
+import PriceCheck from "./PricesCheck";
   
 const PointsaleSales = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalMode, setModalMode] = useState("entry"); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const handleEntryClick = () => {
     setModalMode("entry");
     onOpen();
@@ -21,6 +23,12 @@ const PointsaleSales = () => {
   const handleOutClick = () => {
     setModalMode("out");
     onOpen();
+  };
+  const handlePriceCheck = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
   const itemsSales = [
     {
@@ -46,7 +54,6 @@ const PointsaleSales = () => {
     id: 4,
     name: "Checar Precios",
     icon: MdPriceCheck,
-    address: "PricesCheck",
     roleId: "0",
   },
   ]
@@ -118,10 +125,13 @@ const PointsaleSales = () => {
                                 navigate(`/PointofSale/NewSale`);
                               } else if (item.name === "Entrada Efectivo") {
                                 handleEntryClick();
-                              }else if (item.name === "Salida Efectivo") {
+                              } else if (item.name === "Salida Efectivo") {
                                 handleOutClick();
+                              }else if (item.name === "Checar Precios") {
+                                handlePriceCheck();
                               }
                             }}
+                            
                           >
                             <CardBody className="overflow-visible py-2">
                               <div className="flex justify-center items-center">
@@ -284,17 +294,19 @@ const PointsaleSales = () => {
                                 </div>
                               </div>
                               <div className="lg:col-span-8">
-                              <button className="bg-red-300 hover:bg-red-400 text-gray-700 font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-start">
-                                <span className="w-5 h-5 mr-2">
-                                  <MdInbox />
-                                </span>
-                                {modalMode === 'entry' ? 'Ver Entradas Anteriores' : 'Ver Salidas Anteriores'}
-                              </button>
+                                <button className="bg-red-300 hover:bg-red-400 text-gray-700 font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-start">
+                                  <span className="w-5 h-5 mr-2">
+                                    <MdInbox />
+                                  </span>
+                                  {modalMode === "entry"
+                                    ? "Ver Entradas Anteriores"
+                                    : "Ver Salidas Anteriores"}
+                                </button>
                               </div>
                               <div className="lg:col-span-8"></div>
                             </ModalBody>
                             <ModalFooter>
-                            <button
+                              <button
                                 onClick={onClose}
                                 className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                               >
@@ -313,6 +325,7 @@ const PointsaleSales = () => {
                         )}
                       </ModalContent>
                     </Modal>
+                    <PriceCheck isOpen={isModalOpen} onClose={handleCloseModal}/>
                   </div>
                 </div>
               </div>
