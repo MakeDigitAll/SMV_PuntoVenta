@@ -230,7 +230,7 @@ const Promotions = () => {
       case "id":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.idProducto}</p>
+            <p className="text-bold text-small capitalize">{data.idPromocion}</p>
           </div>
         );
       case "imagen":
@@ -259,23 +259,7 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.desde), "yyyy-MM-dd")}
-              onChange={(e) => {
-                const fechaSeleccionada = e.target.value;
-                const fechaHasta = data.hasta;
-
-                if (fechaSeleccionada <= fechaHasta) {
-                  console.log(e.target.value);
-                  setData((prevData) => {
-                    return prevData.map((item) =>
-                      item.idPromocion === data.idPromocion
-                        ? { ...item, desde: e.target.value }
-                        : item
-                    );
-                  }
-                  )
-                  setHasChanges(true);
-                }
-              }}
+              onChange={(e) => handleEditInputChange(e, data.idPromocion, "fechaDesde", data)}
               placeholder=""
             />
           </div>
@@ -288,24 +272,7 @@ const Promotions = () => {
               type="date"
               className="w-[120px]"
               value={format(new Date(data.hasta), "yyyy-MM-dd")}
-              onChange={(e) => {
-
-                const fechaSeleccionada = e.target.value;
-                const fechaDesde = data.desde;
-
-                if (fechaSeleccionada >= fechaDesde) {
-                  setData((prevData) => {
-                    return prevData.map((item) =>
-                      item.idPromocion === data.idPromocion
-                        ? { ...item, hasta: e.target.value }
-                        : item
-                    );
-                  }
-                  )
-                  setHasChanges(true);
-                }
-              }
-              }
+              onChange={(e) => handleEditInputChange(e, data.idPromocion, "fechaHasta", data)}
               placeholder=""
             />
           </div>
@@ -324,22 +291,7 @@ const Promotions = () => {
               type="number"
               className="w-[80px]"
               value={data.descuento}
-              onChange={(e) => {
-
-                if (e.target.value >= 0 && e.target.value <= 100) {
-                  console.log(e.target.value);
-                  setData((prevData) => {
-                    return prevData.map((item) =>
-                      item.idPromocion === data.idPromocion
-                        ? { ...item, descuento: Number(e.target.value) }
-                        : item
-                    );
-                  }
-                  )
-                  setHasChanges(true);
-                }
-              }
-              }
+              onChange={(e) => handleEditInputChange(e, data.idPromocion, "descuento", data)}
               placeholder=""
             />
           </div>
@@ -356,17 +308,9 @@ const Promotions = () => {
             <Checkbox
               color="success"
               isSelected={data.isActive}
-              onChange={(e) => {
-                setData((prevData) => {
-                  return prevData.map((item) =>
-                    item.idPromocion === data.idPromocion
-                      ? { ...item, isActive: !item.isActive }
-                      : item
-                  );
-                })
-                setHasChanges(true);
-              }
-              }
+              onChange={(e) => handleEditInputChange(e, data.idPromocion, "checkbox", data)}
+
+
             />
           </div>
         );
@@ -492,6 +436,35 @@ const Promotions = () => {
   }, []);
 
 
+
+  const [allProductos, setAllProductos] = useState([]);
+
+  const getAllProducts = () => {
+    async function loadProducts() {
+      try {
+        const response = await fetch(`https://localhost:4000/Productos`);
+        const data = await response.json();
+        if (response.ok) {
+          setAllProductos(data);
+          // console.log(data[0].idproducto);
+        }
+      } catch (err) {
+        toast.error("Error al cargar los datos", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    loadProducts();
+  };
+
+  useEffect(() => {
+    getAllProducts();
+  }, []);
+
+
+
+
   // Inicializa un arreglo vacío para almacenar los productos
   const products = [];
   // useState para los productos
@@ -518,7 +491,6 @@ const Promotions = () => {
     } else if (inputType === 'descuento') {
       producto.descuento = e.target.value;
     }
-
     // Verificar si todos los campos de producto están llenos
     const allFieldsFilled = producto.fechaDesde !== null && producto.fechaHasta !== null && producto.descuento !== null;
 
@@ -532,6 +504,196 @@ const Promotions = () => {
           );
         } else {
           return [...prevAllProducts, producto];
+        }
+      });
+    }
+  }
+
+
+
+
+  const [allProductsEdited, setAllProductsEdited] = useState([]);
+  const productsEdited = [];
+
+
+  const handleEditInputChange = (e, idPromocion, inputType, data) => {
+    let producto = productsEdited.find(item => item.idPromocion === idPromocion);
+
+
+
+    if (!producto) {
+      producto = {
+        idProducto: data.idProducto,
+        idPromocion: data.idPromocion,
+        descuento: data.descuento,
+        fechaDesde: data.desde,
+        fechaHasta: data.hasta,
+      };
+      productsEdited.push(producto);
+    }
+
+    producto.idProducto = data.idProducto;
+
+    // Condicional para asignar fechaDesde, fechaHasta o descuento
+    if (inputType === 'fechaDesde') {
+      producto.fechaDesde = e.target.value;
+
+      //remplazar los datos modificados en data
+      setData((prevData) => {
+        return prevData.map((item) =>
+          item.idPromocion === idPromocion
+            ? { ...item, desde: e.target.value }
+            : item
+        );
+      }
+      )
+      setHasChanges(true);
+
+    } else if (inputType === 'fechaHasta') {
+      producto.fechaHasta = e.target.value;
+      //remplazar los datos modificados en data
+      setData((prevData) => {
+        return prevData.map((item) =>
+          item.idPromocion === idPromocion
+            ? { ...item, hasta: e.target.value }
+            : item
+        );
+      }
+      )
+      setHasChanges(true);
+
+    } else if (inputType === 'descuento') {
+      producto.descuento = e.target.value;
+
+      //remplazar los datos modificados en data
+      setData((prevData) => {
+        return prevData.map((item) =>
+          item.idPromocion === idPromocion
+            ? { ...item, descuento: Number(e.target.value) }
+            : item
+        );
+      }
+      )
+      setHasChanges(true);
+    } else if (inputType === 'checkbox') {
+      producto.isActive = e.target.checked;
+
+      //remplazar los datos modificados en data
+      setData((prevData) => {
+        return prevData.map((item) =>
+          item.idPromocion === data.idPromocion
+            ? { ...item, isActive: !item.isActive }
+            : item
+        );
+      })
+      setHasChanges(true);
+    }
+
+    setAllProductsEdited(prevAllProducts => {
+      // Actualizar el producto si ya existe en allProducts
+      if (prevAllProducts.some(item => item.idPromocion === idPromocion)) {
+        return prevAllProducts.map(item =>
+          item.idPromocion === idPromocion ? producto : item
+        );
+      } else {
+        return [...prevAllProducts, producto];
+      }
+
+    });
+
+  }
+
+  //para verificar fechas y descuento
+  const handleVerificarEdit = () => {
+    //para todos los allProductsEdited verificar que el descuento sea de 0 a 100 si no mostrar mensaje de error 
+    for (let i = 0; i < allProductsEdited.length; i++) {
+      if (allProductsEdited[i].descuento <= 0 || allProductsEdited[i].descuento > 100) {
+        toast.error("Error al agregar la promoción, el descuento debe ser de 1 a 100", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //para todos los allProductsEdited verificar que la fecha desde sea menor a la fechaHasta y que no sea anterior a la fecha actual
+    for (let i = 0; i < allProductsEdited.length; i++) {
+      if (Date(allProductsEdited[i].fechaDesde) > Date(allProductsEdited[i].fechaHasta)) {
+        toast.error("Error al agregar la promoción, la fecha desde debe ser menor a la fecha hasta", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //comprobar que la fecha desde no sea anterior a la fecha actual
+    for (let i = 0; i < allProductsEdited.length; i++) {
+      const fechaActual = format(new Date(), "yyyy-MM-dd");
+      if (allProductsEdited[i].fechaDesde < fechaActual) {
+        toast.error("Error al agregar la promoción, la fecha desde no puede ser anterior a la fecha actual", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        return false;
+      }
+    }
+
+    //si no hay errores retornar llamar a la funcion handleSubmite
+    handleSubmiteEdit();
+
+  }
+
+  const handleSubmiteEdit = () => {
+    if (!allProductsEdited || allProductsEdited.length === 0) {
+      return;
+    }
+
+    let showMessage = true; // Variable para controlar si se muestra el mensaje
+
+    for (let i = 0; i < allProductsEdited.length; i++) {
+
+      const producto = allProductos.find(item => Number(item.idproducto) == Number(allProductsEdited[i].idProducto));
+      allProductsEdited[i].precio = producto.precio;
+    }
+
+    for (let i = 0; i < allProductsEdited.length; i++) {
+      allProductsEdited[i].precioDescuento = Number(allProductsEdited[i].precio) - (Number(allProductsEdited[i].precio) * (Number(allProductsEdited[i].descuento) / 100));
+    }
+
+    for (let i = 0; i < allProductsEdited.length; i++) {
+      const data = {
+        idPromocion: allProductsEdited[i].idPromocion,
+        idProducto: allProductsEdited[i].idProducto,
+        desde: allProductsEdited[i].fechaDesde,
+        hasta: allProductsEdited[i].fechaHasta,
+        precioBase: allProductsEdited[i].precio,
+        descuento: allProductsEdited[i].descuento,
+        precioDescuento: allProductsEdited[i].precioDescuento,
+        isActive: allProductsEdited[i].isActive
+      };
+
+      fetch(`https://localhost:4000/ListadoPromociones`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then((res) => {
+        if (res.status === 200 && showMessage) {
+          toast.success("Promoción agregada correctamente", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          //cerrar el modal
+          onClose();
+          showMessage = false;
+        } else if (showMessage) {
+          toast.error("Error al agregar la promoción", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          showMessage = false;
         }
       });
     }
@@ -784,155 +946,141 @@ const Promotions = () => {
   //-------------------------------------------------------------SSSS---------------------------------------------------------------------------------
 
 
-  const topContent = React.useMemo(() => {
-    return (
-      <>
-        <ItemsHeader />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        <div
-          role="presentation"
-          onClick={handleClickBreadCrumbs}
-          className="text-foreground"
-        >
-          <Breadcrumbs aria-label="breadcrumb" color="foreground">
-            <Link
-              className="text-foreground"
-              underline="hover"
-              sx={{ display: "flex", alignItems: "center" }}
-              color="foreground"
-              href="#"
-              onClick={() => navigate(`/Home`)}
-            >
-              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-              Inicio
-            </Link>
-            <Typography
-              sx={{ display: "flex", alignItems: "center" }}
-              className="text-foreground"
-            >
-              <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
-              Promotions
-            </Typography>
-          </Breadcrumbs>
-        </div>
-        <div
-          className="flex flex-col gap-4"
-          style={{ marginLeft: "10px", marginRight: "10px" }}
-        >
-          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-            <Input
-              isClearable
-              size="sm"
-              className="w-[450px] sm:max-w-[44%]"
-              placeholder="Producto"
-              startContent={<MdSearch />}
-              value={filterValue}
-              onClear={() => onClear()}
-              onValueChange={onSearchChange}
-            />
+  const topContent = (
+    <>
+      <ItemsHeader />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <div
+        role="presentation"
+        onClick={handleClickBreadCrumbs}
+        className="text-foreground"
+      >
+        <Breadcrumbs aria-label="breadcrumb" color="foreground">
+          <Link
+            className="text-foreground"
+            underline="hover"
+            sx={{ display: "flex", alignItems: "center" }}
+            color="foreground"
+            href="#"
+            onClick={() => navigate(`/Home`)}
+          >
+            <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+            Inicio
+          </Link>
+          <Typography
+            sx={{ display: "flex", alignItems: "center" }}
+            className="text-foreground"
+          >
+            <MdBookmarkAdded sx={{ mr: 0.5 }} fontSize="inherit" />
+            Promotions
+          </Typography>
+        </Breadcrumbs>
+      </div>
+      <div
+        className="flex flex-col gap-4"
+        style={{ marginLeft: "10px", marginRight: "10px" }}
+      >
+        <div className="flex flex-wrap place-content-start space-x-6 space-y-1">
+          <Input
+            isClearable
+            size="sm"
+            className="w-[450px] sm:max-w-[44%]"
+            placeholder="Producto"
+            startContent={<MdSearch />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
 
+          <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
+            Agregar Promocion a Producto
+          </Button>
 
-            <Button onPress={onOpen} size="sm" color="success" endContent={<AiOutlinePlus />}>
-              Agregar Promocion a Producto
+          {hasChanges ? (
+            <Button onPress={handleVerificarEdit} size="sm" color="warning" endContent={<IoIosSave />}>
+              Guardar Cambios
             </Button>
-
-            {hasChanges ? (
-              <Button onPress={handleSaveChanges} size="sm" color="warning" endContent={<IoIosSave />}>
-                Guardar Cambios
+          ) : null}
+        </div>
+      </div>
+      <div className="flex justify-between items-center">
+        <div className="flex flex-wrap text-small space-x-3">
+          <Dropdown>
+            <DropdownTrigger className="hidden sm:flex">
+              <Button
+                size="sm"
+                endContent={<MdArrowDropDown className="text-small" />}
+                variant="flat"
+              >
+                Columnas
               </Button>
-            ) : null}
-
-          </div>
-
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex flex-wrap text-small space-x-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Columnas
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                  size="sm"
-                >
-                  Acciones
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-          <label className="flex items-center text-default-400 text-small">
-            Pedidos por Surtir por página:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Table Columns"
+              closeOnSelect={false}
+              selectedKeys={visibleColumns}
+              selectionMode="multiple"
+              onSelectionChange={setVisibleColumns}
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
+              {columns.map((column) => (
+                <DropdownItem key={column.uid} className="capitalize">
+                  {column.name}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+          <Dropdown>
+            <DropdownTrigger className="hidden sm:flex">
+              <Button
+                endContent={<MdArrowDropDown className="text-small" />}
+                variant="flat"
+                size="sm"
+              >
+                Acciones
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Table Columns"
+              closeOnSelect={false}
+              selectedKeys={visibleColumns}
+              selectionMode="multiple"
+              onSelectionChange={setVisibleColumns}
+            >
+              {columns.map((column) => (
+                <DropdownItem key={column.uid} className="capitalize">
+                  {column.name}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
         </div>
-      </>
-    );
-  }, [
-    filterValue,
-    onSearchChange,
-    statusFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    navigate,
-    onClear,
-    hasChanges,
-  ]);
+        <label className="flex items-center text-default-400 text-small">
+          Pedidos por Surtir por página:
+          <select
+            className="bg-transparent outline-none text-default-400 text-small"
+            onChange={onRowsPerPageChange}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+          </select>
+        </label>
+      </div>
+    </>
+  );
 
 
   const bottomContent = React.useMemo(() => {
