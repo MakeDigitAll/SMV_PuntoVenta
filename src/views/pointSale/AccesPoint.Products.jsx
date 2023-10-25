@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Input, Spacer, Table } from "@nextui-org/react";
+import {  Button, Input, Spacer, Table } from "@nextui-org/react";
 import { RiDeleteBin5Line } from "react-icons/ri"; 
 import { MdSearch } from "react-icons/md";
+import ModalCatalogue from "./Catalogue";
+import AddExcelOrders from "../Excel/addExcel/addExcelOrders";
+import ProductsCards from "../../components/shared/CardsProducts";
+import Catalogue from "./Catalogue";
 
 const AccesPointProductosView = () => {
-  const [modalIsOpenCobrar, setModalIsOpenCobrar] = useState(false);
-const [modalIsOpenCatalogo, setModalIsOpenCatalogo] = useState(false);
+
   const [productos, setProductos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [productosEnOrden, setProductosEnOrden] = useState([]); // Almacena los productos en la orden
@@ -43,21 +46,7 @@ const [modalIsOpenCatalogo, setModalIsOpenCatalogo] = useState(false);
     }, 0);
   };
  
-  const openModalCobrar = () => {
-    setModalIsOpenCobrar(true);
-  };
   
-  const closeModalCobrar = () => {
-    setModalIsOpenCobrar(false);
-  };
-  
-  const openModalCatalogo = () => {
-    setModalIsOpenCatalogo(true);
-  };
-  
-  const closeModalCatalogo = () => {
-    setModalIsOpenCatalogo(false);
-  };
   
   
   const actualizarTotalProductosEnOrden = () => {
@@ -272,9 +261,7 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
       onChange={handleSearchIdProducto}
     />
   </div>
-  <Button className="custom-button" size="sm" onClick={openModalCatalogo}>
-  Catalogo
-</Button>
+  <Catalogue/>
 </div>
         <Spacer y={2} />
         <h2 style={{ textAlign: 'left' }}>Productos</h2>
@@ -357,11 +344,6 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
   </button>
 </div>
 
-
-
-
-       
-
         <h2 style={{ textAlign: 'left' }}>Productos en la orden</h2>
         <table
           className="table text-black-400 border-separate space-y-6 text-sm"
@@ -410,64 +392,12 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
         </table>
         <p>Total en la orden: {totalProductosEnOrden.toFixed(2)}</p>
         <div className="flex justify-end">
-        <Button variant="danger" className="custom-button" onClick={openModalCobrar}>
+        <Button variant="danger" className="custom-button">
   Cobrar
 </Button>
 </div>
       </div>
-      <Modal
-  isOpen={modalIsOpenCobrar}
-  onRequestClose={closeModalCobrar}
-  style={{
-    overlay: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      zIndex: "1000",
-    },
-    content: {
-      width: "100%",
-      maxWidth: "800px",
-      maxHeight: "80vh",
-      margin: "0 auto",
-      border: "none",
-      background: "white",
-      overflow: "auto",
-    },
-  }}
->
-
-  <h2>Cobrar</h2>
-  
-</Modal>
-
-    <Modal
-      isOpen={modalIsOpenCatalogo}
-      onRequestClose={closeModalCatalogo}
-      style={{
-        overlay: {
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: "1000",
-        },
-        content: {
-          width: "100%",
-          maxWidth: "800px",
-          maxHeight: "80vh",
-          margin: "0 auto",
-          border: "none",
-          background: "white",
-          overflow: "auto",
-        },
-      }}
-    >
-   
-      <h2>Catálogo</h2>
-     
-    </Modal>
+      <ProductsCards></ProductsCards>
     </div>
     
   );
