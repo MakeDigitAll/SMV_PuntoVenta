@@ -222,6 +222,11 @@ const Promotions = () => {
 
   }
 
+
+
+  const [desdeDisplayDate, setDesdeDisplayDate] = useState("");
+  const [hastaDisplayDate, setHastaDisplayDate] = useState("");
+
   //renderizar los datos de las columnas
   const renderCell = useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
@@ -258,7 +263,7 @@ const Promotions = () => {
               size="sm"
               type="date"
               className="w-[120px]"
-              value={format(new Date(data.desde), "yyyy-MM-dd")}
+              value={desdeDisplayDate || format(new Date(data.desde), "yyyy-MM-dd")}
               onChange={(e) => handleEditInputChange(e, data.idPromocion, "fechaDesde", data)}
               placeholder=""
             />
@@ -271,7 +276,7 @@ const Promotions = () => {
               size="sm"
               type="date"
               className="w-[120px]"
-              value={format(new Date(data.hasta), "yyyy-MM-dd")}
+              value={hastaDisplayDate || format(new Date(data.hasta), "yyyy-MM-dd")}
               onChange={(e) => handleEditInputChange(e, data.idPromocion, "fechaHasta", data)}
               placeholder=""
             />
@@ -344,7 +349,7 @@ const Promotions = () => {
       default:
         return cellValue;
     }
-  }, []);
+  }, [desdeDisplayDate, hastaDisplayDate]);
 
   const renderCellProducto = useCallback((data, columnKey) => {
     switch (columnKey) {
@@ -510,8 +515,6 @@ const Promotions = () => {
   }
 
 
-
-
   const [allProductsEdited, setAllProductsEdited] = useState([]);
   const productsEdited = [];
 
@@ -528,15 +531,27 @@ const Promotions = () => {
         descuento: data.descuento,
         fechaDesde: data.desde,
         fechaHasta: data.hasta,
+        isActive: data.isActive
       };
       productsEdited.push(producto);
     }
+
+
+    console.log(producto);
 
     producto.idProducto = data.idProducto;
 
     // Condicional para asignar fechaDesde, fechaHasta o descuento
     if (inputType === 'fechaDesde') {
       producto.fechaDesde = e.target.value;
+
+      let fechaActual = new Date(e.target.value);
+      fechaActual.setDate(fechaActual.getDate() + 1);
+
+      let fechaFormateada = format(fechaActual, "yyyy-MM-dd");
+
+      setDesdeDisplayDate(fechaFormateada);
+
 
       //remplazar los datos modificados en data
       setData((prevData) => {
@@ -551,6 +566,13 @@ const Promotions = () => {
 
     } else if (inputType === 'fechaHasta') {
       producto.fechaHasta = e.target.value;
+
+      let fechaActual = new Date(e.target.value);
+      fechaActual.setDate(fechaActual.getDate() + 1);
+
+      let fechaFormateada = format(fechaActual, "yyyy-MM-dd");
+
+      setHastaDisplayDate(fechaFormateada);
       //remplazar los datos modificados en data
       setData((prevData) => {
         return prevData.map((item) =>
