@@ -11,17 +11,43 @@ import {
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdPeople,MdSearch } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { TbDotsVertical, TbPlus } from "react-icons/tb";
 
 const Customers = () => {
   const navigate = useNavigate(); 
-  const datos=[
-        { id: 1, imagen:'Hola1', nombre: 'Ejemplo 1',razonSocial: 'Ejemplo 1',rfc:"Pr1",telefono:"4502012", correo: 'Descripción1@gmail.com' },
-        { id: 2, imagen:'Hola1', nombre: 'Ejemplo 2', razonSocial: 'Ejemplo 2',rfc:"Pr2",telefono:"4502012", correo: 'Descripción2@gmail.com'},
-        { id: 3, imagen:'Hola1', nombre: 'Ejemplo 3', razonSocial: 'Ejemplo 3',rfc:"Pr3",telefono:"4502012", correo: 'Descripción3@gmail.com'},]
+  const [data1, setData] = useState([]);
+  async function loadTask() {
+    try {
+      const response = await fetch("https://localhost:4000/ClientesPos");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+        
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  useEffect(() => {
+    loadTask();
+  }, []);
+
+  const [searchCliente, setSearchCliente] = useState('');
+  const handleSearchCliente = (e) => {
+    setSearchCliente(e.target.value);
+  };
+
+    const filteredItems = data1.filter((item) =>
+    item.nombreCliente.toLowerCase().includes(searchCliente.toLowerCase())
+  );
+  
   return (
     <>
       <div className="bg-[#262837] w-full min-h-screen">
@@ -96,8 +122,7 @@ const Customers = () => {
                           className="w-[450px] sm:max-w-[44%]"
                           placeholder="Nombre"
                           startContent={<MdSearch />}
-                          // onChange={handleChangeNombre}
-                          // // value={nombre}
+                          onChange={handleSearchCliente}
                         />
                       </div>
                       <div className="flex flex-wrap place-content-end space-x-2 ml-auto">
@@ -118,9 +143,9 @@ const Customers = () => {
                   <table className="bg-[#262837] min-w-600px w-full table-auto divide-gray-200">
                     <thead>
                       <tr class="bg-red-400 text-black uppercase text-sm leading-normal">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
+                        {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Imagen
-                        </th>
+                        </th> */}
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Nombre
                         </th>
@@ -142,13 +167,13 @@ const Customers = () => {
                       </tr>
                     </thead>
                     <tbody class="text-white text-sm font-light">
-                      {datos.map((item) => (
+                      {filteredItems.map((item) => (
                         <tr key={item.id} class="border-b border-gray-200">
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          {/* <td className="px-6 py-4 whitespace-nowrap">
                             {item.imagen}
-                          </td>
+                          </td> */}
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.nombre}
+                            {item.nombreCliente}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {item.razonSocial}
@@ -160,7 +185,7 @@ const Customers = () => {
                             {item.telefono}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.correo}
+                            {item.email}
                           </td>
                           <td>
                             <div className="relative flex justify-center items-center gap-2 ">

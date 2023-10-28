@@ -6,7 +6,7 @@ import {
 import { RiDashboard2Fill, RiMoneyCnyBoxLine } from "react-icons/ri";
 import { MdDashboard, MdInbox, MdMonetizationOn, MdMoneyOff, MdNumbers, MdPriceCheck, MdSave, MdSearch} from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { TbDotsVertical } from "react-icons/tb";
@@ -60,10 +60,36 @@ const PointsaleSales = () => {
   const navigate = useNavigate();
   
   const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
-  const datos=[
-        { id: 1, ticket: 'Ejemplo 1',fecha: 'Ejemplo 1',hora:"Pr1",cliente:"4502012", estatus: 'Descripción1@gmail.com',factura:"Zulema",monto:"1"},
-        { id: 2, ticket: 'Ejemplo 2', fecha: 'Descripción 2',hora: 'Ejemplo 2',cliente:"Pr2",estatus:"4502012", factura: 'Descripción2@gmail.com',monto:"2"},
-        { id: 3, ticket: 'Ejemplo 3', fecha: 'Descripción 3', hora: 'Ejemplo 3',cliente:"Pr3",estatus:"4502012", factura: 'Descripción3@gmail.com',monto:"3" },]
+  const [data1, setData] = useState([]);
+  async function loadTask() {
+    try {
+      const response = await fetch("https://localhost:4000/VentasRealizadas");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+        
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  useEffect(() => {
+    loadTask();
+  }, []);
+  
+  const [searchticket, setSearchTicket] = useState('');
+  const handleSearchTicket = (e) => {
+    setSearchTicket(e.target.value);
+  };
+
+    const filteredItems = data1.filter((item) =>
+    item.ticket.toString().includes(searchticket.toString())
+  );
+  
   return (
     <>
       <div className="bg-[#262837] w-full min-h-screen">
@@ -160,7 +186,7 @@ const PointsaleSales = () => {
                       className="w-[450px] sm:max-w-[44%]"
                       placeholder="Buscar Ticket"
                       startContent={<MdSearch />}
-                      // onChange={handleChangeNombre}
+                      onChange={handleSearchTicket}
                       // // value={nombre}
                     />
                   </div>
@@ -173,10 +199,7 @@ const PointsaleSales = () => {
                           Ticket
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Fecha
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
-                          Hora
+                          Fecha y Hora
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Cliente
@@ -196,16 +219,13 @@ const PointsaleSales = () => {
                       </tr>
                     </thead>
                     <tbody class="text-white text-sm font-light">
-                      {datos.map((item) => (
+                      {filteredItems.map((item) => (
                         <tr key={item.id} class="border-b border-gray-200">
                           <td className="px-6 py-4 whitespace-nowrap">
                             {item.ticket}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.fecha}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.hora}
+                            {item.fechaHora}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {item.cliente}
