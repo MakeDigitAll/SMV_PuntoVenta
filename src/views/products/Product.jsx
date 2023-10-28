@@ -12,6 +12,12 @@ import {
   MenuItem,
   Textarea,
   checkbox,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem
+
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -23,7 +29,7 @@ import {
   RiDashboard2Fill,
   RiProductHuntFill,
 } from "react-icons/ri";
-import { MdCamera, MdProductionQuantityLimits } from "react-icons/md";
+import { MdCamera, MdKeyboardArrowDown, MdProductionQuantityLimits } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { format } from "date-fns";
@@ -34,70 +40,211 @@ const Product = () => {
   const [photoURL, setPhotoURL] = useState("");
   const [openCrop, setOpenCrop] = useState(false);
   const [file, setFile] = useState(null);
+
+  const [photoURL2, setPhotoURL2] = useState("");
+  const [openCrop2, setOpenCrop2] = useState(false);
+  const [file2, setFile2] = useState(null);
+
+  const [photoURL3, setPhotoURL3] = useState("");
+  const [openCrop3, setOpenCrop3] = useState(false);
+  const [file3, setFile3] = useState(null);
+
+  const [photoURL4, setPhotoURL4] = useState("");
+  const [openCrop4, setOpenCrop4] = useState(false);
+  const [file4, setFile4] = useState(null);
+
+
+
   const [status] = useState(false);
+
   const handleChangeImage = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      setPhotoURL("");
       setFile(file);
       setPhotoURL(URL.createObjectURL(file));
       setOpenCrop(true);
     }
   };
+
+  const handleChangeImage2 = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoURL2("");
+      setFile2(file);
+      setPhotoURL2(URL.createObjectURL(file));
+      setOpenCrop2(true);
+    }
+  };
+
+  const handleChangeImage3 = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoURL3("");
+      setFile3(file);
+      setPhotoURL3(URL.createObjectURL(file));
+      setOpenCrop3(true);
+    }
+  };
+
+  const handleChangeImage4 = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoURL4("");
+      setFile4(file);
+      setPhotoURL4(URL.createObjectURL(file));
+      setOpenCrop4(true);
+    }
+  };
+
   const [user, setUser] = useState({
     imagen: "",
+
+
+    // Datos Generales
     nombreProducto: "",
     codigoFab: "",
     codigoEmp: "",
     marcaProd: "",
     categoriaProd: "",
-    codigoSAT: "",
+    codigoSatProduct: "",
+    codigoSatUnidad: "",
     actualizado: format(new Date(), "yyyy-MM-dd"),
+    existencia: "",
+    cantidad: "",
+    unidadMedida: "",
+    descuento: "",
+    comportamiento: "",
     activo: "",
     web: "",
     pos: "",
     venta: "",
-    precio: "",
-    existencia: "",
-    cantidad: "",
     backOrder: "",
-    descuento: "",
-    total: "",    
+
+    //Costo y precio
+    impuesto: "",
+    impuestoRetenido: "",
+    precio: "",
+    margenGanancia: "",
+    total: 0,
+    precioAnterior: "",
+
+    precioConDescuentoM1: 0,
+    precioConDescuentoM2: 0,
+    precioConDescuentoM3: 0,
+    precioConDescuentoM4: 0,
+    precioConDescuentoM5: 0,
+    precioConDescuentoM6: 0,
+    descuentoM1: 0,
+    descuentoM2: 0,
+    descuentoM3: 0,
+    descuentoM4: 0,
+    descuentoM5: 0,
+    descuentoM6: 0,
+
+
   });
   const [validationErrors, setValidationErrors] = useState({
-    imagenProduc: "",
+    imagen: "",
+    imagen2: "",
+    imagen3: "",
+    imagen4: "",
+
     nombreProducto: "",
     codigoFab: "",
     codigoEmp: "",
     marcaProd: "",
     categoriaProd: "",
-    codigoSAT: "",
+    codigoSatProduct: "",
+    codigoSatUnidad: "",
     actualizado: "",
+    existencia: "",
+    cantidad: "",
+    unidadMedida: "",
+    descuento: "",
+    comportamiento: "",
     activo: "",
     web: "",
     pos: "",
     venta: "",
-    precio: "",
-    existencia: "",
-    cantidad: "",
     backOrder: "",
-    descuento: "",
-    total: "",    
+
+    impuesto: "",
+    impuestoRetenido: "",
+    precio: "",
+    margenGanancia: "",
+    total: "",
+    precioAnterior: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-    setValidationErrors({ ...validationErrors, [name]: "" });
+    let updatedUser = { ...user };
+    let updatedValidationErrors = { ...validationErrors };
+
+    updatedUser[name] = value;
+
+    if (name === "precio" || name === "margenGanancia") {
+      const margenGananciaDecimal = parseFloat(updatedUser.margenGanancia) / 100;
+      const precioBase =
+        parseFloat(updatedUser.precio) + parseFloat(updatedUser.precio) * margenGananciaDecimal;
+      updatedUser.total = precioBase.toFixed(2);
+
+      // Actualiza los campos de "Precio con Descuento" según los campos de descuento individual
+      updatedUser.precioConDescuentoM1 = (precioBase * (1 - parseFloat(updatedUser.descuentoM1) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM2 = (precioBase * (1 - parseFloat(updatedUser.descuentoM2) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM3 = (precioBase * (1 - parseFloat(updatedUser.descuentoM3) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM4 = (precioBase * (1 - parseFloat(updatedUser.descuentoM4) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM5 = (precioBase * (1 - parseFloat(updatedUser.descuentoM5) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM6 = (precioBase * (1 - parseFloat(updatedUser.descuentoM6) / 100)).toFixed(2);
+    } else if (name.startsWith("descuentoM")) {
+      const index = name.replace("descuentoM", "");
+      updatedUser[`precioConDescuentoM${index}`] = (updatedUser.total * (1 - parseFloat(value) / 100)).toFixed(2);
+    } else if (name === "total") {
+      // Si se modifica manualmente el Precio Base, actualiza los campos de "Precio con Descuento" con el nuevo valor
+      const precioBaseManual = parseFloat(value);
+      updatedUser.precioConDescuentoM1 = (precioBaseManual * (1 - parseFloat(updatedUser.descuentoM1) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM2 = (precioBaseManual * (1 - parseFloat(updatedUser.descuentoM2) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM3 = (precioBaseManual * (1 - parseFloat(updatedUser.descuentoM3) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM4 = (precioBaseManual * (1 - parseFloat(updatedUser.descuentoM4) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM5 = (precioBaseManual * (1 - parseFloat(updatedUser.descuentoM5) / 100)).toFixed(2);
+      updatedUser.precioConDescuentoM6 = (precioBaseManual * (1 - parseFloat(updatedUser.descuentoM6) / 100)).toFixed(2);
+    }
+
+    updatedValidationErrors[name] = "";
+
+    setUser(updatedUser);
+    setValidationErrors(updatedValidationErrors);
   };
+
+
   const fileInputRef = useRef(null);
+  const fileInputRef2 = useRef(null);
+  const fileInputRef3 = useRef(null);
+  const fileInputRef4 = useRef(null);
+
+
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
+  const handleFileButtonClick2 = () => {
+    fileInputRef2.current.click();
+  };
+  const handleFileButtonClick3 = () => {
+    fileInputRef3.current.click();
+  };
+  const handleFileButtonClick4 = () => {
+    fileInputRef4.current.click();
+  };
+
+
   async function handleSubmit(e) {
     e.preventDefault();
-    !file
-      ? toast.error("Por favor, selecciona una imagen", { theme: "colored" })
-      : "";
+    if (!file && !file2 && !file3 && !file4) {
+      toast.error("Por favor, selecciona al menos una imagen", { theme: "colored" });
+      return;
+    }
+
     if (
       !photoURL ||
       !user.imagen ||
@@ -106,13 +253,20 @@ const Product = () => {
       !user.codigoEmp ||
       !user.marcaProd ||
       !user.categoriaProd ||
-      !user.codigoSAT ||
-      !user.actualizado ||
-      !user.precio ||
+      !user.codigoSatProduct ||
+      !user.codigoSatUnidad ||
       !user.existencia ||
       !user.cantidad ||
+      !user.unidadMedida ||
+      !user.actualizado ||
       !user.descuento ||
-      !user.total !== "valid"
+      !user.comportamiento ||
+      !user.impuesto ||
+      !user.impuestoRetenido ||
+      !user.precio ||
+      !user.margenGanancia ||
+      !user.total ||
+      !user.precio !== "valid"
     ) {
       toast.error("Favor de llenar todos los campos correctamente", {
         theme: "colored",
@@ -125,12 +279,19 @@ const Product = () => {
     !user.codigoEmp ? (errors.codigoEmp = "Favor de llenar este campo") : "";
     !user.marcaProd ? (errors.marcaProd = "Favor de llenar este campo") : "";
     !user.categoriaProd ? (errors.categoriaProd = "Favor de llenar este campo") : "";
-    !user.codigoSAT ? (errors.codigoSAT = "Favor de llenar este campo") : "";
+    !user.codigoSatProduct ? (errors.codigoSatProduct = "Favor de llenar este campo") : "";
+    !user.codigoSatUnidad ? (errors.codigoSatUnidad = "Favor de llenar este campo") : "";
     !user.precio ? (errors.precio = "Favor de llenar este campo") : "";
     !user.existencia ? (errors.existencia = "Favor de llenar este campo") : "";
     !user.cantidad ? (errors.cantidad = "Favor de llenar este campo") : "";
     !user.descuento ? (errors.descuento = "Favor de llenar este campo") : "";
     !user.total ? (errors.total = "Favor de llenar este campo") : "";
+    !user.unidadMedida ? (errors.unidadMedida = "Favor de llenar este campo") : "";
+    !user.comportamiento ? (errors.comportamiento = "Favor de llenar este campo") : "";
+    !user.impuesto ? (errors.impuesto = "Favor de llenar este campo") : "";
+    !user.impuestoRetenido ? (errors.impuestoRetenido = "Favor de llenar este campo") : "";
+    !user.margenGanancia ? (errors.margenGanancia = "Favor de llenar este campo") : "";
+    !user.precioAnterior ? (errors.precioAnterior = "Favor de llenar este campo") : "";
 
     !photoURL ? (errors.imagen = "Favor de llenar este campo") : "";
     if (Object.keys(errors).length > 0) {
@@ -140,28 +301,42 @@ const Product = () => {
     setValidationErrors({});
 
     const formData = new FormData();
+
+    file && formData.append("imagen", file);
+    file2 && formData.append("imagen2", file2);
+    file3 && formData.append("imagen3", file3);
+    file4 && formData.append("imagen4", file4);
+
+
     const document = JSON.stringify({
       nombreProducto: user.nombreProducto,
       codigoFab: user.codigoFab,
       codigoEmp: user.codigoEmp,
-      marcaProd: user.marcaProd,
-      categoriaProd: user.categoriaProd,
-      codigoSAT: user.codigoSAT,
+      marcaProd: user.marcaId,
+      categoriaProd: user.categoriaId,
+      codigoSatProduct: user.codigoSatProduct,
+      codigoSatUnidad: user.codigoSatUnidad,
       actualizado: user.actualizado,
-      precio: user.precio,
       existencia: user.existencia,
       cantidad: user.cantidad,
+      unidadMedida: user.unidadMedida,
       descuento: user.descuento,
-      total: user.total,
+      comportamiento: user.comportamiento,
       activo: activoToSave,
       web: webToSave,
       pos: posToSave,
       venta: ventaToSave,
       backOrder: backOrderToSave,
+
+      impuesto: user.impuesto,
+      impuestoRetenido: user.impuestoRetenido,
+      precio: user.precio,
+      margenGanancia: user.margenGanancia,
+      total: user.total,
+      precioAnterior: user.precioAnterior,
     });
 
     formData.append("document", document);
-    formData.append("image", file);
     try {
       const result = await http.post(
         `https://localhost:4000/Productos`,
@@ -212,9 +387,10 @@ const Product = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
 
+  //////////////////////// funcion para detectar los checbox ////////////////////////////
   const [isActivo, setIsActivo] = useState(false);
   const activoToSave = isActivo ? 1 : 0;
-  console.log("Activo: ",activoToSave);
+  console.log("Activo: ", activoToSave);
 
   const [isWeb, setIsWeb] = useState(false);
   const webToSave = isWeb ? 1 : 0;
@@ -226,17 +402,108 @@ const Product = () => {
 
   const [isVenta, setIsVenta] = useState(false);
   const ventaToSave = isVenta ? 1 : 0;
-  console.log("venta: ",ventaToSave);
+  console.log("venta: ", ventaToSave);
 
   const [isBackOrder, setIsBackOrder] = useState(false);
   const backOrderToSave = isBackOrder ? 1 : 0;
   console.log("BackOrder: ", backOrderToSave);
- 
+  //////////////////////// Fin de funcion para detectar los checbox ////////////////////////////
 
 
 
-  return !openCrop ? (
+
+  ///////////////// Buscador y seleccionar las marcas //////////////////////////////
+  const [getMarcas, setGetMarcas] = useState([]);
+
+  async function loadMarcas() {
+    try {
+      const response = await fetch("https://localhost:4000/MarcasProducto");
+      const data = await response.json();
+      if (response.ok) {
+        setGetMarcas(data); // Almacena las marcas en el estado
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  function handleMarcaSelection(marca) {
+    const selectedMarca = { marcaProd: marca.marca, marcaId: marca.id };
+    setUser({ ...user, ...selectedMarca });
+
+  }
+  console.log("Marca: ", user.marcaProd)
+  console.log("Marca ID: ", user.marcaId)
+
+
+
+  useEffect(() => {
+    loadMarcas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  ///////////////// Fin de buscador y seleccionar las marcas //////////////////////////////
+
+
+  ///////////////// Buscador y seleccionar las categorias //////////////////////////////
+  const [getCategoria, setGetCategoria] = useState([]);
+  async function loadCategorias() {
+    try {
+      const response = await fetch(
+        "https://localhost:4000/Categoria"
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setGetCategoria(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  function handleCategoriaSelection(categoria) {
+    const selectedCategoria = { categoriaProd: categoria.nombre, categoriaId: categoria.id };
+    setUser({ ...user, ...selectedCategoria });
+
+  }
+  console.log("Categoria:", user.categoriaProd)
+  console.log("Categoria ID : ", user.categoriaId)
+
+
+
+  useEffect(() => {
+    loadCategorias();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  ///////////////// Fin de buscador y seleccionar las categorias //////////////////////////////
+
+
+
+
+
+
+
+
+
+  return (
     <>
+      {openCrop && (
+        <Crop {...{ photoURL, setOpenCrop, setPhotoURL, setFile, aspect: 1 }} />
+      )}
+      {openCrop2 && (
+        <Crop {...{ photoURL: photoURL2, setOpenCrop: setOpenCrop2, setPhotoURL: setPhotoURL2, setFile: setFile2, aspect: 1 }} />
+      )}
+      {openCrop3 && (
+        <Crop {...{ photoURL: photoURL3, setOpenCrop: setOpenCrop3, setPhotoURL: setPhotoURL3, setFile: setFile3, aspect: 1 }} />
+      )}
+      {openCrop4 && (
+        <Crop {...{ photoURL: photoURL4, setOpenCrop: setOpenCrop4, setPhotoURL: setPhotoURL4, setFile: setFile4, aspect: 1 }} />
+      )}
       <ItemsHeader />
       <ToastContainer />
       <main>
@@ -281,9 +548,10 @@ const Product = () => {
                 <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
                   <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                     <div>
+
                       <div className="text-gray-600 place-items-center grid lg:grid-cols-1">
                         <h2 className="font-large text-lg text-foreground">
-                          Imagen de perfil
+                          Imagen del Producto
                         </h2>
                         {photoURL != "" ? (
                           <Image
@@ -322,31 +590,140 @@ const Product = () => {
                           onClick={handleFileButtonClick}
                           id="button-file"
                         >
-                          Agregar foto de perfil
+                          Agregar imagen principal
                         </Button>
                       </div>
+
                       <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                         <br />
-                        <div className="md:col-span-12 flex space-x-4">
-                          <Image
-                            width={150}
-                            height={200}
-                            src="../../../public/Blank-Avatar.png"
-                            alt=""
-                          />
-                          <Image
-                            width={150}
-                            height={200}
-                            src="../../../public/Blank-Avatar.png"
-                            alt=""
-                          />
-                          <Image
-                            width={150}
-                            height={200}
-                            src="../../../public/Blank-Avatar.png"
-                            alt=""
-                          />
+                        <div className="md:col-span-12 grid grid-cols-3 gap-4">
+
+                          <div className="flex flex-col items-center">
+                            {photoURL2 != "" ? (
+                              <Image
+                                src={photoURL2}
+                                alt=""
+                                width={150}
+                                height={200}
+                              />
+                            ) : (
+                              <Image
+                                width={150}
+                                height={200}
+                                src="../../../public/Blank-Avatar.png"
+                                alt=""
+                              />
+                            )}
+                            <input
+                              height={"lg"}
+                              type="file"
+                              id="imagen2"
+                              ref={fileInputRef2}
+                              style={{
+                                display: "none",
+                                borderColor: photoURL2 ? "" : "red",
+                              }}
+                              accept="image2"
+                              onChange={handleChangeImage2}
+                              name="imagen2"
+                            />
+                            <Button
+                              autoFocus
+                              size="auto"
+                              color="success"
+                              endContent={<MdCamera />}
+                              onClick={handleFileButtonClick2}
+                              id="button-file2"
+                            >
+                              Seleccionar
+                            </Button>
+                          </div>
+
+                          <div className="flex flex-col items-center">
+                            {photoURL3 != "" ? (
+                              <Image
+                                src={photoURL3}
+                                alt=""
+                                width={150}
+                                height={200}
+                              />
+                            ) : (
+                              <Image
+                                width={150}
+                                height={200}
+                                src="../../../public/Blank-Avatar.png"
+                                alt=""
+                              />
+                            )}
+                            <input
+                              height={"lg"}
+                              type="file"
+                              id="imagen3"
+                              ref={fileInputRef3}
+                              style={{
+                                display: "none",
+                                borderColor: photoURL3 ? "" : "red",
+                              }}
+                              accept="image3"
+                              onChange={handleChangeImage3}
+                              name="imagen3"
+                            />
+                            <Button
+                              autoFocus
+                              size="auto"
+                              color="success"
+                              endContent={<MdCamera />}
+                              onClick={handleFileButtonClick3}
+                              id="button-file3"
+                            >
+                              Seleccionar
+                            </Button>
+                          </div>
+
+                          <div className="flex flex-col items-center">
+                            {photoURL4 != "" ? (
+                              <Image
+                                src={photoURL4}
+                                alt=""
+                                width={150}
+                                height={200}
+                              />
+                            ) : (
+                              <Image
+                                width={150}
+                                height={200}
+                                src="../../../public/Blank-Avatar.png"
+                                alt=""
+                              />
+                            )}
+                            <input
+                              height={"lg"}
+                              type="file"
+                              id="imagen4"
+                              ref={fileInputRef4}
+                              style={{
+                                display: "none",
+                                borderColor: photoURL4 ? "" : "red",
+                              }}
+                              accept="image4"
+                              onChange={handleChangeImage4}
+                              name="imagen4"
+                            />
+                            <Button
+                              autoFocus
+                              size="auto"
+                              color="success"
+                              endContent={<MdCamera />}
+                              onClick={handleFileButtonClick4}
+                              id="button-file4"
+                            >
+                              Seleccionar
+                            </Button>
+                          </div>
                         </div>
+
+
+
                         <div className="md:col-span-12 flex flex-col items-center space-y-4">
                           <h2 className="font-large text-lg text-foreground text-center">
                             Banderas Web
@@ -407,8 +784,13 @@ const Product = () => {
                           </div>
                         </div>
                       </div>
+
+
+
+
+
                       <div>
-                        
+
                       </div>
                     </div>
                     <div className="lg:col-span-2">
@@ -425,7 +807,7 @@ const Product = () => {
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
                                 <div className="md:col-span-6"></div>
-                                <div className="md:col-span-8">
+                                <div className="md:col-span-12">
                                   <Input
                                     id="nombreProducto"
                                     value={user.nombreProducto}
@@ -439,23 +821,6 @@ const Product = () => {
                                     variant="faded"
                                     error={validationErrors.nombreProducto !== ""}
                                     errorMessage={validationErrors.nombreProducto}
-                                  />
-                                </div>
-                                <div className="md:col-span-4">
-                                  <Input
-                                    size={"sm"}
-                                    type="text"
-                                    label="Fecha"
-                                    id="actualizado"
-                                    disabled={true}
-                                    value={user.actualizado}
-                                    name="actualizado"
-                                    onChange={handleChange}
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.actualizado !== ""}
-                                    errorMessage={validationErrors.actualizado}
                                   />
                                 </div>
                                 <div className="md:col-span-4">
@@ -490,67 +855,92 @@ const Product = () => {
                                   />
                                 </div>
                                 <div className="md:col-span-4">
-                                <Input
-                                    id="marcaProd"
-                                    onChange={handleChange}
-                                    value={user.marcaProd}
-                                    size={"sm"}
-                                    label="Marca del producto"
-                                    name="marcaProd"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.marcaProd !== ""}
-                                    errorMessage={validationErrors.marcaProd}
-                                  />
+                                  <Dropdown>
+                                    <DropdownTrigger>
+                                      <Input
+                                        variant="faded"
+                                        id="marcaProd"
+                                        onChange={handleChange}
+                                        value={user.marcaProd || "Sin Marca Definida"}
+                                        size={"sm"}
+                                        label="Marca del producto"
+                                        name="marcaProd"
+                                        labelPlacement="outside"
+                                        placeholder=" "
+                                        error={validationErrors.marcaProd !== ""}
+                                        errorMessage={validationErrors.marcaProd}
+                                        endContent={<MdKeyboardArrowDown />}
+                                      >
+                                      </Input>
+                                    </DropdownTrigger>
+                                    <DropdownMenu aria-label="Marcas">
+                                      {getMarcas.map((marca) => (
+                                        <DropdownItem key={marca.id} onPress={() => handleMarcaSelection(marca)}>
+                                          {marca.marca}</DropdownItem>
+                                      ))}
+                                    </DropdownMenu>
+                                  </Dropdown>
+                                </div>
+
+                                <div className="md:col-span-4">
+                                  <Dropdown>
+                                    <DropdownTrigger>
+                                      <Input
+                                        id="categoriaProd"
+                                        value={user.categoriaProd || "Sin Categoria Definida"}
+                                        onChange={handleChange}
+                                        size={"sm"}
+                                        label="Categoria del Producto"
+                                        name="categoriaProd"
+                                        labelPlacement="outside"
+                                        placeholder=" "
+                                        variant="faded"
+                                        error={validationErrors.categoriaProd !== ""}
+                                        errorMessage={validationErrors.categoriaProd}
+                                        endContent={<MdKeyboardArrowDown />}
+                                      >
+                                      </Input>
+                                    </DropdownTrigger>
+                                    <DropdownMenu aria-label="Categorias">
+                                      {getCategoria.map((categoria) => (
+                                        <DropdownItem key={categoria.id} onPress={() => handleCategoriaSelection(categoria)}>
+                                          {categoria.nombre}</DropdownItem>
+                                      ))}
+                                    </DropdownMenu>
+                                  </Dropdown>
                                 </div>
 
                                 <div className="md:col-span-4">
                                   <Input
-                                    id="categoriaProd"
-                                    value={user.categoriaProd}
+                                    id="codigoSatProduct"
                                     onChange={handleChange}
+                                    value={user.codigoSatProduct}
                                     size={"sm"}
-                                    label="Categoria del Producto"
-                                    name="categoriaProd"
+                                    label="Codigo de SAT Producto"
+                                    name="codigoSatProduct"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.categoriaProd !== ""}
-                                    errorMessage={validationErrors.categoriaProd}
+                                    error={validationErrors.codigoSatProduct !== ""}
+                                    errorMessage={validationErrors.codigoSatProduct}
+                                  />
+                                </div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="codigoSatUnidad"
+                                    onChange={handleChange}
+                                    value={user.codigoSatUnidad}
+                                    size={"sm"}
+                                    label="Codigo de SAT Unidad"
+                                    name="codigoSatUnidad"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.codigoSatUnidad !== ""}
+                                    errorMessage={validationErrors.codigoSatUnidad}
                                   />
                                 </div>
 
-                                <div className="md:col-span-4">
-                                  <Input
-                                    id="codigoSAT"
-                                    onChange={handleChange}
-                                    value={user.codigoSAT}
-                                    size={"sm"}
-                                    label="Cofigo de SAT Producto"
-                                    name="codigoSAT"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.codigoSAT !== ""}
-                                    errorMessage={validationErrors.codigoSAT}
-                                  />
-                                </div>
-                                <div className="md:col-span-4">
-                                  <Input
-                                    id="precio"
-                                    onChange={handleChange}
-                                    value={user.precio}
-                                    size={"sm"}
-                                    label="Precio del Producto"
-                                    name="precio"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                    error={validationErrors.precio !== ""}
-                                    errorMessage={validationErrors.precio}
-                                  />
-                                </div>
                                 <div className="md:col-span-4">
                                   <Input
                                     id="existencia"
@@ -581,7 +971,21 @@ const Product = () => {
                                     errorMessage={validationErrors.cantidad}
                                   />
                                 </div>
-                                <div className="md:col-span-4"></div>
+                                <div className="md:col-span-4">
+                                  <Input
+                                    id="unidadMedida"
+                                    onChange={handleChange}
+                                    value={user.unidadMedida}
+                                    size={"sm"}
+                                    label="Unidad de Medida"
+                                    name="unidadMedida"
+                                    labelPlacement="outside"
+                                    placeholder=" "
+                                    variant="faded"
+                                    error={validationErrors.unidadMedida !== ""}
+                                    errorMessage={validationErrors.unidadMedida}
+                                  />
+                                </div>
                                 <div className="md:col-span-4">
                                   <Input
                                     id="descuento"
@@ -597,63 +1001,65 @@ const Product = () => {
                                     errorMessage={validationErrors.descuento}
                                   />
                                 </div>
-                                <div className="md:col-span-4">
+                                <div className="md:col-span-8">
                                   <Input
-                                    id="total"
+                                    id="comportamiento"
                                     onChange={handleChange}
-                                    value={user.total}
+                                    value={user.comportamiento}
                                     size={"sm"}
-                                    label="Total"
-                                    name="total"
+                                    label="comportamiento"
+                                    name="comportamiento"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                    error={validationErrors.total !== ""}
-                                    errorMessage={validationErrors.total}
+                                    error={validationErrors.comportamiento !== ""}
+                                    errorMessage={validationErrors.comportamiento}
+                                    endContent={<MdKeyboardArrowDown />}
                                   />
                                 </div>
-                                <div className="md:col-span-4">
+
+                                <div className="md:col-span-12">
 
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox 
-                                  onChange={setIsActivo.bind(
-                                    null,
-                                    !isActivo
-                                  )}
-                                  isSelected={isActivo}>Activo</Checkbox>
+                                  <Checkbox
+                                    onChange={setIsActivo.bind(
+                                      null,
+                                      !isActivo
+                                    )}
+                                    isSelected={isActivo}>Activo</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox 
-                                  onChange={setIsWeb.bind(
-                                    null,
-                                    !isWeb
-                                  )}
-                                  isSelected={isWeb}>En Web</Checkbox>
+                                  <Checkbox
+                                    onChange={setIsWeb.bind(
+                                      null,
+                                      !isWeb
+                                    )}
+                                    isSelected={isWeb}>En Web</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox 
-                                  onChange={setIsPos.bind(
-                                    null,
-                                    !isPos
-                                  )}
-                                  isSelected={isPos}>POS</Checkbox>
+                                  <Checkbox
+                                    onChange={setIsPos.bind(
+                                      null,
+                                      !isPos
+                                    )}
+                                    isSelected={isPos}>POS</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox 
-                                  onChange={setIsVenta.bind(
-                                    null,
-                                    !isVenta
-                                  )}
-                                  selected={isVenta}>Venta</Checkbox>
+                                  <Checkbox
+                                    onChange={setIsVenta.bind(
+                                      null,
+                                      !isVenta
+                                    )}
+                                    selected={isVenta}>Venta</Checkbox>
                                 </div>
                                 <div className="md:col-span-2">
-                                  <Checkbox 
-                                  onChange={setIsBackOrder.bind(
-                                    null,
-                                    !isBackOrder
-                                  )}
-                                  isSelected={isBackOrder}>Back Order</Checkbox>
+                                  <Checkbox
+                                    onChange={setIsBackOrder.bind(
+                                      null,
+                                      !isBackOrder
+                                    )}
+                                    isSelected={isBackOrder}>Back Order</Checkbox>
                                 </div>
                               </div>
                             </Tab>
@@ -661,56 +1067,52 @@ const Product = () => {
                               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                                 <Spacer y={6} />
                                 <div className="md:col-span-12"></div>
-                                <div className="md:col-span-4">
-                                  <Input
-                                    id="moneda"
-                                    isDisabled={status ? true : false}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    label="Moneda"
-                                    name="moneda"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
-                                  />
-                                </div>
-                                <div className="md:col-span-4">
+
+                                <div className="md:col-span-6">
                                   <Input
                                     id="impuesto"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
+                                    value={user.impuesto}
                                     size={"sm"}
                                     label="Impuesto"
                                     name="impuesto"
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
-                                  />
-                                </div>
-                                <div className="md:col-span-4">
-                                  <Input
-                                    id="impuestoRet"
-                                    isDisabled={status ? true : false}
-                                    onChange={handleChange}
-                                    size={"sm"}
-                                    label="Impuesto Retenido"
-                                    name="impuestoRet"
-                                    labelPlacement="outside"
-                                    placeholder=" "
-                                    variant="faded"
+                                    error={validationErrors.impuesto !== ""}
+                                    errorMessage={validationErrors.impuesto}
+                                    endContent={<MdKeyboardArrowDown />}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    size={"sm"}
-                                    label="Costo"
-                                    id="costo"
-                                    isDisabled={status ? true : false}
-                                    name="costo"
+                                    id="impuestoRetenido"
                                     onChange={handleChange}
+                                    value={user.impuestoRetenido}
+                                    size={"sm"}
+                                    label="Impuesto Retenido"
+                                    name="impuestoRetenido"
                                     labelPlacement="outside"
-                                    placeholder="$ 0.00"
+                                    placeholder=" "
                                     variant="faded"
+                                    error={validationErrors.impuestoRetenido !== ""}
+                                    errorMessage={validationErrors.impuestoRetenido}
+                                    endContent={<MdKeyboardArrowDown />}
+                                  />
+                                </div>
+                                <div className="md:col-span-6">
+                                  <Input
+                                    id="precio"
+                                    onChange={handleChange}
+                                    value={user.precio}
+                                    size={"sm"}
+                                    label="Costo del Producto"
+                                    name="precio"
+                                    labelPlacement="outside"
+                                    variant="faded"
+                                    placeholder="$ 0.00"
+                                    error={validationErrors.precio !== ""}
+                                    errorMessage={validationErrors.precio}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
@@ -718,38 +1120,44 @@ const Product = () => {
                                     size={"sm"}
                                     label="% Margen de Ganancia"
                                     id="margenGanancia"
-                                    isDisabled={status ? true : false}
                                     name="margenGanancia"
                                     onChange={handleChange}
+                                    value={user.margenGanancia}
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
+                                    error={validationErrors.margenGanancia !== ""}
+                                    errorMessage={validationErrors.margenGanancia}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
-                                    id="precioBase"
-                                    isDisabled={status ? true : false}
+                                    id="total"
                                     onChange={handleChange}
-                                    size="small"
+                                    value={user.total}
+                                    size={"sm"}
                                     label="Precio Base"
-                                    name="precioBase"
+                                    name="total"
                                     labelPlacement="outside"
-                                    placeholder="$ 0.00"
                                     variant="faded"
+                                    placeholder="$ 0.00"
+                                    error={validationErrors.total !== ""}
+                                    errorMessage={validationErrors.total}
                                   />
                                 </div>
                                 <div className="md:col-span-6">
                                   <Input
                                     id="precioAnterior"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
-                                    size="small"
+                                    value={user.precioAnterior}
+                                    size={"sm"}
                                     label="Precio Anterior"
                                     name="precioAnterior"
                                     labelPlacement="outside"
                                     placeholder="$ 0.00"
                                     variant="faded"
+                                    error={validationErrors.precioAnterior !== ""}
+                                    errorMessage={validationErrors.precioAnterior}
                                   />
                                 </div>
                                 <div className="md:col-span-12 flex flex-col  space-y-4">
@@ -792,12 +1200,12 @@ const Product = () => {
                                   />
                                   <br />
                                   <Input
-                                    id="decuentoM1"
-                                    isDisabled={status ? true : false}
+                                    id="descuentoM1"
                                     onChange={handleChange}
+                                    value={user.descuentoM1}
                                     size={"sm"}
                                     label="% de Descuento"
-                                    name="decuentoM1"
+                                    name="descuentoM1"
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -805,8 +1213,9 @@ const Product = () => {
                                   <br />
                                   <Input
                                     id="precioConDescuentoM1"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
+                                    disabled={true}
+                                    value={user.precioConDescuentoM1}
                                     size={"sm"}
                                     label="Precio con Descuento"
                                     name="precioConDescuentoM1"
@@ -818,7 +1227,6 @@ const Product = () => {
                                 <div className="md:col-span-2">
                                   <Input
                                     id="unidadesM2"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="A Partir de (x) Unidades"
@@ -829,12 +1237,12 @@ const Product = () => {
                                   />
                                   <br />
                                   <Input
-                                    id="decuentoM2"
-                                    isDisabled={status ? true : false}
+                                    id="descuentoM2"
                                     onChange={handleChange}
+                                    value={user.descuentoM2}
                                     size={"sm"}
                                     label="% de Descuento"
-                                    name="decuentoM2"
+                                    name="descuentoM2"
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -842,8 +1250,9 @@ const Product = () => {
                                   <br />
                                   <Input
                                     id="precioConDescuentoM2"
-                                    isDisabled={status ? true : false}
+                                    disabled={true}
                                     onChange={handleChange}
+                                    value={user.precioConDescuentoM2}
                                     size={"sm"}
                                     label="Precio con Descuento"
                                     name="precioConDescuentoM2"
@@ -855,7 +1264,6 @@ const Product = () => {
                                 <div className="md:col-span-2">
                                   <Input
                                     id="unidadesM3"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="A Partir de (x) Unidades"
@@ -866,12 +1274,12 @@ const Product = () => {
                                   />
                                   <br />
                                   <Input
-                                    id="decuentoM3"
-                                    isDisabled={status ? true : false}
+                                    id="descuentoM3"
                                     onChange={handleChange}
+                                    value={user.descuentoM3}
                                     size={"sm"}
                                     label="% de Descuento"
-                                    name="decuentoM3"
+                                    name="descuentoM3"
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -879,8 +1287,9 @@ const Product = () => {
                                   <br />
                                   <Input
                                     id="precioConDescuentoM3"
-                                    isDisabled={status ? true : false}
+                                    disabled={true}
                                     onChange={handleChange}
+                                    value={user.precioConDescuentoM3}
                                     size={"sm"}
                                     label="Precio con Descuento"
                                     name="precioConDescuentoM3"
@@ -892,7 +1301,6 @@ const Product = () => {
                                 <div className="md:col-span-2">
                                   <Input
                                     id="unidadesM4"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="A Partir de (x) Unidades"
@@ -903,12 +1311,12 @@ const Product = () => {
                                   />
                                   <br />
                                   <Input
-                                    id="decuentoM4"
-                                    isDisabled={status ? true : false}
+                                    id="descuentoM4"
                                     onChange={handleChange}
+                                    value={user.descuentoM4}
                                     size={"sm"}
                                     label="% de Descuento"
-                                    name="decuentoM4"
+                                    name="descuentoM4"
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -916,8 +1324,9 @@ const Product = () => {
                                   <br />
                                   <Input
                                     id="precioConDescuentoM4"
-                                    isDisabled={status ? true : false}
+                                    disabled={true}
                                     onChange={handleChange}
+                                    value={user.precioConDescuentoM4}
                                     size={"sm"}
                                     label="Precio con Descuento"
                                     name="precioConDescuentoM4"
@@ -929,7 +1338,6 @@ const Product = () => {
                                 <div className="md:col-span-2">
                                   <Input
                                     id="unidadesM5"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="A Partir de (x) Unidades"
@@ -940,12 +1348,12 @@ const Product = () => {
                                   />
                                   <br />
                                   <Input
-                                    id="decuentoM5"
-                                    isDisabled={status ? true : false}
+                                    id="descuentoM5"
                                     onChange={handleChange}
+                                    value={user.descuentoM5}
                                     size={"sm"}
                                     label="% de Descuento"
-                                    name="decuentoM5"
+                                    name="descuentoM5"
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -953,8 +1361,9 @@ const Product = () => {
                                   <br />
                                   <Input
                                     id="precioConDescuentoM5"
-                                    isDisabled={status ? true : false}
+                                    disabled={true}
                                     onChange={handleChange}
+                                    value={user.precioConDescuentoM5}
                                     size={"sm"}
                                     label="Precio con Descuento"
                                     name="precioConDescuentoM5"
@@ -966,7 +1375,6 @@ const Product = () => {
                                 <div className="md:col-span-2">
                                   <Input
                                     id="unidadesM6"
-                                    isDisabled={status ? true : false}
                                     onChange={handleChange}
                                     size={"sm"}
                                     label="A Partir de (x) Unidades"
@@ -977,12 +1385,12 @@ const Product = () => {
                                   />
                                   <br />
                                   <Input
-                                    id="decuentoM6"
-                                    isDisabled={status ? true : false}
+                                    id="descuentoM6"
                                     onChange={handleChange}
+                                    value={user.descuentoM6}
                                     size={"sm"}
                                     label="% de Descuento"
-                                    name="decuentoM6"
+                                    name="descuentoM6"
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -990,8 +1398,9 @@ const Product = () => {
                                   <br />
                                   <Input
                                     id="precioConDescuentoM6"
-                                    isDisabled={status ? true : false}
+                                    disabled={true}
                                     onChange={handleChange}
+                                    value={user.precioConDescuentoM6}
                                     size={"sm"}
                                     label="Precio con Descuento"
                                     name="precioConDescuentoM6"
@@ -1989,9 +2398,7 @@ const Product = () => {
         </div>
       </main>
     </>
-  ) : (
-    <Crop {...{ photoURL, setOpenCrop, setPhotoURL, setFile, aspect: 1 }} />
-  );
+  )
 };
 
 export default Product;
