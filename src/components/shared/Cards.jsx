@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Catalogue from "../../views/pointSale/Catalogue";
-
-const cards = () => {
+import { Button } from "@nextui-org/react";
+import ProductsCards from "../../components/shared/CardsProducts";
+const Cards = () => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Sin categoría seleccionada");
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(false);
+  const [initialModalOpen, setInitialModalOpen] = useState(false);
   const loadCategoriesFromAPI = async () => {
     try {
       const response = await fetch("https://localhost:4000/Categorias"); // Se va a cambiar la URL
@@ -17,21 +19,33 @@ const cards = () => {
       console.error("Error al cargar datos desde la API:", error);
     }
   };
-
-  const handleCardClick = (categoryName, openModal) => {
-    setSelectedCategory(categoryName);
-    if (openModal) {
-      setModalIsOpen(true);
+  const openModal = () => {
+    if (!initialModalOpen) {
+      setSelectedCategory("Sin categoría seleccionada");
+      setInitialModalOpen(true);
     }
+    setModalIsOpen(true);
   };
 
+  const handleClearCategory = () => {
+    setSelectedCategory("Sin categoría seleccionada");
+    setModalIsOpen(false);
+  };
+
+  const handleCardClick = (categoryName) => {
+    console.log("Categoría seleccionada:", categoryName);
+    setSelectedCategory(categoryName);
+    setCategoriaSeleccionada(true);
+    setModalIsOpen(true); // Abre el modal aquí
+  };
+  
   useEffect(() => {
     loadCategoriesFromAPI();
   }, []);
 
   const Card = ({ img, nombre, id, inventory, handleCardClick }) => {
     const [highlighted, setHighlighted] = useState(false);
-    const [pressed, setPressed] = useState(false); // Nuevo estado para el card presionado
+    const [pressed, setPressed] = useState(false);
 
     const cardStyle = {
       backgroundColor: highlighted ? "#ec7c6a" : "#1F1D2B",
@@ -46,17 +60,22 @@ const cards = () => {
       color: highlighted ? "#ffffff" : "#888888",
       cursor: "pointer",
       transition: "background-color 0.3s ease-in-out",
+      
     };
 
     const handleCardPress = (categoryName) => {
-      handleCardClick(categoryName, true);
-      setPressed(true); // Cambia el estado del card a presionado
-      console.log("Se logró"); // Agrega el mensaje al hacer clic
+      handleCategorySelection(categoryName);
+      setPressed(true);
+      console.log("Se logró");
     };
-
+    const handleCategorySelection = (categoryName) => {
+      setSelectedCategory(categoryName);
+   
+    };
+    
     return (
       <div
-        style={pressed ? { ...cardStyle, color: "#00ff00" } : cardStyle} // Cambia el color del texto cuando se presiona
+        style={pressed ? { ...cardStyle, color: "#00ff00" } : cardStyle}
         onClick={() => handleCardPress(nombre)}
         onMouseEnter={() => setHighlighted(true)}
         onMouseLeave={() => setHighlighted(false)}
@@ -74,9 +93,8 @@ const cards = () => {
           alt={img}
         />
         <p style={{ fontSize: "20px" }}>
-          {pressed ? "Presionado" : nombre}
-        </p>{" "}
-        {/* Cambia el texto si se presionó el card */}
+          {pressed ? "Seleccionado" : nombre}
+        </p>
         <span>{id}</span>
         <p style={{ color: "#666666" }}>{inventory} Categoria</p>
       </div>
@@ -95,7 +113,7 @@ const cards = () => {
         flexDirection: "column",
         alignItems: "center",
         gap: "2px",
-        color: "#ffffff", // Texto más oscuro
+        color: "#ffffff",
         cursor: "pointer",
       }}
       onClick={() => handleCardClick("Sin categoría", true)}
@@ -121,25 +139,33 @@ const cards = () => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px",
-        }}
-      >
-        {categories.map((item, index) => (
-          <Card key={index} {...item} handleCardClick={handleCardClick} />
-        ))}
-        <EmptyCard handleCardClick={handleCardClick} />
-      </div>
+      {categoriaSeleccionada ? (
+        <ProductsCards selectedCategory={selectedCategory} />
+      ) : (
+        <div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "20px",
+            }}
+          >
+            {categories.map((item, index) => (
+              <Card key={index} {...item} handleCardClick={handleCardClick} />
+            ))}
+            <EmptyCard handleCardClick={handleCardClick} />
+          </div>
+        </div>
+      )}
+      
       <Catalogue
-        selectedCategory={selectedCategory}
-        modalIsOpen={modalIsOpen}
-        setModalIsOpen={setModalIsOpen}
-      />
+  selectedCategory={selectedCategory}
+  modalIsOpen={modalIsOpen}
+  setModalIsOpen={setModalIsOpen}
+  buttonText="Catalogo"
+  handleCardClick={handleCardClick}
+/>
     </div>
   );
 };
-
-export default cards;
+export default Cards;

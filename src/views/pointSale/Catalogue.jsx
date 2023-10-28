@@ -2,13 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
 import Modal from 'react-modal';
 import Cards from "../../components/shared/Cards";
+import ProductsCards from "../../components/shared/CardsProducts";
+
 
 Modal.setAppElement('#root');
 
-const Catalogue = ({ selectedCategory }) => { 
+const Catalogue = ({ setSelectedCategory,selectedCategory }) => { 
   const [productos, setProductos] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
+  const [originalProductos, setOriginalProductos] = useState([]);
+  const [categorySelected, setCategorySelected] = useState(false);
+  const openModal = () => {
+    setModalIsOpen(true);
+    setSelectedCategory("Sin categoría seleccionada");
+   
+  };
   const closeModal = () => {
     setModalIsOpen(false);
   };
@@ -19,7 +27,7 @@ const Catalogue = ({ selectedCategory }) => {
       const data = await response.json();
       if (response.ok) {
         setProductos(data);
-        setOriginalProductos(data);
+        setOriginalProductos(data); 
       }
     } catch (error) {
       console.error("Error al cargar los datos:", error);
@@ -28,8 +36,12 @@ const Catalogue = ({ selectedCategory }) => {
 
   useEffect(() => {
     loadProductosFromDB();
-  }, []);
-
+    if (modalIsOpen) {
+      setCategorySelected(true); 
+    }
+  }, [modalIsOpen, selectedCategory]);
+    console.log("selectedCategory:", selectedCategory);
+    console.log("categorySelected:", categorySelected);
   return (
     <div style={{ textAlign: "center" }}>
       <style>
@@ -57,48 +69,54 @@ const Catalogue = ({ selectedCategory }) => {
           }
           .custom-button {
             background-color: #ec7c6a;
-           font-size: 14px;
+            font-size: 14px;
             color: white;
           }
         `}
       </style>
-      
-    <div style={{ position: 'relative', zIndex: '0' }}>
-      <Button className="custom-button" size="sm" onClick={() => setModalIsOpen(true)}>Catalogo</Button>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={{
-          overlay: {
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: '1000',
-          },
-          content: {
-            width: '100%',
-            maxWidth: '800px',
-            maxHeight: '80vh',
-            margin: '0 auto',
-            border: 'none',
-            background: '#262837',
-            overflow: 'auto',
-          },
-        }}
-      >
-        
-         <div style={{ background: "#ec7c6a", padding: "10px", textAlign: "center" }}>
-          <h2 style={{ color: "white" }}>
-            Catalogo: {selectedCategory}
-          </h2>
-        </div>
-      <br></br>
-      <br></br>
-      <br></br>
-        <Cards/>
-      </Modal>
-    </div>
+      <div style={{ position: 'relative', zIndex: '0' }}>
+        <Button className="custom-button" size="sm" onClick={openModal}>Catalogo</Button>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={{
+            overlay: {
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              zIndex: '1000',
+            },
+            content: {
+              width: '100%',
+              maxWidth: '1200px',
+              maxsHeight: '80vh',
+              margin: '0 auto',
+              border: 'none',
+              background: '#262837',
+              overflow: 'auto',
+            },
+          }}
+        >
+          <div style={{ background: "#ec7c6a", padding: "10px", textAlign: "center" }}>
+            <h2 style={{ color: "white" }}>
+              Catálogo: {selectedCategory}
+            </h2>
+          </div>
+          <br></br>
+          <Button
+            className="custom-button"
+            size="sm"
+            onClick={closeModal}
+          >
+            Cerrar
+          </Button>
+          <br></br>
+          <br></br>
+          <Cards />
+          {categorySelected && <ProductsCards selectedCategory={selectedCategory} />}
+        </Modal>
+      </div>
     </div>
   );
 };
