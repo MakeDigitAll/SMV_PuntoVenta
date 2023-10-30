@@ -50,7 +50,7 @@ import PaymentMethodList from "./views/settings/PaymentMethods.jsx";
 import BranchOffices from "./views/settings/BranchOffices.jsx";
 import NewBranch from "./views/settings/NewBranch.jsx";
 import Chat from "./views/chat/chat.jsx";
-import SecuritProfiles from "./views/settings/SecuritProfiles.jsx";
+import SecuritProfiles from "./views/settings/perfilesSeguridad/SecuritProfiles.jsx";
 import ConfigureAccess from "./views/settings/ConfigureAccess.jsx";
 import Quote from "./views/sales/Quote.jsx";
 import Seller from "./views/sellers/Seller.jsx";
