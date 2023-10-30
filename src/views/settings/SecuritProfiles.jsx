@@ -55,7 +55,6 @@ import axios from "axios";
 const columns = [
   { name: "ID", uid: "id" },
   { name: "Nombre del Perfil", uid: "nombrePerfil", sortable: true },
-  { name: "Usuarios", uid: "usuarios", sortable: true },
   { name: "Acciones", uid: "Actions", sortable: true },
 ];
 
@@ -159,6 +158,7 @@ const SecuritProfiles = () => {
       if (response.ok) {
         setData(data);
       }
+      console.log(data);
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -380,6 +380,7 @@ const SecuritProfiles = () => {
   }
 
   const renderCell = React.useCallback((data, columnKey) => {
+    console.log(data);
     const cellValue = data[columnKey];
     switch (columnKey) {
       case "id":
@@ -392,7 +393,7 @@ const SecuritProfiles = () => {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {format(data.fecha)}
+              {format(data.nombrePerfil)}
             </p>
           </div>
         );
@@ -463,6 +464,36 @@ const SecuritProfiles = () => {
     setFilterValue("");
     setPage(1);
   }, []);
+
+
+
+  const [nombrePerfil, setNombrePerfil] = useState("");
+  //para guardar perfil en la base de datos
+  const handleGuardarPerfil = async () => {
+    const datosPerfil = {
+      nombrePerfil: nombrePerfil,
+    };
+    try {
+      const res = await axios.post(
+        `https://localhost:4000/PerfilesSeguridad`,
+        datosPerfil
+      );
+      if (res.status === 200) {
+        toast.success("Perfil de Seguridad guardado", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+        onClose(true);
+        setUpdateCounter((prevCounter) => prevCounter + 1);
+      }
+    } catch (error) {
+      toast.error("Error al guardar los datos", {
+        position:
+          "bottom-right",
+        theme: "colored",
+      });
+    }
+  };
 
   const topContent = React.useMemo(() => {
     return (
@@ -552,7 +583,7 @@ const SecuritProfiles = () => {
                 onSelectionChange={setVisibleColumns}
               >
                 {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
+                  < DropdownItem key={column.uid} className="capitalize" >
                     {column.name}
                   </DropdownItem>
                 ))}
@@ -595,7 +626,7 @@ const SecuritProfiles = () => {
               <option value="15">15</option>
             </select>
           </label>
-        </div>
+        </div >
       </>
     );
   }, [
@@ -650,6 +681,11 @@ const SecuritProfiles = () => {
     );
   }, [data.length, selectedKeys, page, pages, onPreviousPage, onNextPage]);
 
+
+  const handleNombrePerfil = (e) => {
+    setNombrePerfil(e.target.value);
+  }
+
   return (
     <div style={{ marginLeft: "40px", marginRight: "40px" }}>
       <Table
@@ -683,6 +719,7 @@ const SecuritProfiles = () => {
           items={sortedItems}
         >
           {(item) => (
+            console.log(item),
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
@@ -709,10 +746,8 @@ const SecuritProfiles = () => {
                   <Input
                     id="nombre"
                     name="nombreForma"
-                    value={
-                      modeModal !== "create" ? task.nombreForma : undefined
-                    }
-                    onChange={handleChange}
+                    value={nombrePerfil}
+                    onChange={handleNombrePerfil}
                     label="Nombre del Perfil de Seguridad"
                     placeholder="Ventas"
                     variant="bordered"
@@ -725,7 +760,7 @@ const SecuritProfiles = () => {
                     Cerrar
                   </Button>
                   {showButton && (
-                    <Button id="BtnGuardar" color="primary">
+                    <Button onPress={handleGuardarPerfil} id="BtnGuardar" color="primary">
                       Guardar
                     </Button>
                   )}
