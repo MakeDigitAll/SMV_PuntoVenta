@@ -37,6 +37,37 @@ const ModalUserInfo = ({ onClose, data }) => {
         console.log(selectedData);
     }, [selectedData]);
 
+
+
+    const handleSubmmit = async () => {
+        const idPerfilSeguridad = data.id;
+
+        //Post
+        try {
+            const res = await fetch(`https://localhost:4000/PerfilesSeguridad/${idPerfilSeguridad}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(selectedData),
+            });
+            if (res.ok) {
+                toast.success("Datos Guardados", {
+                    position: "bottom-right",
+                    theme: "colored",
+                });
+                onClose(true);
+            } else {
+                console.error("Error al crear el elemento", res.statusText);
+            }
+        } catch (error) {
+            toast.error("Error al guardar los datos", {
+                position: "bottom-right",
+                theme: "colored",
+            });
+        }
+
+    }
     return (
         <Modal
             size="5xl"
@@ -2726,10 +2757,9 @@ const ModalUserInfo = ({ onClose, data }) => {
                         </ScrollShadow>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary">{t("profile.save")}</Button>
-
+                        <Button color="primary" onPress={handleSubmmit}>{t("Guardar")}</Button>
                         <Button color="danger" onClick={closeHandler}>
-                            {t("profile.cancel")}
+                            {t("Cerrar")}
                         </Button>
                     </ModalFooter>
                 </>
