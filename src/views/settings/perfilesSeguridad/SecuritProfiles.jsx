@@ -23,19 +23,10 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Checkbox,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import {
-  MdAlignHorizontalCenter,
   MdArrowDropDown,
-  MdCreditCard,
-  MdFilterList,
-  MdImportContacts,
-  MdMonetizationOn,
-  MdPriceChange,
-  MdPriceCheck,
-  MdSearch,
   MdSecurity,
 } from "react-icons/md";
 import ItemsHeader from "../../../components/header/itemsHeader/ItemsHeader";
@@ -44,11 +35,8 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import {
   RiDashboard2Fill,
-  RiListOrdered,
-  RiSdCardFill,
-  RiUser2Fill,
 } from "react-icons/ri";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 import axios from "axios";
@@ -63,7 +51,6 @@ const INITIAL_VISIBLE_COLUMNS = ["id", "nombrePerfil", "usuarios", "Actions"];
 const SecuritProfiles = () => {
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const [updatedData, setUpdatedData] = useState([]);
 
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
@@ -179,60 +166,10 @@ const SecuritProfiles = () => {
     onOpen();
   };
 
-  const handleView = (id) => {
-    setModeModal("view");
-    setIsInputDisabled(true);
-    async function viewModal() {
-      try {
-        const response = await fetch(
-          `https://localhost:4000/PerfilesSeguridad/${id}`
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setTask({
-            id: data.id,
-            nombrePerfil: data.nombrePerfil,
-            usuarios: data.usuarios,
-          });
-          setShowButton(false);
-          onOpen();
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    viewModal();
-  };
 
   const handleEdit = (id) => {
-    setModeModal("edit");
-    setIsInputDisabled(false);
-    async function editModal() {
-      try {
-        const response = await fetch(
-          `https://localhost:4000/PerfilesSeguridad/${id}`
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setTask({
-            id: data.id,
-            nombrePerfil: data.nombrePerfil,
-            usuarios: data.usuarios,
-          });
-          setShowButton(true);
-          onOpen();
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    editModal();
+    //abrir el modal
+
   };
 
   async function handleSubmit(e) {
@@ -283,64 +220,6 @@ const SecuritProfiles = () => {
     }
   }
 
-  async function handleEditing(e) {
-    e.preventDefault();
-
-    const newErrors = {};
-
-    if (!task.nombrePerfil) {
-      newErrors.nombrePerfil =
-        "El Campo Nombre del Perfil de Seguridad es Obligatorio";
-      toast.error("El Campo Nombre del Perfil de Seguridad es Obligatorio", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-      return;
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const datosListado = {
-      id: task.id,
-      nombre: task.nombrePerfil,
-    };
-    async function edit() {
-      try {
-        const res = await fetch(
-          `https://localhost:4000/PerfilesSeguridad/${datosListado.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(datosListado),
-          }
-        );
-        if (res.ok) {
-          toast.success("Perfil de Seguridad Editado Correctamente", {
-            position: "bottom-right",
-            theme: "colored",
-          });
-          onClose(true);
-          setEditCounter((prevCounter) => prevCounter + 1);
-        } else {
-          toast.error("Error al actualizar el perfil de seguirdad", {
-            position: "bottom-right",
-            theme: "colored",
-          });
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-    edit();
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -380,7 +259,6 @@ const SecuritProfiles = () => {
   }
 
   const renderCell = React.useCallback((data, columnKey) => {
-    console.log(data);
     const cellValue = data[columnKey];
     switch (columnKey) {
       case "id":
