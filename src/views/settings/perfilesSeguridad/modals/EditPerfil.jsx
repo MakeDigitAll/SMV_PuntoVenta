@@ -13,6 +13,7 @@ import {
 } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 const ModalUserInfo = ({ onClose, data }) => {
     const { t } = useTranslation();
@@ -25,18 +26,11 @@ const ModalUserInfo = ({ onClose, data }) => {
     };
 
     const setDefaultValues = (tipo, valor) => {
-        console.log("tipo", tipo);
-        console.log("valor", valor);
         setSelectedData({
             ...selectedData,
             [tipo]: valor,
         });
     };
-
-    useEffect(() => {
-        console.log(selectedData);
-    }, [selectedData]);
-
 
 
     const handleSubmmit = async () => {
@@ -344,13 +338,13 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "mover_a_cuenta",
-                                                    selectedData.mover_a_cuenta ? false : true
+                                                    "mover_a_cuenta_cobranza",
+                                                    selectedData.mover_a_cuenta_cobranza ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.mover_a_cuenta}
+                                            isSelected={selectedData.mover_a_cuenta_cobranza}
                                         >
-                                            Mover a cuenta
+                                            Mover a cuenta cobranza
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
@@ -384,7 +378,7 @@ const ModalUserInfo = ({ onClose, data }) => {
                                             }
                                             isSelected={selectedData.mover_a_cuenta_caja_general}
                                         >
-                                            Mover a cuenta
+                                            Move a cuenta caja general
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
@@ -395,7 +389,7 @@ const ModalUserInfo = ({ onClose, data }) => {
                                             }
                                             isSelected={selectedData.mover_a_cobranza_caja_general}
                                         >
-                                            Mover a cuenta
+                                            Mover a cuenta cobranza caja general
                                         </Checkbox>
                                         <text>Surtir pedidos</text>
                                         <Checkbox
