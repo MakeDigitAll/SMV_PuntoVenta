@@ -5,7 +5,7 @@ import 'handsontable/dist/handsontable.full.css';
 import { Button } from '@nextui-org/react';
 import { HotTable } from '@handsontable/react';
 
-Modal.setAppElement("#root");
+
 
 const AddExcelQuotes = () => {
   const headers = [

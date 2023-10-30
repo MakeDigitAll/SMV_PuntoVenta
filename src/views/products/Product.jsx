@@ -379,10 +379,10 @@ const Product = () => {
       });
     }
   }
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   loadTask();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");

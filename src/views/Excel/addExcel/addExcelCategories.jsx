@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Modal from 'react-modal';
 import ExcelJS from 'exceljs';
 import 'handsontable/dist/handsontable.full.css';
 import { Button } from '@nextui-org/react';
-import { HotTable } from '@handsontable/react';
-Modal.setAppElement('#root');
+
 const AddExcelCategories = () => {
   const headers = [
     ' ', 'Nombre', 'SKU'

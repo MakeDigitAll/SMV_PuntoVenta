@@ -5,7 +5,6 @@ import ExcelJS from "exceljs";
 import "handsontable/dist/handsontable.full.css";
 import { Button } from "@nextui-org/react";
 
-Modal.setAppElement("#root");
 
 const AddExcelBrands = () => {
   const headers = [" ", "Marca", "Catalogo", "Productos"];

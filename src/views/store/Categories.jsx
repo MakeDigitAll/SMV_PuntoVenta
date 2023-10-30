@@ -411,9 +411,6 @@ const Categories = () => {
           />
           <div className="flex flex-wrap place-content-end space-x-2">
             <AddExcelCategories />
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Categorías
-            </Button>
             <Button
               size="sm"
               color="primary"

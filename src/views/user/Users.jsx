@@ -363,13 +363,7 @@ const Users = () => {
               // value={correo}
             />
           </div>
-          <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar precios
-            </Button>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar costos
-            </Button>
+          <div className="flex flex-wrap place-content-end space-x-2">            
             <Button
               onPress={() => navigate(`/Settings/User`)}
               size="sm"
@@ -407,7 +401,7 @@ const Users = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Dropdown>
+            {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
                   endContent={<MdArrowDropDown className="text-small" />}
@@ -431,10 +425,10 @@ const Users = () => {
                   </DropdownItem>
                 ))}
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
           </div>
           <label className="flex items-center text-small">
-            Productos por página:
+            Usuarios por página:
             <select
               className="bg-transparent outline-none text-small"
               onChange={onRowsPerPageChange}
@@ -460,7 +454,7 @@ const Users = () => {
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small">
           <span style={{ marginRight: "30px" }}>
-            {data.length} productos en total
+            {data.length} usuarios en total
           </span>
           {selectedKeys === "all"
             ? "All items selected"

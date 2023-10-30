@@ -6,7 +6,7 @@ import ModalCatalogue from "./Catalogue";
 import AddExcelOrders from "../Excel/addExcel/addExcelOrders";
 
 import Catalogue from "./Catalogue";
-Modal.setAppElement('#root');
+
 const AccesPointProductosView = () => {
   const [productos, setProductos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

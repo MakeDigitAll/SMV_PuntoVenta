@@ -15,9 +15,8 @@ import {
   Pagination,
   Chip,
   Select,
-  SelectItem,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -27,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
+import moment from "moment";
 const statusOptions = [
   { name: "Active", uid: "active" },
   { name: "Paused", uid: "paused" },
@@ -40,7 +40,7 @@ const columns = [
   { name: "Vendedor", uid: "idVendedor", sortable: true },
   { name: "Recurrencia", uid: "recurrencia", sortable: true },
   { name: "Total", uid: "total", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
+  { name: "Estatus", uid: "status", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
@@ -266,7 +266,7 @@ const Quotes = () => {
       case "fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fecha}</p>
+            <p className="text-bold text-small capitalize">{moment(data.fecha).format("DD/MM/YYYY")}</p>
           </div>
         );
       case "pedido":
@@ -547,10 +547,6 @@ const Quotes = () => {
             <div>
               <AddExcelQuotes />
             </div>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Cotizaciones
-            </Button>
-
             <Button
               size="sm"
               color="primary"
@@ -581,16 +577,12 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(
-                  (column) => (
-                    //console.log(column),
-                    (
-                      <DropdownItem key={column.uid} className="capitalize">
-                        {column.name}
-                      </DropdownItem>
-                    )
-                  )
-                )}
+                {columns.map((column) => (
+                  //console.log(column),
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -611,15 +603,11 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(
-                  (column) => (
-                    (
-                      <DropdownItem key={column.uid} className="capitalize">
-                        {column.name}
-                      </DropdownItem>
-                    )
-                  )
-                )}
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -638,13 +626,15 @@ const Quotes = () => {
       </>
     );
   }, [
+    modalidad,
+    onSearchChange2,
     filterValue,
     onSearchChange,
-    statusFilter,
-    marcaOptions,
+    selectedVendedor,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
+    onClear2,
     onClear,
   ]);
   const bottomContent = React.useMemo(() => {
@@ -708,15 +698,13 @@ const Quotes = () => {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            (
-              <TableColumn
-                key={column.uid}
-                align={column.uid === "Actions" ? "center" : "start"}
-                allowsSorting={column.sortable}
-              >
-                {column.name}
-              </TableColumn>
-            )
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "Actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
           )}
         </TableHeader>
         <TableBody

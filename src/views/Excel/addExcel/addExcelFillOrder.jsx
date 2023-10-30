@@ -5,7 +5,7 @@ import 'handsontable/dist/handsontable.full.css';
 import { Button } from '@nextui-org/react';
 import { HotTable } from '@handsontable/react';
 import { toast } from 'react-toastify';
-Modal.setAppElement("#root");
+
 const AddExcelFillOrder = () => {
   const headers = [
     " ",

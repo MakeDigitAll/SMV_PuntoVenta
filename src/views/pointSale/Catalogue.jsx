@@ -5,7 +5,7 @@ import Cards from "../../components/shared/Cards";
 import ProductsCards from "../../components/shared/CardsProducts";
 
 
-Modal.setAppElement('#root');
+
 
 const Catalogue = ({ setSelectedCategory,selectedCategory }) => { 
   const [productos, setProductos] = useState([]);
