@@ -37,246 +37,6 @@ const ModalUserInfo = ({ onClose, data }) => {
         console.log(selectedData);
     }, [selectedData]);
 
-
-    /*
-
-     --- 2 - Lista de precios
-    ver_listas_de_precios 
-    crear_lista_de_precios 
-    editar_lista_de_precios 
-    eliminar_lista_de_precios 
-
-     --- 3 - Reporte de ventas de clientes
-    ver_reporte_de_venta_de_clientes 
-
-     --- 4 - Estado de cuenta
-    ver_estado_de_cuenta 
-    ver_detalle 
-    capturar_pagos 
-    imprimir_ticket_de_abono 
-    cancelar_ticket_de_abono 
-
-     --- 5 - Catalogo de mercados
-    consultar_catalogo_de_mercados 
-    crear_nuevo_mercado 
-    editar_mercado 
-    eliminar_mercado 
-
-     -- Vendedores
-          --- 1 - Vendedores
-    ver_catalogo_de_vendedores 
-    crear_nuevo_vendedor 
-    editar_vendedor 
-    eliminar_vendedor 
-
-     --- 2 - Registro de visitas
-    consultar_registro_de_visitas 
-    registrar_visitas 
-    eliminar_visita 
-
-     --- 3 - Comisiones
-    consultar_comisiones 
-    crear_nueva_comision 
-    editar_comision 
-    eliminar_comisiones 
-
-     --- 4 - Reporte de comisiones
-    consultar_reporte_de_comisiones 
-
-     --- 5 - Reporte de cliente
-    consultar_reporte_de_clientes 
-
-     -- Productos
-     --- 1 - Productos
-    ver_catalogo_de_productos 
-    modificar_inventarios 
-    modificar_precio 
-    modificar_costo 
-    modificar_informacion_adicional 
-    alta_de_nuevos_productos 
-    editar_productos 
-    eliminar_productos 
-    consultar_productos_desactivados 
-    record_venta_producto 
-    inventario_inicial_en_alta 
-    actualizar_precios_y_costos_por_marca 
-
-     --- 2 - Marcas
-    ver_catalogo_de_marcas 
-    crear_nueva_marca 
-    editar_marca 
-    eliminar_marca 
-
-     --- 3 - Proveedores
-    ver_catalogo_de_proveedores 
-    crear_nuevo_proveedor 
-    editar_proveedor 
-    eliminar_proveedor 
-
-     --- 4 - Categorias
-    ver_categoria 
-    crear_nueva_categoria 
-    editar_categorias 
-    eliminar_categorias 
-    crear_y_editar_subCategorias 
-
-     --- 5 - Descuentos
-    ver_catalogo_de_descuentos 
-    crear_nuevos_descuentos 
-    editar_descuentos 
-    eliminar_descuento 
-
-     --- 6 - Margen de productos
-    consultar_margen_de_productos 
-
-     --- 7 - Insignias
-    ver_catalogo_de_insignias 
-    alta_de_nuevas_insignias 
-    editar_insignias 
-    eliminar_insignias 
-
-    -- Compras
-     --- 1 - Ordenes de compra
-    consultar_ordenes_de_compra 
-    crear_nueva_orden_de_compra 
-    editar_orden_de_compra 
-    eliminar_orden_de_compra 
-    procesar_orden_de_compra 
-    cancelar_orden_de_compra 
-    recibir_mercancia 
-
-    -- Inventario
-     --- 1 - Entradas de almacen
-    consultar_entradas_de_almacen 
-    crear_nueva_entrada_de_almacen 
-    editar_entradas_de_almacen 
-    eliminar_entradas_de_almacen 
-    catalogo_de_motivos_de_entrada 
-    agregar_motivo_de_entrada 
-    modificar_motivo_de_entrada 
-    eliminar_motivo_de_entrada 
-    usar_motivos_de_entrada_clase_1 
-    usar_motivos_de_entrada_clase_2 
-    usar_motivos_de_entrada_clase_3 
-
-     --- 2 - Reporte de inventario
-    consultar_reporte_de_inventario 
-
-     --- 3 - Salidas de almacen
-    consultar_salidas_de_almacen 
-    agregar_salida_manual 
-    eliminar_salida 
-    catalogo_de_motivos_de_salida 
-    agregar_motivo_de_salida 
-    modificar_motivo_de_salida 
-    eliminar_motivo_de_salida 
-    usar_motivos_de_salida_clase_1 
-    usar_motivos_de_salida_clase_2 
-    usar_motivos_de_salida_clase_3 
-
-     --- 4 - Transferencias entre almacenes
-    consultar_transferencias 
-    autorizar 
-    rechazar 
-    surtir 
-    recibir 
-    crear_nuevas_tranferencias 
-    editar_transferencias 
-    eliminar_tranferencias 
-
-     --- 5 - Reporte de inventario por almacen
-    consultar_reporte_de_inventario_x_almacen 
-
-     --- 6 - Logistica
-    logistica 
-
-     -- Bancos
-     --- 1 - Bancos
-    consultar_catalogo_de_bancos 
-    crear_nuevo_banco 
-    editar_banco 
-    eliminar_banco 
-
-     --- 2 - Cuentas bancarias
-    consultar_cuentas_bancarias 
-    crear_cuentas_bancarias 
-    editar_cuentas_bancarias 
-    eliminar_cuentas_bancarias 
-    consultar_estado_de_cuentas 
-
-     --- 3 - Salidas
-    consultar_salidas 
-    crear_nuevas_salidas 
-    editar_salidas 
-    eliminar_salidas 
-
-     --- 4 - Entradas
-    consultar_entradas 
-    crear_nuevas_entradas 
-    editar_entradas 
-    eliminar_entradas 
-
-     --- 5 - Transferencias
-    consultar_tranferencias 
-    crear_nuevas_tranferencias 
-    eliminar_tranferencias 
-
-    --Nominas
-     --- 1 - Empleados
-    consultar_empleados 
-    agregar_nuevo_empleado 
-    editar_empleado 
-    eliminar_empleado 
-
-     --- 2 - Catalogos
-    consultar_comprobantes_emitidos 
-    nuevo_comprobante 
-    consultar_catalogos 
-    consultar_catalogo_de_departamentos 
-    crear_un_nuevo_departamento 
-    editar_un_departamento 
-    eliminar_un_departamento 
-    consultar_catalogo_de_puestos_de_trabajo 
-    crear_nuevo_puesto_de_trabajo 
-    editar_puesto_de_trabajo 
-    eliminar_puesto_de_trabajo 
-    consultar_regimenes_de_contratacion 
-    crear_nuevo_regimen_de_contratacion 
-    editar_regimen_de_contratacion 
-    eliminar_regimen_de_contratacion 
-    consultar_tipos_de_contratos 
-    crear_nuevo_tipos_de_contratos 
-    editar_tipos_de_contratos 
-    eliminar_tipos_de_contratos 
-    consultar_tipos_de_jornadas 
-    crear_nuevo_tipo_de_jornanda 
-    editar_tipo_de_jornanda 
-    eliminar_tipo_de_jornada 
-
-    --Configuracion
-     --- 1 - Configuracion
-    modificar_configuraciones 
-
-     --- 2 - Importacion de datos
-    importar_productos 
-
-     --- 3 - Envios
-    consultar_tipos_de_datos 
-    consultar_las_condiciones_de_envio 
-    crear_paquetes_de_envio 
-    consultar_paquetes_de_envio 
-    crear_costos_de_envio 
-    consultar_costos_de_envio 
-
-     -- Pagina Web
-     --- 1 - Notificaciones
-    ver_notificaciones 
-    cambiar_estatus_de_notificaciones 
-    
-    
-    
-    */
-
     return (
         <Modal
             size="5xl"
@@ -292,9 +52,8 @@ const ModalUserInfo = ({ onClose, data }) => {
                 <>
                     <ModalHeader></ModalHeader>
                     <ModalBody>
-                        <ScrollShadow className="h-[600px]">
+                        <ScrollShadow size={0} className="h-[700px]">
                             <Accordion>
-
                                 <AccordionItem key="1" aria-label="Dashboard" title="Dashboard">
                                     <div className="flex flex-col">
                                         <Checkbox
@@ -1856,6 +1615,1113 @@ const ModalUserInfo = ({ onClose, data }) => {
                                     </div>
                                 </AccordionItem>
 
+                                <AccordionItem key="7" aria-label="Compras" title="Compras">
+                                    <div className="flex flex-col">
+                                        <text>Ordenes de compra</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_ordenes_de_compra",
+                                                    selectedData.consultar_ordenes_de_compra ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_ordenes_de_compra}
+                                        >
+                                            Consultar ordenes de compra
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nueva_orden_de_compra",
+                                                    selectedData.crear_nueva_orden_de_compra ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nueva_orden_de_compra}
+                                        >
+                                            Crear nueva orden de compra
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_orden_de_compra",
+                                                    selectedData.editar_orden_de_compra ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_orden_de_compra}
+                                        >
+                                            Editar orden de compra
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_orden_de_compra",
+                                                    selectedData.eliminar_orden_de_compra ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_orden_de_compra}
+                                        >
+                                            Eliminar orden de compra
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "procesar_orden_de_compra",
+                                                    selectedData.procesar_orden_de_compra ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.procesar_orden_de_compra}
+                                        >
+                                            Procesar orden de compra
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "cancelar_orden_de_compra",
+                                                    selectedData.cancelar_orden_de_compra ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.cancelar_orden_de_compra}
+                                        >
+                                            Cancelar orden de compra
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "recibir_mercancia",
+                                                    selectedData.recibir_mercancia ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.recibir_mercancia}
+                                        >
+                                            Recibir mercancía
+                                        </Checkbox>
+                                    </div>
+                                </AccordionItem>
+
+                                <AccordionItem key="8" aria-label="Inventario" title="Inventario">
+                                    <div className="flex flex-col">
+                                        <text>Entradas de almacen</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_entradas_de_almacen",
+                                                    selectedData.consultar_entradas_de_almacen ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_entradas_de_almacen}
+                                        >
+                                            Consultar entradas de almacen
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nueva_entrada_de_almacen",
+                                                    selectedData.crear_nueva_entrada_de_almacen ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nueva_entrada_de_almacen}
+                                        >
+                                            Crear nueva entrada de almacen
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_entradas_de_almacen",
+                                                    selectedData.editar_entradas_de_almacen ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_entradas_de_almacen}
+                                        >
+                                            Editar entradas de almacen
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_entradas_de_almacen",
+                                                    selectedData.eliminar_entradas_de_almacen ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_entradas_de_almacen}
+                                        >
+                                            Eliminar entradas de almacen
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "catalogo_de_motivos_de_entrada",
+                                                    selectedData.catalogo_de_motivos_de_entrada ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.catalogo_de_motivos_de_entrada}
+                                        >
+                                            Catálogo de motivos de entrada
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "agregar_motivo_de_entrada",
+                                                    selectedData.agregar_motivo_de_entrada ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.agregar_motivo_de_entrada}
+                                        >
+                                            Agregar motivo de entrada
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "modificar_motivo_de_entrada",
+                                                    selectedData.modificar_motivo_de_entrada ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.modificar_motivo_de_entrada}
+                                        >
+                                            Modificar motivo de entrada
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_motivo_de_entrada",
+                                                    selectedData.eliminar_motivo_de_entrada ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_motivo_de_entrada}
+                                        >
+                                            Eliminar motivo de entrada
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "usar_motivos_de_entrada_clase_1",
+                                                    selectedData.usar_motivos_de_entrada_clase_1 ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.usar_motivos_de_entrada_clase_1}
+                                        >
+                                            Usar motivos de entrada clase 1
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "usar_motivos_de_entrada_clase_2",
+                                                    selectedData.usar_motivos_de_entrada_clase_2 ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.usar_motivos_de_entrada_clase_2}
+                                        >
+                                            Usar motivos de entrada clase 2
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "usar_motivos_de_entrada_clase_3",
+                                                    selectedData.usar_motivos_de_entrada_clase_3 ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.usar_motivos_de_entrada_clase_3}
+                                        >
+                                            Usar motivos de entrada clase 3
+                                        </Checkbox>
+                                        <text>Reporte de inventario</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_reporte_de_inventario",
+                                                    selectedData.consultar_reporte_de_inventario ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_reporte_de_inventario}
+                                        >
+                                            Consultar reporte de inventario
+                                        </Checkbox>
+                                        <text>Salidas de almacen</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_salidas_de_almacen",
+                                                    selectedData.consultar_salidas_de_almacen ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_salidas_de_almacen}
+                                        >
+                                            Consultar salidas de almacen
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "agregar_salida_manual",
+                                                    selectedData.agregar_salida_manual ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.agregar_salida_manual}
+                                        >
+                                            Agregar salida manual
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_salida",
+                                                    selectedData.eliminar_salida ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_salida}
+                                        >
+                                            Eliminar salida
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "catalogo_de_motivos_de_salida",
+                                                    selectedData.catalogo_de_motivos_de_salida ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.catalogo_de_motivos_de_salida}
+                                        >
+                                            Catálogo de motivos de salida
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "agregar_motivo_de_salida",
+                                                    selectedData.agregar_motivo_de_salida ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.agregar_motivo_de_salida}
+                                        >
+                                            Agregar motivo de salida
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "modificar_motivo_de_salida",
+                                                    selectedData.modificar_motivo_de_salida ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.modificar_motivo_de_salida}
+                                        >
+                                            Modificar motivo de salida
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_motivo_de_salida",
+                                                    selectedData.eliminar_motivo_de_salida ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_motivo_de_salida}
+                                        >
+                                            Eliminar motivo de salida
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "usar_motivos_de_salida_clase_1",
+                                                    selectedData.usar_motivos_de_salida_clase_1 ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.usar_motivos_de_salida_clase_1}
+                                        >
+                                            Usar motivos de salida clase 1
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "usar_motivos_de_salida_clase_2",
+                                                    selectedData.usar_motivos_de_salida_clase_2 ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.usar_motivos_de_salida_clase_2}
+                                        >
+                                            Usar motivos de salida clase 2
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "usar_motivos_de_salida_clase_3",
+                                                    selectedData.usar_motivos_de_salida_clase_3 ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.usar_motivos_de_salida_clase_3}
+                                        >
+                                            Usar motivos de salida clase 3
+                                        </Checkbox>
+                                        <text>Transferencias entre almacenes</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_transferencias",
+                                                    selectedData.consultar_transferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_transferencias}
+                                        >
+                                            Consultar transferencias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "autorizar",
+                                                    selectedData.autorizar ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.autorizar}
+                                        >
+                                            Autorizar
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "rechazar",
+                                                    selectedData.rechazar ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.rechazar}
+                                        >
+                                            Rechazar
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "surtir",
+                                                    selectedData.surtir ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.surtir}
+                                        >
+                                            Surtir
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "recibir",
+                                                    selectedData.recibir ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.recibir}
+                                        >
+                                            Recibir
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevas_tranferencias",
+                                                    selectedData.crear_nuevas_tranferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevas_tranferencias}
+                                        >
+                                            Crear nuevas tranferencias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_transferencias",
+                                                    selectedData.editar_transferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_transferencias}
+                                        >
+                                            Editar transferencias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_transferencias",
+                                                    selectedData.eliminar_transferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_transferencias}
+                                        >
+                                            Eliminar transferencias
+                                        </Checkbox>
+                                        <text>Reporte de inventario por almacen</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_reporte_de_inventario_x_almacen",
+                                                    selectedData.consultar_reporte_de_inventario_x_almacen
+                                                        ? false
+                                                        : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_reporte_de_inventario_x_almacen}
+                                        >
+                                            Consultar reporte de inventario por almacen
+                                        </Checkbox>
+                                        <text>Logistica</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "logistica",
+                                                    selectedData.logistica ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.logistica}
+                                        >
+                                            Logistica
+                                        </Checkbox>
+                                    </div>
+                                </AccordionItem>
+
+                                <AccordionItem key="9" aria-label="Bancos" title="Bancos">
+                                    <div className="flex flex-col">
+                                        <text>Bancos</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_catalogo_de_bancos",
+                                                    selectedData.consultar_catalogo_de_bancos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_catalogo_de_bancos}
+                                        >
+                                            Consultar catalogo de bancos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevo_banco",
+                                                    selectedData.crear_nuevo_banco ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevo_banco}
+                                        >
+                                            Crear nuevo banco
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_banco",
+                                                    selectedData.editar_banco ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_banco}
+                                        >
+                                            Editar banco
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_banco",
+                                                    selectedData.eliminar_banco ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_banco}
+                                        >
+                                            Eliminar banco
+                                        </Checkbox>
+                                        <text>Cuentas bancarias</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_cuentas_bancarias",
+                                                    selectedData.consultar_cuentas_bancarias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_cuentas_bancarias}
+                                        >
+                                            Consultar cuentas bancarias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_cuentas_bancarias",
+                                                    selectedData.crear_cuentas_bancarias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_cuentas_bancarias}
+                                        >
+                                            Crear cuentas bancarias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_cuentas_bancarias",
+                                                    selectedData.editar_cuentas_bancarias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_cuentas_bancarias}
+                                        >
+                                            Editar cuentas bancarias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_cuentas_bancarias",
+                                                    selectedData.eliminar_cuentas_bancarias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_cuentas_bancarias}
+                                        >
+                                            Eliminar cuentas bancarias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_estado_de_cuentas",
+                                                    selectedData.consultar_estado_de_cuentas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_estado_de_cuentas}
+                                        >
+                                            Consultar estado de cuentas
+                                        </Checkbox>
+                                        <text>Salidas</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_salidas",
+                                                    selectedData.consultar_salidas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_salidas}
+                                        >
+                                            Consultar salidas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevas_salidas",
+                                                    selectedData.crear_nuevas_salidas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevas_salidas}
+                                        >
+                                            Crear nuevas salidas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_salidas",
+                                                    selectedData.editar_salidas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_salidas}
+                                        >
+                                            Editar salidas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_salidas",
+                                                    selectedData.eliminar_salidas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_salidas}
+                                        >
+                                            Eliminar salidas
+                                        </Checkbox>
+                                        <text>Entradas</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_entradas",
+                                                    selectedData.consultar_entradas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_entradas}
+                                        >
+                                            Consultar entradas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevas_entradas",
+                                                    selectedData.crear_nuevas_entradas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevas_entradas}
+                                        >
+                                            Crear nuevas entradas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_entradas",
+                                                    selectedData.editar_entradas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_entradas}
+                                        >
+                                            Editar entradas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_entradas",
+                                                    selectedData.eliminar_entradas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_entradas}
+                                        >
+                                            Eliminar entradas
+                                        </Checkbox>
+                                        <text>Transferencias</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_tranferencias",
+                                                    selectedData.consultar_tranferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_tranferencias}
+                                        >
+                                            Consultar tranferencias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevas_tranferencias",
+                                                    selectedData.crear_nuevas_tranferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevas_tranferencias}
+                                        >
+                                            Crear nuevas tranferencias
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_tranferencias",
+                                                    selectedData.eliminar_tranferencias ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_tranferencias}
+                                        >
+                                            Eliminar tranferencias
+                                        </Checkbox>
+                                    </div>
+                                </AccordionItem>
+
+                                <AccordionItem key="10" aria-label="Nominas" title="Nominas">
+                                    <div className="flex flex-col">
+                                        <text>Empleados</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_empleados",
+                                                    selectedData.consultar_empleados ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_empleados}
+                                        >
+                                            Consultar empleados
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "agregar_nuevo_empleado",
+                                                    selectedData.agregar_nuevo_empleado ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.agregar_nuevo_empleado}
+                                        >
+                                            Agregar nuevo empleado
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_empleado",
+                                                    selectedData.editar_empleado ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_empleado}
+                                        >
+                                            Editar empleado
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_empleado",
+                                                    selectedData.eliminar_empleado ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_empleado}
+                                        >
+                                            Eliminar empleado
+                                        </Checkbox>
+                                        <text>Catalogos</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_comprobantes_emitidos",
+                                                    selectedData.consultar_comprobantes_emitidos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_comprobantes_emitidos}
+                                        >
+                                            Consultar comprobantes emitidos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "nuevo_comprobante",
+                                                    selectedData.nuevo_comprobante ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.nuevo_comprobante}
+                                        >
+                                            Nuevo comprobante
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_catalogos",
+                                                    selectedData.consultar_catalogos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_catalogos}
+                                        >
+                                            Consultar catalogos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_catalogo_de_departamentos",
+                                                    selectedData.consultar_catalogo_de_departamentos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_catalogo_de_departamentos}
+                                        >
+                                            Consultar catalogo de departamentos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_un_nuevo_departamento",
+                                                    selectedData.crear_un_nuevo_departamento ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_un_nuevo_departamento}
+                                        >
+                                            Crear un nuevo departamento
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_un_departamento",
+                                                    selectedData.editar_un_departamento ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_un_departamento}
+                                        >
+                                            Editar un departamento
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_un_departamento",
+                                                    selectedData.eliminar_un_departamento ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_un_departamento}
+                                        >
+                                            Eliminar un departamento
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_catalogo_de_puestos_de_trabajo",
+                                                    selectedData.consultar_catalogo_de_puestos_de_trabajo
+                                                        ? false
+                                                        : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_catalogo_de_puestos_de_trabajo}
+                                        >
+                                            Consultar catalogo de puestos de trabajo
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevo_puesto_de_trabajo",
+                                                    selectedData.crear_nuevo_puesto_de_trabajo ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevo_puesto_de_trabajo}
+                                        >
+                                            Crear nuevo puesto de trabajo
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_puesto_de_trabajo",
+                                                    selectedData.editar_puesto_de_trabajo ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_puesto_de_trabajo}
+                                        >
+                                            Editar puesto de trabajo
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_puesto_de_trabajo",
+                                                    selectedData.eliminar_puesto_de_trabajo ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_puesto_de_trabajo}
+                                        >
+                                            Eliminar puesto de trabajo
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_regimenes_de_contratacion",
+                                                    selectedData.consultar_regimenes_de_contratacion ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_regimenes_de_contratacion}
+                                        >
+                                            Consultar regimenes de contratacion
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevo_regimen_de_contratacion",
+                                                    selectedData.crear_nuevo_regimen_de_contratacion ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevo_regimen_de_contratacion}
+                                        >
+                                            Crear nuevo regimen de contratacion
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_regimen_de_contratacion",
+                                                    selectedData.editar_regimen_de_contratacion ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_regimen_de_contratacion}
+                                        >
+                                            Editar regimen de contratacion
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_regimen_de_contratacion",
+                                                    selectedData.eliminar_regimen_de_contratacion ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_regimen_de_contratacion}
+                                        >
+                                            Eliminar regimen de contratacion
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_tipos_de_contratos",
+                                                    selectedData.consultar_tipos_de_contratos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_tipos_de_contratos}
+                                        >
+                                            Consultar tipos de contratos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevo_tipos_de_contratos",
+                                                    selectedData.crear_nuevo_tipos_de_contratos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevo_tipos_de_contratos}
+                                        >
+                                            Crear nuevo tipos de contratos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_tipos_de_contratos",
+                                                    selectedData.editar_tipos_de_contratos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_tipos_de_contratos}
+                                        >
+                                            Editar tipos de contratos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_tipos_de_contratos",
+                                                    selectedData.eliminar_tipos_de_contratos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_tipos_de_contratos}
+                                        >
+                                            Eliminar tipos de contratos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_tipos_de_jornadas",
+                                                    selectedData.consultar_tipos_de_jornadas ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_tipos_de_jornadas}
+                                        >
+                                            Consultar tipos de jornadas
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_nuevo_tipo_de_jornanda",
+                                                    selectedData.crear_nuevo_tipo_de_jornanda ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_nuevo_tipo_de_jornanda}
+                                        >
+                                            Crear nuevo tipo de jornanda
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "editar_tipo_de_jornanda",
+                                                    selectedData.editar_tipo_de_jornanda ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.editar_tipo_de_jornanda}
+                                        >
+                                            Editar tipo de jornanda
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "eliminar_tipo_de_jornada",
+                                                    selectedData.eliminar_tipo_de_jornada ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.eliminar_tipo_de_jornada}
+                                        >
+                                            Eliminar tipo de jornada
+                                        </Checkbox>
+                                    </div>
+                                </AccordionItem>
+
+                                <AccordionItem key="11" aria-label="Configuracion" title="Configuracion">
+                                    <div className="flex flex-col">
+                                        <text>Configuracion</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "modificar_configuraciones",
+                                                    selectedData.modificar_configuraciones ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.modificar_configuraciones}
+                                        >
+                                            Modificar configuraciones
+                                        </Checkbox>
+                                        <text>Importacion de datos</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "importar_productos",
+                                                    selectedData.importar_productos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.importar_productos}
+                                        >
+                                            Importar productos
+                                        </Checkbox>
+                                        <text>Envios</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_tipos_de_datos",
+                                                    selectedData.consultar_tipos_de_datos ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_tipos_de_datos}
+                                        >
+                                            Consultar tipos de datos
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_las_condiciones_de_envio",
+                                                    selectedData.consultar_las_condiciones_de_envio ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_las_condiciones_de_envio}
+                                        >
+                                            Consultar las condiciones de envio
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_paquetes_de_envio",
+                                                    selectedData.crear_paquetes_de_envio ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_paquetes_de_envio}
+                                        >
+                                            Crear paquetes de envio
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_paquetes_de_envio",
+                                                    selectedData.consultar_paquetes_de_envio ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_paquetes_de_envio}
+                                        >
+                                            Consultar paquetes de envio
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "crear_costos_de_envio",
+                                                    selectedData.crear_costos_de_envio ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.crear_costos_de_envio}
+                                        >
+                                            Crear costos de envio
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "consultar_costos_de_envio",
+                                                    selectedData.consultar_costos_de_envio ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.consultar_costos_de_envio}
+                                        >
+                                            Consultar costos de envio
+                                        </Checkbox>
+                                    </div>
+                                </AccordionItem>
+
+                                <AccordionItem key="12" aria-label="Pagina Web" title="Pagina Web">
+                                    <div className="flex flex-col">
+                                        <text>Notificaciones</text>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "ver_notificaciones",
+                                                    selectedData.ver_notificaciones ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.ver_notificaciones}
+                                        >
+                                            Ver notificaciones
+                                        </Checkbox>
+                                        <Checkbox
+                                            onValueChange={() =>
+                                                setDefaultValues(
+                                                    "cambiar_estatus_de_notificaciones",
+                                                    selectedData.cambiar_estatus_de_notificaciones ? false : true
+                                                )
+                                            }
+                                            isSelected={selectedData.cambiar_estatus_de_notificaciones}
+                                        >
+                                            Cambiar estatus de notificaciones
+                                        </Checkbox>
+                                    </div>
+                                </AccordionItem>
                             </Accordion>
                         </ScrollShadow>
                     </ModalBody>
