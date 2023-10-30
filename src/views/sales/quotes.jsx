@@ -36,8 +36,8 @@ const columns = [
   { name: "Folio", uid: "folio", sortable: true },
   { name: "Fecha", uid: "fecha", sortable: true },
   { name: "Pedido", uid: "pedido", sortable: true },
-  { name: "Cliente", uid: "idCliente", sortable: true },
-  { name: "Vendedor", uid: "idVendedor", sortable: true },
+  { name: "Cliente", uid: "cliente", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
   { name: "Recurrencia", uid: "recurrencia", sortable: true },
   { name: "Total", uid: "total", sortable: true },
   { name: "Estatus", uid: "status", sortable: true },
@@ -47,8 +47,8 @@ const INITIAL_VISIBLE_COLUMNS = [
   "folio",
   "fecha",
   "pedido",
-  "idCliente",
-  "idVendedor",
+  "cliente",
+  "vendedor",
   "recurrencia",
   "total",
   "status",
@@ -69,6 +69,7 @@ const Quotes = () => {
       const response = await fetch("https://localhost:4000/Cotizaciones");
       const data = await response.json();
       if (response.ok) {
+        console.log(data);
         setData(data);
         contarmarca();
       }
@@ -266,7 +267,9 @@ const Quotes = () => {
       case "fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{moment(data.fecha).format("DD/MM/YYYY")}</p>
+            <p className="text-bold text-small capitalize">
+              {moment(data.fecha).format("DD/MM/YYYY")}
+            </p>
           </div>
         );
       case "pedido":
@@ -278,13 +281,15 @@ const Quotes = () => {
       case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.cliente}</p>
+            <p className="text-bold text-small capitalize">
+              {data.nombreComercial}
+            </p>
           </div>
         );
       case "vendedor":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
       case "origen":
@@ -297,6 +302,14 @@ const Quotes = () => {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">$ {data.monto}</p>
+          </div>
+        );
+      case "recurrencia":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {data.recurrencia == 1 ? "Sí" : "No"}
+            </p>
           </div>
         );
       case "status":
@@ -612,7 +625,7 @@ const Quotes = () => {
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Productos por página:
+            Cotizaciones por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -643,10 +656,7 @@ const Quotes = () => {
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
             {data.length} Cotizaciones en total
-          </span>
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${data.length} selected`}
+          </span>          
         </span>
         <Pagination
           isCompact
@@ -685,11 +695,9 @@ const Quotes = () => {
     <div style={{ marginLeft: "40px", marginRight: "40px" }}>
       <Table
         aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
