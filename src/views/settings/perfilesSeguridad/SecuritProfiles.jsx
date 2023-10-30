@@ -38,6 +38,7 @@ import {
 } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import ModalEditarPerfil from "./modals/EditPerfil";
 
 import axios from "axios";
 const columns = [
@@ -166,12 +167,6 @@ const SecuritProfiles = () => {
     onOpen();
   };
 
-
-  const handleEdit = (id) => {
-    //abrir el modal
-
-  };
-
   async function handleSubmit(e) {
     e.preventDefault();
     const newErrors = {};
@@ -258,6 +253,25 @@ const SecuritProfiles = () => {
     }
   }
 
+  const [modalEditPermisos, setModalEditPermisos] = useState(false);
+
+  //Cierra el modal de Informacion de usuario
+  const closeModalEdit = (data) => {
+    if (data === "success") {
+      refetchData();
+      toast.success(t("otros.datosActualizados"));
+    }
+
+    setModalEditPermisos(false);
+  };
+
+  const [selectedData, setSelectedData] = useState({});
+  //abre  el modal de Informacion de usuario
+  const openModalEdit = (data) => {
+    setSelectedData(data);
+    setModalEditPermisos(true);
+  };
+
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
     switch (columnKey) {
@@ -294,7 +308,7 @@ const SecuritProfiles = () => {
                 {/* <DropdownItem onPress={() => navigate("/Settings/SecuritProfiles/ConfigureAccess")}>
                   Configurar control de acceso
                 </DropdownItem> */}
-                <DropdownItem onPress={() => handleEdit(data.id)}>
+                <DropdownItem onPress={() => openModalEdit(data)}>
                   Editar Perfil de Seguridad
                 </DropdownItem>
                 <DropdownItem
@@ -637,6 +651,14 @@ const SecuritProfiles = () => {
           )}
         </ModalContent>
       </Modal>
+
+      {modalEditPermisos && (
+        <ModalEditarPerfil
+          onClose={closeModalEdit}
+          data={selectedData}
+        />
+      )}
+
     </div>
   );
 };
