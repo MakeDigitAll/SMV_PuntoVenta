@@ -32,7 +32,7 @@ const Car = (props) => {
               <div className="text-center">
                 <h1 className="text-md">Imagen Producto</h1>
               </div>
-              <div className="flex justify-center items-center">
+              <div className="flex flex-col items-center justify-center">
                 <img
                   src="https://somosmamas.com.ar/wp-content/uploads/2020/06/00-1320x743.jpg"
                   className="w-26 h-24 object-cover rounded-full"
@@ -43,151 +43,9 @@ const Car = (props) => {
           </div>
         </div>
         <div>
-          <div className="h-[400px] md:h-[700px] lg:h-[540px] overflow-y-auto">
-            {/* Product */}
-            <div className="bg-[#262837] p-4 rounded-xl mb-4">
-              <div className="grid grid-cols-6 mb-2">
-                {/* Product description */}
-                <div className="col-span-4 flex items-center gap-3">
-                  <img src="https://somosmamas.com.ar/wp-content/uploads/2020/06/00-1320x743.jpg" className="w-10 h-10 object-cover" />
-                  <div>
-                    <h5 className="text-sm">Spaicy seaso...</h5>
-                    <p className="text-xs text-gray-500">$2.29</p>
-                  </div>
-                </div>
-                {/* Qty */}
-                <div>
-                  <span>2</span>
-                </div>
-                {/* Price */}
-                <div>
-                  <span>$4.58</span>
-                </div>
-              </div>
-              {/* Note */}
-              <div className="grid grid-cols-6 items-center">
-                <form className="col-span-5">
-                  <input
-                    type="text"
-                    className="bg-[#1F1D2B] py-2 px-4 rounded-lg outline-none"
-                    placeholder="Order note..."
-                  />
-                </form>
-                <div>
-                  <button className="border border-red-500 p-2 rounded-lg">
-                    <RiDeleteBin6Line className="text-red-500" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Product */}
-            <div className="bg-[#262837] p-4 rounded-xl mb-4">
-              <div className="grid grid-cols-6 mb-2">
-                {/* Product description */}
-                <div className="col-span-4 flex items-center gap-3">
-                  <img src="comida.png" className="w-10 h-10 object-cover" />
-                  <div>
-                    <h5 className="text-sm">Spaicy seaso...</h5>
-                    <p className="text-xs text-gray-500">$2.29</p>
-                  </div>
-                </div>
-                {/* Qty */}
-                <div>
-                  <span>2</span>
-                </div>
-                {/* Price */}
-                <div>
-                  <span>$4.58</span>
-                </div>
-              </div>
-              {/* Note */}
-              <div className="grid grid-cols-6 items-center">
-                <form className="col-span-5">
-                  <input
-                    type="text"
-                    className="bg-[#1F1D2B] py-2 px-4 rounded-lg outline-none"
-                    placeholder="Order note..."
-                  />
-                </form>
-                <div>
-                  <button className="border border-red-500 p-2 rounded-lg">
-                    <RiDeleteBin6Line className="text-red-500" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Product */}
-            <div className="bg-[#262837] p-4 rounded-xl mb-4">
-              <div className="grid grid-cols-6 mb-2">
-                {/* Product description */}
-                <div className="col-span-4 flex items-center gap-3">
-                  <img src="comida.png" className="w-10 h-10 object-cover" />
-                  <div>
-                    <h5 className="text-sm">Spaicy seaso...</h5>
-                    <p className="text-xs text-gray-500">$2.29</p>
-                  </div>
-                </div>
-                {/* Qty */}
-                <div>
-                  <span>2</span>
-                </div>
-                {/* Price */}
-                <div>
-                  <span>$4.58</span>
-                </div>
-              </div>
-              {/* Note */}
-              <div className="grid grid-cols-6 items-center">
-                <form className="col-span-5">
-                  <input
-                    type="text"
-                    className="bg-[#1F1D2B] py-2 px-4 rounded-lg outline-none"
-                    placeholder="Order note..."
-                  />
-                </form>
-                <div>
-                  <button className="border border-red-500 p-2 rounded-lg">
-                    <RiDeleteBin6Line className="text-red-500" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="bg-[#262837] p-4 rounded-xl mb-4">
-              <div className="grid grid-cols-6 mb-2">
-                {/* Product description */}
-                <div className="col-span-4 flex items-center gap-3">
-                  <img src="comida.png" className="w-10 h-10 object-cover" />
-                  <div>
-                    <h5 className="text-sm">Spaicy seaso...</h5>
-                    <p className="text-xs text-gray-500">$2.29</p>
-                  </div>
-                </div>
-                {/* Qty */}
-                <div>
-                  <span>2</span>
-                </div>
-                {/* Price */}
-                <div>
-                  <span>$4.58</span>
-                </div>
-              </div>
-              {/* Note */}
-              <div className="grid grid-cols-6 items-center">
-                <form className="col-span-5">
-                  <input
-                    type="text"
-                    className="bg-[#1F1D2B] py-2 px-4 rounded-lg outline-none"
-                    placeholder="Order note..."
-                  />
-                </form>
-                <div>
-                  <button className="border border-red-500 p-2 rounded-lg">
-                    <RiDeleteBin6Line className="text-red-500" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* <div className="h-[300px] md:h-[600px] lg:h-[540px] overflow-y-auto">
+  
+          </div> */}
         </div>
         <div className="grid grid-cols-2 mb-4">
           {/* Product description */}

@@ -11,13 +11,14 @@ import {
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 import Car from "./Car";
-const SidebarMovil = () => {
+const SidebarMovil = ({ currentPage,showCar, setShowCar }) => {
     const navigate = useNavigate();
-    const [showCar, setShowCar] = useState(false);
+    const showCarInitially = currentPage === '/PointofSale/NewSale';
     const [showMenu, setShowMenu] = useState(false);
     const [showOrder, setShowOrder] = useState(false);
     const toggleCar = () => {
       setShowCar(!showCar);
+      console.log("showCar:", showCar);
       toggleOrders();
     };
     const toggleMenu = () => {
@@ -43,7 +44,7 @@ const SidebarMovil = () => {
             <RiAddLine />
           </button>
           <button onClick={toggleCar} className="p-2">
-                <RiNumbersLine />
+            <RiNumbersLine />
           </button>
           {showCar && <Car />}
           <button onClick={toggleMenu} className="text-white p-2">

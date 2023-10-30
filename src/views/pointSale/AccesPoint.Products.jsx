@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
-import {  Button, Input, Spacer, Table } from "@nextui-org/react";
+import {  Button, Input, Modal, Spacer, Table } from "@nextui-org/react";
 import { RiDeleteBin5Line } from "react-icons/ri"; 
 import { MdSearch } from "react-icons/md";
 import ModalCatalogue from "./Catalogue";
 import AddExcelOrders from "../Excel/addExcel/addExcelOrders";
-import ProductsCards from "../../components/shared/CardsProducts";
+
 import Catalogue from "./Catalogue";
-
+Modal.setAppElement('#root');
 const AccesPointProductosView = () => {
-
   const [productos, setProductos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [productosEnOrden, setProductosEnOrden] = useState([]); // Almacena los productos en la orden
-  const [totalProductosEnOrden, setTotalProductosEnOrden] = useState(0); // Estado para el total de productos en la orden
+  const [productosEnOrden, setProductosEnOrden] = useState([]);
+  const [totalProductosEnOrden, setTotalProductosEnOrden] = useState(0);
   const [cantidadProductosAgregados, setCantidadProductosAgregados] = useState({});
   const [cantidadTotalEnOrden, setCantidadTotalEnOrden] = useState(0);
   const [precioTotalEnOrden, setPrecioTotalEnOrden] = useState(0);
@@ -20,7 +19,10 @@ const AccesPointProductosView = () => {
   const [buscador, setBuscador] = useState("");
   const [originalProductos, setOriginalProductos] = useState([]);
   const [idProductoBuscado, setIdProductoBuscado] = useState("");
-  
+
+  const [showModal, setShowModal] = useState(false);
+  const [descuento, setDescuento] = useState(0);
+
   const productsPerPage = 3;
 
   async function loadProductosFromDB() {
@@ -73,7 +75,14 @@ const paginate = (pageNumber) => {
 };
 
  
+ const handleApplyDiscount = () => {
+    // Aplicar el descuento al total
+    const totalConDescuento = totalProductosEnOrden - descuento;
+    setTotalProductosEnOrden(totalConDescuento);
 
+    // Cerrar el modal
+    handleCloseModal();
+  };
   
 
 const handleAgregarProductoAOrden = (selectedProduct) => {
@@ -206,7 +215,13 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
       setProductos(productosFiltrados);
     }
   };
-
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  const handleShowModal = () => {
+    console.log("Opening modal"); // Add this line for debugging
+    setShowModal(true);
+  };
   return (
     <div style={{ textAlign: "center" }}>
       <style>
@@ -397,9 +412,35 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
 </Button>
 </div>
       </div>
-      <ProductsCards></ProductsCards>
+      <div className="flex justify-end">
+        <Button variant="danger" className="custom-button" onClick={handleShowModal}>
+          Aplicar Descuento
+        </Button>
+      </div>
+      <Modal open={showModal} onClose={handleCloseModal}>
+        <Modal.Header>Aplicar Descuento</Modal.Header>
+        <Modal.Content>
+          <Input
+            type="number"
+            size="sm"
+            placeholder="Ingrese el descuento"
+            value={descuento}
+            onChange={(e) => setDescuento(parseFloat(e.target.value))}
+          />
+        </Modal.Content>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleApplyDiscount}>
+            Aplicar Descuento
+          </Button>
+          <Button variant="default" onClick={handleCloseModal}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
     
+    
+            
   );
 };
 

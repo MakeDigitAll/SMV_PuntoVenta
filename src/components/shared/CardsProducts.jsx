@@ -20,16 +20,15 @@ const CardList = ({ data }) => (
   </div>
 );
 
-const ProductsCards = () => {
-  const [categories, setCategories] = useState([]);
+const ProductsCards = ({ selectedCategory }) => {
+  const [products, setProducts] = useState([]);
 
-
-  const loadCategoriesFromAPI = async () => {
+  const loadProductsFromAPI = async () => {
     try {
-      const response = await fetch("https://localhost:4000/Productos"); 
+      const response = await fetch("https://localhost:4000/Productos");
       const data = await response.json();
       if (response.ok) {
-        setCategories(data);
+        setProducts(data);
       }
     } catch (error) {
       console.error("Error al cargar datos desde la API:", error);
@@ -37,13 +36,17 @@ const ProductsCards = () => {
   };
 
   useEffect(() => {
-    loadCategoriesFromAPI(); 
-  }, []); 
+    loadProductsFromAPI();
+  }, []);
+  console.log(selectedCategory);
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.nombre == selectedCategory)
+    : products;
+
   return (
     <div>
-      <CardList data={categories} />
+      <CardList data={filteredProducts} />
     </div>
   );
 };
-
 export default ProductsCards;

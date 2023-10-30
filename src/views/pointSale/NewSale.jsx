@@ -12,20 +12,25 @@ import {
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdMoney } from "react-icons/md";
 import AccesPointProductosView from './AccesPoint.Products';
-// import { toggleOrders, showMenu,toggleMenu} from '../../components/shared/SidebarMovill'
+import { useLocation } from 'react-router-dom';
 
 const NewSale = () => {
   const [showOrder, setShowOrder] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showCar, setShowCar] = useState(false);
-
+  const location = useLocation();
+  const toggleCar = () => {
+    setShowCar((prevShowCar) => !prevShowCar); // Cambiar entre verdadero y falso
+  };
   return (
     <>
      
       <div className="bg-[#262837] w-full min-h-screen">
         <Sidebar showMenu={showMenu}/>
-        <SidebarMovil/>
-        <Car showOrder={showOrder} setShowOrder={setShowOrder} setShowCar={showCar}/>
+        <SidebarMovil showCar={showCar} // Pasa el estado de showCar como una prop
+        setShowCar={toggleCar} // Pasa la función de toggleCar
+        currentPage={location.pathname} />
+        <Car showOrder={showOrder} setShowOrder={setShowOrder}/>
         <Spacer y={8} />
         <main className="lg:pl-32 lg:pr-96 pb-20">
           <div className="p-12">
