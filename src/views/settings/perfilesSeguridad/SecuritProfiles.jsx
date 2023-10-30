@@ -38,7 +38,7 @@ import {
   MdSearch,
   MdSecurity,
 } from "react-icons/md";
-import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import ItemsHeader from "../../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -413,9 +413,9 @@ const SecuritProfiles = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onPress={() => handleView(data.id)}>
-                  Ver Perfil de Seguridad
-                </DropdownItem>
+                {/* <DropdownItem onPress={() => navigate("/Settings/SecuritProfiles/ConfigureAccess")}>
+                  Configurar control de acceso
+                </DropdownItem> */}
                 <DropdownItem onPress={() => handleEdit(data.id)}>
                   Editar Perfil de Seguridad
                 </DropdownItem>
@@ -543,15 +543,7 @@ const SecuritProfiles = () => {
         >
           <Spacer y={8} />
           <div className="flex flex-wrap place-content-end space-x-2">
-            <Button
-              size="sm"
-              color="primary"
-              onPress={() =>
-                navigate("/Settings/SecuritProfiles/ConfigureAccess")
-              }
-            >
-              Boton prueba
-            </Button>
+
             <Button
               onPress={handleCreate}
               size="sm"
