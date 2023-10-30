@@ -16,7 +16,7 @@ import {
   Chip,
 } from "@nextui-org/react";
 
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -73,39 +73,51 @@ const Orders = () => {
   }
   const SearchFolio = (e) => {
     setFolio(e.target.value);
-  }
-  
+  };
+
   const [pedidosData, setPedidosData] = useState([]);
   const [cotizacionesData, setCotizacionesData] = useState([]);
-  const [cotizacionesFolioFiltrado, setCotizacionesFolioFiltrado] = useState(" ");
+  const [cotizacionesFolioFiltrado, setCotizacionesFolioFiltrado] =
+    useState(" ");
   const [AlmacenFolioFiltrado, setAlmacenFolioFiltrado] = useState(" ");
   const [foliofiltrado, setFolio] = useState(" ");
   const [AlmacenData, setAlmacenData] = useState([]);
   const loadCotizaciones = async () => {
-    const response = await fetch('https://localhost:4000/Cotizaciones');
+    const response = await fetch("https://localhost:4000/Cotizaciones");
     const data = await response.json();
-    const cotizacionesConStatus1 = data.filter(cotizacion => cotizacion.status === 1);
+    const cotizacionesConStatus1 = data.filter(
+      (cotizacion) => cotizacion.status === 1
+    );
     setCotizacionesData(cotizacionesConStatus1);
     setCotizacionesFolioFiltrado(" ");
     loadAlmacen();
-  }
+  };
   const loadAlmacen = async () => {
-    const response = await fetch('https://localhost:4000/OrdenCompra/ListadoEntradas');
+    const response = await fetch(
+      "https://localhost:4000/OrdenCompra/ListadoEntradas"
+    );
     const data = await response.json();
-    const AlmacenStatus1 = data.filter(Almacen => Almacen.status === 3 || Almacen.status === 4);
+    const AlmacenStatus1 = data.filter(
+      (Almacen) => Almacen.status === 3 || Almacen.status === 4
+    );
     setAlmacenData(AlmacenStatus1);
     setAlmacenFolioFiltrado(" ");
     AlmacenStatus1.forEach(async (ordenCompra) => {
-      const pedidoRelacionado = pedidosData.find(pedido => pedido.folio === ordenCompra.folio);
-    
+      const pedidoRelacionado = pedidosData.find(
+        (pedido) => pedido.folio === ordenCompra.folio
+      );
+
       if (pedidoRelacionado) {
-        const response = await fetch(`https://localhost:4000/PedidosPendientes/${pedidoRelacionado.id}`, {
-          method: 'POST',
-        });
+        const response = await fetch(
+          `https://localhost:4000/PedidosPendientes/${pedidoRelacionado.id}`,
+          {
+            method: "POST",
+          }
+        );
         const result = await response.json();
       }
     });
-  }
+  };
 
   const [data, setData] = useState([]);
 
@@ -114,7 +126,6 @@ const Orders = () => {
       const response = await fetch("https://localhost:4000/Pedidos");
       const data = await response.json();
       if (response.ok) {
-        
         setPedidosData(data);
       }
     } catch {
@@ -131,17 +142,19 @@ const Orders = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const filteredListadoProd = pedidosData.filter((pedido) => {
-    const cotizacionRelacionada = cotizacionesData.find(cotizacion => cotizacion.folio === pedido.folio);
-    
+    const cotizacionRelacionada = cotizacionesData.find(
+      (cotizacion) => cotizacion.folio === pedido.folio
+    );
+
     if (cotizacionRelacionada && cotizacionRelacionada.status === 1) {
-      const folio = pedido.folio && typeof pedido.folio === 'string' ? pedido.folio : " ";
+      const folio =
+        pedido.folio && typeof pedido.folio === "string" ? pedido.folio : " ";
 
       return folio.toLowerCase().includes(foliofiltrado.toLowerCase());
     } else {
       return false;
     }
   });
- 
 
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
@@ -228,7 +241,6 @@ const Orders = () => {
       Regresado: "error",
     };
 
-
     switch (columnKey) {
       case "ID":
         return (
@@ -239,17 +251,13 @@ const Orders = () => {
       case "Folio":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.folio}
-            </p>
+            <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
       case "Fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.fecha}
-            </p>
+            <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
       case "Cotizacion":
@@ -261,7 +269,9 @@ const Orders = () => {
       case "Numero de cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
+            <p className="text-bold text-small capitalize">
+              {data.numeroCliente}
+            </p>
           </div>
         );
       case "Cliente":
@@ -273,7 +283,9 @@ const Orders = () => {
       case "Razon social":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.razonSocial}</p>
+            <p className="text-bold text-small capitalize">
+              {data.razonSocial}
+            </p>
           </div>
         );
       case "Monto":
@@ -291,7 +303,9 @@ const Orders = () => {
       case "Facturacion":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">$ {data.facturacion}</p>
+            <p className="text-bold text-small capitalize">
+              $ {data.facturacion}
+            </p>
           </div>
         );
       case "Surtido":
@@ -303,96 +317,116 @@ const Orders = () => {
       case "status":
         if (data.status === 0) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Nuevo"]} size="sm">
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Nuevo"]}
+              size="sm"
+            >
               <span>Nuevo</span>
             </Chip>
-
           );
         } else if (data.status === 1) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Procesado"]} size="sm">
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Procesado"]}
+              size="sm"
+            >
               <span>Procesado</span>
             </Chip>
-
           );
         } else if (data.status === 2) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Facturado"]} size="sm" >
-              <span >Facturado</span>
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Facturado"]}
+              size="sm"
+            >
+              <span>Facturado</span>
             </Chip>
-
           );
         } else if (data.status === 3) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Surtido"]} size="sm" >
-              <span >surtido</span>
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Surtido"]}
+              size="sm"
+            >
+              <span>surtido</span>
             </Chip>
-
           );
         } else if (data.status === 4) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Cancelada"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Cancelada"]}
+              size="sm"
+            >
               <span>Cancelado</span>
             </Chip>
-
           );
         } else if (data.status === 5) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Devuelto"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Devuelto"]}
+              size="sm"
+            >
               <span>Devuelto</span>
             </Chip>
-
           );
         } else if (data.status === 6) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Cerrado"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Cerrado"]}
+              size="sm"
+            >
               <span>Cerrado</span>
             </Chip>
-
           );
         } else if (data.status === 7) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Pendiente"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Pendiente"]}
+              size="sm"
+            >
               <span>Pendiente</span>
             </Chip>
-
           );
         } else if (data.status === 8) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Entregado"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Entregado"]}
+              size="sm"
+            >
               <span>Entregado</span>
             </Chip>
-
           );
         } else if (data.status === 9) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Despachado"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Despachado"]}
+              size="sm"
+            >
               <span>Despachado</span>
             </Chip>
-
           );
         } else if (data.status === 10) {
           return (
-
-            <Chip className="capitalize" color={statusColorMap["Regresado"]} size="sm" >
+            <Chip
+              className="capitalize"
+              color={statusColorMap["Regresado"]}
+              size="sm"
+            >
               <span>Devuelto</span>
             </Chip>
-
           );
         } else {
-          return (
-            <span>{data.status}</span>
-          );
+          return <span>{data.status}</span>;
         }
       case "Actions":
         return (
@@ -450,151 +484,143 @@ const Orders = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-
-          <ItemsHeader />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-          <div
-            role="presentation"
-            onClick={handleClickBreadCrumbs}
-            className="text-foreground"
-          >
-
-            <Breadcrumbs aria-label="breadcrumb" color="foreground">
-              <Link
-                className="text-foreground"
-                underline="hover"
-                sx={{ display: "flex", alignItems: "center" }}
-                color="foreground"
-                href="#"
-                onClick={() => navigate(`/Home`)}
-              >
-                <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Home
-              </Link>
-              <Typography
-                sx={{ display: "flex", alignItems: "center" }}
-                className="text-foreground"
-              >
-                <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Pedidos
-              </Typography>
-            </Breadcrumbs>
+        <ItemsHeader />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div
+          role="presentation"
+          onClick={handleClickBreadCrumbs}
+          className="text-foreground"
+        >
+          <Breadcrumbs aria-label="breadcrumb" color="foreground">
+            <Link
+              className="text-foreground"
+              underline="hover"
+              sx={{ display: "flex", alignItems: "center" }}
+              color="foreground"
+              href="#"
+              onClick={() => navigate(`/Home`)}
+            >
+              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+              Home
+            </Link>
+            <Typography
+              sx={{ display: "flex", alignItems: "center" }}
+              className="text-foreground"
+            >
+              <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
+              Pedidos
+            </Typography>
+          </Breadcrumbs>
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={{ marginLeft: "10px", marginRight: "10px" }}
+        >
+          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Modalidad"
+              startContent={<MdSearch />}
+              // value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Folio"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
           </div>
-          <div
-            className="flex flex-col gap-4"
-            style={{ marginLeft: "10px", marginRight: "10px" }}
-          >
-            <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-              <Input
-                isClearable
-                size="sm"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Modalidad"
-                startContent={<MdSearch />}
-                // value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
-              />
-              <Input
-                isClearable
-                size="sm"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Folio"
-                startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
-              />
-              
-            </div>
-            <div className="flex flex-wrap place-content-end space-x-2">
-            <AddExcelOrders/>
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar Pedidos
-              </Button>
-
-              <Button size="sm" color="primary" endContent={<TbPlus />}>
-                Nuevo Pedido
-              </Button>
-            </div>
+          <div className="flex flex-wrap place-content-end space-x-2">
+            <AddExcelOrders />
+            <Button size="sm" color="primary" endContent={<TbPlus />}>
+              Nuevo Pedido
+            </Button>
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-wrap text-small space-x-3">
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Columnas
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap text-small space-x-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
                 >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                    size="sm"
-                  >
-                    Acciones
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-            <label className="flex items-center text-default-400 text-small">
-              Productos por página:
-              <select
-                className="bg-transparent outline-none text-default-400 text-small"
-                onChange={onRowsPerPageChange}
+                  Columnas
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </label>
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                  size="sm"
+                >
+                  Acciones
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           </div>
-
+          <label className="flex items-center text-default-400 text-small">
+            Productos por página:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
       </>
     );
   }, [

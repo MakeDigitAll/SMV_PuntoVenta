@@ -14,11 +14,9 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+import { TbDotsVertical } from "react-icons/tb";
+import { MdArrowDropDown, MdBookmarkAdded, MdSearch } from "react-icons/md";
 
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
@@ -50,12 +48,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const Visits = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-      }
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const marcaOptions = [];
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -110,10 +104,7 @@ const Visits = () => {
         data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
+    if (statusFilter !== "all") {
       filteredUsers = filteredUsers.filter((data) =>
         Array.from(statusFilter).includes(data.cliente)
       );
@@ -157,7 +148,7 @@ const Visits = () => {
             <p className="text-bold text-small capitalize">{data.fecha}</p>
           </div>
         );
-        case "hora":
+      case "hora":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.hora}</p>
@@ -175,7 +166,7 @@ const Visits = () => {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.cliente}</p>
-        </div>
+          </div>
         );
       case "vendedor":
         return (
@@ -183,10 +174,12 @@ const Visits = () => {
             <p className="text-bold text-small capitalize">{data.vendedor}</p>
           </div>
         );
-        case "comentarios":
+      case "comentarios":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.comentarios}</p>
+            <p className="text-bold text-small capitalize">
+              {data.comentarios}
+            </p>
           </div>
         );
       case "Actions":
@@ -245,7 +238,6 @@ const Visits = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -290,27 +282,26 @@ const Visits = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Cliente"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Folio"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
- 
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Cliente"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Folio"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
 
             <Dropdown>
               <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
@@ -337,12 +328,6 @@ const Visits = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            
-          </div>
-          <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Visitas
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -416,6 +401,7 @@ const Visits = () => {
     filterValue,
     onSearchChange,
     statusFilter,
+    marcaOptions,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
