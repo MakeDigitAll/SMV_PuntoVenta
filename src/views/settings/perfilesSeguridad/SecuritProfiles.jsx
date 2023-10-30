@@ -133,7 +133,7 @@ const SecuritProfiles = () => {
   });
 
   const [isInputDisabled, setIsInputDisabled] = useState(false);
-  const [modeModal, setModeModal] = useState("create", "edit", "view");
+  const [modeModal, setModeModal] = useState("create");
   const [updateCounter, setUpdateCounter] = useState(0);
   const [editCounter, setEditCounter] = useState(0); // Paso 1
   const [disableCounter, setDisableCounter] = useState(0); // Paso 1
@@ -589,7 +589,6 @@ const SecuritProfiles = () => {
           items={sortedItems}
         >
           {(item) => (
-            console.log(item),
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
@@ -609,8 +608,6 @@ const SecuritProfiles = () => {
               >
                 <ModalHeader className="flex flex-col gap-1">
                   {modeModal === "create" && "Nuevo Perfil de Seguridad"}
-                  {modeModal === "edit" && "Editar Perfil de Seguridad"}
-                  {modeModal === "view" && "Detalles del Perfil de Seguridad"}
                 </ModalHeader>
                 <ModalBody>
                   <Input
