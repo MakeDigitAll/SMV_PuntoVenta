@@ -146,7 +146,6 @@ const SecuritProfiles = () => {
       if (response.ok) {
         setData(data);
       }
-      console.log(data);
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -232,14 +231,14 @@ const SecuritProfiles = () => {
   async function handleDisable(id) {
     try {
       const res = await fetch(`https://localhost:4000/PerfilesSeguridad/${id}`, {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(),
       });
       if (res.ok) {
-        toast.warning("Deshabilitando Perfil de Seguirdad", {
+        toast.success("Perfil de seguridad deshabilitado", {
           position: "bottom-right",
           theme: "colored",
         });
