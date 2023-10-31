@@ -6,10 +6,10 @@ import ModalCatalogue from "./Catalogue";
 import AddExcelOrders from "../Excel/addExcel/addExcelOrders";
 
 import Catalogue from "./Catalogue";
-Modal.setAppElement('#root');
+import Cards from "../../components/shared/Cards";
+
 const AccesPointProductosView = () => {
   const [productos, setProductos] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [productosEnOrden, setProductosEnOrden] = useState([]);
   const [totalProductosEnOrden, setTotalProductosEnOrden] = useState(0);
   const [cantidadProductosAgregados, setCantidadProductosAgregados] = useState({});
@@ -18,7 +18,7 @@ const AccesPointProductosView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [buscador, setBuscador] = useState("");
   const [originalProductos, setOriginalProductos] = useState([]);
-  const [idProductoBuscado, setIdProductoBuscado] = useState("");
+  const [idBuscado, setidBuscado] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [descuento, setDescuento] = useState(0);
@@ -93,7 +93,7 @@ const handleAgregarProductoAOrden = (selectedProduct) => {
     selectedProduct.cantidad = cantidadDisponible - 1;
 
     // Buscar si el producto ya está en la orden
-    const productInOrder = productosEnOrden.find((item) => item.idproducto === selectedProduct.idproducto);
+    const productInOrder = productosEnOrden.find((item) => item.id === selectedProduct.id);
 
     if (productInOrder) {
       // Si el producto ya está en la orden, solo incrementa la cantidad
@@ -102,11 +102,11 @@ const handleAgregarProductoAOrden = (selectedProduct) => {
 
       // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
       const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
-      updatedCantidadTotalEnOrden[selectedProduct.idproducto] = (updatedCantidadTotalEnOrden[selectedProduct.idproducto] || 0) + 1;
+      updatedCantidadTotalEnOrden[selectedProduct.id] = (updatedCantidadTotalEnOrden[selectedProduct.id] || 0) + 1;
       setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
 
       const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
-      updatedPrecioTotalEnOrden[selectedProduct.idproducto] = (updatedPrecioTotalEnOrden[selectedProduct.idproducto] || 0) + selectedProduct.precio * (1 - selectedProduct.descuento / 100);
+      updatedPrecioTotalEnOrden[selectedProduct.id] = (updatedPrecioTotalEnOrden[selectedProduct.id] || 0) + selectedProduct.precio * (1 - selectedProduct.descuento / 100);
       setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
 
     } else {
@@ -119,11 +119,11 @@ const handleAgregarProductoAOrden = (selectedProduct) => {
 
       // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
       const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
-      updatedCantidadTotalEnOrden[selectedProduct.idproducto] = 1;
+      updatedCantidadTotalEnOrden[selectedProduct.id] = 1;
       setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
 
       const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
-      updatedPrecioTotalEnOrden[selectedProduct.idproducto] = selectedProduct.precio * (1 - selectedProduct.descuento / 100);
+      updatedPrecioTotalEnOrden[selectedProduct.id] = selectedProduct.precio * (1 - selectedProduct.descuento / 100);
       setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
     }
 
@@ -136,18 +136,18 @@ const handleAgregarProductoAOrden = (selectedProduct) => {
     const productoRemovido = productosEnOrden[index];
 
     // Encuentra el producto correspondiente en la tabla 1 y actualiza su cantidad
-    const productoEnTabla1 = productos.find((producto) => producto.idproducto === productoRemovido.idproducto);
+    const productoEnTabla1 = productos.find((producto) => producto.id === productoRemovido.id);
     if (productoEnTabla1) {
       productoEnTabla1.cantidad += 1;
     }
 
     // Actualiza el estado de cantidadProductosAgregados y precioTotalEnOrden
     const updatedCantidadProductosAgregados = { ...cantidadProductosAgregados };
-    updatedCantidadProductosAgregados[productoRemovido.idproducto] = (updatedCantidadProductosAgregados[productoRemovido.idproducto] || 0) - 1;
+    updatedCantidadProductosAgregados[productoRemovido.id] = (updatedCantidadProductosAgregados[productoRemovido.id] || 0) - 1;
     setCantidadProductosAgregados(updatedCantidadProductosAgregados);
 
     const updatedPrecioTotalEnOrden = { ...precioTotalEnOrden };
-    updatedPrecioTotalEnOrden[productoRemovido.idproducto] = (updatedPrecioTotalEnOrden[productoRemovido.idproducto] || 0) - productoRemovido.precio * (1 - productoRemovido.descuento / 100);
+    updatedPrecioTotalEnOrden[productoRemovido.id] = (updatedPrecioTotalEnOrden[productoRemovido.id] || 0) - productoRemovido.precio * (1 - productoRemovido.descuento / 100);
     setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
 
     // Si la cantidad es 1 o menor en la tabla 2, elimina el producto de la orden
@@ -167,7 +167,7 @@ const handleAgregarProductoAOrden = (selectedProduct) => {
     const productoRemovido = productosEnOrden[index];
 
     // Encuentra el producto correspondiente en la tabla 1 y actualiza su cantidad
-    const productoEnTabla1 = productos.find((producto) => producto.idproducto === productoRemovido.idproducto);
+    const productoEnTabla1 = productos.find((producto) => producto.id === productoRemovido.id);
     if (productoEnTabla1) {
       productoEnTabla1.cantidad += productoRemovido.cantidad;
     }
@@ -185,9 +185,9 @@ const handleAgregarProductoAOrden = (selectedProduct) => {
     producto.nombre.toLowerCase().includes(nombreABuscar.toLowerCase())
   );
 };
-const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
+const filtrarProductosPorid = (productos, idABuscar) => {
   return productos.filter((producto) =>
-    producto.idproducto.toLowerCase().includes(idProductoABuscar.toLowerCase())
+    producto.id.toLowerCase().includes(idABuscar.toLowerCase())
   );
 };
   
@@ -203,15 +203,15 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
       setProductos(productosFiltrados);
     }
   };
-  const handleSearchIdProducto = (event) => {
+  const handleSearchid = (event) => {
     const searchTerm = event.target.value;
-    setIdProductoBuscado(searchTerm);
+    setidBuscado(searchTerm);
 
     if (searchTerm.trim() === "") {
       // Restablecer la lista original cuando el término de búsqueda está vacío
       setProductos(originalProductos);
     } else {
-      const productosFiltrados = filtrarProductosPorIdProducto(originalProductos, searchTerm);
+      const productosFiltrados = filtrarProductosPorid(originalProductos, searchTerm);
       setProductos(productosFiltrados);
     }
   };
@@ -272,11 +272,11 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
       size="sm"
       placeholder="SKU"
       startContent={<MdSearch />}
-      value={idProductoBuscado}
-      onChange={handleSearchIdProducto}
+      value={idBuscado}
+      onChange={handleSearchid}
     />
   </div>
-  <Catalogue/>
+ <Catalogue></Catalogue>
 </div>
         <Spacer y={2} />
         <h2 style={{ textAlign: 'left' }}>Productos</h2>
@@ -299,7 +299,7 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
           <tbody>
             {currentProducts.map((producto, index) => (
               <tr key={index} className="bg-gray-800">
-                <td className="p-3">{producto.idproducto}</td> {/* Cambiar a idproducto */}
+                <td className="p-3">{producto.id}</td> {/* Cambiar a id */}
                 <td className="p-3">{producto.nombre}</td>
                 <td className="p-3">{producto.marca}</td>
                 <td className="p-3">{producto.categoria}</td>
@@ -367,7 +367,7 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
           <thead className="bg-gray-800 text-black-500">
             <tr>
               <th className="p-3">No. Producto</th>
-              <th className="p-3">Código</th> {/* Cambiar a idproducto */}
+              <th className="p-3">Código</th> {/* Cambiar a id */}
               <th className="p-3">Nombre</th>
               <th className="p-3">Cantidad</th>
               <th className="p-3">Precio Unitario</th>
@@ -380,7 +380,7 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
             {productosEnOrden.map((producto, index) => (
               <tr key={index} className="bg-gray-800">
                 <td className="p-3">{index + 1}</td>
-                <td className="p-3">{producto.idproducto}</td> {/* Cambiar a idproducto */}
+                <td className="p-3">{producto.id}</td> 
                 <td className="p-3">{producto.nombre}</td>
                 <td className="p-3">{producto.cantidad}</td>
                 <td className="p-3">{producto.precio.toFixed(2)}</td>
@@ -437,10 +437,11 @@ const filtrarProductosPorIdProducto = (productos, idProductoABuscar) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Cards></Cards>
+            
     </div>
     
-    
-            
+   
   );
 };
 

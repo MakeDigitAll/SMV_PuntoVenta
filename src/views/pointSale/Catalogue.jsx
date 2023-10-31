@@ -3,10 +3,7 @@ import { Button } from "@nextui-org/react";
 import Modal from 'react-modal';
 import Cards from "../../components/shared/Cards";
 import ProductsCards from "../../components/shared/CardsProducts";
-
-
 Modal.setAppElement('#root');
-
 const Catalogue = ({ setSelectedCategory,selectedCategory }) => { 
   const [productos, setProductos] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -15,7 +12,8 @@ const Catalogue = ({ setSelectedCategory,selectedCategory }) => {
   const openModal = () => {
     setModalIsOpen(true);
     setSelectedCategory("Sin categoría seleccionada");
-   
+    // Agrega un código aquí para mostrar todos los productos
+    setCategorySelected(true);
   };
   const closeModal = () => {
     setModalIsOpen(false);
@@ -75,19 +73,21 @@ const Catalogue = ({ setSelectedCategory,selectedCategory }) => {
         `}
       </style>
       <div style={{ position: 'relative', zIndex: '0' }}>
-        <Button className="custom-button" size="sm" onClick={openModal}>Catalogo</Button>
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={closeModal}
-          style={{
-            overlay: {
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              zIndex: '1000',
-            },
-            content: {
+      <Button className="custom-button" size="sm" onClick={openModal}>
+        Catalogo
+      </Button>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={{
+          overlay: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: '1000',
+          },
+          content: {
               width: '100%',
               maxWidth: '1200px',
               maxsHeight: '80vh',
