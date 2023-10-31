@@ -2306,11 +2306,11 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "eliminar_transferencia",
-                                                    selectedData.eliminar_transferencia ? false : true
+                                                    "eliminar_transferencias",
+                                                    selectedData.eliminar_transferencias ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.eliminar_transferencia}
+                                            isSelected={selectedData.eliminar_transferencias}
                                         >
                                             Eliminar transferencia
                                         </Checkbox>
