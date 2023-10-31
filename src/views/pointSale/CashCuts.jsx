@@ -6,16 +6,41 @@ import {
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdMoneyOff, MdReport, MdSearch } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 
 const ListCashCuts = () => {
   const navigate = useNavigate(); 
-  const datos=[
-        { id: 1, desde:'Hola1', hasta: 'Ejemplo 1',usuario: 'Ejemplo 1',estatus:"Pr1",},
-        { id: 2, desde:'Hola1', hasta: 'Ejemplo 2', usuario: 'Ejemplo 2',estatus:"Pr2",},
-        { id: 3, desde:'Hola1', hasta: 'Ejemplo 3', usuario: 'Ejemplo 3',estatus:"Pr3",},]
+  const [data1, setData] = useState([]);
+  async function loadTask() {
+    try {
+      const response = await fetch("https://localhost:4000/CortesdeCaja");
+      const data = await response.json();
+      if (response.ok) {
+        setData(data);
+        
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  useEffect(() => {
+    loadTask();
+  }, []);
+
+  const [searchusuario, setSearchUsuario] = useState('');
+  const handleSearchUsuario = (e) => {
+    setSearchUsuario(e.target.value);
+  };
+
+    const filteredItems = data1.filter((item) =>
+    item.usuario.toLowerCase().includes(searchusuario.toLowerCase())
+  );
   return (
     <>
       <div className="bg-[#262837] w-full min-h-screen">
@@ -82,6 +107,7 @@ const ListCashCuts = () => {
                         className="w-[450px] sm:max-w-[44%]"
                         placeholder="Usuario del Sistema"
                         startContent={<MdSearch />}
+                        onChange={handleSearchUsuario}
                       />
                     </div>
                   </div>
@@ -109,7 +135,7 @@ const ListCashCuts = () => {
                     </tr>
                   </thead>
                   <tbody class="text-white text-sm font-light">
-                    {datos.map((item) => (
+                    {filteredItems.map((item) => (
                       <tr key={item.id} class="border-b border-gray-200">
                         <td className="px-6 py-4 whitespace-nowrap">
                           {item.desde}

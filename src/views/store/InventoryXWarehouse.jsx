@@ -369,9 +369,6 @@ const InventoryWarehouse = () => {
             
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar inventario x almacén
-            </Button>
             <Button size="sm" color="primary" endContent={<TbPlus />}>
               Nuevo
             </Button>

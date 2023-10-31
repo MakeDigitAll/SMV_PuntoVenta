@@ -4,7 +4,7 @@ import ExcelJS from 'exceljs';
 import 'handsontable/dist/handsontable.full.css';
 import { Button } from '@nextui-org/react';
 import { HotTable } from '@handsontable/react';
-Modal.setAppElement('#root');
+
 const AddExcelOrders = () => {
   const headers = [
     ' ', 'Fecha', 'Cotizacion', 'Numero de cliente', 'Cliente',

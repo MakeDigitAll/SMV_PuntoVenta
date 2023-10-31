@@ -32,7 +32,6 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 
 const columns = [
   { name: "Imagen", uid: "Imagen", sortable: true },
-  { name: "ID", uid: "ID", sortable: true },
   { name: "Cod.Fab.", uid: "CodFab", sortable: true },
   { name: "Cod.Emp.", uid: "CodEmp", sortable: true },
   { name: "Nombre/Descripción", uid: "Nombre", sortable: true },
@@ -50,7 +49,6 @@ const columns = [
 
 const INITIAL_VISIBLE_COLUMNS = [
   "Imagen",
-  "ID",
   "CodFab",
   "CodEmp",
   "Nombre",
@@ -71,7 +69,7 @@ const ProductList = () => {
   const marcaOptions = [];
   function contarmarca() {
     for (let i = 0; i < data.length; i++) {
-      marcaOptions.push({ name: data[i].marca, uid: data[i].idproducto });
+      marcaOptions.push({ name: data[i].marca, uid: data[i].id });
     }
   }
 
@@ -305,150 +303,144 @@ const ProductList = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-
-          <ItemsHeader />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-          <div
-            role="presentation"
-            onClick={handleClickBreadCrumbs}
-            className="text-foreground"
-          >
-            <Breadcrumbs aria-label="breadcrumb" color="foreground">
-              <Link
-                className="text-foreground"
-                underline="hover"
-                sx={{ display: "flex", alignItems: "center" }}
-                color="foreground"
-                href="#"
-                onClick={() => navigate(`/Home`)}
-              >
-                <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                Inicio
-              </Link>
-              <Typography
-                sx={{ display: "flex", alignItems: "center" }}
-                className="text-foreground"
-              >
-                <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
-                Listado de Productos
-              </Typography>
-            </Breadcrumbs>
+        <ItemsHeader />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div
+          role="presentation"
+          onClick={handleClickBreadCrumbs}
+          className="text-foreground"
+        >
+          <Breadcrumbs aria-label="breadcrumb" color="foreground">
+            <Link
+              className="text-foreground"
+              underline="hover"
+              sx={{ display: "flex", alignItems: "center" }}
+              color="foreground"
+              href="#"
+              onClick={() => navigate(`/Home`)}
+            >
+              <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
+              Inicio
+            </Link>
+            <Typography
+              sx={{ display: "flex", alignItems: "center" }}
+              className="text-foreground"
+            >
+              <MdShoppingCart sx={{ mr: 0.5 }} fontSize="inherit" />
+              Listado de Productos
+            </Typography>
+          </Breadcrumbs>
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={{ marginLeft: "10px", marginRight: "10px" }}
+        >
+          <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Productos"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
           </div>
-          <div
-            className="flex flex-col gap-4"
-            style={{ marginLeft: "10px", marginRight: "10px" }}
-          >
-            <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-              <Input
-                isClearable
-                size="sm"
-                className="w-[450px] sm:max-w-[44%]"
-                placeholder="Productos"
-                startContent={<MdSearch />}
-                value={filterValue}
-                onClear={() => onClear()}
-                onValueChange={onSearchChange}
-              />
-              
-            </div>
-            <div className="flex flex-wrap place-content-end space-x-2">
-              <div>
-            <ExcelProducts />
-              </div>
+          <div className="flex flex-wrap place-content-end space-x-2">
             <div>
-              
+              <ExcelProducts />
+            </div>
+            <div>
               <AddExcelProducts />
-            
-          </div>
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar precios
-              </Button>
-              <Button size="sm" color="warning" endContent={<TbReload />}>
-                Actualizar costos
-              </Button>
-              <Button size="sm" color="primary" endContent={<TbPlus />} onPress={() =>navigate(`/Products/NewProduct`)}>
-                Nuevo Producto
-              </Button>
             </div>
-            
-          </div>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-wrap text-small space-x-3">
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    size="sm"
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                  >
-                    Columnas
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button
-                    endContent={<MdArrowDropDown className="text-small" />}
-                    variant="flat"
-                    size="sm"
-                  >
-                    Acciones
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Table Columns"
-                  closeOnSelect={false}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                >
-                  {columns.map((column) => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {column.name}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-            <label className="flex items-center text-default-400 text-small">
-              Productos por página:
-              <select
-                className="bg-transparent outline-none text-default-400 text-small"
-                onChange={onRowsPerPageChange}
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </label>
-          </div>
 
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<TbPlus />}
+              onPress={() => navigate(`/Products/NewProduct`)}
+            >
+              Nuevo Producto
+            </Button>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap text-small space-x-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  size="sm"
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                >
+                  Columnas
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<MdArrowDropDown className="text-small" />}
+                  variant="flat"
+                  size="sm"
+                >
+                  Acciones
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+          <label className="flex items-center text-default-400 text-small">
+            Productos por página:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
       </>
     );
   }, [
@@ -536,7 +528,7 @@ const ProductList = () => {
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.idproducto}>
+            <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

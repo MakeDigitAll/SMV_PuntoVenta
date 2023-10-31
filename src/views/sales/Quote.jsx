@@ -7,6 +7,7 @@ import {
   Tabs,
   Checkbox,
   Select,
+  Pagination,
   Textarea,
   TableHeader,
   TableColumn,
@@ -23,17 +24,20 @@ import {
   SelectItem,
   Card,
   CardBody,
+
 } from "@nextui-org/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { format } from "date-fns";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 
 //import ProfileImageUpload from "../user/ProfilesImagenUploads.tsx";
 import { Breadcrumbs, Typography } from "@mui/material";
 import { RiDashboard2Fill } from "react-icons/ri";
 import {
   MdDiscount,
+  MdKeyboardArrowDown,
   MdPeopleAlt,
   MdPercent,
   MdPerson,
@@ -46,7 +50,7 @@ import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
-import { use } from "i18next";
+
 const Quote = () => {
   const [user, setUser] = useState({
     nombreCliente: "",
@@ -55,11 +59,11 @@ const Quote = () => {
     recurrencia: "",
     envio: "",
     comentarios: "",
-    neto: "50",
-    descuento: "5",
-    subtotal: "45",
-    impuestos: "7",
-    total: "52",
+    neto: "",
+    descuento: "",
+    subtotal: "",
+    impuestos: "",
+    total: "",
 
 
 
@@ -71,7 +75,6 @@ const Quote = () => {
     imagen: "",
     emailConfirm: "",
     passwordConfirm: "",
-    dateQuote: format(new Date(), "yyyy-MM-dd"),
   });
   const [validationErrors, setValidationErrors] = useState({
     nombreCliente: "",
@@ -96,7 +99,6 @@ const Quote = () => {
     origen: "",
     monto: "",
   });
-
 
   const datosCliente = () => {
     async function loadDatosCliente() {
@@ -133,6 +135,7 @@ const Quote = () => {
         }
         break;
       default:
+
         break;
     }
 
@@ -175,7 +178,7 @@ const Quote = () => {
 
     try {
       const result = await http.post(
-        `https://localhost:4000:4000/Cotizaciones`,
+        `https://localhost:4000/Cotizaciones`,
         formData,
         {
           headers: {
@@ -198,30 +201,30 @@ const Quote = () => {
           };
           formData2.append("document2", JSON.stringify(document2));
           console.log(document2);
-          async function insertProductCotizacion () {
+          async function insertProductCotizacion() {
             try {
-               
-                //realizamos la segunda solicitud para guardar los datos
-                const response2 = await http.post(
-                  `https://localhost:4000/ProductosCotizados`,
-                  formData2,
-                  {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    },
-                  }
-                );
-  
-                if (response2.status === 200) {
-                  toast.success("Cliente creado correctamente", { theme: "colored" });
-                  navigate("/Sales/Quotes");
-                } else {
-                  toast.error("Error al crear una cotizacion", {
-                    position: "bottom-right",
-                    theme: "colored",
-                  });
+
+              //realizamos la segunda solicitud para guardar los datos
+              const response2 = await http.post(
+                `https://localhost:4000/ProductosCotizados`,
+                formData2,
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
                 }
-              
+              );
+
+              if (response2.status === 200) {
+                toast.success("Cliente creado correctamente", { theme: "colored" });
+                navigate("/Sales/Quotes");
+              } else {
+                toast.error("Error al crear una cotizacion", {
+                  position: "bottom-right",
+                  theme: "colored",
+                });
+              }
+
             } catch (error) {
               toast.error("Error al crear una cotizacion", {
                 position: "bottom-right",
@@ -230,7 +233,7 @@ const Quote = () => {
             }
 
           }
-          insertProductCotizacion();          
+          insertProductCotizacion();
         })
 
       } else {
@@ -300,6 +303,11 @@ const Quote = () => {
     recurrencia: false,
     comentarios: "",
     envio: "",
+    neto: 0,
+    descuento: 0,
+    subtotal: 0,
+    impuestos: 0,
+    total: 0,
   });
 
 
@@ -309,7 +317,7 @@ const Quote = () => {
     console.log(folio);
     try {
       const response = await fetch(
-        `https://localhost:4000:4000/Cotizaciones/${folio}`
+        `https://localhost:4000/Cotizaciones/${folio}`
       );
       const data = await response.json();
       setDataQuote({
@@ -323,31 +331,6 @@ const Quote = () => {
       });
     }
   };
-
-  // const getCotizacion = async (folioCotizacion) => {
-  //   var folio = Number(folioCotizacion);
-  //   try {
-  //     const response = await fetch(
-  //       "https://localhost:4000:4000/Cotizaciones/" + folio
-  //     );
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       setCotizacionData({
-  //         fecha: format(new Date(data.fecha), "yyyy-MM-dd"),
-  //         recurrencia: Number(data.recurrencia),
-  //         comentarios: data.comentarios,
-  //         envio: data.envio,
-  //       });
-  //       console.log(data);
-  //       getDatosCliente(data.idCliente);
-  //     }
-  //   } catch {
-  //     toast.error("Error al cargar los datos", {
-  //       position: "bottom-right",
-  //       theme: "colored",
-  //     });
-  //   }
-  // };
 
   // useEffect(() => {
   //   console.log(params);
@@ -391,25 +374,6 @@ const Quote = () => {
       total: data.total,
     };
   }
-  const agregarFila = (data, index) => {
-    const cantidad = parseFloat(cantidadProducto[index]);
-
-    const nuevoProducto = filasAgregadas.find(
-      (fila) => fila.codigo === data.codigoEmpresa
-    );
-
-    if (nuevoProducto) {
-      toast.warning("El producto ya ha sido agregado a la cotización.");
-      return;
-    }
-    // Verifica si la cantidad es un número válido
-    if (!isNaN(cantidad) || cantidad > 0) {
-      const datosAdaptados = adaptarDatos(data, cantidad);
-      setFilasAgregadas([...filasAgregadas, datosAdaptados]);
-    } else {
-      toast.warning("Por favor, ingrese una cantidad válida.");
-    }
-  };
 
   // ------------------------------------------------------------------------------------------------------------//
   //                                      Código para calcular totales                                           //
@@ -465,11 +429,19 @@ const Quote = () => {
     tablaResumen.querySelector(
       "#total"
     ).textContent = `$${totalesNuevaTabla.total.toFixed(2)}`;
+
+    setCotizacionData({
+      ...cotizacionData,
+      neto: totalesNuevaTabla.netoTotal,
+      descuento: totalesNuevaTabla.descuentoTotal,
+      subtotal: totalesNuevaTabla.subtotalTotal,
+      impuestos: totalesNuevaTabla.impuestosTotal,
+      total: totalesNuevaTabla.total,
+    });
   };
   useEffect(() => {
-    // Esta función se ejecutará cuando el componente esté montado
     calcularTotales();
-  }, [filasAgregadas /*, dataQuote.descuento*/]);
+  }, [filasAgregadas]);
 
 
 
@@ -493,7 +465,7 @@ const Quote = () => {
           (Number(value) *
             Number(nuevasFilas[index].precioUnitario) *
             Number(nuevasFilas[index].descuento)) /
-            100,
+          100,
       };
 
       setFilasAgregadas(nuevasFilas);
@@ -522,6 +494,27 @@ const Quote = () => {
   //                                      Código para agregar productos a la cotización                         //
   //------------------------------------------------------------------------------------------------------------//
 
+  const agregarFila = (data, index) => {
+    const cantidad = parseFloat(cantidadProducto[index]);
+
+    const nuevoProducto = filasAgregadas.find(
+      (fila) => fila.codigo === data.codigoEmpresa
+    );
+
+    if (nuevoProducto) {
+      toast.warning("El producto ya ha sido agregado a la cotización.");
+      return;
+    }
+    // Verifica si la cantidad es un número válido
+    if (!isNaN(cantidad) && cantidad > 0 && cantidad <= data.existencia) {
+      const datosAdaptados = adaptarDatos(data, cantidad);
+      datosAdaptados.total = datosAdaptados.precioUnitario * datosAdaptados.cantidad - (datosAdaptados.precioUnitario * datosAdaptados.cantidad * datosAdaptados.descuento) / 100;
+      setFilasAgregadas([...filasAgregadas, datosAdaptados]);
+    } else {
+      toast.warning("Por favor, ingrese una cantidad válida.");
+    }
+  };
+
   const [dataQuote, setDataQuote] = useState({
     pedido: "",
     cliente: "",
@@ -542,7 +535,7 @@ const Quote = () => {
     onOpen();
     async function loadProducts() {
       try {
-        const response = await fetch(`https://localhost:4000:4000/Productos`);
+        const response = await fetch(`https://localhost:4000/Productos`);
         const data = await response.json();
         if (response.ok) {
           setProductos(data);
@@ -584,7 +577,6 @@ const Quote = () => {
           );
 
           const data = await response.json();
-          console.log(data);
           if (response.ok) {
             const datos = await Promise.all(
               data.map(async (producto) => {
@@ -631,22 +623,27 @@ const Quote = () => {
   useEffect(() => {
     //obtener la url
     const url = window.location.href;
-    console.log(url);
     //separrar la url por /
     const urlSeparada = url.split("/");
     //si al url en la posicion 6 es igual a EditQuote
     if (urlSeparada[6] === "EditQuote") {
       setIsOnlyRead(false);
       setVariable("Editar Cotización");
+      setIsEditable(true);
       getCotizacion(urlSeparada[5]);
+      setIdCotizacion(Number(urlSeparada[5]));
     } else if (urlSeparada[6] === "ViewQuote") {
       setIsOnlyRead(true);
       setVariable("Ver Cotización");
       getCotizacion(urlSeparada[5]);
+      setIdCotizacion(Number(urlSeparada[5]));
     } else {
       setIsOnlyRead(false);
     }
   }, []);
+
+  //codigo para los botones
+  const [isEditable, setIsEditable] = useState(false);
 
   //--Codigo Para Buscar Cliente
   const [clientes, setClientes] = useState([]); // Estado para almacenar los datos de los clientes de la base de datos
@@ -664,6 +661,8 @@ const Quote = () => {
   //para almacenar los resultados de la busqueda
   const [nombreVendedor, setNombreVendedor] = useState("");
   const [idVendedor, setIdVendedor] = useState("");
+  //id de la cotizacioin
+  const [idCotizacion, setIdCotizacion] = useState("");
 
   //fechaCotizacion
   const [fechaCotizacion, setFechaCotizacion] = useState();
@@ -671,6 +670,7 @@ const Quote = () => {
   //Es recurrente
   const [isRecurrente, setIsRecurrente] = useState(false);
   const recurrenciaToSave = isRecurrente ? 1 : 0;
+
 
 
   //para almacenar los datos del cliente seleccionado
@@ -695,7 +695,7 @@ const Quote = () => {
   const getClientes = () => {
     async function getClientes() {
       try {
-        const response = await fetch(`https://localhost:4000:4000/ListadoClientes`);
+        const response = await fetch(`https://localhost:4000/ListadoClientes`);
         const data = await response.json();
         if (response.ok) {
           setClientes(data);
@@ -712,34 +712,55 @@ const Quote = () => {
 
   //
 
-  const [direccionesCliente, setDireccionesCliente] = useState([]);
+  const [allDireccionesCliente, setAllDireccionesCliente] = useState([]);
 
-  const getDireccionCliente = () => {
-    async function getDireccionCliente() {
-      try {
-        const response = await fetch(
-          `https://localhost:4000:4000/ClientesDireccionEnvio/${idCliente}`
-        );
-        const data = await response.json();
-        if (response.ok) {
-          console.log(data);
-          setDireccionesCliente(data);
-        }
-      } catch (err) {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
+  const getDireccionCliente = async (id) => {
+    if (id === undefined) {
+      id = idCliente;
     }
-    getDireccionCliente();
+
+    try {
+      const responseEnvio = await fetch(`https://localhost:4000/ClientesDireccionEnvio/${id}`);
+      const responseFacturacion = await fetch(`https://localhost:4000/DireccionFacturacionCliente/${id}`);
+
+      const dataEnvio = await responseEnvio.json();
+      const dataFacturacion = await responseFacturacion.json();
+
+      // Inicializa un contador para idIndex
+      let idIndex = 1;
+
+      // Asigna un id único numérico a cada objeto en dataEnvio
+      const dataEnvioConId = dataEnvio.map((obj) => ({
+        ...obj,
+        idIndex: idIndex++
+      }));
+
+      // Asigna un id único numérico a cada objeto en dataFacturacion
+      const dataFacturacionConId = dataFacturacion.map((obj) => ({
+        ...obj,
+        idIndex: idIndex++
+      }));
+
+      // Combina ambos arrays en uno solo con idIndex
+      const combinedData = dataEnvioConId.concat(dataFacturacionConId);
+
+      setAllDireccionesCliente(combinedData);
+    } catch (err) {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
   };
+
+
 
   const getDatosCliente = (idCliente) => {
     async function getDatosCliente() {
       try {
         const response = await fetch(
-          `https://localhost:4000:4000/ListadoClientes/${idCliente}`
+          `https://localhost:4000/ListadoClientes/${idCliente}`
+
         );
         const data = await response.json();
         if (response.ok) {
@@ -753,6 +774,9 @@ const Quote = () => {
       }
     }
     getDatosCliente();
+    getDireccionCliente(idCliente);
+    setAllDireccionesCliente([]);
+
   };
 
   useEffect(() => {
@@ -769,7 +793,7 @@ const Quote = () => {
   //buscar vendedor
   const buscarCliente = () => {
     let usuariosSearch = clientes.filter((cliente) =>
-      cliente.nombreComercial.toLowerCase().includes(searchNombreCliente)
+      cliente.nombreComercial.toLowerCase().includes(searchNombreCliente.toLowerCase())
     );
 
 
@@ -856,10 +880,128 @@ const Quote = () => {
     setClienteInfoDireccion(clienteInfoDireccion);
   };
 
+
+
+  const setClienteFacturacion = (facturacion) => {
+    let clienteInfoFacturacion = {
+      DateCreation: facturacion.DateCreation,
+      DateModification: facturacion.DateModification,
+      capital: facturacion.capital,
+      formaPago: facturacion.formaPago,
+      id: facturacion.id,
+      idCliente: facturacion.idCliente,
+      idIndex: facturacion.idIndex,
+      metodoPago: facturacion.metodoPago,
+      predeterminado: facturacion.predeterminado,
+      razonSocial: facturacion.razonSocial,
+      regimenFiscal: facturacion.regimenFiscal,
+      rfc: facturacion.rfc,
+      usoCFDI: facturacion.usoCFDI,
+    }
+    setClienteInfoFacturacion(clienteInfoFacturacion);
+  }
+
   const handleClickFacturacion = (facturacion) => {
-    console.log("Facturacion");
-    console.log(facturacion);
+    setClienteFacturacion(facturacion);
+
   };
+
+
+  const handleMarcarComoPerdida = async () => {
+    async function send() {
+      try {
+        const response = await fetch(
+          `https://localhost:4000/CotizacionesPerdidas/${idCotizacion}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: idCotizacion,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          toast.success("Cotización Perdida", { theme: "colored" });
+          navigate("/Sales/Quotes");
+        }
+      } catch (error) {
+        toast.error("Error al guardar Cotización", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    send();
+  }
+
+  const handleGanarCotizacion = async () => {
+    async function send() {
+      try {
+        const response = await fetch(
+          `https://localhost:4000/CotizacionesGanada/${idCotizacion}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: idCotizacion,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          toast.success("Cotización Ganada", { theme: "colored" });
+          navigate("/Sales/Quotes");
+        }
+      } catch (error) {
+        toast.error("Error al guardar Cotización", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+    }
+    send();
+  }
+
+
+  //obtener todos los productos de la base de datos
+  const [productosSearched, setProductosSearched] = useState([]);
+  const [nameProducto, setNameProducto] = useState("");
+
+  const handleSearchProducto = (e) => {
+    const value = e.target.value.toLowerCase();
+    setNameProducto(value);
+    const result = [];
+    result.push(...productos.filter((producto) => producto.nombre.toLowerCase().includes(value))); // Usar spread (...) para agregar elementos al array
+    if (value === "") {
+      setProductosSearched(productos);
+    } else {
+      setProductosSearched(result);
+    }
+  };
+
+
+  //paginacion del modal
+  const [pageProductos, setPageProductos] = useState(1);
+  const rowsPerPageProductos = 8;
+
+  const pagesProductos = Math.ceil(productosSearched.length / rowsPerPageProductos);
+
+  //paginacion de la tabla de usuarios ordenados
+  const itemsProductos = useMemo(() => {
+    const start = (pageProductos - 1) * rowsPerPageProductos;
+    const end = start + rowsPerPageProductos;
+    if (productosSearched.length === 0 && !nameProducto) {
+      setProductosSearched(productos);
+      return productos.slice(start, end);
+    }
+    return productosSearched.slice(start, end);
+  }, [pagesProductos, rowsPerPageProductos, productos, pageProductos, productosSearched]);
+
 
   return (
     <>
@@ -928,8 +1070,7 @@ const Quote = () => {
                               <Input
                                 id="cliente"
                                 value={
-                                  searchNombreCliente ||
-                                  clienteInfoGeneral.nombreComercial
+                                  isOnlyRead ? clienteInfoGeneral.nombreComercial : searchNombreCliente
                                 }
                                 onValueChange={setSearchNombreCliente}
                                 size="sm"
@@ -1016,7 +1157,11 @@ const Quote = () => {
                             <div className="md:col-span-6">
                               <Checkbox
                                 isDisabled={isOnlyRead}
-                                onChange={setIsRecurrente}
+                                onChange={setIsRecurrente.bind(
+                                  null,
+                                  !isRecurrente
+                                )}
+                                isSelected={isRecurrente || cotizacionData.recurrencia}
                               >
                                 Es recurrente
                               </Checkbox>
@@ -1038,33 +1183,34 @@ const Quote = () => {
                                 placeholder="General"
                                 size="sm"
                               >
-                                {direccionesCliente.map((direcciones) => (
+                                {allDireccionesCliente.map((direcciones) => (
                                   <SelectItem
-                                    key={direcciones.id}
-                                    value={direcciones.nombreDireccion}
+                                    key={direcciones.idIndex}
+                                    value={direcciones.nombreDireccion || direcciones.razonSocial || "Sin nombre de dirección"}
                                     onClick={() => {
-                                      direcciones.nombreDireccion
-                                        ? (setShowInfoGeneral(false),
-                                          setShowInfoDireccion(true),
-                                          setShowInfoFacturacion(false),
-                                          handleClickDireccion(direcciones))
-                                        : direcciones.facturacion
-                                          ? (setShowInfoGeneral(false),
-                                            setShowInfoDireccion(false),
-                                            setShowInfoFacturacion(true),
-                                            handleClickFacturacion(direcciones))
-                                          : (setShowInfoGeneral(true),
-                                            setShowInfoDireccion(false),
-                                            setShowInfoFacturacion(false),
-                                            setClienteInfoGeneral(
-                                              clienteInfoGeneral
-                                            ));
+                                      if (direcciones.nombreDireccion) {
+                                        setShowInfoGeneral(false);
+                                        setShowInfoDireccion(true);
+                                        setShowInfoFacturacion(false);
+                                        handleClickDireccion(direcciones);
+                                      } else if (direcciones.razonSocial) {
+                                        setShowInfoGeneral(false);
+                                        setShowInfoDireccion(false);
+                                        setShowInfoFacturacion(true);
+                                        handleClickFacturacion(direcciones);
+                                      } else {
+                                        setShowInfoGeneral(true);
+                                        setShowInfoDireccion(false);
+                                        setShowInfoFacturacion(false);
+                                        setClienteInfoGeneral(clienteInfoGeneral);
+                                      }
                                     }}
                                   >
-                                    {direcciones.nombreDireccion}
+                                    {direcciones.nombreDireccion || direcciones.razonSocial || "Otro"}
                                   </SelectItem>
                                 ))}
                               </Select>
+
                               {showInfoGeneral ? (
                                 <div>
                                   <Card>
@@ -1377,7 +1523,146 @@ const Quote = () => {
                                   </Card>
                                 </div>
                               ) : showInfoFacturacion ? (
-                                <></>
+                                <div>
+                                  <Card>
+                                    <CardBody>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Razon Social: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.razonSocial}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Regimen Fiscal: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.regimenFiscal}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Uso CFDI: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.usoCFDI}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          RFC: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.rfc}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Predeterminado: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.predeterminado}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          MetodoPago: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.metodoPago}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Forma de Pago: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.formaPago}
+                                        </p>
+                                      </div>
+
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Capital: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.capital}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          ID del Cliente: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.idCliente}
+                                        </p>
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <p className="text-small text-default-500">
+                                          Fecha de Modificacion: &nbsp;
+                                        </p>
+                                        <p>
+                                          {clienteInfoFacturacion.DateModification}
+                                        </p>
+                                      </div>
+
+                                    </CardBody>
+                                  </Card>
+                                </div>
                               ) : (
                                 <></>
                               )}
@@ -1392,7 +1677,7 @@ const Quote = () => {
                                     isRequired
                                     isDisabled={isOnlyRead}
                                     name="envio"
-                                    value={user.envio || cotizacionData.envio || "Seleccione"}
+                                    value={cotizacionData.envio || "Seleccione"}
                                     onChange={handleChange}
                                     labelPlacement="outside"
                                     placeholder=" "
@@ -1404,7 +1689,7 @@ const Quote = () => {
                                 </DropdownTrigger>
                                 <DropdownMenu>
                                   <DropdownItem
-                                    onClick={() => handleChangeEnvio("No Aplica") ||
+                                    onClick={() =>
                                       setCotizacionData({
                                         ...cotizacionData,
                                         envio: "No Aplica",
@@ -1414,7 +1699,7 @@ const Quote = () => {
                                     No Aplica
                                   </DropdownItem>
                                   <DropdownItem
-                                    onClick={() => handleChangeEnvio("Recoger en Oficina") ||
+                                    onClick={() =>
                                       setCotizacionData({
                                         ...cotizacionData,
                                         envio: "Recoger en Oficina",
@@ -1424,7 +1709,7 @@ const Quote = () => {
                                     Recoger en Oficina
                                   </DropdownItem>
                                   <DropdownItem
-                                    onClick={() => handleChangeEnvio("Envío a domicilio") ||
+                                    onClick={() =>
                                       setCotizacionData({
                                         ...cotizacionData,
                                         envio: "Envío a domicilio",
@@ -1482,6 +1767,8 @@ const Quote = () => {
                                               name="cantidad"
                                               placeholder=""
                                               variant="faded"
+                                              isDisabled={isOnlyRead}
+
                                               error={
                                                 validationErrors.cantidad !== ""
                                               }
@@ -1504,9 +1791,24 @@ const Quote = () => {
                                             ${fila.precioUnitario}
                                           </TableCell>
                                           <TableCell>
-                                            {fila.descuento}%
+                                            {fila.descuento > 0 ? (
+                                              <div
+                                                className="text-green-500"
+                                              >
+                                                {fila.descuento}%
+                                              </div>
+
+                                            ) : (
+                                              <div
+                                                className=""
+                                              >
+                                                {fila.descuento}%
+                                              </div>
+                                            )}
+
+
                                           </TableCell>
-                                          <TableCell>{fila.total}</TableCell>
+                                          <TableCell>${fila.total}</TableCell>
                                         </TableRow>
                                       ))}
                                     </TableBody>
@@ -1627,14 +1929,44 @@ const Quote = () => {
                     </div>
                     <div className="md:col-span-12 text-right">
                       <div className="space-x-5 space-y-5">
-                        <Button
-                          className="min-w-[200px]"
-                          color="primary"
-                          type="submit"
-                          endContent={<MdSave />}
-                        >
-                          Guardar cotización
-                        </Button>
+                        <div >
+
+                          {isOnlyRead && !isEditable ? (
+                            <div>
+
+                              <Button
+                                className="min-w-[200px]  m-3"
+                                color="success"
+
+                                endContent={<MdSave />}
+                                onPress={() => { handleGanarCotizacion() }}
+                              >
+                                Ganar cotización
+                              </Button>
+
+                              <Button
+                                className="min-w-[200px]  m-3"
+                                color="danger"
+
+                                endContent={<MdSave />}
+                                onPress={() => { handleMarcarComoPerdida() }}
+                              >
+                                Marcar Como Perdida
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              className="min-w-[200px]"
+                              color="primary"
+                              type="submit"
+                              endContent={<MdSave />}
+                            >
+                              Guardar cotización
+                            </Button>
+                          )}
+
+
+                        </div>
                       </div>
                       <Spacer y={3} />
                     </div>
@@ -1668,11 +2000,14 @@ const Quote = () => {
                           <div className="md:col-span-6">
                             <Input
                               id="nombre"
-                              value={user.nombre}
-                              onValueChange={handleChange}
+                              //value={user.nombre}
+                              //onValueChange={handleChange}
+                              onChange={(e) => {
+                                handleSearchProducto(e);
+                              }}
                               size="sm"
                               type="text"
-                              label="Cliente"
+                              label="Nombre del producto"
                               name="nombre"
                               labelPlacement="outside"
                               placeholder=" "
@@ -1720,38 +2055,73 @@ const Quote = () => {
                               id="tablaEnModal"
                               removeWrapper
                               aria-label="Example static collection table"
+                              bottomContent={
+                                pagesProductos > 0 ? (
+                                  <div className="flex w-full justify-center">
+                                    <Pagination
+                                      isCompact
+                                      showControls
+                                      showShadow
+                                      color="primary"
+                                      page={pageProductos}
+                                      total={pagesProductos}
+                                      onChange={(pageProductos) => setPageProductos(pageProductos)}
+                                    />
+                                  </div>
+                                ) : null
+                              }
                             >
                               <TableHeader>
                                 <TableColumn>Código</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
                                 <TableColumn>Marca</TableColumn>
-                                <TableColumn>Cantidad</TableColumn>
                                 <TableColumn>Inv.</TableColumn>
                                 <TableColumn>Precio Uni.</TableColumn>
                                 <TableColumn>Descuento</TableColumn>
+                                <TableColumn>Cantidad</TableColumn>
                                 <TableColumn>Total</TableColumn>
                                 <TableColumn>Acciones</TableColumn>
                               </TableHeader>
                               <TableBody>
-                                {datos.map((data, index) => (
-                                  <TableRow key={data.id}>
+                                {itemsProductos.map((data, index) => (
+                                  <TableRow key={data.idproducto}>
                                     <TableCell>{data.codigoEmpresa}</TableCell>
                                     <TableCell>{data.nombre}</TableCell>
                                     <TableCell>{data.marca}</TableCell>
+                                    <TableCell>{data.existencia}</TableCell>
+                                    <TableCell>{data.precio}</TableCell>
+                                    <TableCell>
+
+                                      {data.descuento > 0 ? (
+                                        <div
+                                          className="text-green-500"
+                                        >
+                                          {data.descuento}%
+                                        </div>
+
+                                      ) : (
+                                        <div
+                                          className=""
+                                        >
+                                          {data.descuento}%
+                                        </div>
+                                      )}
+
+
+
+                                    </TableCell>
                                     <TableCell>
                                       <Input
                                         size="sm"
+                                        className="w-[80px]"
                                         type="number"
-                                        value={cantidadProducto[index] || ""} // Usar la cantidad del estado correspondiente
+                                        value={cantidadProducto[index] || ""}
                                         onChange={(e) =>
                                           handleCantidadChange(e, index)
                                         }
                                         placeholder=""
                                       />
                                     </TableCell>
-                                    <TableCell>{data.existencia}</TableCell>
-                                    <TableCell>{data.precio}</TableCell>
-                                    <TableCell>{data.descuento}</TableCell>
                                     <TableCell>{data.total}</TableCell>
                                     <TableCell>
                                       <Button

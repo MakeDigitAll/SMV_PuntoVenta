@@ -340,9 +340,6 @@ const FillOrders = () => {
             
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Surtir Pedido
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">

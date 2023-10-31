@@ -1,5 +1,4 @@
-
-import { Accordion, AccordionItem, Card, CardBody, Spacer } from "@nextui-org/react";
+import { Card, CardBody, Spacer } from "@nextui-org/react";
 import { TbRoad } from "react-icons/tb";
 import {
   BiArchiveOut,
@@ -10,16 +9,12 @@ import {
   BiStar,
 } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { RiCoinFill, RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
-
-
-
 
 const itemsSales = [
   {
@@ -75,11 +70,8 @@ const itemsSales = [
 
 const ItemsSales = () => {
   const navigate = useNavigate();
-  const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
-
   return (
     <div className="place-content-center">
-      
       <ItemsHeader />
       <ToastContainer
         position="top-right"
@@ -93,7 +85,7 @@ const ItemsSales = () => {
         pauseOnHover
         theme="light"
       />
-      <div style={{marginTop: "30px", marginLeft:'30px'}}>
+      <div style={{ marginTop: "30px", marginLeft: "30px" }}>
         <Breadcrumbs aria-label="breadcrumb" color="foreground">
           <Link
             className="text-foreground"

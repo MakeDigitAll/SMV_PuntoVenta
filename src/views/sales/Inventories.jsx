@@ -14,10 +14,9 @@ import {
   DropdownItem,
   Pagination,
   User,
-  Checkbox,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookOnline, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+import { TbDotsVertical, TbPlus } from "react-icons/tb";
+import { MdArrowDropDown, MdBookOnline, MdSearch } from "react-icons/md";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -33,8 +32,8 @@ const columns = [
   { name: "Marca", uid: "Marca", sortable: true },
   { name: "Minímo", uid: "Minimo", sortable: true },
   { name: "Máximo", uid: "Maximo", sortable: true },
-  { name:"Total", uid: "Total",sortable:true},
-  { name:"Detalles", uid: "Detalles",sortable:true},
+  { name: "Total", uid: "Total", sortable: true },
+  { name: "Detalles", uid: "Detalles", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 
@@ -51,17 +50,13 @@ const INITIAL_VISIBLE_COLUMNS = [
   "Actions",
 ];
 
-const   Inventory = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-      }
-    }
+const Inventory = () => {
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:4000/inventarioGeneralReporteInventario");
+      const response = await fetch(
+        "https://localhost:4000/inventarioGeneralReporteInventario"
+      );
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -86,7 +81,7 @@ const   Inventory = () => {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
@@ -112,10 +107,7 @@ const   Inventory = () => {
         data.nombre.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
+    if (statusFilter !== "all") {
       filteredUsers = filteredUsers.filter((data) =>
         Array.from(statusFilter).includes(data.nombre)
       );
@@ -147,12 +139,14 @@ const   Inventory = () => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-        case "Imagen":
-            return <User avatarProps={{ radius: "lg", src: data.imagen }} />;
-        case "CodFab":
+      case "Imagen":
+        return <User avatarProps={{ radius: "lg", src: data.imagen }} />;
+      case "CodFab":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.codigoFabricante}</p>
+            <p className="text-bold text-small capitalize">
+              {data.codigoFabricante}
+            </p>
           </div>
         );
       case "CodEmp":
@@ -163,7 +157,7 @@ const   Inventory = () => {
             </p>
           </div>
         );
-        
+
       case "Nombre":
         return (
           <div className="flex flex-col">
@@ -188,13 +182,13 @@ const   Inventory = () => {
             <p className="text-bold text-small capitalize">{data.maximo}</p>
           </div>
         );
-        case "Total":
+      case "Total":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.total}</p>
           </div>
         );
-        case "Detalles":
+      case "Detalles":
         return (
           <div className="flex flex-col">
             {/* <p className="text-bold text-small capitalize">{data.status}</p> */}
@@ -256,7 +250,6 @@ const   Inventory = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -311,37 +304,8 @@ const   Inventory = () => {
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Marca
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Inventario
-            </Button>
             <Button size="sm" color="primary" endContent={<TbPlus />}>
               Nueva Inventario
             </Button>
@@ -417,7 +381,6 @@ const   Inventory = () => {
   }, [
     filterValue,
     onSearchChange,
-    statusFilter,
     visibleColumns,
     onRowsPerPageChange,
     navigate,

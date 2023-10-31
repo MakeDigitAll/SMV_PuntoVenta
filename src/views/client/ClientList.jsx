@@ -1,19 +1,42 @@
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Button, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Pagination } from "@nextui-org/react";
-import { MdArrowDropDown, MdCategory, MdDelete, MdEdit, MdRemoveRedEye, MdSearch } from "react-icons/md";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Tooltip,
+  Input,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownTrigger,
+  DropdownMenu,
+  Pagination,
+} from "@nextui-org/react";
+import {
+  MdArrowDropDown,
+  MdCategory,
+  MdDelete,
+  MdEdit,
+  MdRemoveRedEye,
+  MdSearch,
+} from "react-icons/md";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
-import { RiDashboard2Fill, RiUser2Fill } from "react-icons/ri";
+import { RiDashboard2Fill } from "react-icons/ri";
 import Typography from "@mui/material/Typography";
-import { TbPlus, TbReload } from "react-icons/tb";
+import { TbPlus } from "react-icons/tb";
 import React, { useState, useEffect, useCallback } from "react";
 import AddExcelClients from "../Excel/addExcel/addExcelClients";
 import Images from "../../components/images/Images";
+import moment from "moment";
 const columns = [
   { name: "Imagen", uid: "imagen", sortable: true },
-  { name: "Nombre del cliente", uid: "nombreComercial", sortable: true },
+  { name: "Nombre del cliente", uid: "nombreCliente", sortable: true },
   { name: "# Cliente", uid: "numeroCliente", sortable: true },
   { name: "# Comercial", uid: "numeroCliente", sortable: true },
   { name: "Nombre Comercial", uid: "nombreComercial", sortable: true },
@@ -23,7 +46,7 @@ const columns = [
   { name: "Vendedor", uid: "vendedor", sortable: true },
   { name: "Activo", uid: "activo", sortable: true },
   { name: "Registro", uid: "registro", sortable: true },
-  { name: "Actualizado", uid: "actualizacion", sortable: true },
+  { name: "Actualizado", uid: "Actualizado", sortable: true },
   { name: "Actions", uid: "Actions", sortable: true },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
@@ -36,7 +59,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "vendedor",
   "activo",
   "registro",
-  "actualizacion",
+  "Actualizado",
   "Actions",
 ];
 const ClientList = () => {
@@ -47,7 +70,6 @@ const ClientList = () => {
       const data = await response.json();
       if (response.ok) {
         setData(data);
-        
       }
     } catch {
       toast.error("Error al cargar los datos", {
@@ -64,9 +86,9 @@ const ClientList = () => {
   function handleClickBreadCrumbs(event) {
     event.preventDefault();
   }
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [disableCounter, setDisableCounter] = useState(0); 
+  const [disableCounter, setDisableCounter] = useState(0);
   const params = useParams();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -129,41 +151,22 @@ const ClientList = () => {
     });
   }, [sortDescriptor, items]);
 
-  async function loadTask() {
-    try {
-      const response = await fetch("https://localhost:4000/ListadoClientes");
-      const data = await response.json();
-      if (response.ok) {
-        setData(data);
-        
-      }
-    } catch {
-      toast.error("Error al cargar los datos", {
-        position: "bottom-right",
-        theme: "colored",
-      });
-    }
-  }
-
-  useEffect(() => {
-    loadTask();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
   const handleDisable = async (id) => {
     const datoDisable = {
-      id: id
+      id: id,
     };
     console.log(datoDisable);
     try {
-      const res = await fetch(`https://localhost:4000:4000/ListadoClientesDisabled/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datoDisable),
-      });
+      const res = await fetch(
+        `https://localhost:4000:4000/ListadoClientesDisabled/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datoDisable),
+        }
+      );
 
       if (res.ok) {
         toast.warning("Deshabilitando Cliente", {
@@ -192,7 +195,6 @@ const ClientList = () => {
 
   const renderCell = React.useCallback((data, columnKey) => {
     const cellValue = data[columnKey];
-
     switch (columnKey) {
       case "id":
         return (
@@ -203,31 +205,43 @@ const ClientList = () => {
       case "imagen":
         return (
           <div className="flex flex-col">
-            <Images idImage={data.id} designType="tabla" ruta={"/api/images/clientImage/"} />
+            <Images
+              idImage={data.id}
+              designType="tabla"
+              ruta={"/api/images/clientImage/"}
+            />
           </div>
         );
       case "nombreCliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.nombreCliente}</p>
+            <p className="text-bold text-small capitalize">
+              {data.nombreCliente}
+            </p>
           </div>
         );
       case "numeroCliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroCliente}</p>
+            <p className="text-bold text-small capitalize">
+              {data.numeroCliente}
+            </p>
           </div>
         );
       case "numeroComercial":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.numeroComercial}</p>
+            <p className="text-bold text-small capitalize">
+              {data.numeroComercial}
+            </p>
           </div>
         );
       case "razonSocial":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.razonSocial}</p>
+            <p className="text-bold text-small capitalize">
+              {data.razonSocial}
+            </p>
           </div>
         );
       case "contacto":
@@ -275,13 +289,13 @@ const ClientList = () => {
       case "registro":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.registro}</p>
+            <p className="text-bold text-small capitalize">{moment(data.registro).format("DD/MM/YYYY")}</p>
           </div>
         );
-      case "actualizado":
+      case "Actualizado":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.actualizado}</p>
+            <p className="text-bold text-small capitalize">{moment(data.actualizado).format("DD/MM/YYYY")}</p>
           </div>
         );
       case "Actions":
@@ -289,17 +303,21 @@ const ClientList = () => {
           <div className="relative flex items-center gap-2">
             <Tooltip content="Ver Cliente">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdRemoveRedEye onClick={() => navigate(`/Customers/${data.id}/ViewClient`)}/>
+                <MdRemoveRedEye
+                  onClick={() => navigate(`/Customers/${data.id}/ViewClient`)}
+                />
               </span>
             </Tooltip>
             <Tooltip content="Editar Cliente">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <MdEdit onClick={() => navigate(`/Customers/${data.id}/EditClient`)}/>
+                <MdEdit
+                  onClick={() => navigate(`/Customers/${data.id}/EditClient`)}
+                />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Deshabilitar Cliente">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <MdDelete onClick={() => handleDisable(data.id)}/>
+                <MdDelete onClick={() => handleDisable(data.id)} />
               </span>
             </Tooltip>
           </div>
@@ -341,7 +359,6 @@ const ClientList = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -411,9 +428,6 @@ const ClientList = () => {
           </div>
           <div className="flex flex-wrap place-content-end space-x-2">
             <AddExcelClients />
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Clientes
-            </Button>
             <Button
               onPress={() => navigate(`/Customers/NewClient`)}
               size="sm"

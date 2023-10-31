@@ -25,6 +25,8 @@ const lngs = {
   Es: { nativeName: "Español" },
 };
 const Header = () => {
+  const url = window.location.href;
+  const POS = url.split("/")[3];
   const { i18n, t } = useTranslation();
   const [selectedKeys, setSelectedKeys] = React.useState(i18n.language);
   const { theme, setTheme } = useTheme();
@@ -70,7 +72,7 @@ const Header = () => {
   }
 
   // async function openNotifications() {}
-  return (
+  return !POS.startsWith("PointofSale") ? (
     <>
       <header>
         <div
@@ -355,7 +357,7 @@ const Header = () => {
         </div>
       </header>
     </>
-  );
+  ) : null;
 };
 
 export default Header;

@@ -15,9 +15,8 @@ import {
   Pagination,
   Chip,
   Select,
-  SelectItem,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
+import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import { MdArrowDropDown, MdSearch, MdShoppingCart } from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -27,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import AddExcelQuotes from "../Excel/addExcel/addExcelQuotes";
+import moment from "moment";
 const statusOptions = [
   { name: "Active", uid: "active" },
   { name: "Paused", uid: "paused" },
@@ -36,19 +36,19 @@ const columns = [
   { name: "Folio", uid: "folio", sortable: true },
   { name: "Fecha", uid: "fecha", sortable: true },
   { name: "Pedido", uid: "pedido", sortable: true },
-  { name: "Cliente", uid: "idCliente", sortable: true },
-  { name: "Vendedor", uid: "idVendedor", sortable: true },
+  { name: "Cliente", uid: "cliente", sortable: true },
+  { name: "Vendedor", uid: "vendedor", sortable: true },
   { name: "Recurrencia", uid: "recurrencia", sortable: true },
   { name: "Total", uid: "total", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
+  { name: "Estatus", uid: "status", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 const INITIAL_VISIBLE_COLUMNS = [
   "folio",
   "fecha",
   "pedido",
-  "idCliente",
-  "idVendedor",
+  "cliente",
+  "vendedor",
   "recurrencia",
   "total",
   "status",
@@ -69,6 +69,7 @@ const Quotes = () => {
       const response = await fetch("https://localhost:4000/Cotizaciones");
       const data = await response.json();
       if (response.ok) {
+        console.log(data);
         setData(data);
         contarmarca();
       }
@@ -213,7 +214,6 @@ const Quotes = () => {
       const datoDisable = {
         id: id,
       };
-      console.log(datoDisable);
       try {
         const res = await fetch(
           `https://localhost:4000:4000/CotizacionesDisable/${id}`,
@@ -267,7 +267,9 @@ const Quotes = () => {
       case "fecha":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.fecha}</p>
+            <p className="text-bold text-small capitalize">
+              {moment(data.fecha).format("DD/MM/YYYY")}
+            </p>
           </div>
         );
       case "pedido":
@@ -279,13 +281,15 @@ const Quotes = () => {
       case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.cliente}</p>
+            <p className="text-bold text-small capitalize">
+              {data.nombreComercial}
+            </p>
           </div>
         );
       case "vendedor":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.vendedor}</p>
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
       case "origen":
@@ -298,6 +302,14 @@ const Quotes = () => {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">$ {data.monto}</p>
+          </div>
+        );
+      case "recurrencia":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {data.recurrencia == 1 ? "Sí" : "No"}
+            </p>
           </div>
         );
       case "status":
@@ -548,10 +560,6 @@ const Quotes = () => {
             <div>
               <AddExcelQuotes />
             </div>
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Cotizaciones
-            </Button>
-
             <Button
               size="sm"
               color="primary"
@@ -582,16 +590,12 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(
-                  (column) => (
-                    console.log(column),
-                    (
-                      <DropdownItem key={column.uid} className="capitalize">
-                        {column.name}
-                      </DropdownItem>
-                    )
-                  )
-                )}
+                {columns.map((column) => (
+                  //console.log(column),
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -612,21 +616,16 @@ const Quotes = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(
-                  (column) => (
-                    console.log(column),
-                    (
-                      <DropdownItem key={column.uid} className="capitalize">
-                        {column.name}
-                      </DropdownItem>
-                    )
-                  )
-                )}
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {column.name}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Productos por página:
+            Cotizaciones por página:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -640,13 +639,15 @@ const Quotes = () => {
       </>
     );
   }, [
+    modalidad,
+    onSearchChange2,
     filterValue,
     onSearchChange,
-    statusFilter,
-    marcaOptions,
+    selectedVendedor,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
+    onClear2,
     onClear,
   ]);
   const bottomContent = React.useMemo(() => {
@@ -655,10 +656,7 @@ const Quotes = () => {
         <span className="w-[30%] text-small text-default-400">
           <span style={{ marginRight: "30px" }}>
             {data.length} Cotizaciones en total
-          </span>
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${data.length} selected`}
+          </span>          
         </span>
         <Pagination
           isCompact
@@ -697,11 +695,9 @@ const Quotes = () => {
     <div style={{ marginLeft: "40px", marginRight: "40px" }}>
       <Table
         aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -710,16 +706,13 @@ const Quotes = () => {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            console.log(column),
-            (
-              <TableColumn
-                key={column.uid}
-                align={column.uid === "Actions" ? "center" : "start"}
-                allowsSorting={column.sortable}
-              >
-                {column.name}
-              </TableColumn>
-            )
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "Actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
           )}
         </TableHeader>
         <TableBody

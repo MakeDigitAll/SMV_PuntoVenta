@@ -14,11 +14,9 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  User,
-  Checkbox,
 } from "@nextui-org/react";
-import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
-import { MdArrowDropDown, MdBookmarkAdded, MdMoneyOffCsred, MdSearch, MdShoppingCart, MdStore } from "react-icons/md";
+import { TbDotsVertical } from "react-icons/tb";
+import { MdArrowDropDown, MdBookmarkAdded, MdSearch } from "react-icons/md";
 
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
 import Typography from "@mui/material/Typography";
@@ -37,7 +35,7 @@ const columns = [
   { name: "Vendedor", uid: "vendedor", sortable: true },
   { name: "Factura", uid: "factura", sortable: true },
   { name: "Surtido", uid: "surtido", sortable: true },
-  { name:"Parcial", uid: "parcial",sortable:true},
+  { name: "Parcial", uid: "parcial", sortable: true },
   { name: "Acciones", uid: "Actions" },
 ];
 
@@ -56,16 +54,12 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const FillOrder = () => {
-    const marcaOptions = [];
-    function contarmarca() {
-      for (let i = 0; i < data.length; i++) {
-        marcaOptions.push({ name: data[i].marca, uid: data[i].id });
-      }
-    }
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
-      const response = await fetch("https://localhost:4000/PedidosPendientesSurtir");
+      const response = await fetch(
+        "https://localhost:4000/PedidosPendientesSurtir"
+      );
       const data = await response.json();
       if (response.ok) {
         setData(data);
@@ -90,7 +84,7 @@ const FillOrder = () => {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
@@ -116,10 +110,7 @@ const FillOrder = () => {
         data.cliente.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
+    if (statusFilter !== "all") {
       filteredUsers = filteredUsers.filter((data) =>
         Array.from(statusFilter).includes(data.cliente)
       );
@@ -163,7 +154,7 @@ const FillOrder = () => {
             <p className="text-bold text-small capitalize">{data.folio}</p>
           </div>
         );
-        case "fecha":
+      case "fecha":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.fecha}</p>
@@ -172,12 +163,10 @@ const FillOrder = () => {
       case "cliente":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {data.cliente}
-            </p>
+            <p className="text-bold text-small capitalize">{data.cliente}</p>
           </div>
         );
-        
+
       case "monto":
         return (
           <div className="flex flex-col">
@@ -190,7 +179,7 @@ const FillOrder = () => {
             <p className="text-bold text-small capitalize">{data.estatus}</p>
           </div>
         );
-        case "vendedor":
+      case "vendedor":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.vendedor}</p>
@@ -208,7 +197,7 @@ const FillOrder = () => {
             <p className="text-bold text-small capitalize">{data.surtido}</p>
           </div>
         );
-        case "Parcial":
+      case "Parcial":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.parcial}</p>
@@ -270,7 +259,6 @@ const FillOrder = () => {
   const topContent = React.useMemo(() => {
     return (
       <>
-        
         <ItemsHeader />
         <ToastContainer
           position="top-right"
@@ -315,60 +303,28 @@ const FillOrder = () => {
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           <div className="flex flex-wrap place-content-start space-x-6 space-y-1 ">
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Cliente"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
-  <Input
-    isClearable
-    size="sm"
-    className="w-[450px] sm:max-w-[44%]"
-    placeholder="Folio"
-    startContent={<MdSearch />}
-    value={filterValue}
-    onClear={() => onClear()}
-    onValueChange={onSearchChange}
-  />
- 
-
-            <Dropdown>
-              <DropdownTrigger className="w-[300px] sm:max-w-[44%]">
-                <Button
-                  size="sm"
-                  endContent={<MdArrowDropDown className="text-small" />}
-                  variant="flat"
-                >
-                  Modalidad
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {marcaOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Cliente"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
+            <Input
+              isClearable
+              size="sm"
+              className="w-[450px] sm:max-w-[44%]"
+              placeholder="Folio"
+              startContent={<MdSearch />}
+              value={filterValue}
+              onClear={() => onClear()}
+              onValueChange={onSearchChange}
+            />
           </div>
-          <div className="flex flex-wrap place-content-end space-x-2">
-            <Button size="sm" color="warning" endContent={<TbReload />}>
-              Actualizar Surtir Pedido
-            </Button>
-          </div>
+          <div className="flex flex-wrap place-content-end space-x-2"></div>
         </div>
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap text-small space-x-3">
@@ -440,7 +396,6 @@ const FillOrder = () => {
   }, [
     filterValue,
     onSearchChange,
-    statusFilter,
     visibleColumns,
     onRowsPerPageChange,
     navigate,
