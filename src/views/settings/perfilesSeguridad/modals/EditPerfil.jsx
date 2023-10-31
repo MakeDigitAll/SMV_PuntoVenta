@@ -60,8 +60,29 @@ const ModalUserInfo = ({ onClose, data }) => {
                 theme: "colored",
             });
         }
-
     }
+
+    //obtener los datos del perfil de seguridad
+    const getPerfilSeguridad = async () => {
+        const idPerfilSeguridad = data.id;
+        try {
+            const res = await fetch(`https://localhost:4000/PerfilesSeguridad/${idPerfilSeguridad}`);
+            const data = await res.json();
+            setSelectedData(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+    useEffect(() => {
+        getPerfilSeguridad();
+    }
+        , []);
+
+
+
+
     return (
         <Modal
             size="5xl"
@@ -378,18 +399,18 @@ const ModalUserInfo = ({ onClose, data }) => {
                                             }
                                             isSelected={selectedData.mover_a_cuenta_caja_general}
                                         >
-                                            Move a cuenta caja general
+                                            Mover a cuenta caja general
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "mover_a_cobranza_caja_general",
-                                                    selectedData.mover_a_cobranza_caja_general ? false : true
+                                                    "mover_a_cobranza",
+                                                    selectedData.mover_a_cobranza ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.mover_a_cobranza_caja_general}
+                                            isSelected={selectedData.mover_a_cobranza}
                                         >
-                                            Mover a cuenta cobranza caja general
+                                            Mover a cobranza
                                         </Checkbox>
                                         <text>Surtir pedidos</text>
                                         <Checkbox
@@ -413,17 +434,6 @@ const ModalUserInfo = ({ onClose, data }) => {
                                             isSelected={selectedData.consultar_surtido_de_pedidos}
                                         >
                                             Consultar surtido de pedidos
-                                        </Checkbox>
-                                        <Checkbox
-                                            onValueChange={() =>
-                                                setDefaultValues(
-                                                    "surtir_pedido",
-                                                    selectedData.surtir_pedido ? false : true
-                                                )
-                                            }
-                                            isSelected={selectedData.surtir_pedido}
-                                        >
-                                            Surtir pedido
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
@@ -479,7 +489,7 @@ const ModalUserInfo = ({ onClose, data }) => {
                                             }
                                             isSelected={selectedData.surtir_pedido}
                                         >
-                                            Surtir pedido
+                                            Surtido de pedido
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
@@ -624,17 +634,6 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "punto_de_venta",
-                                                    selectedData.punto_de_venta ? false : true
-                                                )
-                                            }
-                                            isSelected={selectedData.punto_de_venta}
-                                        >
-                                            Punto de venta
-                                        </Checkbox>
-                                        <Checkbox
-                                            onValueChange={() =>
-                                                setDefaultValues(
                                                     "nueva_venta",
                                                     selectedData.nueva_venta ? false : true
                                                 )
@@ -701,13 +700,13 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "eliminar_cliente",
-                                                    selectedData.eliminar_cliente ? false : true
+                                                    "eliminar_cliente_ventas",
+                                                    selectedData.eliminar_cliente_ventas ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.eliminar_cliente}
+                                            isSelected={selectedData.eliminar_cliente_ventas}
                                         >
-                                            Eliminar cliente
+                                            Eliminar cliente de ventas
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
@@ -1527,11 +1526,11 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "crear_y_editar_subCategorias",
-                                                    selectedData.crear_y_editar_subCategorias ? false : true
+                                                    "crear_y_editar_subcategorias",
+                                                    selectedData.crear_y_editar_subcategorias ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.crear_y_editar_subCategorias}
+                                            isSelected={selectedData.crear_y_editar_subcategorias}
                                         >
                                             Crear y editar subCategorías
                                         </Checkbox>
@@ -1974,11 +1973,11 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "consultar_transferencias",
-                                                    selectedData.consultar_transferencias ? false : true
+                                                    "consultar_transferencias_almacenes",
+                                                    selectedData.consultar_transferencias_almacenes ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.consultar_transferencias}
+                                            isSelected={selectedData.consultar_transferencias_almacenes}
                                         >
                                             Consultar transferencias
                                         </Checkbox>
@@ -2029,13 +2028,13 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "crear_nuevas_tranferencias",
-                                                    selectedData.crear_nuevas_tranferencias ? false : true
+                                                    "crear_nuevas_transferencias",
+                                                    selectedData.crear_nuevas_transferencias ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.crear_nuevas_tranferencias}
+                                            isSelected={selectedData.crear_nuevas_transferencias}
                                         >
-                                            Crear nuevas tranferencias
+                                            Crear nuevas transferencias
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
@@ -2285,35 +2284,35 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "consultar_tranferencias",
-                                                    selectedData.consultar_tranferencias ? false : true
+                                                    "consultar_transferencias",
+                                                    selectedData.consultar_transferencias ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.consultar_tranferencias}
+                                            isSelected={selectedData.consultar_transferencias}
                                         >
-                                            Consultar tranferencias
+                                            Consultar transferencias
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "crear_nuevas_tranferencias",
-                                                    selectedData.crear_nuevas_tranferencias ? false : true
+                                                    "crear_nuevas_transferencias",
+                                                    selectedData.crear_nuevas_transferencias ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.crear_nuevas_tranferencias}
+                                            isSelected={selectedData.crear_nuevas_transferencias}
                                         >
-                                            Crear nuevas tranferencias
+                                            Crear nuevas transferencias
                                         </Checkbox>
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "eliminar_tranferencias",
-                                                    selectedData.eliminar_tranferencias ? false : true
+                                                    "eliminar_transferencia",
+                                                    selectedData.eliminar_transferencia ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.eliminar_tranferencias}
+                                            isSelected={selectedData.eliminar_transferencia}
                                         >
-                                            Eliminar tranferencias
+                                            Eliminar transferencia
                                         </Checkbox>
                                     </div>
                                 </AccordionItem>
