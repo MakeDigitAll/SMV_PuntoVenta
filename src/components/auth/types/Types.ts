@@ -14,6 +14,7 @@ export interface AuthResponse {
   export interface User {
       _id:string;
       nombre:string;
+      idPerfilSeguridad:string;
       apellido:string;
       email:string;
       
