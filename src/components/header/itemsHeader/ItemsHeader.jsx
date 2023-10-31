@@ -11,8 +11,11 @@ import {
 import {  TbReport, TbReportAnalytics, TbWorld } from "react-icons/tb";
 import { MdSettings, MdShoppingCart, MdStorefront } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState } from "react"; 
+import { useAuth } from "../../auth/AuthProvider";
+
 const ItemsHeader = () => {
+  console.log(useAuth().getUser().idPerfilSeguridad);
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
   const items = [
