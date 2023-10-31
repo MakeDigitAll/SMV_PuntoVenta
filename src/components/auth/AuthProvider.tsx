@@ -6,12 +6,12 @@ interface AuthProviderProps {
 }
 const AuthContext = createContext({
   isAuthenticated: false,
-  getAccessToken: () => {},
-  saveUser: (userData: AuthResponse) => {},
-  getRefreshToken: () => {},
+  getAccessToken: () => { },
+  saveUser: (userData: AuthResponse) => { },
+  getRefreshToken: () => { },
   getUser: () => ({} as User | undefined),
-  signOut: () => {},
-  guardarTablaID:(id)=>{},
+  signOut: () => { },
+  guardarTablaID: (id) => { },
 });
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -45,14 +45,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return json.body.accessToken;
       } else throw new Error(response.statusText);
     } catch (error) {
-      
+
       return null;
     }
   }
   function getUser() {
     return user;
   }
-  async function getUserInfo(accessToken:string) {
+  async function getUserInfo(accessToken: string) {
     try {
       const response = await fetch(`https://localhost:4000/api/auth/user`, {
         method: "GET",
@@ -80,10 +80,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } else {
       const token = getRefreshToken();
       if (token) {
-        const newAccessToken = await requestNewAccessToken(token);        
+        const newAccessToken = await requestNewAccessToken(token);
         if (newAccessToken) {
-          const userInfo = await getUserInfo(newAccessToken);          
-          if (userInfo) {   
+          const userInfo = await getUserInfo(newAccessToken);
+          if (userInfo) {
             saveSessionInfo(userInfo, newAccessToken, token);
             setIsLoading(false);
             return;
@@ -117,14 +117,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       userData.body.accessToken,
       userData.body.refreshToken
     );
+    //setear el id en el local storage
+    localStorage.setItem('idPerfilSeguridad', userData.body.userInfo.idPerfilSeguridad);
   }
-  function signOut(){
+  function signOut() {
     setIsAuthenticated(false);
     setAccessToken("");
     setUser(undefined);
     localStorage.removeItem("token");
   }
-  
+
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, getAccessToken, saveUser, getRefreshToken, getUser, signOut, guardarTablaID, }}

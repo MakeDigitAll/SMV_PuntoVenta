@@ -17,7 +17,7 @@ export interface AuthResponse {
       idPerfilSeguridad:string;
       apellido:string;
       email:string;
-      
+      idPerfilSeguridad:string;
   }
   export interface AccessTokenResponse{
     statusCode: number;
