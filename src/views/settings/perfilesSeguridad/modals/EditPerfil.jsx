@@ -2028,11 +2028,11 @@ const ModalUserInfo = ({ onClose, data }) => {
                                         <Checkbox
                                             onValueChange={() =>
                                                 setDefaultValues(
-                                                    "crear_nuevas_transferencias",
-                                                    selectedData.crear_nuevas_transferencias ? false : true
+                                                    "crear_nuevas_transferencias_almacenes",
+                                                    selectedData.crear_nuevas_transferencias_almacenes ? false : true
                                                 )
                                             }
-                                            isSelected={selectedData.crear_nuevas_transferencias}
+                                            isSelected={selectedData.crear_nuevas_transferencias_almacenes}
                                         >
                                             Crear nuevas transferencias
                                         </Checkbox>
