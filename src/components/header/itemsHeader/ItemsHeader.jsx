@@ -109,62 +109,6 @@ const ItemsHeader = () => {
       roleId: "0",
     },
   ];
-  //Permisos que se van a guardar temoralmente por 5 minutos en el localstorage
-  // Función para establecer un elemento en el localStorage con tiempo de expiración
-  function setItemWithExpiry(key, value, expiryInMinutes) {
-    const now = new Date();
-    const item = {
-      value: value,
-      expiry: now.getTime() + expiryInMinutes * 60 * 1000
-    };
-    localStorage.setItem(key, JSON.stringify(item));
-  }
-
-  // Función para obtener un elemento del localStorage
-  function getItemWithExpiry(key) {
-    const itemString = localStorage.getItem(key);
-    if (!itemString) {
-      return null;
-    }
-    const item = JSON.parse(itemString);
-    const now = new Date();
-    if (now.getTime() > item.expiry) {
-      // Si el elemento ha expirado, lo eliminamos del localStorage
-      localStorage.removeItem(key);
-      return null;
-    }
-    return item.value;
-  }
-
-
-  useEffect(() => {
-    setData();
-  }, []);
-
-
-  const setData = async () => {
-    const miValor = getItemWithExpiry('permisos');
-    if (miValor) {
-      //no hacer nada
-    } else {
-      //obtener el idPerfilSeguridad del localstorage
-      const idPerfilSeguridad = Number(localStorage.getItem('idPerfilSeguridad'));
-
-      try {
-        const response = await fetch(`https://localhost:4000/PerfilesSeguridad/${idPerfilSeguridad}`);
-        const data = await response.json();
-        if (response.ok) {
-          setItemWithExpiry('permisos', data, 5);
-        }
-      } catch {
-        toast.error("Error al cargar los datos", {
-          position: "bottom-right",
-          theme: "colored",
-        });
-      }
-    }
-  }
-
 
   return (
     <div className="place-content-center">

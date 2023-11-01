@@ -73,8 +73,39 @@ import AccesPointProductosView from "./views/pointSale/AccesPoint.Products.jsx";
 import Customer from "./views/pointSale/Customer.jsx";
 import ListCashCuts from "./views/pointSale/CashCuts.jsx";
 import CustomerDebts from "./views/pointSale/CustomerDebts.jsx";
+import Unautorized from "../src/components/routes/Unauthorized.jsx";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const App = () => {
+
+
+  useEffect(() => {
+    setData();
+  }, []);
+
+
+  const [permisos, setPermisos] = useState([]);
+
+  const setData = async () => {
+
+    //obtener el idPerfilSeguridad del localstorage
+    const idPerfilSeguridad = Number(localStorage.getItem('idPerfilSeguridad'));
+
+    try {
+      const response = await fetch(`https://localhost:4000/PerfilesSeguridad/${idPerfilSeguridad}`);
+      const data = await response.json();
+      if (response.ok) {
+        setPermisos(data);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -95,7 +126,7 @@ const App = () => {
         },
         {
           path: "/Products/ProductList",
-          element: <ProductList />,
+          element: permisos.ver_catalogo_de_productos ? <ProductList /> : <Unautorized />,
         },
         {
           path: "/home/VerAlmacen",
@@ -123,7 +154,7 @@ const App = () => {
         },
         {
           path: "/Administration/AccountStates",
-          element: <AccountStates />,
+          element: permisos.ver_estado_de_cuenta ? <AccountStates /> : <Unautorized />,
         },
         {
           path: "/Administration/CollectionDay",
@@ -131,7 +162,7 @@ const App = () => {
         },
         {
           path: "/Administration/MarginSales",
-          element: <MarginSales />,
+          element: permisos.consultar_reporte_de_margen_de_ventas ? <MarginSales /> : <Unautorized />,
         },
         {
           path: "/Administration/SalesReport",
@@ -139,7 +170,7 @@ const App = () => {
         },
         {
           path: "/Administration/PriceList",
-          element: <PriceList />,
+          element: permisos.crear_lista_de_precios ? <PriceList /> : <Unautorized />,
         },
         {
           path: "/Administration/Discounts",
@@ -187,7 +218,7 @@ const App = () => {
         },
         {
           path: "/PointofSale",
-          element: <PointofSale />,
+          element: permisos.punto_de_venta ? <PointofSale /> : <Unautorized />,
         },
         {
           path: "/PointofSale/Reports",
@@ -207,7 +238,7 @@ const App = () => {
         },
         {
           path: "/PointofSale/NewSale",
-          element: <NewSale />,
+          element: permisos.nueva_venta ? <NewSale /> : <Unautorized />,
         },
         {
           path: "/PointofSale/Sales",
@@ -231,15 +262,15 @@ const App = () => {
         },
         {
           path: "/Customers",
-          element: <ClientList />,
+          element: permisos.consultar_lista_de_clientes ? <ClientList /> : <Unautorized />,
         },
         {
           path: "/Sellers",
-          element: <SellersList />,
+          element: permisos.ver_catalogo_de_vendedores ? <SellersList /> : <Unautorized />,
         },
         {
           path: "/Sellers/Seller",
-          element: <Seller />,
+          element: permisos.crear_nuevo_vendedor ? <Seller /> : <Unautorized />,
         },
         {
           path: "/Sellers/:id/ViewSeller",
@@ -247,7 +278,7 @@ const App = () => {
         },
         {
           path: "/Sellers/:id/EditSeller",
-          element: <Seller />,
+          element: permisos.editar_vendedor ? <Seller /> : <Unautorized />,
         },
         {
           path: "/Settings/Users",
@@ -299,7 +330,7 @@ const App = () => {
         },
         {
           path: "/Store/InventoryXWarehouse",
-          element: <InventoryWarehouse />,
+          element: permisos.consultar_reporte_de_inventario_x_almacen ? <InventoryWarehouse /> : <Unautorized />,
         },
         {
           path: "/Store/Capture/Brands",
@@ -351,15 +382,15 @@ const App = () => {
         },
         {
           path: "/Sales/Quotes/NewQuote",
-          element: <Quote />,
+          element: permisos.crear_cotizaciones ? <Quote /> : <Unautorized />,
         },
         {
           path: "/Sales/Quotes/:id/ViewQuote",
-          element: <Quote />,
+          element: permisos.ver_cotizaciones ? <Quote /> : <Unautorized />,
         },
         {
           path: "/Sales/Quotes/:id/EditQuote",
-          element: <Quote />,
+          element: permisos.editar_cotizaciones ? <Quote /> : <Unautorized />,
         },
         {
           path: "/Sales/fillOrder",
