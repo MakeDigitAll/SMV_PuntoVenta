@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
+import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 
 const ListCashCuts = () => {
   const navigate = useNavigate(); 
@@ -49,6 +50,7 @@ const ListCashCuts = () => {
         <Spacer y={8} />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-10" style={{ overflow: "auto" }}>
+          <HeaderPointofSale/>
             <div className="">
               <div>
                 <div>

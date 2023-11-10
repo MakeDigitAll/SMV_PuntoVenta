@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Catalogue from "../../views/pointSale/Catalogue";
 import { Button } from "@nextui-org/react";
-import ProductsCards from "../../components/shared/CardsProducts";
+import ProductsCatalogue from "./CardsProductsCatalogue";
 
 const Cards = () => {
   const [categories, setCategories] = useState([]);
@@ -14,20 +14,24 @@ const Cards = () => {
 
   const loadCategoriesFromAPI = async () => {
     try {
-      const response = await fetch("https://localhost:4000/Categorias"); // Se va a cambiar la URL
-      const data = await response.json();
+      const response = await fetch("https://localhost:4000/productos");
+      
       if (response.ok) {
-        const uniqueCategories = data.filter((category, index, self) =>
-          index === self.findIndex((c) => c.nombre === category.nombre)
-        );
-        setCategories(uniqueCategories);
+        const data = await response.json();
+        console.log("Datos desde la API:", data); // Agregado para depuración
+        // Obtén solo las categorías únicas
+        const uniqueCategories = Array.from(new Set(data.map((product) => product.categoria)));
+        console.log("Categorías únicas:", uniqueCategories); // Agregado para depuración
+        setUniqueCategories(data);
+       
       }
     } catch (error) {
       console.error("Error al cargar datos desde la API:", error);
     }
     setShowCardData(Array(uniqueCategories.length).fill(false));
   };
-
+  
+  
   const openModal = () => {
     if (!initialModalOpen) {
       setSelectedCategory("Sin categoría");
@@ -57,8 +61,11 @@ const Cards = () => {
   }, []);
   const showAllCards = () => {
     console.log("Mostrando todas las tarjetas");
-    setShowCardData(Array(uniqueCategories.length).fill(true));
+    setModalIsOpen(false); 
+    setCategoriaSeleccionada(false); 
+    setShowCardData(Array(uniqueCategories.length).fill(false)); 
   };
+
   const handleCardPress = (categoryName) => {
     handleCategorySelection(categoryName);
     setPressed(true);
@@ -72,13 +79,16 @@ const Cards = () => {
       setShowCardData(Array(uniqueCategories.length).fill(false));
     }
   };
-  const Card = ({ img, nombre, id, inventory, index }) => {
+ 
+    
+  const Card = ({ imagen, categoria, id, inventario, index, showCardData, handleCardPress }) => {
+    console.log("Datos en la tarjeta:", { imagen, categoria, id, inventario, index });
     const [highlighted, setHighlighted] = useState(false);
     const [pressed, setPressed] = useState(false);
-
+  
     const cardStyle = {
       backgroundColor: highlighted ? "#ec7c6a" : "#1F1D2B",
-      padding: "8px",
+      padding: "4px",
       borderRadius: "12px",
       marginBottom: "20px",
       textAlign: "center",
@@ -91,17 +101,16 @@ const Cards = () => {
       transition: "background-color 0.3s ease-in-out",
       width: "180px",
     };
-
-    
+  
     return (
       <div
         style={pressed ? { ...cardStyle, color: "#00ff00" } : cardStyle}
-        onClick={() => handleCardPress(nombre)}
+        onClick={() => handleCardPress(categoria)}
         onMouseEnter={() => setHighlighted(true)}
         onMouseLeave={() => setHighlighted(false)}
       >
         <img
-          src={img}
+          src={imagen}
           style={{
             width: "160px",
             height: "160px",
@@ -110,16 +119,14 @@ const Cards = () => {
             boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.5)",
             borderRadius: "50%",
           }}
-          alt={img}
+          alt={imagen}
         />
         <p style={{ fontSize: "20px" }}>
-          {pressed ? "Seleccionado" : nombre}
+          {pressed ? "Seleccionado" : categoria}
         </p>
         <span>{id}</span>
         <p style={{ color: "#666666" }}>
-        <p style={{ color: "#666666" }}>
-  {showCardData[index] ? inventory : "Datos ocultos"} Categoria
-</p>
+          {showCardData[index] ? inventario : "Datos ocultos"} Categoria
         </p>
       </div>
     );
@@ -173,38 +180,38 @@ const Cards = () => {
   return (
     <div>
       {categoriaSeleccionada ? (
-        <ProductsCards selectedCategory={selectedCategory} />
+        <ProductsCatalogue selectedCategory={selectedCategory} />
       ) : (
         <div>
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "20px",
+              gap: "10px", // Ajusta el valor de gap para reducir el espacio
             }}
           >
             {uniqueCategories.map((category, index) => (
               <Card
                 key={index}
-                {...category}
+                imagen={category.imagen}
+                categoria={category.categoria}
+                id={category.id}
+                inventario={category.inventory}
                 index={index}
+                showCardData={showCardData}
+                handleCardPress={handleCardPress}
               />
             ))}
-            <EmptyCard handleCardClick={handleCardClick} selectedCategory={selectedCategory} />
+            <EmptyCard
+              handleCardClick={handleCardClick}
+              selectedCategory={selectedCategory}
+            />
           </div>
         </div>
       )}
-
-<Catalogue
-  selectedCategory={selectedCategory}
-  modalIsOpen={modalIsOpen}
-  setModalIsOpen={setModalIsOpen}
-  buttonText="Catalogo"
-  handleCardClick={handleCardClick}
-/>
-<Button onClick={showAllCards}>Mostrar Tarjetas</Button>
+  
+      <Button onClick={showAllCards}>Regresar</Button>
     </div>
-  );
-};
+  );};
 
 export default Cards;

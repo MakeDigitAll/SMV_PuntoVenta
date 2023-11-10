@@ -1,10 +1,26 @@
+import { Input, Spacer } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
+import { MdSearch } from "react-icons/md";
 
-const Card = ({ imagen, nombre, cantidad, precio, tienePromocion, descuento }) => {
+const Card = ({ imagen, nombre, cantidad, precio, tienePromoción, descuento }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const agregarProductoAOrden = () => {
+    // Crea un objeto con los detalles del producto seleccionado
+    const selectedProduct = {
+      id: "ID_DEL_PRODUCTO", // Reemplaza con el ID correcto
+      nombre: nombre,
+      cantidad: 1,
+      precio: precio,
+      descuento: descuento,
+    };
+
+    // Llama a la función para agregar el producto a la lista del código 1
+  
+  };
+
   const cardStyle = {
-    backgroundColor: isHovered ? "#FFA500" : "#1F1D2B",
+    backgroundColor: isHovered ? "#ec7c6a" : "#1F1D2B",
     padding: "4px",
     borderRadius: "12px",
     marginBottom: "20px",
@@ -16,7 +32,8 @@ const Card = ({ imagen, nombre, cantidad, precio, tienePromocion, descuento }) =
     color: isHovered ? "#ffffff" : "#888888",
     cursor: "pointer",
     transition: "background-color 0.3s ease-in-out",
-    width: "200px",
+    width: "180px",
+    
   };
 
   return (
@@ -24,6 +41,7 @@ const Card = ({ imagen, nombre, cantidad, precio, tienePromocion, descuento }) =
       style={cardStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={agregarProductoAOrden}
     >
       <img
         src={imagen}
@@ -43,25 +61,37 @@ const Card = ({ imagen, nombre, cantidad, precio, tienePromocion, descuento }) =
       <p style={{ color: "#666666" }}>
         Descuento: {descuento}%
       </p>
-      {tienePromocion === 1 && (
+      {tienePromoción === 1 && (
         <span className="text-yellow-500">★ Tiene Promoción</span>
       )}
     </div>
   );
 };
 
-const CardList = ({ data }) => (
-  <div className="grid grid-cols-6 gap-2" style={{ marginBottom: "20px" }}>
-    {data.map((item, index) => (
-      <Card key={index} {...item} />
-    ))}
-  </div>
-);
+const CardList = ({ data }) => {
+ 
+  const sortedData = [...data].sort((a, b) => a.nombre.localeCompare(b.nombre));
 
+  return (
+    <div className="grid grid-cols-6 gap-2" style={{ marginBottom: "20px" }}>
+      {sortedData.map((item, index) => (
+        <Card key={index} {...item} />
+      ))}
+    </div>
+  );
+};
 const ProductsCards = ({ selectedCategory }) => {
   const [products, setProducts] = useState([]);
-  const [nameSearchQuery, setNameSearchQuery] = useState(""); // Término de búsqueda por nombre
-  const [idSearchQuery, setIdSearchQuery] = useState(""); // Término de búsqueda por ID
+  const [nameSearchQuery, setNameSearchQuery] = useState("");
+  const [idSearchQuery, setIdSearchQuery] = useState("");
+ 
+  const filteredProductsById = selectedCategory
+    ? products.filter((product) => product.id.toString() === selectedCategory)
+    : products;
+
+  const filteredProductsByIdSearch = filteredProductsById.filter((product) =>
+    product.id.toString().includes(idSearchQuery)
+  );
 
   const loadProductsFromAPI = async () => {
     try {
@@ -79,62 +109,68 @@ const ProductsCards = ({ selectedCategory }) => {
     loadProductsFromAPI();
   }, []);
 
-  // Filtrar productos por nombre
-  const filteredProductsByName = selectedCategory
-    ? products.filter((product) => product.nombre === selectedCategory)
-    : products;
-
-  // Filtrar productos por ID
-  const filteredProductsById = selectedCategory
-    ? products.filter((product) => product.id.toString() === selectedCategory)
-    : products;
-
-  // Función para manejar cambios en el campo de búsqueda por nombre
   const handleNameSearchChange = (event) => {
     setNameSearchQuery(event.target.value);
   };
 
-  // Función para manejar cambios en el campo de búsqueda por ID
   const handleIdSearchChange = (event) => {
     setIdSearchQuery(event.target.value);
   };
 
-  // Filtrar productos por nombre en función del término de búsqueda
-  const filteredProductsByNameSearch = filteredProductsByName.filter((product) =>
-    product.nombre.toLowerCase().includes(nameSearchQuery.toLowerCase())
-  );
+  const handleAgregarProductoAOrden = (selectedProduct) => {
+    const productoEnLista = {
+      id: selectedProduct.id,
+      nombre: selectedProduct.nombre,
+      cantidad: 1,
+      precio: selectedProduct.precio,
+      descuento: selectedProduct.descuento,
+    };
 
-  // Filtrar productos por ID en función del término de búsqueda
-  const filteredProductsByIdSearch = filteredProductsById.filter((product) =>
-    product.id.toString().includes(idSearchQuery)
-  );
+    setProductosSeleccionados([...productosSeleccionados, productoEnLista]);
 
+    
+  };
+  const filteredProductsByNameSearch = products.filter((product) =>
+  product.nombre.toLowerCase().includes(nameSearchQuery.toLowerCase())
+);
   return (
     <div>
       <div className="mb-8">
         <div style={{ marginBottom: "16px" }}>
-          <input
-            type="text"
-            placeholder="Nombre..."
-            className="p-2 rounded-lg border border-orange-500"
-            value={nameSearchQuery}
-            onChange={handleNameSearchChange}
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder="SKU"
-            className="p-2 rounded-lg border border-orange-500"
-            value={idSearchQuery}
-            onChange={handleIdSearchChange}
-          />
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col w-[450px] sm:max-w-[44%]">
+              <Input
+                type="text"
+                size="sm"
+                placeholder="Buscar por nombre"
+                startContent={<MdSearch />}
+                value={nameSearchQuery}
+                onChange={handleNameSearchChange}
+              />
+            </div>
+            <div className="flex flex-col w-[450px] sm:max-w-[44%]">
+              <Input
+                type="text"
+                size="sm"
+                placeholder="SKU"
+                startContent={<MdSearch />}
+                value={idSearchQuery}
+                onChange={handleIdSearchChange}
+              />
+            </div>
+          </div>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+         <Spacer></Spacer>
+          <CardList data={nameSearchQuery ? filteredProductsByNameSearch : filteredProductsByIdSearch} />
         </div>
       </div>
-
-      <CardList data={nameSearchQuery ? filteredProductsByNameSearch : filteredProductsByIdSearch} />
     </div>
   );
-};
-
+}
 export default ProductsCards;

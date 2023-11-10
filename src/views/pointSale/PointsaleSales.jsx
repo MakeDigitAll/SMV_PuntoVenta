@@ -11,6 +11,7 @@ import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { TbDotsVertical } from "react-icons/tb";
 import PriceCheck from "./PricesCheck";
+import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
   
 const PointsaleSales = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -98,6 +99,7 @@ const PointsaleSales = () => {
         <Spacer y={2} />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-10" style={{ overflow: "auto" }}>
+          <HeaderPointofSale/>
             <div className="">
               <div>
                 <div>

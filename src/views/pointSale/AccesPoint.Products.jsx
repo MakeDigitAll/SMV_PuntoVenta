@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {  Button, Input, Modal, Spacer, Table } from "@nextui-org/react";
+import { Button, Input, Spacer, Table, Modal,ModalFooter, ModalHeader, ModalContent, useModal, useDisclosure } from "@nextui-org/react";
 import { RiDeleteBin5Line } from "react-icons/ri"; 
 import { MdSearch } from "react-icons/md";
-import ModalCatalogue from "./Catalogue";
-import AddExcelOrders from "../Excel/addExcel/addExcelOrders";
-
 import Catalogue from "./Catalogue";
 import Cards from "../../components/shared/Cards";
-
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 const AccesPointProductosView = () => {
   const [productos, setProductos] = useState([]);
   const [productosEnOrden, setProductosEnOrden] = useState([]);
@@ -19,19 +17,28 @@ const AccesPointProductosView = () => {
   const [buscador, setBuscador] = useState("");
   const [originalProductos, setOriginalProductos] = useState([]);
   const [idBuscado, setidBuscado] = useState("");
-
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [descuento, setDescuento] = useState(0);
+const [descuento, setDescuento] = useState(0);
+const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
 
+const handleCobrar = () => {
+  navigate("/PointofSale/Sales");
+};
+const handleShowModal = () => {
+  onOpen();
+};
+const handleCloseModal = () => {
+  onClose();
+};
   const productsPerPage = 3;
-
   async function loadProductosFromDB() {
     try {
       const response = await fetch("https://localhost:4000/Productos");
       const data = await response.json();
       if (response.ok) {
         setProductos(data);
-        setOriginalProductos(data); // Guardar una copia de los productos originales
+        setOriginalProductos(data);
       }
     } catch (error) {
       console.error("Error al cargar los datos:", error);
@@ -40,10 +47,10 @@ const AccesPointProductosView = () => {
   useEffect(() => {
     loadProductosFromDB();
   }, []);
-
+  
   const calcularTotal = (productos) => {
     return productos.reduce((total, producto) => {
-      const subtotal = producto.precio * producto.cantidad * (1 - producto.descuento / 100); // Cambio de precioUnitario a precio
+      const subtotal = producto.precio * producto.cantidad * (1 - producto.descuento / 100);
       return total + subtotal;
     }, 0);
   };
@@ -55,6 +62,9 @@ const AccesPointProductosView = () => {
     const total = calcularTotal(productosEnOrden);
     setTotalProductosEnOrden(total);
   };
+
+  useEffect(() => {
+  }, [productosEnOrden]);
 
   useEffect(() => {
     const totalOrden = calcularTotal(productosEnOrden);
@@ -75,15 +85,28 @@ const paginate = (pageNumber) => {
 };
 
  
- const handleApplyDiscount = () => {
+const handleApplyDiscount = () => {
+  if (descuento>100 || descuento<0) {
+    toast.error("Tu descuento debe ser entre 1 y 100", {
+      position: "bottom-right",
+      theme: "colored",
+    });
+  } else {
+    const descuentoAplicado = (descuento / 100) * totalProductosEnOrden;
+
     // Aplicar el descuento al total
-    const totalConDescuento = totalProductosEnOrden - descuento;
+    const totalConDescuento = totalProductosEnOrden - descuentoAplicado;
     setTotalProductosEnOrden(totalConDescuento);
 
     // Cerrar el modal
-    handleCloseModal();
-  };
-  
+    onClose();
+  }
+};
+const handleKeyDown = (e) => {
+  if (e.key === "Enter") {
+    handleApplyDiscount();
+  }
+};
 
 const handleAgregarProductoAOrden = (selectedProduct) => {
   const cantidadDisponible = selectedProduct.cantidad;
@@ -215,13 +238,9 @@ const filtrarProductosPorid = (productos, idABuscar) => {
       setProductos(productosFiltrados);
     }
   };
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-  const handleShowModal = () => {
-    console.log("Opening modal"); // Add this line for debugging
-    setShowModal(true);
-  };
+
+  
+  
   return (
     <div style={{ textAlign: "center" }}>
       <style>
@@ -276,7 +295,20 @@ const filtrarProductosPorid = (productos, idABuscar) => {
       onChange={handleSearchid}
     />
   </div>
- <Catalogue></Catalogue>
+  <Catalogue/>
+  <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+
 </div>
         <Spacer y={2} />
         <h2 style={{ textAlign: 'left' }}>Productos</h2>
@@ -406,38 +438,50 @@ const filtrarProductosPorid = (productos, idABuscar) => {
           </tbody>
         </table>
         <p>Total en la orden: {totalProductosEnOrden.toFixed(2)}</p>
-        <div className="flex justify-end">
-        <Button variant="danger" className="custom-button">
-  Cobrar
-</Button>
-</div>
       </div>
       <div className="flex justify-end">
-        <Button variant="danger" className="custom-button" onClick={handleShowModal}>
+        <Button
+          variant="danger"
+          className="custom-button"
+          onClick={handleShowModal}
+        >
           Aplicar Descuento
         </Button>
       </div>
-      <Modal open={showModal} onClose={handleCloseModal}>
-        <Modal.Header>Aplicar Descuento</Modal.Header>
-        <Modal.Content>
+      <Button
+        variant="danger"
+        className="custom-button"
+        onClick={handleCobrar}
+      >
+        Cobrar
+      </Button>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onClose}
+        size="sm"
+        disableBackdropClick
+      >
+        <ModalHeader>Aplicar Descuento</ModalHeader>
+        <ModalContent>
           <Input
             type="number"
             size="sm"
             placeholder="Ingrese el descuento"
             value={descuento}
             onChange={(e) => setDescuento(parseFloat(e.target.value))}
+            onKeyDown={handleKeyDown}
           />
-        </Modal.Content>
-        <Modal.Footer>
+        </ModalContent>
+        <ModalFooter>
           <Button variant="primary" onClick={handleApplyDiscount}>
             Aplicar Descuento
           </Button>
-          <Button variant="default" onClick={handleCloseModal}>
+          <Button variant="default" onClick={onClose}>
             Cerrar
           </Button>
-        </Modal.Footer>
+        </ModalFooter>
       </Modal>
-      <Cards></Cards>
+   
             
     </div>
     

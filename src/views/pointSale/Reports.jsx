@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { useState } from "react";
+import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 const itemsReports = [
   {
       id: 1,
@@ -39,6 +40,7 @@ const Reports = () => {
         <SidebarMovil />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-12">
+          <HeaderPointofSale/>
             {/* <div className="p-12 bg-gray-100"> */}
             <div className="">
               <div>

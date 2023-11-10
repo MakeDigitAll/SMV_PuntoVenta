@@ -13,6 +13,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdMoney } from "react-icons/md";
 import AccesPointProductosView from './AccesPoint.Products';
 import { useLocation } from 'react-router-dom';
+import HeaderPointofSale from '../../components/header/headerC/HederPointofSale';
 
 const NewSale = () => {
   const [showOrder, setShowOrder] = useState(false);
@@ -34,6 +35,7 @@ const NewSale = () => {
         <Spacer y={8} />
         <main className="lg:pl-32 lg:pr-96 pb-20">
           <div className="p-12">
+          <HeaderPointofSale/>
         {/* <div className="p-12 bg-gray-100"> */}
         <div className="">
           <div>

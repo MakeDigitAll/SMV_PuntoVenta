@@ -15,6 +15,7 @@ import { useState ,useEffect} from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { TbDotsVertical, TbPlus } from "react-icons/tb";
+import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 
 const Customers = () => {
   const navigate = useNavigate(); 
@@ -56,6 +57,7 @@ const Customers = () => {
         <Spacer y={8} />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-10" style={{ overflow: "auto" }}>
+          <HeaderPointofSale/>
             <div className="">
               <div>
                 <div>
