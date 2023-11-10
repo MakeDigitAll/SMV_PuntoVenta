@@ -15,6 +15,7 @@ import {
   Pagination,
   User,
   Checkbox,
+  Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 } from "@nextui-org/react";
 import { statusOptions } from "./data";
 import { TbDotsVertical, TbPlus, TbReload } from "react-icons/tb";
@@ -25,10 +26,12 @@ import Link from "@mui/material/Link";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
+import UserImage from "../user/UserImage";
+import Images from "../../components/images/Images";
 import AddExcelProducts from "../Excel/addExcel/addExcelProducts";
 import ExcelProducts from "../Excel/exports/ExcelProducts";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader";
+import moment from "moment";
 
 const columns = [
   { name: "Imagen", uid: "Imagen", sortable: true },
@@ -73,6 +76,8 @@ const ProductList = () => {
     }
   }
 
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [disableCounter, setDisableCounter] = useState(0);
   const [data, setData] = useState([]);
   async function loadTask() {
     try {
@@ -142,6 +147,58 @@ const ProductList = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
+  //////////////////////// DESHABILITAR PRODUCTO /////////////////////////////
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal, onOpenChange: onOpenChangeModal } = useDisclosure();
+
+
+  const [disableID, setDisableID] = useState("");
+  const handleDisable = (id) => {
+    onOpenModal();
+    setDisableID(id);
+  }
+
+  async function handleDisableTrue() {
+    console.log(disableID);
+    async function disable() {
+      try {
+        const res = await fetch(`https://localhost:4000/ProductosDisable/${disableID}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: disableID }),
+        });
+        if (res.ok) {
+          toast.warning("Deshabilitando Producto", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+          onCloseModal(true);
+          setDisableCounter((prevCounter) => prevCounter + 1);
+        } else {
+          toast.error("Error al deshabilitar Producto", {
+            position: "bottom-right",
+            theme: "colored",
+          });
+        }
+      } catch (error) {
+        toast.error("Error al deshabilitar Producto", {
+          position: "bottom-right",
+          theme: "colored",
+        });
+      }
+      finally {
+        setIsDataLoading(true);
+        await loadTask();
+        setIsDataLoading(false);
+      }
+    }
+    disable();
+  }
+
+  ////////////////////// FIN DESHABILITAR PRODUCTO //////////////////////////
+
+
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -163,18 +220,24 @@ const ProductList = () => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "name":
-        return <User avatarProps={{ radius: "lg", src: data.avatar }} />;
-      case "Nombre":
+      case "Imagen":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{data.nombre}</p>
-          </div>
+          <Images
+            idImage={data.id}
+            designType="tabla"
+            ruta={"/api/ProductImage/"}
+          />
         );
       case "ID":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{data.idproducto}</p>
+          </div>
+        );
+      case "Nombre":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{data.nombre}</p>
           </div>
         );
       case "CodFab":
@@ -208,13 +271,13 @@ const ProductList = () => {
       case "CodSAT":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">Aun no se define</p>
+            <p className="text-bold text-small capitalize">{data.codigoSat}</p>
           </div>
         );
       case "Actualizado":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">Generico</p>
+            <p className="text-bold text-small capitalize">{moment(data.actualizado).format("DD/MM/YYYY")}</p>
           </div>
         );
       case "Activo":
@@ -257,9 +320,9 @@ const ProductList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Products/${data.id}/ViewProduct`)}>Ver Producto</DropdownItem>
+                <DropdownItem onPress={() => navigate(`/Products/${data.id}/EditProduct`)}>Editar Producto</DropdownItem>
+                <DropdownItem className="text-danger" color="danger" onPress={() => handleDisable(data.id)}>Deshabilitar Producto</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -536,6 +599,28 @@ const ProductList = () => {
           )}
         </TableBody>
       </Table>
+      <Modal
+        isOpen={isOpenModal}
+        onOpenChange={onOpenChangeModal}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">¿SEGURO QUE DESEA DESHABILITAR ESTE PRODUCTO?</ModalHeader>
+              <ModalBody>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancelar
+                </Button>
+                <Button color="primary" onPress={handleDisableTrue}>
+                  Aceptar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

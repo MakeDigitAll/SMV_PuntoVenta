@@ -398,6 +398,14 @@ const App = () => {
           element: <Product />,
         },
         {
+          path: "/Products/:id/ViewProduct",
+          element: <Product />,
+        },
+        {
+          path: "/Products/:id/EditProduct",
+          element: <Product />,
+        },
+        {
           path: "/POS/Access",
           element: <AccesPoint />,
         },

@@ -30,13 +30,17 @@ import {
   RiProductHuntFill,
 } from "react-icons/ri";
 import { MdCamera, MdKeyboardArrowDown, MdProductionQuantityLimits } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ItemsHeader from "../../components/header/itemsHeader/ItemsHeader.jsx";
 import { format } from "date-fns";
 import { MdSave } from "react-icons/md";
 import http from "../../components/axios/Axios";
 import Crop from "../../components/crop/Crop.jsx";
+import Images from "../../components/images/Images";
 const Product = () => {
+
+  const params = useParams();
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [photoURL, setPhotoURL] = useState("");
   const [openCrop, setOpenCrop] = useState(false);
   const [file, setFile] = useState(null);
@@ -237,7 +241,7 @@ const Product = () => {
     fileInputRef4.current.click();
   };
 
-
+  ///////////////////////////// SUBMIT DE DATOS HACIA EL API //////////////////////////
   async function handleSubmit(e) {
     e.preventDefault();
     if (!file && !file2 && !file3 && !file4) {
@@ -299,15 +303,11 @@ const Product = () => {
       return;
     }
     setValidationErrors({});
-
     const formData = new FormData();
-
     file && formData.append("imagen", file);
     file2 && formData.append("imagen2", file2);
     file3 && formData.append("imagen3", file3);
     file4 && formData.append("imagen4", file4);
-
-
     const document = JSON.stringify({
       nombreProducto: user.nombreProducto,
       codigoFab: user.codigoFab,
@@ -328,6 +328,7 @@ const Product = () => {
       venta: ventaToSave,
       backOrder: backOrderToSave,
 
+      //COSTO Y PRECIO
       impuesto: user.impuesto,
       impuestoRetenido: user.impuestoRetenido,
       precio: user.precio,
@@ -335,7 +336,6 @@ const Product = () => {
       total: user.total,
       precioAnterior: user.precioAnterior,
     });
-
     formData.append("document", document);
     try {
       const result = await http.post(
@@ -351,7 +351,6 @@ const Product = () => {
         toast.success("Producto creado correctamente", { theme: "colored" });
         navigate("/Products/ProductList");
       } else {
-        console.log(result);
       }
     } catch (e) {
       e.response.status == 501
@@ -363,15 +362,188 @@ const Product = () => {
   }
 
 
-  async function loadTask() {
+  ///////////////// UPDATE DE DATOS HACIA EL API ///////////////////////
+  async function handleEdit(e) {
+    e.preventDefault();
+    if (!file && !file2 && !file3 && !file4) {
+      toast.error("Por favor, selecciona al menos una imagen", { theme: "colored" });
+      return;
+    }
+
+
+    const formData = new FormData();
+    file && formData.append("imagen", file);
+    file2 && formData.append("imagen2", file2);
+    file3 && formData.append("imagen3", file3);
+    file4 && formData.append("imagen4", file4);
+    const document = JSON.stringify({
+      nombreProducto: user.nombreProducto,
+      codigoFab: user.codigoFab,
+      codigoEmp: user.codigoEmp,
+      marcaProd: user.marcaId,
+      categoriaProd: user.categoriaId,
+      codigoSatProduct: user.codigoSatProduct,
+      codigoSatUnidad: user.codigoSatUnidad,
+      actualizado: user.actualizado,
+      existencia: user.existencia,
+      cantidad: user.cantidad,
+      unidadMedida: user.unidadMedida,
+      descuento: user.descuento,
+      comportamiento: user.comportamiento,
+      activo: activoToSave,
+      web: webToSave,
+      pos: posToSave,
+      venta: ventaToSave,
+      backOrder: backOrderToSave,
+
+      //COSTO Y PRECIO
+      impuesto: user.impuesto,
+      impuestoRetenido: user.impuestoRetenido,
+      precio: user.precio,
+      margenGanancia: user.margenGanancia,
+      total: user.total,
+      precioAnterior: user.precioAnterior,
+    });
+    formData.append("document", document);
+    try {
+      const result = await http.put(
+        `https://localhost:4000/ProductosEditing/${params.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (result.status == 200 ? true : false) {
+        toast.success("Producto editado correctamente", { theme: "colored" });
+        navigate("/Products/ProductList");
+      } else {
+      }
+    } catch (e) {
+      e.response.status == 501
+        ? toast.error("Favor de verificar el tipo de dato", {
+          theme: "colored",
+        })
+        : toast.error(e.response.data.body.error, { theme: "colored" });
+    }
+  }
+
+
+  ////////////////////////////////// MOSTRAR IMAGENES ///////////////////////////
+  async function loadProductImage(id) {
+    try {
+      console.log("id", id);
+      const response = await fetch(`https://localhost:4000/api/ProductImage/${id}`);
+      console.log(response);
+      if (response.status === 200) {
+        const data = await response.blob();
+        const imageUrl = URL.createObjectURL(data);
+        return imageUrl;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return null;
+  }
+
+  async function loadAllProductImages(id) {
+    try {
+      const response = await fetch(`https://localhost:4000/api/ImagesProduct/${id}`);
+      if (response.status === 200) {
+        const data = await response.json();
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        const img = document.createElement('img');
+        img.src = imageUrl();
+        console.log(img);
+
+        return {
+          imagen2: await loadImage((imagen2)),
+          imagen3: await loadImage(data.imagen3),
+          imagen4: await loadImage(data.imagen4),
+        };
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return null;
+  }
+  async function loadImage(imageUrl) {
+    try {
+      const response = await fetch(imageUrl);
+      if (response.status === 200) {
+        const data = await response.blob();
+        return URL.createObjectURL(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return null;
+  }
+
+
+
+
+  /////////////////////////// FIN DE MOSTRAR IMAGENES /////////////////////////
+
+
+  ///////////////// FUNCION PARA CARGAR LOS DATOS POR MEDIO DE ID ////////////////////
+  async function loadTask(id) {
     try {
       const response = await fetch(
-        "https://localhost:4000/Productos"
+        `https://localhost:4000/Productos/${id}`
       );
       const data = await response.json();
-      if (response.ok) {
-        setData(data);
+      setUser({
+        nombreProducto: data.nombre,
+        codigoFab: data.codigoFabricante,
+        codigoEmp: data.codigoFabricante,
+        marcaProd: data.marca,
+        categoriaProd: data.categoria,
+        codigoSatProduct: data.codigoSat,
+        codigoSatUnidad: data.codigoSatUnidad,
+        existencia: data.existencia,
+        cantidad: data.cantidad,
+        unidadMedida: data.unidadMedida,
+        descuento: data.descuento,
+        comportamiento: data.comportamiento,
+        activo: data.activo,
+        web: data.web,
+        pos: data.pos,
+        venta: data.venta,
+        backOrder: data.backOrder,
+        impuesto: data.impuesto,
+        impuestoRetenido: data.impuestoRetenido,
+        precio: data.precio,
+        margenGanancia: data.margenGanancia,
+        total: data.total,
+        precioAnterior: data.precioAnterior,
+      });
+      const url = window.location.pathname;
+      let arr = url.split("/");
+      console.log(arr[3]);
+      if (arr[3] === "ViewProduct") {
+        setIsInputDisabled(true);
+        document.getElementById('btnGuardar').style.display = 'none';
+        document.getElementById('button-file').style.display = 'none';
+        document.getElementById('button-file2').style.display = 'none';
+        document.getElementById('button-file3').style.display = 'none';
+        document.getElementById('button-file4').style.display = 'none';
       }
+      if (arr[3] === "EditProduct") {
+        setIsInputDisabled(false);
+      }
+
+      const productoImage = await loadProductImage(id);
+      setPhotoURL(productoImage || "");
+
+      const allProductoImages = await loadAllProductImages(id);
+      setPhotoURL2(allProductoImages.imagen2 || "");
+      setPhotoURL3(allProductoImages.imagen3 || "");
+      setPhotoURL4(allProductoImages.imagen4 || "");
+
+
     } catch {
       toast.error("Error al cargar los datos", {
         position: "bottom-right",
@@ -379,34 +551,30 @@ const Product = () => {
       });
     }
   }
-  // useEffect(() => {
-  //   loadTask();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
+  useEffect(() => {
+    if (params.id) {
+      loadTask(params.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
   const navigate = useNavigate();
   const [selected, setSelected] = useState("photos");
 
   //////////////////////// funcion para detectar los checbox ////////////////////////////
   const [isActivo, setIsActivo] = useState(false);
   const activoToSave = isActivo ? 1 : 0;
-  console.log("Activo: ", activoToSave);
 
   const [isWeb, setIsWeb] = useState(false);
   const webToSave = isWeb ? 1 : 0;
-  console.log("Web: ", webToSave);
 
   const [isPos, setIsPos] = useState(false);
   const posToSave = isPos ? 1 : 0;
-  console.log("POS: ", posToSave);
 
   const [isVenta, setIsVenta] = useState(false);
   const ventaToSave = isVenta ? 1 : 0;
-  console.log("venta: ", ventaToSave);
 
   const [isBackOrder, setIsBackOrder] = useState(false);
   const backOrderToSave = isBackOrder ? 1 : 0;
-  console.log("BackOrder: ", backOrderToSave);
   //////////////////////// Fin de funcion para detectar los checbox ////////////////////////////
 
 
@@ -435,9 +603,6 @@ const Product = () => {
     setUser({ ...user, ...selectedMarca });
 
   }
-  console.log("Marca: ", user.marcaProd)
-  console.log("Marca ID: ", user.marcaId)
-
 
 
   useEffect(() => {
@@ -471,8 +636,6 @@ const Product = () => {
     setUser({ ...user, ...selectedCategoria });
 
   }
-  console.log("Categoria:", user.categoriaProd)
-  console.log("Categoria ID : ", user.categoriaId)
 
 
 
@@ -483,11 +646,20 @@ const Product = () => {
   ///////////////// Fin de buscador y seleccionar las categorias //////////////////////////////
 
 
+  ///////////////////// FUNCION PARA VER SI HACE UN SUBMIT O UN UPDATE ///////////////////
+  async function handleFormSubmit(e) {
+    e.preventDefault();
 
-
-
-
-
+    if (params.id) {
+      console.log(params.id);
+      console.log("quiero Editar");
+      await handleEdit(e);
+    } else {
+      console.log("quiero crear uno nuevo");
+      await handleSubmit(e);
+    }
+  }
+  ///////////////////// FIN FUNCION PARA VER SI HACE UN SUBMIT O UN UPDATE ///////////////////
 
 
   return (
@@ -543,7 +715,7 @@ const Product = () => {
                   </Typography>
                 </Breadcrumbs>
               </div>
-              <form onChange={handleChange} onSubmit={handleSubmit}>
+              <form onChange={handleChange} onSubmit={handleFormSubmit}>
                 <Spacer y={6} />
                 <div className="bg-card rounded shadow-2xl px-4 md:p-8 mb-6">
                   <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
@@ -555,7 +727,7 @@ const Product = () => {
                         </h2>
                         {photoURL != "" ? (
                           <Image
-                            src={photoURL}
+                            src={photoURL2}
                             alt=""
                             width={300}
                             height={300}
@@ -596,23 +768,13 @@ const Product = () => {
 
                       <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-12 space-x-4 space-y-4 content-end">
                         <br />
-                        <div className="md:col-span-12 grid grid-cols-3 gap-4">
 
+                        <div className="md:col-span-12 grid grid-cols-3 gap-4">
                           <div className="flex flex-col items-center">
-                            {photoURL2 != "" ? (
-                              <Image
-                                src={photoURL2}
-                                alt=""
-                                width={150}
-                                height={200}
-                              />
+                            {photoURL2 !== "" ? (
+                              <Image src={photoURL2} alt="" width={150} height={200} />
                             ) : (
-                              <Image
-                                width={150}
-                                height={200}
-                                src="../../../public/Blank-Avatar.png"
-                                alt=""
-                              />
+                              <Image src="/Blank-Avatar.png" alt="" width={150} height={200} />
                             )}
                             <input
                               height={"lg"}
@@ -640,20 +802,10 @@ const Product = () => {
                           </div>
 
                           <div className="flex flex-col items-center">
-                            {photoURL3 != "" ? (
-                              <Image
-                                src={photoURL3}
-                                alt=""
-                                width={150}
-                                height={200}
-                              />
+                            {photoURL3 !== "" ? (
+                              <Image src={photoURL3} alt="" width={150} height={200} />
                             ) : (
-                              <Image
-                                width={150}
-                                height={200}
-                                src="../../../public/Blank-Avatar.png"
-                                alt=""
-                              />
+                              <Image src="/Blank-Avatar.png" alt="" width={150} height={200} />
                             )}
                             <input
                               height={"lg"}
@@ -681,20 +833,10 @@ const Product = () => {
                           </div>
 
                           <div className="flex flex-col items-center">
-                            {photoURL4 != "" ? (
-                              <Image
-                                src={photoURL4}
-                                alt=""
-                                width={150}
-                                height={200}
-                              />
+                            {photoURL4 !== "" ? (
+                              <Image src={photoURL4} alt="" width={150} height={200} />
                             ) : (
-                              <Image
-                                width={150}
-                                height={200}
-                                src="../../../public/Blank-Avatar.png"
-                                alt=""
-                              />
+                              <Image src="/Blank-Avatar.png" alt="" width={150} height={200} />
                             )}
                             <input
                               height={"lg"}
@@ -721,6 +863,7 @@ const Product = () => {
                             </Button>
                           </div>
                         </div>
+
 
 
 
@@ -812,6 +955,7 @@ const Product = () => {
                                     id="nombreProducto"
                                     value={user.nombreProducto}
                                     onValueChange={handleChange}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     type="text"
                                     label="Nombre del producto"
@@ -832,6 +976,7 @@ const Product = () => {
                                     value={user.codigoFab}
                                     name="codigoFab"
                                     onChange={handleChange}
+                                    disabled={isInputDisabled}
                                     labelPlacement="outside"
                                     placeholder=" "
                                     variant="faded"
@@ -844,6 +989,7 @@ const Product = () => {
                                     id="codigoEmp"
                                     onChange={handleChange}
                                     value={user.codigoEmp}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Código de Empresa"
                                     name="codigoEmp"
@@ -861,6 +1007,7 @@ const Product = () => {
                                         variant="faded"
                                         id="marcaProd"
                                         onChange={handleChange}
+                                        isDisabled={isInputDisabled}
                                         value={user.marcaProd || "Sin Marca Definida"}
                                         size={"sm"}
                                         label="Marca del producto"
@@ -889,6 +1036,7 @@ const Product = () => {
                                         id="categoriaProd"
                                         value={user.categoriaProd || "Sin Categoria Definida"}
                                         onChange={handleChange}
+                                        isDisabled={isInputDisabled}
                                         size={"sm"}
                                         label="Categoria del Producto"
                                         name="categoriaProd"
@@ -915,6 +1063,7 @@ const Product = () => {
                                     id="codigoSatProduct"
                                     onChange={handleChange}
                                     value={user.codigoSatProduct}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Codigo de SAT Producto"
                                     name="codigoSatProduct"
@@ -930,6 +1079,7 @@ const Product = () => {
                                     id="codigoSatUnidad"
                                     onChange={handleChange}
                                     value={user.codigoSatUnidad}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Codigo de SAT Unidad"
                                     name="codigoSatUnidad"
@@ -946,6 +1096,7 @@ const Product = () => {
                                     id="existencia"
                                     onChange={handleChange}
                                     value={user.existencia}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Existencia"
                                     name="existencia"
@@ -961,6 +1112,7 @@ const Product = () => {
                                     id="cantidad"
                                     onChange={handleChange}
                                     value={user.cantidad}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Cantidad"
                                     name="cantidad"
@@ -976,6 +1128,7 @@ const Product = () => {
                                     id="unidadMedida"
                                     onChange={handleChange}
                                     value={user.unidadMedida}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Unidad de Medida"
                                     name="unidadMedida"
@@ -991,6 +1144,7 @@ const Product = () => {
                                     id="descuento"
                                     onChange={handleChange}
                                     value={user.descuento}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Descuento"
                                     name="descuento"
@@ -1006,6 +1160,7 @@ const Product = () => {
                                     id="comportamiento"
                                     onChange={handleChange}
                                     value={user.comportamiento}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="comportamiento"
                                     name="comportamiento"
@@ -1073,6 +1228,7 @@ const Product = () => {
                                     id="impuesto"
                                     onChange={handleChange}
                                     value={user.impuesto}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Impuesto"
                                     name="impuesto"
@@ -1089,6 +1245,7 @@ const Product = () => {
                                     id="impuestoRetenido"
                                     onChange={handleChange}
                                     value={user.impuestoRetenido}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Impuesto Retenido"
                                     name="impuestoRetenido"
@@ -1105,6 +1262,7 @@ const Product = () => {
                                     id="precio"
                                     onChange={handleChange}
                                     value={user.precio}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Costo del Producto"
                                     name="precio"
@@ -1123,6 +1281,7 @@ const Product = () => {
                                     name="margenGanancia"
                                     onChange={handleChange}
                                     value={user.margenGanancia}
+                                    disabled={isInputDisabled}
                                     labelPlacement="outside"
                                     placeholder="0"
                                     variant="faded"
@@ -1135,6 +1294,7 @@ const Product = () => {
                                     id="total"
                                     onChange={handleChange}
                                     value={user.total}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Precio Base"
                                     name="total"
@@ -1150,6 +1310,7 @@ const Product = () => {
                                     id="precioAnterior"
                                     onChange={handleChange}
                                     value={user.precioAnterior}
+                                    disabled={isInputDisabled}
                                     size={"sm"}
                                     label="Precio Anterior"
                                     name="precioAnterior"
@@ -2380,6 +2541,7 @@ const Product = () => {
                           </Button>
                         )}
                         <Button
+                          id="btnGuardar"
                           className="min-w-[200px]"
                           color="success"
                           type="submit"
