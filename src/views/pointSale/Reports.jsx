@@ -44,39 +44,6 @@ const Reports = () => {
             {/* <div className="p-12 bg-gray-100"> */}
             <div className="">
               <div>
-                <div>
-                  <Breadcrumbs aria-label="breadcrumb" color="foreground">
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Home`)}
-                    >
-                      <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Inicio
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/PointofSale`)}
-                    >
-                      <MdDashboard sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Dashboard
-                    </Link>
-                    <Typography
-                      sx={{ display: "flex", alignItems: "center" }}
-                      className="text-foreground"
-                    >
-                      <MdReport sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Reportes
-                    </Typography>
-                  </Breadcrumbs>
-                </div>
                 <Spacer y={4} />
                 <Accordion
                   selectedKeys={selectedKeys}

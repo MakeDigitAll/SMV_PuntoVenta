@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
+import moment from "moment";
 
 const ListCashCuts = () => {
   const navigate = useNavigate(); 
@@ -54,48 +55,6 @@ const ListCashCuts = () => {
             <div className="">
               <div>
                 <div>
-                  <Breadcrumbs aria-label="breadcrumb" color="foreground">
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Home`)}
-                    >
-                      <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Inicio
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/PointofSale`)}
-                    >
-                      <MdDashboard sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Dashboard
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/PointofSale/Reports`)}
-                    >
-                      <MdReport sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Reportes
-                    </Link>
-                    <Typography
-                      sx={{ display: "flex", alignItems: "center" }}
-                      className="text-foreground"
-                    >
-                      <MdMoneyOff sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Listado de Cortes de Caja
-                    </Typography>
-                  </Breadcrumbs>
                   <Spacer y={8} />
                   <div
                     className="flex flex-col gap-4"
@@ -140,10 +99,10 @@ const ListCashCuts = () => {
                     {filteredItems.map((item) => (
                       <tr key={item.id} class="border-b border-gray-200">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {item.desde}
+                          {moment(item.desde).format("DD/MM/YYYY")}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {item.hasta}
+                          {moment(item.hasta).format("DD/MM/YYYY")}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {item.usuario}

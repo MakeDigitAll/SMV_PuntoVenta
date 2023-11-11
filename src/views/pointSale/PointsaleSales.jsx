@@ -12,11 +12,14 @@ import SidebarMovil from "../../components/shared/SidebarMovill";
 import { TbDotsVertical } from "react-icons/tb";
 import PriceCheck from "./PricesCheck";
 import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
+import moment from "moment";
+import CashReceipts from "./CashReceipts";
   
 const PointsaleSales = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalMode, setModalMode] = useState("entry"); 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpenSecondModal, setIsOpenSecondModal] = useState(false);
   const handleEntryClick = () => {
     setModalMode("entry");
     onOpen();
@@ -31,6 +34,17 @@ const PointsaleSales = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  
+  const openSecondModal = () => {
+    // Verifica el valor actual de modalMode
+    if (modalMode === "entry") {
+      setModalMode("out");
+    } else {
+      setModalMode("entry");
+    }
+    setIsOpenSecondModal(true);
+  };
+
   const itemsSales = [
     {
         id: 1,
@@ -99,41 +113,10 @@ const PointsaleSales = () => {
         <Spacer y={2} />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-10" style={{ overflow: "auto" }}>
-          <HeaderPointofSale/>
+            <HeaderPointofSale />
             <div className="">
               <div>
                 <div>
-                  <Breadcrumbs aria-label="breadcrumb" color="foreground">
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Home`)}
-                    >
-                      <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Inicio
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/PointofSale`)}
-                    >
-                      <MdDashboard sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Dashboard
-                    </Link>
-                    <Typography
-                      sx={{ display: "flex", alignItems: "center" }}
-                      className="text-foreground"
-                    >
-                      <MdMonetizationOn sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Ventas
-                    </Typography>
-                  </Breadcrumbs>
                   <Spacer y={8} />
                   <Accordion
                     selectedKeys={selectedKeys}
@@ -155,11 +138,10 @@ const PointsaleSales = () => {
                                 handleEntryClick();
                               } else if (item.name === "Salida Efectivo") {
                                 handleOutClick();
-                              }else if (item.name === "Checar Precios") {
+                              } else if (item.name === "Checar Precios") {
                                 handlePriceCheck();
                               }
                             }}
-                            
                           >
                             <CardBody className="overflow-visible py-2">
                               <div className="flex justify-center items-center">
@@ -227,7 +209,9 @@ const PointsaleSales = () => {
                             {item.ticket}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.fechaHora}
+                            {moment(item.fechaHora).format(
+                              "DD/MM/YYYY HH:mm:ss"
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {item.cliente}
@@ -316,7 +300,9 @@ const PointsaleSales = () => {
                                 </div>
                               </div>
                               <div className="lg:col-span-8">
-                                <button className="bg-red-300 hover:bg-red-400 text-gray-700 font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-start">
+                                <button
+                                className="bg-red-300 hover:bg-red-400 text-gray-700 font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-start"
+                                onClick={() => openSecondModal("entry")}>
                                   <span className="w-5 h-5 mr-2">
                                     <MdInbox />
                                   </span>
@@ -347,7 +333,13 @@ const PointsaleSales = () => {
                         )}
                       </ModalContent>
                     </Modal>
-                    <PriceCheck isOpen={isModalOpen} onClose={handleCloseModal}/>
+                    <PriceCheck
+                      isOpen={isModalOpen}
+                      onClose={handleCloseModal}
+                    />
+                    <CashReceipts
+                      isOpen={isOpenSecondModal} onClose={() => setIsOpenSecondModal(false)} modalMode={modalMode}
+                    />
                   </div>
                 </div>
               </div>

@@ -86,7 +86,7 @@ const ProductsCards = ({ selectedCategory }) => {
   const [idSearchQuery, setIdSearchQuery] = useState("");
  
   const filteredProductsById = selectedCategory
-    ? products.filter((product) => product.id.toString() === selectedCategory)
+    ? products.filter((product) => product.id && product.id.toString() === selectedCategory)
     : products;
 
   const filteredProductsByIdSearch = filteredProductsById.filter((product) =>
