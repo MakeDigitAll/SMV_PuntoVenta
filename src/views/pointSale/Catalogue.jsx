@@ -19,7 +19,7 @@ const contentStyle = {
   width: "100%", // Ajusta el ancho del contenido dentro del modal
 };
 
-const Catalogue = () => {
+const Catalogue = (selectedCategory) => {
   const [productos, setProductos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [originalProductos, setOriginalProductos] = useState([]);
@@ -55,12 +55,15 @@ const Catalogue = () => {
       setCategorySelected(true);
     }
   }, [isModalOpen]);
-
+  const handleCategorySelect = (selectedCategory) => {
+    
+    setCategorySelected(selectedCategory);
+  };
   return (
     <div style={{ textAlign: "center" }}>
       <div>
         <Button className="custom-button" size="sm" onClick={onOpen}>
-          Catálogo
+          Catálogo {}
         </Button>
         <Modal
           isOpen={isOpen}
@@ -69,7 +72,12 @@ const Catalogue = () => {
           blockScroll
           size="5xl"
           closeOnEsc
-          style={modalStyle}
+          style={{
+            margin: '20px', 
+            padding: '20px',
+          }}
+          backdrop="blur"
+          padding="200px"
         >
           <div style={contentStyle}>
             <ModalHeader>
@@ -79,7 +87,7 @@ const Catalogue = () => {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ borderBottom: "2px solid orange", padding: "10px" }}>
           
-                <h2>Catálogo</h2>
+            <h2>Catálogo: {categorySelected}</h2>
               </div>
               </div>
               
@@ -88,8 +96,8 @@ const Catalogue = () => {
               <Spacer></Spacer>
               <Spacer></Spacer>
               <Spacer></Spacer>
-              <Cards />
-              {categorySelected && <ProductsCards />}
+              <Cards onCategorySelect={handleCategorySelect} />
+              
             </ModalContent>
             <ModalFooter>
               <Button className="custom-button" size="sm" onClick={closeModal}>

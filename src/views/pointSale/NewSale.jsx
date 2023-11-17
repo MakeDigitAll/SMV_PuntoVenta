@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import { RiDashboard2Fill } from "react-icons/ri";
 import { MdDashboard, MdMoney } from "react-icons/md";
-import AccesPointProductosView from './AccesPoint.Products';
+import NewSaleProductos from './NewSaleProducts';
 import { useLocation } from 'react-router-dom';
 import HeaderPointofSale from '../../components/header/headerC/HederPointofSale';
 
@@ -31,49 +31,16 @@ const NewSale = () => {
         <SidebarMovil showCar={showCar} // Pasa el estado de showCar como una prop
         setShowCar={toggleCar} // Pasa la función de toggleCar
         currentPage={location.pathname} />
-        <Car showOrder={showOrder} setShowOrder={setShowOrder}/>
+        
         <Spacer y={8} />
         <main className="lg:pl-32 lg:pr-96 pb-20">
           <div className="p-12">
           <HeaderPointofSale/>
-        {/* <div className="p-12 bg-gray-100"> */}
+    
         <div className="">
           <div>
             <div>
-              <Breadcrumbs aria-label="breadcrumb" color="foreground">
-                <Link
-                  className="text-foreground"
-                  underline="hover"
-                  sx={{ display: "flex", alignItems: "center" }}
-                  color="foreground"
-                  href="#"
-                  onClick={() => navigate(`/Home`)}
-                >
-                  <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                  Inicio
-                </Link>
-                <Link
-                  className="text-foreground"
-                  underline="hover"
-                  sx={{ display: "flex", alignItems: "center" }}
-                  color="foreground"
-                  href="#"
-                  onClick={() => navigate(`/PointofSale`)}
-                >
-                  <MdDashboard sx={{ mr: 0.5 }} fontSize="inherit" />
-                  Dashboard
-                </Link>
-                <Typography
-                  sx={{ display: "flex", alignItems: "center" }}
-                  className="text-foreground"
-                >
-                  <MdMoney sx={{ mr: 0.5 }} fontSize="inherit" />
-                  Nueva Venta
-                </Typography>
-                <div>
-        <AccesPointProductosView/>
-      </div>
-              </Breadcrumbs>
+            <NewSaleProductos showOrder={showOrder} setShowOrder={setShowOrder}/>
             </div>
           </div>
         </div>

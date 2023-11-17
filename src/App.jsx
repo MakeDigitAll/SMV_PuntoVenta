@@ -69,11 +69,12 @@ import NewSale from "./views/pointSale/NewSale.jsx";
 import Product from "./views/products/Product.jsx";
 import AccesPoint from "./views/pointSale/AccesPointOfSale.jsx";
 import PointsaleSales from "./views/pointSale/PointsaleSales.jsx";
-import AccesPointProductosView from "./views/pointSale/AccesPoint.Products.jsx";
 import Customer from "./views/pointSale/Customer.jsx";
 import ListCashCuts from "./views/pointSale/CashCuts.jsx";
 import CustomerDebts from "./views/pointSale/CustomerDebts.jsx";
 import ProductsPOS from "./views/pointSale/productsPOS.jsx";
+
+import NewSaleProductos from "./views/pointSale/NewSaleProducts.jsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -258,6 +259,7 @@ const App = () => {
           path: "/Settings/Users",
           element: <Users />,
         },
+        
         {
           path: "/POS/Home",
           element: <PosHome />,
@@ -408,7 +410,7 @@ const App = () => {
         },
         {
           path: "/PointOfSaleProducts",
-          element: <AccesPointProductosView />,
+          element: <NewSaleProductos />,
         },
       ],
     },

@@ -69,11 +69,17 @@ const Card = ({ imagen, nombre, cantidad, precio, tienePromoción, descuento }) 
 };
 
 const CardList = ({ data }) => {
- 
   const sortedData = [...data].sort((a, b) => a.nombre.localeCompare(b.nombre));
 
   return (
-    <div className="grid grid-cols-6 gap-2" style={{ marginBottom: "20px" }}>
+    <div
+      className="grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // Ajusta este valor según tus necesidades
+        gap: "10px",
+      }}
+    >
       {sortedData.map((item, index) => (
         <Card key={index} {...item} />
       ))}
@@ -91,16 +97,20 @@ const ProductsCatalogue = ({ selectedCategory }) => {
         const response = await fetch("https://localhost:4000/Productos");
         const data = await response.json();
         if (response.ok) {
-          setProducts(data);
+          // Filtrar productos por categoría
+          const filteredProducts = data.filter(product => product.categoria == selectedCategory);
+          console.log("Categoría del producto:", selectedCategory);
+          
+          setProducts(filteredProducts);
         }
       } catch (error) {
         console.error("Error al cargar datos desde la API:", error);
       }
     };
-  
     useEffect(() => {
       loadProductsFromAPI();
-    }, []);
+    }, [selectedCategory]);
+   
   
     useEffect(() => {
       // Filtrar productos por nombre e ID
@@ -112,14 +122,7 @@ const ProductsCatalogue = ({ selectedCategory }) => {
       setFilteredProducts(filteredProducts);
     }, [nameSearchQuery, idSearchQuery, products]);
   
-    const handleNameSearchChange = (event) => {
-      setNameSearchQuery(event.target.value);
-    };
-  
-    const handleIdSearchChange = (event) => {
-      setIdSearchQuery(event.target.value);
-    };
-  
+   
     return (
       <div>
         <div className="mb-8">
