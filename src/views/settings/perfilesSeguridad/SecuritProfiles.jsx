@@ -39,6 +39,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ModalEditarPerfil from "./modals/EditPerfil";
+import { useAuth } from "../../../components/auth/AuthProvider"; 
 
 import axios from "axios";
 const columns = [
@@ -385,6 +386,64 @@ const SecuritProfiles = () => {
       });
     }
   };
+
+  ///////////////////////// MANEJO DE ACCESOS ////////////////
+  const auth = useAuth();
+  async function getUserId(){
+    if(auth.isAuthenticated){
+      const userId = auth.getUser().id;
+      console.log("ID del usuario: ", userId);
+    }
+  }
+
+  const [perfilSeguridad, setPerfilSeguridad] = useState(null);
+  async function loadDataUser(userId) {
+    console.log("Id usuario", userId);
+    try {
+      const response = await fetch(`https://localhost:4000/api/user/${userId}`);
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Id Perfil Seguridad: ",data.perfilSeguridad);
+        setPerfilSeguridad(data.perfilSeguridad);
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  async function loadPermisosSeguridad(){
+    console.log("entro el id de perfil de seguirdad", perfilSeguridad);
+    try{
+      const response = await fetch(`https://localhost:4000/PerfilesSeguridad/Permisos/${perfilSeguridad}`)
+      console.log("id perfil en otra funcion", perfilSeguridad);
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+      }
+    } catch {
+      toast.error("Error al cargar los datos", {
+        position: "bottom-right",
+        theme: "colored",
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      const userId = auth.getUser().id;
+      loadDataUser(userId);
+    }
+  }, [auth.isAuthenticated]);
+
+  useEffect(() => {
+    if (perfilSeguridad !== null) {
+      loadPermisosSeguridad();
+    }
+  }, [perfilSeguridad]);
+//////////////////////////// FIN DE MANEJO DE ACCESOS ///////////////////////////////// 
 
   const topContent = React.useMemo(() => {
     return (

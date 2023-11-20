@@ -80,7 +80,83 @@ const ModalUserInfo = ({ onClose, data }) => {
     }
         , []);
 
+///////////////////////////// FUNCION DE SELECCIONAR TODO PARA LOS DIFERENTES SUBMENUS //////////////////////
+const [selectAllDashboard, setSelectAllDashboard] = useState(false);
+const [selectedDashboard, setSelectedDashboard] = useState ({
+    ventas_del_mes: false,
+    ventas_del_ano: false,
+    ventas_del_dia_por_agente: false,
+    ventas_del_mes_por_agente: false,
+    top_5_desplazamiento: false,
+    inventario: false,
+    mensajes_desde_la_pagina: false,
+    tareas_agendadas: false,
+});
 
+const [selectedAllVentas, setSelectedAllVentas] = useState(false);
+const [selectedVentas, setSelectedVentas] = useState ({
+    ver_cotizaciones: false,
+    descuentos: false,
+    crear_cotizaciones: false,
+    editar_cotizaciones: false,
+    generacion_de_pedidos: false,
+    modificar_precios: false,
+    consultar_cotizaciones_de_todos: false,
+    acceso_a_cotizaciones_expiradas: false,
+    consultar_reporte_de_margen_de_ventas: false,
+    consultar_reporte_de_ventas: false,
+    ver_tipos_de_cambio: false,
+    capturar_tipos_de_cambio: false,
+    eliminar_tipo_de_cambio: false,
+    ver_cobranza: false,
+    mover_a_cuenta_cobranza: false,
+    extender_fecha: false,
+    ver_movimientos: false,
+    mover_a_cuenta_caja_general: false,
+    mover_a_cobranza: false,
+    consultar_surtido_de_pedidos: false,
+    consultar_surtido_de_todos: false,
+    abrir_pedidos_surtidos: false,
+    ver_pedidos: false,
+    capturar_formas_de_pago: false,
+    surtido_de_pedidos: false,
+    cancelar_pedido: false,
+    procesar_pedido: false,
+    guardar_pedido: false,
+    cancelacion_de_pedido: false,
+    consultar_pedido_de_todos: false,
+    reporte_de_facturas: false,
+    facturar_pedido: false,
+    consultar_notas_de_credito: false,
+    consultar_complementos_de_pago: false,
+    generar_notas_de_credito: false,
+    generar_complemento_de_pago: false,
+    consultar_reporte_de_cobranza: false,
+    surtir_pedido: false,
+});
+
+
+
+  const handleSelectAllDashboard = () => {
+    setSelectAllDashboard((prevSelectAll) => !prevSelectAll);
+    const newSelectedData = Object.fromEntries(
+      Object.keys(selectedDashboard).map((key) => [key, !selectAllDashboard])
+    );
+    setSelectedData(newSelectedData);
+  };
+
+  const handleSelectAllVentas = () => {
+    setSelectedAllVentas((prevSelectAll) => !prevSelectAll);
+    const newSelectedData = Object.fromEntries(
+      Object.keys(selectedVentas).map((key) => [key, !selectedAllVentas])
+    );
+    setSelectedData(newSelectedData);
+  };
+
+
+
+
+////////////////////////////////////////// FIN DE SELECCIONAR TODO /////////////////////////////////////////
 
 
     return (
@@ -102,13 +178,16 @@ const ModalUserInfo = ({ onClose, data }) => {
                             <Accordion>
                                 <AccordionItem key="1" aria-label="Dashboard" title="Dashboard">
                                     <div className="flex flex-col">
+                                        <Checkbox className="mb-2" onValueChange={handleSelectAllDashboard} isSelected={selectAllDashboard}>
+                                            Seleccionar Todo
+                                        </Checkbox>
                                         <Checkbox
-
                                             onValueChange={() =>
                                                 setDefaultValues(
                                                     "ventas_del_mes",
-                                                    selectedData.ventas_del_mes ? false : true
-                                                )
+                                                    !selectedDashboard.ventas_del_mes || selectedData.ventas_del_mes ? false : true
+                                                  )
+                                                  
                                             }
                                             isSelected={selectedData.ventas_del_mes}
                                         >
@@ -196,13 +275,16 @@ const ModalUserInfo = ({ onClose, data }) => {
 
                                 <AccordionItem key="2" aria-label="Ventas" title="Ventas">
                                     <div className="flex flex-col">
+                                        <Checkbox className="mb-2" onValueChange={handleSelectAllVentas} isSelected={selectedAllVentas}>
+                                            Seleccionar Todo
+                                        </Checkbox>
                                         <text>Cotizaciones</text>
                                         <Checkbox
 
                                             onValueChange={() =>
                                                 setDefaultValues(
                                                     "ver_cotizaciones",
-                                                    selectedData.ver_cotizaciones ? false : true
+                                                    !selectedVentas.ver_cotizaciones || selectedData.ver_cotizaciones ? false : true
                                                 )
                                             }
                                             isSelected={selectedData.ver_cotizaciones}

@@ -69,6 +69,8 @@ const itemsSales = [
 ];
 
 const ItemsSales = () => {
+ 
+
   const navigate = useNavigate();
   return (
     <div className="place-content-center">
