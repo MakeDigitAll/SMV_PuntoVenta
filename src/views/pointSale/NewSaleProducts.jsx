@@ -442,85 +442,59 @@ const NewSaleProductos = (props) => {
 
         </div>
         <Spacer y={2} />
-        <h2 style={{ textAlign: 'left' }}>Productos</h2>
-        <table
-          className="table text-black-400 border-separate space-y-6 text-sm"
-          style={{ fontFamily: "Gotham, sans-serif" }}
-        >
-          <thead className="bg-gray-800 text-black-500">
-            <tr>
-              <th className="p-3">Código</th>
-              <th className="p-3">Nombre</th>
-              <th className="p-3">Marca</th>
-              <th className="p-3">Categoria</th>
-              <th className="p-3">Cantidad</th>
-              <th className="p-3">Precio Unitario</th>
-              <th className="p-3">Descuento</th>
-              <th className="p-3">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentProducts.map((producto, index) => (
-              <tr key={index} className="bg-gray-800">
-                <td className="p-3">{producto.id}</td> {/* Cambiar a id */}
-                <td className="p-3">{producto.nombre}</td>
-                <td className="p-3">{producto.marca}</td>
-                <td className="p-3">{producto.categoria}</td>
-                <td className="p-3">{producto.cantidad}</td>
-                <td className="p-3">{producto.precio.toFixed(2)}</td>
-                <td className="p-3">{producto.descuento}%</td>
-                <td className="p-3">
-                  <Button
-                    variant="primary"
-                    onClick={() => handleAgregarProductoAOrden(producto)}
-                  >
-                    +
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div>
+  <h2 style={{ textAlign: 'left' }}>Productos</h2>
+  <div className="product-list" style={{  overflowY: 'auto' }}>
+    <table
+      className="table text-black-400 border-separate space-y-6 text-sm"
+      style={{ fontFamily: "Gotham, sans-serif", width: '100%' }}
+    >
+      <thead className="bg-gray-800 text-black-500">
+        <tr>
+          <th className="p-3">Código</th>
+          <th className="p-3">Nombre</th>
+          <th className="p-3">Marca</th>
+          <th className="p-3">Categoria</th>
+          <th className="p-3">Cantidad</th>
+          <th className="p-3">Precio Unitario</th>
+          <th className="p-3">Descuento</th>
+          <th className="p-3">Añadir</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
 
-        <div className="pagination" style={{ textAlign: 'left' }}>
-          <button
-            className="page-link"
-            onClick={() => {
-              if (currentPage > 1) {
-                paginate(currentPage - 1);
-              }
-            }}
-          >
-            &lt;
-          </button>
-          {Array.from({ length: Math.ceil(productosOrdenados.length / productsPerPage) }).map((_, index) => (
-            <button
-              key={index}
-              className={`page-link ${currentPage === index + 1 ? "active" : ""}`}
-              onClick={() => paginate(index + 1)}
-              style={{
-                margin: '0.2rem',
-                border: '1px solid #ccc',
-                padding: '0.3rem 0.5rem',
-                borderRadius: '4px',
-                background: currentPage === index + 1 ? '#007bff' : 'transparent',
-                color: '#fff', // Hace que el color del texto sea blanco
-              }}
-            >
-              {index + 1}
-            </button>
-          ))}
-          <button
-            className="page-link"
-            onClick={() => {
-              if (currentPage < Math.ceil(productosOrdenados.length / productsPerPage)) {
-                paginate(currentPage + 1);
-              }
-            }}
-          >
-            &gt;
-          </button>
-        </div>
+  <div className="product-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+    <table
+      className="table text-black-400 border-separate space-y-6 text-sm"
+      style={{ fontFamily: "Gotham, sans-serif", width: '100%' }}
+    >
+      <tbody>
+        {productosOrdenados.map((producto, index) => (
+          <tr key={index} className="bg-gray-800">
+            <td className="p-3">{producto.id}</td>
+            <td className="p-3">{producto.nombre}</td>
+            <td className="p-3">{producto.marca}</td>
+            <td className="p-3">{producto.categoria}</td>
+            <td className="p-3">{producto.cantidad}</td>
+            <td className="p-3">{producto.precio.toFixed(2)}</td>
+            <td className="p-3">{producto.descuento}%</td>
+            <td className="p-3">
+              <Button
+                variant="primary"
+                onClick={() => handleAgregarProductoAOrden(producto)}
+              >
+                +
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
 
         <h2 style={{ textAlign: 'left' }}>Productos en la orden</h2>
         <table
