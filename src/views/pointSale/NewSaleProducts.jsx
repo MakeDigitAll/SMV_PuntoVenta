@@ -18,7 +18,6 @@ const NewSaleProductos = (props) => {
   const [originalProductos, setOriginalProductos] = useState([]);
   const [idBuscado, setidBuscado] = useState("");
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const [descuento, setDescuento] = useState(0);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { isOpen: isOpenC, onOpen: onOpenC, onClose: onCloseC } = useDisclosure();
@@ -29,16 +28,11 @@ const NewSaleProductos = (props) => {
   const handleShowModal = () => {
     onOpen();
   };
-  const handleCloseModal = () => {
-    onClose();
-  };
+
   const handleShowModalCancelar = () => {
     onOpenC(true);
   };
-  const handleCloseModalCobrar = () => {
-    onCloseC();
-  };
-
+ 
   const productsPerPage = 3;
   async function loadProductosFromDB() {
     try {
@@ -62,35 +56,15 @@ const NewSaleProductos = (props) => {
       return total + subtotal;
     }, 0);
   };
-
-
-
-
-  const actualizarTotalProductosEnOrden = () => {
-    const total = calcularTotal(productosEnOrden);
-    setTotalProductosEnOrden(total);
-  };
-
-  useEffect(() => {
-  }, [productosEnOrden]);
-
   useEffect(() => {
     const totalOrden = calcularTotal(productosEnOrden);
     setTotalProductosEnOrden(totalOrden);
   }, [productosEnOrden]);
 
-  // Ordenar los productos por nombre
   const productosOrdenados = productos.slice().sort((a, b) => a.nombre.localeCompare(b.nombre));
-
-  // Calcular el índice de inicio y final para la paginación
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = productosOrdenados.slice(indexOfFirstProduct, indexOfLastProduct);
-
-  // Cambiar la página
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
 
   const puedeGenerarTicket = () => {
@@ -100,7 +74,7 @@ const NewSaleProductos = (props) => {
 
   const handleApplyDiscount = () => {
     const hayProductosEnOrden = productosEnOrden.length > 0;
-  
+
     if (!hayProductosEnOrden) {
       setDescuento(0);
       toast.error("No hay productos en la lista", {
@@ -109,8 +83,8 @@ const NewSaleProductos = (props) => {
       });
       return;
     }
-  
-   
+
+
     if (descuento > 100 || descuento < 0) {
       toast.error("Tu descuento debe ser entre 1 y 100", {
         position: "bottom-right",
@@ -135,18 +109,16 @@ const NewSaleProductos = (props) => {
     const cantidadDisponible = selectedProduct.cantidad;
 
     if (cantidadDisponible > 0) {
-      // Restar 1 a la cantidad disponible
+  
       selectedProduct.cantidad = cantidadDisponible - 1;
 
-      // Buscar si el producto ya está en la orden
+   
       const productInOrder = productosEnOrden.find((item) => item.id === selectedProduct.id);
 
       if (productInOrder) {
-        // Si el producto ya está en la orden, solo incrementa la cantidad
+      
         productInOrder.cantidad += 1;
         productInOrder.total = productInOrder.cantidad * productInOrder.precio * (1 - productInOrder.descuento / 100);
-
-        // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
         const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
         updatedCantidadTotalEnOrden[selectedProduct.id] = (updatedCantidadTotalEnOrden[selectedProduct.id] || 0) + 1;
         setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
@@ -156,14 +128,14 @@ const NewSaleProductos = (props) => {
         setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
 
       } else {
-        // Si el producto no está en la orden, agrégalo
+     
         setProductosEnOrden([...productosEnOrden, {
           ...selectedProduct,
           cantidad: 1,
           total: selectedProduct.precio * (1 - selectedProduct.descuento / 100),
         }]);
 
-        // Actualizar el estado de cantidadTotalEnOrden y precioTotalEnOrden
+    
         const updatedCantidadTotalEnOrden = { ...cantidadTotalEnOrden };
         updatedCantidadTotalEnOrden[selectedProduct.id] = 1;
         setCantidadTotalEnOrden(updatedCantidadTotalEnOrden);
@@ -172,8 +144,6 @@ const NewSaleProductos = (props) => {
         updatedPrecioTotalEnOrden[selectedProduct.id] = selectedProduct.precio * (1 - selectedProduct.descuento / 100);
         setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
       }
-
-      // Actualiza el total de la orden
       const totalOrden = calcularTotal(productosEnOrden);
       setTotalProductosEnOrden(totalOrden);
     }
@@ -181,13 +151,13 @@ const NewSaleProductos = (props) => {
   const handleEliminarProductoEnOrden = (index) => {
     const productoRemovido = productosEnOrden[index];
 
-    // Encuentra el producto correspondiente en la tabla 1 y actualiza su cantidad
+  
     const productoEnTabla1 = productos.find((producto) => producto.id === productoRemovido.id);
     if (productoEnTabla1) {
       productoEnTabla1.cantidad += 1;
     }
 
-    // Actualiza el estado de cantidadProductosAgregados y precioTotalEnOrden
+  
     const updatedCantidadProductosAgregados = { ...cantidadProductosAgregados };
     updatedCantidadProductosAgregados[productoRemovido.id] = (updatedCantidadProductosAgregados[productoRemovido.id] || 0) - 1;
     setCantidadProductosAgregados(updatedCantidadProductosAgregados);
@@ -196,14 +166,13 @@ const NewSaleProductos = (props) => {
     updatedPrecioTotalEnOrden[productoRemovido.id] = (updatedPrecioTotalEnOrden[productoRemovido.id] || 0) - productoRemovido.precio * (1 - productoRemovido.descuento / 100);
     setPrecioTotalEnOrden(updatedPrecioTotalEnOrden);
 
-    // Si la cantidad es 1 o menor en la tabla 2, elimina el producto de la orden
     const nuevosProductosEnOrden = [...productosEnOrden];
     if (productoRemovido.cantidad > 1) {
-      // Si la cantidad es mayor que 1, simplemente resta 1 a la cantidad en la tabla 2
+
       productoRemovido.cantidad -= 1;
       productoRemovido.total = productoRemovido.cantidad * productoRemovido.precio * (1 - productoRemovido.descuento / 100);
     } else {
-      // Si la cantidad es 1 o menor en la tabla 2, elimina el producto de la orden
+    
       nuevosProductosEnOrden.splice(index, 1);
     }
     setProductosEnOrden(nuevosProductosEnOrden);
@@ -212,20 +181,18 @@ const NewSaleProductos = (props) => {
   const handleDelete = (index) => {
     const productoRemovido = productosEnOrden[index];
 
-    // Encuentra el producto correspondiente en la tabla 1 y actualiza su cantidad
+
     const productoEnTabla1 = productos.find((producto) => producto.id === productoRemovido.id);
     if (productoEnTabla1) {
       productoEnTabla1.cantidad += productoRemovido.cantidad;
     }
 
-    // Elimina el producto de la tabla 2
+  
     const nuevosProductosEnOrden = [...productosEnOrden];
     nuevosProductosEnOrden.splice(index, 1);
     setProductosEnOrden(nuevosProductosEnOrden);
   };
 
-  const productosTotal = calcularTotal(productos);
-  const productosEnOrdenTotal = calcularTotal(productosEnOrden);
   const filtrarProductosPorNombre = (productos, nombreABuscar) => {
     return productos.filter((producto) =>
       producto.nombre.toLowerCase().includes(nombreABuscar.toLowerCase())
@@ -241,10 +208,9 @@ const NewSaleProductos = (props) => {
     const searchTerm = event.target.value;
     setBuscador(searchTerm);
     if (searchTerm.trim() === "") {
-      // Restablecer la lista original cuando el término de búsqueda está vacío
+    
       setProductos(originalProductos);
     } else {
-      // Filtrar productos por nombre
       const productosFiltrados = filtrarProductosPorNombre(originalProductos, searchTerm);
       setProductos(productosFiltrados);
     }
@@ -254,7 +220,7 @@ const NewSaleProductos = (props) => {
     setidBuscado(searchTerm);
 
     if (searchTerm.trim() === "") {
-      // Restablecer la lista original cuando el término de búsqueda está vacío
+  
       setProductos(originalProductos);
     } else {
       const productosFiltrados = filtrarProductosPorid(originalProductos, searchTerm);
@@ -335,20 +301,20 @@ const NewSaleProductos = (props) => {
                 </div>
               </div>
             </div>
-           
-           
+
+
 
             <div className="bg-[#262837] w-full bottom-0 left-0 p-2" style={{ minHeight: '250px' }}>
-            <div className="text-center">
-                  <h1 className="text-md">Total de Venta</h1>
-                </div>
-                <div className="flex items-center justify-between mb-3">
+              <div className="text-center">
+                <h1 className="text-md">Total de Venta</h1>
+              </div>
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-gray-400">Neto</span>
                 <span>$0.0</span>
               </div>
               <div className="flex items-center justify-between mb-3">
-              <span className="text-gray-400">Descuento</span>
-                    <span className="text-right">${descuentoAplicado.toFixed(2)}</span>
+                <span className="text-gray-400">Descuento</span>
+                <span className="text-right">${descuentoAplicado.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-gray-400">Subtotal</span>
@@ -371,36 +337,36 @@ const NewSaleProductos = (props) => {
                 <span>$0.0</span>
               </div>
               <div className="flex flex-col space-y-4">
-  <div className="flex justify-between space-x-1">
-    <Button
-      variant="danger"
-      onClick={handleShowModal}
-      style={{ flex: 1, backgroundColor: '#AC3DB9',fontWeight: 'bold' }}
-    >
-      Descuento(%)
-    </Button>
-    <Button
-      onClick={handleShowModalCancelar}
-      style={{ flex: 1, backgroundColor: '#AB2409',fontWeight: 'bold' }}
-    >
-      Cancelar pedido
-    </Button>
-  </div>
-  <div className="flex justify-between space-x-1">
-  <Button
-  isDisabled={!puedeGenerarTicket()}
-  style={{ flex: 1, backgroundColor: '#D69926', fontWeight: 'bold' }}
->
-  Imp. Ticket
-</Button>
-    <Button
-      style={{ flex: 1, backgroundColor: '#54CD71',fontWeight: 'bold' }}
-    >
-      Pagar
-    </Button>
-  </div>
-</div>
-<Spacer></Spacer>
+                <div className="flex justify-between space-x-1">
+                  <Button
+                    variant="danger"
+                    onClick={handleShowModal}
+                    style={{ flex: 1, backgroundColor: '#AC3DB9', fontWeight: 'bold' }}
+                  >
+                    Descuento(%)
+                  </Button>
+                  <Button
+                    onClick={handleShowModalCancelar}
+                    style={{ flex: 1, backgroundColor: '#AB2409', fontWeight: 'bold' }}
+                  >
+                    Cancelar pedido
+                  </Button>
+                </div>
+                <div className="flex justify-between space-x-1">
+                  <Button
+                    isDisabled={!puedeGenerarTicket()}
+                    style={{ flex: 1, backgroundColor: '#D69926', fontWeight: 'bold' }}
+                  >
+                    Imp. Ticket
+                  </Button>
+                  <Button
+                    style={{ flex: 1, backgroundColor: '#54CD71', fontWeight: 'bold' }}
+                  >
+                    Pagar
+                  </Button>
+                </div>
+              </div>
+              <Spacer></Spacer>
             </div>
           </div>
         </div>
@@ -443,56 +409,56 @@ const NewSaleProductos = (props) => {
         </div>
         <Spacer y={2} />
         <div>
-  <h2 style={{ textAlign: 'left' }}>Productos</h2>
-  <div className="product-list" style={{  overflowY: 'auto' }}>
-    <table
-      className="table text-black-400 border-separate space-y-6 text-sm"
-      style={{ fontFamily: "Gotham, sans-serif", width: '100%' }}
-    >
-      <thead className="bg-gray-800 text-black-500">
-        <tr>
-          <th className="p-3">Código</th>
-          <th className="p-3">Nombre</th>
-          <th className="p-3">Marca</th>
-          <th className="p-3">Categoria</th>
-          <th className="p-3">Cantidad</th>
-          <th className="p-3">Precio Unitario</th>
-          <th className="p-3">Descuento</th>
-          <th className="p-3">Añadir</th>
-        </tr>
-      </thead>
-    </table>
-  </div>
+          <h2 style={{ textAlign: 'left' }}>Productos</h2>
+          <div className="product-list" style={{ overflowY: 'auto' }}>
+            <table
+              className="table text-black-400 border-separate space-y-6 text-sm"
+              style={{ fontFamily: "Gotham, sans-serif", width: '100%' }}
+            >
+              <thead className="bg-gray-800 text-black-500">
+                <tr>
+                  <th className="p-3">Código</th>
+                  <th className="p-3">Nombre</th>
+                  <th className="p-3">Marca</th>
+                  <th className="p-3">Categoria</th>
+                  <th className="p-3">Cantidad</th>
+                  <th className="p-3">Precio Unitario</th>
+                  <th className="p-3">Descuento</th>
+                  <th className="p-3">Añadir</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
 
-  <div className="product-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-    <table
-      className="table text-black-400 border-separate space-y-6 text-sm"
-      style={{ fontFamily: "Gotham, sans-serif", width: '100%' }}
-    >
-      <tbody>
-        {productosOrdenados.map((producto, index) => (
-          <tr key={index} className="bg-gray-800">
-            <td className="p-3">{producto.id}</td>
-            <td className="p-3">{producto.nombre}</td>
-            <td className="p-3">{producto.marca}</td>
-            <td className="p-3">{producto.categoria}</td>
-            <td className="p-3">{producto.cantidad}</td>
-            <td className="p-3">{producto.precio.toFixed(2)}</td>
-            <td className="p-3">{producto.descuento}%</td>
-            <td className="p-3">
-              <Button
-                variant="primary"
-                onClick={() => handleAgregarProductoAOrden(producto)}
-              >
-                +
-              </Button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-</div>
+          <div className="product-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            <table
+              className="table text-black-400 border-separate space-y-6 text-sm"
+              style={{ fontFamily: "Gotham, sans-serif", width: '100%' }}
+            >
+              <tbody>
+                {productosOrdenados.map((producto, index) => (
+                  <tr key={index} className="bg-gray-800">
+                    <td className="p-3">{producto.id}</td>
+                    <td className="p-3">{producto.nombre}</td>
+                    <td className="p-3">{producto.marca}</td>
+                    <td className="p-3">{producto.categoria}</td>
+                    <td className="p-3">{producto.cantidad}</td>
+                    <td className="p-3">{producto.precio.toFixed(2)}</td>
+                    <td className="p-3">{producto.descuento}%</td>
+                    <td className="p-3">
+                      <Button
+                        variant="primary"
+                        onClick={() => handleAgregarProductoAOrden(producto)}
+                      >
+                        +
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
 
 
@@ -545,10 +511,10 @@ const NewSaleProductos = (props) => {
         <p>Total en la orden: {totalProductosEnOrden.toFixed(2)}</p>
       </div>
       <div className="flex flex-wrap place-content-end space-x-2">
-<Button color="success">
-  Guardar
-</Button>
-</div>
+        <Button color="success">
+          Guardar
+        </Button>
+      </div>
       <Modal
         isOpen={isOpen}
         onOpenChange={onClose}
