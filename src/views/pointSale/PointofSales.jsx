@@ -72,37 +72,7 @@ const PointofSale = () => {
           price="123" />
         </div>
         </div>
-          <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((almacen) => (
-              <tr key={almacen.id}>
-                <td>{almacen.id}</td>
-                <td>{almacen.nombre}</td>
-                <td>{almacen.tipo}</td>
-              </tr>
-            ))}
-            <td>
-            </td>
-          </tbody>
-          <tbody>
-            {filteredData.map((data2) => (
-              <tr key={data2.id}>
-                <td>{data2.nombre}</td>
-                <td>{data2.maximo}</td>
-                <td>{data2.minimo}</td>
-              </tr>
-            ))}
-            <td>
-            </td>
-          </tbody>
-        </table>
+          
       </main>
     </div>
   );

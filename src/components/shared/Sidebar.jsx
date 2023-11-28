@@ -1,33 +1,40 @@
+import React, { useState, useEffect } from 'react';
 import {
   RiHome6Line,
   RiGroup2Fill,
   RiUser2Fill,
   RiLoginBoxLine,
-} from "react-icons/ri";
-import { TbMoneybag, TbReportAnalytics } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
-import { Image } from "@nextui-org/react";
-import { useState } from 'react';
+} from 'react-icons/ri';
+import {
+  TbBrandProducthunt,
+  TbMoneybag,
+  TbReportAnalytics,
+} from 'react-icons/tb';
+import { useNavigate } from 'react-router-dom';
+import { Image } from '@nextui-org/react';
+
 const Sidebar = (props) => {
-  // eslint-disable-next-line react/prop-types
   const { showMenu } = props;
   const [activeMenuItem, setActiveMenuItem] = useState(null);
+  const [nuevaVentaNumber, setNuevaVentaNumber] = useState(0);
+  const [totalCantidadProductos, setTotalCantidadProductos] = useState(0); // Estado para la suma de cantidad de productos
 
+ 
   const handleMenuItemClick = (item) => {
     if (activeMenuItem === item) {
-      // Si el elemento ya está activo, desactívalo
       setActiveMenuItem(null);
     } else {
-      // De lo contrario, establece el nuevo elemento como activo
       setActiveMenuItem(item);
     }
   };
+
   const navigate = useNavigate();
+
   function handleLogout() {
-    localStorage.removeItem("tableId");
+    localStorage.removeItem('tableId');
     navigate(`/POS/Access`);
   }
-  
+
   return (
     <>
       <div
@@ -99,16 +106,17 @@ const Sidebar = (props) => {
                 />
               </a>
             </li>
-            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'nuevaVenta' ? 'bg-[#262837] text-white' : ''}`}>
+            
+            <li className={`hover:bg-[#262837] p-3 rounded-tl-xl rounded-bl-xl group transition-colors ${activeMenuItem === 'Prodcutos' ? 'bg-[#262837] text-white' : ''}`}>
               <a
-                href="#"
                 className="group-hover:bg-[#ec7c6a] p-4 flex justify-center rounded-xl text-[#ec7c6a] group-hover:text-white transition-colors"
-                title="Nueva Venta"
-                onClick={()=>{
-                  handleMenuItemClick('nuevaVenta');
-                  navigate("/PointofSale/NewSale")}}
+                title="Productos"
+                onClick={() => {
+                  handleMenuItemClick('Productos');
+                  navigate('/PointofSale/Products')
+                }}
               >
-                <RiUser2Fill className="text-2xl"/>
+                <TbBrandProducthunt className="text-2xl"/>
               </a>
             </li>
             <li className="hover:bg-[#262837] p-4 rounded-tl-xl rounded-bl-xl group transition-colors">

@@ -5,20 +5,20 @@ const Car = (props) => {
   const { showOrder, setShowOrder } = props;
   return (
     <div
-      className={`lg:col-span-2 fixed top-0 bg-[#1F1D2B] w-full lg:w-96 lg:right-0 h-full transition-all z-50 overflow-auto ${
-        showOrder ? "right-0" : "-right-full"
-      }`}
+    className={`lg:col-span-2 fixed top-0 bg-[#1F1D2B] w-full lg:w-96 lg:right-0 h-screen transition-all z-40 ${
+      showOrder ? "right-0" : "-right-full"}`
+    }
     >
       {/* Orders */}
-      <div className="relative pt-16 lg:pt-8 text-gray-300 p-8 h-full">
+      <div className="relative pt-16 lg:pt-8 text-gray-300 p-8 h-full flex flex-col justify-between">
         <RiCloseLine
           onClick={() => setShowOrder(false)}
           className="lg:hidden absolute left-4 top-4 p-3 box-content text-gray-300 bg-[#262837] rounded-full text-xl"
         />
         <div className="bg-[#262837] p-4 rounded-xl mb-4">
-          <div className="grid grid-cols-6 mb-4">
+          <div className="grid grid-cols-4 mb-2">
             {/* Product description */}
-            <div className="col-span-4 flex items-center gap-3">
+            <div className="col-span-2 flex items-center gap-2">
               <div>
                 <h1 className="text-md">Vendedor</h1>
                 <p className="text-xs text-gray-400">Vendedor:Sitio Web</p>
@@ -26,9 +26,9 @@ const Car = (props) => {
             </div>
           </div>
         </div>
-        <div className="bg-[#262837] p-4 rounded-xl mb-4">
-          <div className="grid grid-cols-6 mb-2">
-            <div className="col-span-2 flex flex-col items-center justify-center gap-3">
+        <div className="bg-[#262837] p-2 rounded-xl mb-2">
+          <div className="grid grid-cols-4 mb-0">
+            <div className="col-span-4 flex flex-col items-center justify-center gap-3">
               <div className="text-center">
                 <h1 className="text-md">Imagen Producto</h1>
               </div>
@@ -47,9 +47,9 @@ const Car = (props) => {
   
           </div> */}
         </div>
-        <div className="grid grid-cols-2 mb-4">
+        <div className="grid grid-cols-2 mb-2">
           {/* Product description */}
-          <div className="col-span-4 flex items-center gap-3">
+          <div className="col-span-2 flex items-center gap-3">
             <div>
               <h1 className="text-md">Total de Venta</h1>
               <div className="flex flex-col gap-2">
@@ -73,16 +73,16 @@ const Car = (props) => {
             </div>
           </div>
         </div>
-        <div className="bg-[#262837] w-full bottom-0 left-0 p-4">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-[#262837] w-full bottom-0 left-0 p-2" style={{ minHeight: '250px' }}>
+          <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400 text-medium">Total</span>
             <span>$201.03</span>
           </div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400">Pagado</span>
             <span>$201.03</span>
           </div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400">Falta</span>
             <span>$201.03</span>
           </div>

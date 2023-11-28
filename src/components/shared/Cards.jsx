@@ -1,87 +1,110 @@
 import React, { useState, useEffect } from "react";
-import Catalogue from "../../views/pointSale/Catalogue";
 import { Button } from "@nextui-org/react";
-import ProductsCards from "../../components/shared/CardsProducts";
-const Cards = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("Sin categoría seleccionada");
+import ProductsCatalogue from "./CardsProductsCatalogue";
+
+const Cards = ({ onCategorySelect }) => {
+  const [selectedCategory, setSelectedCategory] = useState("Sin categoría");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(false);
   const [initialModalOpen, setInitialModalOpen] = useState(false);
+  const [showCardData, setShowCardData] = useState([]);
+  const [uniqueCategories, setUniqueCategories] = useState([]);
+
   const loadCategoriesFromAPI = async () => {
     try {
-      const response = await fetch("https://localhost:4000/Categorias"); // Se va a cambiar la URL
-      const data = await response.json();
+      const response = await fetch("https://localhost:4000/productos");
+
       if (response.ok) {
-        setCategories(data);
+        const data = await response.json();
+     
+
+        const uniqueCategoriesSet = new Set(data.map((product) => product.categoria));
+        const uniqueCategoriesArray = Array.from(uniqueCategoriesSet);
+       
+        setUniqueCategories(uniqueCategoriesArray);
+        setShowCardData(Array(uniqueCategoriesArray.length).fill(false));
       }
     } catch (error) {
       console.error("Error al cargar datos desde la API:", error);
     }
   };
+
   const openModal = () => {
     if (!initialModalOpen) {
-      setSelectedCategory("Sin categoría seleccionada");
+      setSelectedCategory("Sin categoría");
+      setCategoriaSeleccionada(true);
       setInitialModalOpen(true);
     }
     setModalIsOpen(true);
+    setShowCardData(Array(uniqueCategories.length).fill(true));
   };
 
-  const handleClearCategory = () => {
-    setSelectedCategory("Sin categoría seleccionada");
-    setModalIsOpen(false);
-  };
-
+  
   const handleCardClick = (categoryName) => {
-    console.log("Categoría seleccionada:", categoryName);
     setSelectedCategory(categoryName);
     setCategoriaSeleccionada(true);
-    setModalIsOpen(true); // Abre el modal aquí
+    setModalIsOpen(true);
+    setShowCardData(Array(uniqueCategories.length).fill(true));
   };
-  
+
   useEffect(() => {
     loadCategoriesFromAPI();
   }, []);
 
-  const Card = ({ img, nombre, id, inventory, handleCardClick }) => {
+  const showAllCards = () => {
+   onCategorySelect("Sin categoria seleccionada")
+    setModalIsOpen(false);
+    setCategoriaSeleccionada(false);
+    setShowCardData(Array(uniqueCategories.length).fill(false));
+  };
+
+  const handleCardPress = (categoryName) => {
+    setSelectedCategory(categoryName);
+    setCategoriaSeleccionada(true);
+    setModalIsOpen(true);
+    setShowCardData(Array(uniqueCategories.length).fill(true));
+
+    // Pass the selected category to the prop callback
+    onCategorySelect(categoryName);
+  };
+  const handleCategorySelection = (categoryName) => {
+    setSelectedCategory(categoryName);
+    setShowCardData(Array(uniqueCategories.length).fill(false));
+    
+      setShowCardData(Array(uniqueCategories.length).fill(true));
+    
+  };
+
+  const Card = ({ imagen, categoria, id, inventario, index }) => {
+   
     const [highlighted, setHighlighted] = useState(false);
-    const [pressed, setPressed] = useState(false);
 
     const cardStyle = {
       backgroundColor: highlighted ? "#ec7c6a" : "#1F1D2B",
-      padding: "8px",
+      padding: "4px",
       borderRadius: "12px",
       marginBottom: "20px",
       textAlign: "center",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      gap: "2px",
+      width: "180px",
+      marginRight: "2px",
+      gap: "1px",
       color: highlighted ? "#ffffff" : "#888888",
       cursor: "pointer",
       transition: "background-color 0.3s ease-in-out",
-      
     };
 
-    const handleCardPress = (categoryName) => {
-      handleCategorySelection(categoryName);
-      setPressed(true);
-      console.log("Se logró");
-    };
-    const handleCategorySelection = (categoryName) => {
-      setSelectedCategory(categoryName);
-   
-    };
-    
     return (
       <div
-        style={pressed ? { ...cardStyle, color: "#00ff00" } : cardStyle}
-        onClick={() => handleCardPress(nombre)}
+        style={cardStyle}
+        onClick={() => handleCardPress(categoria)}
         onMouseEnter={() => setHighlighted(true)}
         onMouseLeave={() => setHighlighted(false)}
       >
         <img
-          src={img}
+          src={imagen}
           style={{
             width: "160px",
             height: "160px",
@@ -90,82 +113,90 @@ const Cards = () => {
             boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.5)",
             borderRadius: "50%",
           }}
-          alt={img}
+          alt={imagen}
         />
-        <p style={{ fontSize: "20px" }}>
-          {pressed ? "Seleccionado" : nombre}
-        </p>
+        <p style={{ fontSize: "20px" }}>{categoria}</p>
         <span>{id}</span>
-        <p style={{ color: "#666666" }}>{inventory} Categoria</p>
+        <p style={{ color: "#666666" }}>{showCardData[index] ? inventario : "Datos ocultos"} Categoria</p>
       </div>
     );
   };
 
-  const EmptyCard = ({ handleCardClick }) => (
-    <div
-      style={{
-        backgroundColor: "#ec7c6a",
-        padding: "8px",
-        borderRadius: "12px",
-        marginBottom: "20px",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "2px",
-        color: "#ffffff",
-        cursor: "pointer",
-      }}
-      onClick={() => handleCardClick("Sin categoría", true)}
-    >
+  const EmptyCard = () => {
+    
+
+    return (
       <div
         style={{
-          width: "160px",
-          height: "160px",
-          backgroundColor: "#888888",
-          borderRadius: "50%",
+          backgroundColor: "#ec7c6a",
+          padding: "8px",
+          borderRadius: "12px",
+          marginBottom: "20px",
+          textAlign: "center",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          gap: "2px",
+          color: "#ffffff",
+          cursor: "pointer",
         }}
+        onClick={() => handleCardClick("Sin categoría")}
       >
-        <span style={{ fontSize: "20px", color: "#666666" }}>
-          Sin categoría
-        </span>
+        <div
+          style={{
+            width: "160px",
+            marginBottom: "20px",
+            height: "160px",
+            padding: "8px",
+            backgroundColor: "#888888",
+            borderRadius: "50%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            justifyContent: "center",
+          }}
+        >
+          <span style={{ fontSize: "20px", color: "#666666" }}>Sin categoría</span>
+        </div>
+        <p style={{ color: "#666666" }}>Sin categoría</p>
       </div>
-      <p style={{ color: "#666666" }}>Sin categoría</p>
-    </div>
-  );
+    );
+  };
 
   return (
     <div>
       {categoriaSeleccionada ? (
-        <ProductsCards selectedCategory={selectedCategory} />
+        <ProductsCatalogue selectedCategory={selectedCategory} />
       ) : (
+        
         <div>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "20px",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+              gap: "10px",
             }}
           >
-            {categories.map((item, index) => (
-              <Card key={index} {...item} handleCardClick={handleCardClick} />
+            {uniqueCategories.map((category, index) => (
+              <Card
+                key={index}
+                imagen={category.imagen}
+                categoria={category}
+                id={category.id}
+                inventario={category.inventory}
+                index={index}
+              />
             ))}
-            <EmptyCard handleCardClick={handleCardClick} />
+            <EmptyCard />
           </div>
         </div>
       )}
-      
-      <Catalogue
-  selectedCategory={selectedCategory}
-  modalIsOpen={modalIsOpen}
-  setModalIsOpen={setModalIsOpen}
-  buttonText="Catalogo"
-  handleCardClick={handleCardClick}
-/>
+
+      <Button onClick={showAllCards}>Regresar</Button>
     </div>
+  
   );
 };
+
 export default Cards;

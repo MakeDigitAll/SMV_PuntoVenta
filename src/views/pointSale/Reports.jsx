@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from "../../components/shared/Sidebar";
 import SidebarMovil from "../../components/shared/SidebarMovill";
 import { useState } from "react";
+import HeaderPointofSale from "../../components/header/headerC/HederPointofSale";
 const itemsReports = [
   {
       id: 1,
@@ -39,42 +40,10 @@ const Reports = () => {
         <SidebarMovil />
         <main className="lg:pl-28 lg:pr-90 pb-15">
           <div className="p-12">
+          <HeaderPointofSale/>
             {/* <div className="p-12 bg-gray-100"> */}
             <div className="">
               <div>
-                <div>
-                  <Breadcrumbs aria-label="breadcrumb" color="foreground">
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/Home`)}
-                    >
-                      <RiDashboard2Fill sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Inicio
-                    </Link>
-                    <Link
-                      className="text-foreground"
-                      underline="hover"
-                      sx={{ display: "flex", alignItems: "center" }}
-                      color="foreground"
-                      href="#"
-                      onClick={() => navigate(`/PointofSale`)}
-                    >
-                      <MdDashboard sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Dashboard
-                    </Link>
-                    <Typography
-                      sx={{ display: "flex", alignItems: "center" }}
-                      className="text-foreground"
-                    >
-                      <MdReport sx={{ mr: 0.5 }} fontSize="inherit" />
-                      Reportes
-                    </Typography>
-                  </Breadcrumbs>
-                </div>
                 <Spacer y={4} />
                 <Accordion
                   selectedKeys={selectedKeys}
